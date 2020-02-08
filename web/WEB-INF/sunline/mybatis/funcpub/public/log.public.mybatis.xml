@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sunline.funcpub.mybatis.public.log" >
+	<resultMap id="loginLog_resultMap" type="java.util.HashMap">
+		<result column="userid" property="userId"/>
+		<result column="usercode" property="userCode"/>
+		<result column="username" property="userName"/>
+		<result column="lognip" property="lognip"/>
+		<result column="lognst" property="lognst"/>
+		<result column="logndt" property="logndt" javaType="java.sql.Timestamp" jdbcType="TIMESTAMP"/>
+	</resultMap>
+	<select id="queryLoginLog_listPage" parameterType="java.util.HashMap" resultMap="loginLog_resultMap">
+		select a.userid , b.usercode , b.username , a.lognip , a.lognst , a.logndt 
+		from pcmc_user b 
+		inner join pcmc_user_login a on a.userid = b.userid
+		<where>
+			b.corpcode=#{corpcode}
+			<if test="userCode != null and userCode !='%%' ">
+				and (b.userCode like #{userCode} or b.userName like #{userCode})
+			</if>
+			<if test="startDate != null">
+			<![CDATA[
+				and a.logndt >= #{startDate}
+			]]>
+			</if>
+			<if test="endDate != null">
+			<![CDATA[
+				and a.logndt <= #{endDate}
+			]]>
+			</if>
+		</where>
+		order by a.logndt desc
+	</select>
+	
+	<resultMap id="loginLogDetail_resultMap" type="java.util.HashMap">
+		<result column="userid" property="userId"/>
+		<result column="usercode" property="userCode"/>
+		<result column="username" property="userName"/>
+		<result column="lastdt" property="lastdt"/>
+		<result column="lognno" property="lognno"/>
+		<result column="disable" property="disable"/>
+	</resultMap>
+	<select id="getLoginLogUserDetail" parameterType="java.util.HashMap" resultMap="loginLogDetail_resultMap">
+		select a.userid , b.username , b.usercode , max(a.logndt) as lastdt , count(*) as lognno , b.disable 
+		from pcmc_user b
+		inner join pcmc_user_login a  on a.userid = b.userid
+		<where>
+			b.corpcode=#{corpcode}
+			<if test="userId != null and userId != ''">
+				and a.userid = #{userId}
+			</if>
+		</where>
+		group by a.userid, b.username, b.usercode, b.disable
+	</select>
+	
+	<resultMap id="lognip_resultMap" type="java.util.HashMap">
+		<result column="lastip" property="lastip"/>
+	</resultMap>
+	<select id="getLastLognip" parameterType="java.util.HashMap" resultMap="lognip_resultMap">
+		select a.lognip as lastip from pcmc_user_login a 
+		where a.logndt = (
+			select max(b.logndt) from pcmc_user_login b
+				<where>
+					<if test="userId != null and userId != ''">
+						b.userid = #{userId}
+					</if>
+				</where>
+		)
+		<if test="userId != null and userId != ''">
+				and a.userid = #{userId}
+		</if>
+	</select>
+	
+	<resultMap type="java.util.HashMap" id="loginLogListByUserId_resultMap">
+		<result column="logndt" property="logndt"/>
+		<result column="lognst" property="lognst"/>
+		<result column="lognip" property="lognip"/>
+		<result column="ulokid" property="ulokid"/>
+		<result column="uloktm" property="uloktm"/>
+	</resultMap>
+	<select id="queryLoginLogByUserId_listPage" parameterType="java.util.HashMap" resultMap="loginLogListByUserId_resultMap">
+		select a.logndt , a.lognst , a.lognip , a.ulokid , a.uloktm 
+		from pcmc_user_login a 
+		<where>
+			<if test="userId != null and userId != ''">
+				a.userid = #{userId}
+			</if>
+		</where>
+		order by a.logndt
+	</select>
+</mapper>

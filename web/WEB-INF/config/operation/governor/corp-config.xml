@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="gb2312"?>
+<Sunline>
+	<Session></Session>
+	
+	<!-- 法人交易配置 -->
+	<Operation id="corpActor" bean="com.sunline.governor.corp.actor.CorpActor" desc="法人信息管理" >
+		<Action name="queryCorpList" desc="获取法人信息列表" acttype="query" />
+		<Action name="selectCorpList" desc="获取法人信息列表-用于select选择 不需要分页" acttype="query"/>
+		<Action name="saveOrUpdateCorp" desc="新增法人信息" acttype="add" />
+		<!-- <Action name="addCorpLogo" desc="新增法人信息" acttype="add" /> -->
+		<!-- <Action name="editCorp" desc="修改法人信息" acttype="edit" /> -->
+		<Action name="delCorp" desc="停用法人信息" acttype="del" />
+		<Action name="updateCorp" desc="启用法人信息" acttype="del" />
+		<Action name="getCorp" desc="获取单个法人信息" acttype="query" />
+		<Action name="checkCorpUnique" desc="校验法人编码唯一性" acttype="query" />
+	</Operation>
+	
+	<!-- 法人初始化交易配置 -->
+	<Operation id="corpInitConfigActor" bean="com.sunline.governor.corpinitconfig.actor.CorpInitConfigActor" desc="法人信息管理" >
+		<Action name="queryCorpInitConfigList" desc="获取法人初始化配置列表" acttype="query" />
+		<Action name="delCorpInitConfig" desc="删除法人初始化配置" acttype="del" />
+		<Action name="editCorpInitConfig" desc="更新法人初始化配置" acttype="add" />
+		<Action name="getCorpInitConfig" desc="获取单个法人初始化配置" acttype="query" />
+	</Operation>
+	
+	<Operation id="corpInitActor" bean="com.sunline.governor.actor.corpinit.CorpInitActor" desc="法人管理数据初始化">
+		<Action name="queryCorpInitConfig" desc="查询系统功能初始化配置" acttype="query"/>
+		<Action name="initFunction" desc="初始化数据" acttype="update"/>
+		<Action name="resetCorpInit" desc="重置初始化数据" acttype="update"/>
+		<Action name="clearTempRef" desc="清空关联关系表" acttype="update"/>
+		<Action name="repairData" desc="修复数据" acttype="update"/>
+	</Operation>
+	
+	<Operation id="corpInitTest" bean="com.sunline.governor.actor.corpinit.CorpInitTestActor" desc="测试Actor 初始化数据">
+		<Action name="InitData" desc="测试Actor 初始化法人数据" acttype="update"/>		
+	</Operation>
+</Sunline>

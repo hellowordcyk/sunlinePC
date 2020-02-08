@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="gb2312"?>
+<!-- 公共功能  -->
+<Sunline>
+	<Session></Session>
+	
+	<!-- excel公共导出 -->
+	<Operation id="funcpub-excel"  bean="com.sunline.funcpub.Excel"  desc="导出excel">
+		<Action name="exportExcel" desc="获取机构"/>
+	</Operation>
+	
+	<Operation id="funcpub-logconfig"  bean="com.sunline.funcpub.log.actor.LogConfigActor"  desc="公共日志配置"
+	filterpath="/funcpub/logconfig/query/">
+		<Action name="getOperationTree" desc="获取功能树" acttype="query"/>
+		<Action name="getOperationInfo" desc="获取功能详细信息" acttype="query"/>
+		<Action name="updateLogConfig" desc="保存详细信息" acttype="update"/>
+		<Action name="queryPubLogs" desc="查询日志信息" acttype="query"/>
+	</Operation>
+	
+	<!-- 日志配置管理 -->
+	<Operation id="funcpub-logconfigmanage"  bean="com.sunline.funcpub.log.actor.LogConfigManageActor"  desc="公共日志配置"
+    filterpath="/funcpub/logconfig/config/">
+        <Action name="getOperationTree" desc="获取功能树" acttype="query"/>
+        <Action name="getOperationInfo" desc="获取功能详细信息" acttype="query"/>
+        <Action name="updateLogConfig" desc="保存详细信息" acttype="update"/>
+        <Action name="queryPubLogs" desc="查询日志信息" acttype="query"/>
+    </Operation>
+	
+	
+	<!-- jui测试 -->
+		<Operation id="funcpub-jui-user"  bean="com.sunline.funcpub.TestJuiActor"  desc="测试">
+			<Action name="getData" desc="获取数据"/>
+			<Action name="getMenu" desc="获取数据"/>
+			<Action name="addMenu" desc="获取数据"/>
+			<Action name="delMenu" desc="获取数据"/>
+		</Operation>
+
+		<!--首页全局搜索功能-->
+	<Operation id="funcpub-jui-seacher" bean="com.sunline.funcpub.SeacherAll">
+
+		<Action name="seacherResult" desc="查询出搜索的功能结果"></Action>
+	</Operation>
+		
+	<Operation id="Login"  bean="com.sunline.funcpub.Login"  desc="公共日志配置">
+		<Action name="checklogin" >
+		    <responseFlow>
+              <handler type="CheckUserLoginHandler">
+                   <parameter name="actionName" value="checklogin"></parameter>
+              </handler>                  
+          </responseFlow>
+		</Action>
+		<Action name="checkdate" />
+		<Action name="login" desc="登录" acttype="query">
+            <Flow>
+                <Forward result="0" path="/pcmc/forward.jsp" />
+            </Flow>
+		</Action>
+		
+	</Operation>
+	<Operation id="PubLogHandler" bean="com.sunline.funcpub.log.handler">
+	    <Action name="invoke"></Action>
+ 
+	</Operation>
+	
+   	<Operation id="userLoginDetail" bean="com.sunline.funcpub.login.actor.UserLoginDetailActor"
+   	 filterpath="/funcpub/portal/userlogin/">
+	    <Action name="getUserLoginDetail"></Action>
+ 		<Action name="getUserLockDetail"></Action>
+ 		<Action name="lockUser" acttype="deal"></Action>
+ 		<Action name="enableUser" acttype="deal"></Action>
+	</Operation>
+   	
+	
+</Sunline>

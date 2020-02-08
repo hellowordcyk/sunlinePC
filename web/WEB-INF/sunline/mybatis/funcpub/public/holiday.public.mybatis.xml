@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sunline.pcmc.mybatis.holiday">
+	<select id="queryHoliday_entityRule_listPage" parameterType="java.util.Map" resultType="com.sunline.funcpub.holiday.bean.HolidayInfo" >
+		SELECT 
+			t1.CALENDAR_DATE AS calendarDate,
+			t1.WEEK_DAY AS weekDay,
+			t1.DATE_TYPE AS dateType,
+			t1.IS_HOLIDAY AS isHoliday,
+			t1.OPER_TYPE AS operType,
+			t1.DATE_DESC AS dateDesc,
+			t1.CREATION_DATE AS creationDate,
+			t1.CREATED_BY AS createdBy,
+			t1.LAST_UPDATE_DATE AS lastUpdateDate,
+			t1.LAST_UPDATED_BY AS lastUpdatedBy,
+			t1.LAST_UPDATE_LOGIN AS lastUpdateLogin,
+			t1.ATTRIBUTE_GROUP_ID AS attributeGroupId
+			 FROM TVMC_HOLIDAY_INFO t1 
+ 	         <where> 
+ 	         <if test="calendarDate != null and calendarDate != ''" >
+	 			AND t1.CALENDAR_DATE=#{calendarDate,jdbcType=DATE}
+			</if>
+			<if test="weekDay != null and weekDay.trim() != ''" >
+				 AND t1.WEEK_DAY=#{weekDay}
+			</if>
+			<if test="dateType != null and dateType.trim() != ''" >
+				 AND t1.DATE_TYPE=#{dateType}
+			</if>
+			<if test="isHoliday != null and isHoliday.trim() != ''" >
+				 AND t1.IS_HOLIDAY=#{isHoliday}
+			</if>
+			</where>
+			ORDER BY t1.LAST_UPDATE_DATE,t1.CALENDAR_DATE DESC
+	</select>
+	<select id="queryHoliday" parameterType="java.util.Map" resultType="com.sunline.funcpub.holiday.bean.HolidayInfo" >
+		SELECT 
+			t1.CALENDAR_DATE AS calendarDate,
+			t1.WEEK_DAY AS weekDay,
+			t1.DATE_TYPE AS dateType,
+			t1.IS_HOLIDAY AS isHoliday,
+			t1.OPER_TYPE AS operType,
+			t1.DATE_DESC AS dateDesc,
+			t1.CREATION_DATE AS creationDate,
+			t1.CREATED_BY AS createdBy,
+			t1.LAST_UPDATE_DATE AS lastUpdateDate,
+			t1.LAST_UPDATED_BY AS lastUpdatedBy,
+			t1.LAST_UPDATE_LOGIN AS lastUpdateLogin,
+			t1.ATTRIBUTE_GROUP_ID AS attributeGroupId
+			 FROM TVMC_HOLIDAY_INFO t1 
+			 <where> 
+ 	         <if test="startDate != null " >
+	 			AND t1.CALENDAR_DATE <![CDATA[>=]]> #{startDate,jdbcType=DATE}
+			</if>
+			 <if test="endDate != null " >
+	 			AND t1.CALENDAR_DATE <![CDATA[<=]]> #{endDate,jdbcType=DATE}
+			</if>
+			</where>
+		ORDER BY t1.CALENDAR_DATE
+	</select>
+	<select id="getHoliday" parameterType="java.util.Date" resultType="com.sunline.funcpub.holiday.bean.HolidayInfo" >
+        SELECT 
+			t1.CALENDAR_DATE AS calendarDate,
+			t1.WEEK_DAY AS weekDay,
+			t1.DATE_TYPE AS dateType,
+			t1.IS_HOLIDAY AS isHoliday,
+			t1.OPER_TYPE AS operType,
+			t1.DATE_DESC AS dateDesc,
+			t1.CREATION_DATE AS creationDate,
+			t1.CREATED_BY AS createdBy,
+			t1.LAST_UPDATE_DATE AS lastUpdateDate,
+			t1.LAST_UPDATED_BY AS lastUpdatedBy,
+			t1.LAST_UPDATE_LOGIN AS lastUpdateLogin,
+			t1.ATTRIBUTE_GROUP_ID AS attributeGroupId
+			FROM TVMC_HOLIDAY_INFO t1 
+ 	        WHERE  t1.CALENDAR_DATE=#{calendarDate,jdbcType=DATE}
+    </select>
+    <select id="isExist" parameterType="java.util.Map"  resultType="java.lang.Integer" >
+        SELECT  COUNT(1) FROM TVMC_HOLIDAY_INFO  t1
+        WHERE
+        t1.CALENDAR_DATE=#{calendarDate}
+         <if test="operType != null and operType.trim() != ''" >
+	 		  AND t1.OPER_TYPE=#{operType}
+	  </if>
+    </select>
+    
+	<insert id="addHoliday" parameterType="com.sunline.funcpub.holiday.bean.HolidayInfo" > 
+       INSERT INTO TVMC_HOLIDAY_INFO(CALENDAR_DATE,
+		WEEK_DAY,DATE_TYPE,IS_HOLIDAY,OPER_TYPE,DATE_DESC,
+		CREATION_DATE,CREATED_BY,LAST_UPDATE_DATE,LAST_UPDATED_BY,LAST_UPDATE_LOGIN,
+		ATTRIBUTE_GROUP_ID)
+		VALUES (#{calendarDate},#{weekDay},#{dateType,jdbcType=VARCHAR},#{isHoliday,jdbcType=VARCHAR},#{operType,jdbcType=VARCHAR},#{dateDesc,jdbcType=VARCHAR},
+		#{creationDate},#{createdBy,jdbcType=VARCHAR},#{lastUpdateDate},#{lastUpdatedBy,jdbcType=VARCHAR},#{lastUpdateLogin,jdbcType=VARCHAR},
+		#{attributeGroupId,jdbcType=VARCHAR})
+    </insert>
+    
+     <update id="updateHoliday" parameterType="com.sunline.funcpub.holiday.bean.HolidayInfo" >
+       UPDATE TVMC_HOLIDAY_INFO SET 
+	   CALENDAR_DATE=#{calendarDate},
+	   WEEK_DAY=#{weekDay,jdbcType=NUMERIC},
+	   DATE_TYPE=#{dateType,jdbcType=VARCHAR},
+	   IS_HOLIDAY=#{isHoliday,jdbcType=VARCHAR},
+	   OPER_TYPE=#{operType,jdbcType=VARCHAR},
+	   DATE_DESC=#{dateDesc,jdbcType=VARCHAR},
+	   LAST_UPDATE_DATE=#{lastUpdateDate,jdbcType=TIMESTAMP},
+	   LAST_UPDATED_BY=#{lastUpdatedBy,jdbcType=VARCHAR},
+	   LAST_UPDATE_LOGIN=#{lastUpdateLogin,jdbcType=VARCHAR},
+	   ATTRIBUTE_GROUP_ID=#{attributeGroupId,jdbcType=NUMERIC}
+	   WHERE
+		CALENDAR_DATE=#{calendarDate}
+    </update>
+    
+    <delete id="deleteHoliday" parameterType="java.util.Map" >
+          DELETE  FROM TVMC_HOLIDAY_INFO WHERE  CALENDAR_DATE=#{calendarDate}
+    </delete>
+    
+</mapper> 	  

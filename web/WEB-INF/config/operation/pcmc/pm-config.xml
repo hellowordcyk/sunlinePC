@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="gb2312"?>
+<Sunline>
+    <Session>
+    </Session>
+    <Operation id="info" bean="com.sunline.bimis.pcmc.pm.PcmcInfoActor"  desc="公告信息">
+    	<Action name="addPcmcInfo" desc="新增公告信息">
+        </Action>
+        <Action name="queryPcmcInfoByManager" desc="管理员角色查询公告信息">
+        </Action>
+        <Action name="queryPcmcInfoByLogUser" desc="登录用户角色查询公告信息">
+        </Action>
+        <Action name="deletePcmcInfo" desc="删除公告信息">
+        </Action>
+        <Action name="updatePcmcInfo" desc="更新公告信息">
+        </Action>
+        <Action name="getPcmcInfoById"  desc="查询个人发布公告信息">
+        </Action>
+        <Action name="queryInfoContent"  desc="查询公告内容">
+        </Action> 
+        <Action name="queryNoticeInfo"  desc="查询提示公告">
+        </Action>
+    </Operation>
+    <Operation id="log" bean="com.sunline.bdss.log.actor.QueryLogActor"  desc="日志信息">
+    	<Action name="queryLog"  desc="查询日志信息">
+        </Action>
+        <Action name="queryLogXml"  desc="查询日志xml信息">
+        </Action>
+        <Action name="queryCountActGroup"  desc="统计日志功能模块信息">
+        </Action>
+        <Action name="queryCountAct"  desc="统计日志功能信息">
+        </Action>
+        
+    </Operation>
+    <Operation id="pm" bean="com.sunline.bimis.pcmc.pm.PmInfoDealBean"  desc="门户信息">
+        <Action name="getInfomList"  desc="获取门户信息">
+            <Flow>
+                <Forward result="0" path=""></Forward>
+            </Flow>
+        </Action>
+        <Action name="getInfomSingle"  desc="获取单条信息">
+            <Flow>
+                <Forward result="0" path=""></Forward>
+            </Flow>
+        </Action>
+		<Action name="getPersonInfomList" desc="获取信息(登陆后)">
+		    <Request multi="false">
+                <Field name="infotype" title="信息类别" type="String" maxlen="2" notnull="true"></Field>
+			</Request>
+        </Action>        
+		<Action name="getOpenList" desc="获取公开栏目(登陆前显示)">
+		    <Request multi="false">
+			</Request>
+        </Action>
+		<Action name="getPersonList" desc="获取栏目(登陆后显示)">
+		    <Request multi="false">
+			</Request>
+        </Action>        
+		<Action name="getAdjunctByInfoID" accredit="false" desc="根据信息编号得到附件信息">
+		    <Request multi="false">
+                <Field name="infoid" title="信息编号" type="long" maxlen="19" notnull="true"></Field>
+			</Request>
+        </Action>        
+		<Action name="getFileInfoByID" accredit="false" desc="根据文件编号得到文件信息">
+		    <Request multi="false">
+                <Field name="fileid" title="文件编号" type="long" maxlen="19" notnull="true"></Field>
+			</Request>
+        </Action>
+		<Action name="editInfo" accredit="false" desc="编辑信息保存">
+		    <Request multi="false">
+                <Field name="infotype" title="信息类别" type="String" maxlen="2" notnull="true"></Field>
+		        <Field name="title" title="标题" type="String" maxlen="60" notnull="true"></Field>
+                <Field name="content" title="内容" type="String" maxlen="5000" notnull="true"></Field>
+		        <Field name="createuser" title="发布人" type="long" maxlen="19" notnull="true"></Field>
+			</Request>
+			<Response reuslt="-1">
+			    <Hint></Hint>
+				<Error></Error>
+			</Response>
+            <Flow>
+                <Forward result="0" path=""></Forward>
+            </Flow>    
+        </Action>
+		<Action name="getMessageNum" desc="获取消息条数">
+		    <Request multi="false">
+			    <Field name="isread" title="是否已阅读" type="String" maxlen="1" notnull="true"></Field>
+			</Request>
+			<Response reuslt="-1">
+			    <Hint></Hint>
+				<Error></Error>
+			</Response>
+			<Flow>
+                <Forward result="0" path=""></Forward>
+            </Flow>
+		</Action>
+		<Action name="getNewMessageList" desc="获取具体消息信息">
+		    <Request multi="false">
+			    <Field name="size" title="显示数量" type="long" maxlen="2" notnull="true"></Field>
+				<Field name="pageno" title="页" type="long" maxlen="19" notnull="true"></Field>
+			    <Field name="isread" title="是否已阅读" type="String" maxlen="1" notnull="true"></Field>
+			</Request>
+			<Response reuslt="-1">
+			    <Hint></Hint>
+				<Error></Error>
+			</Response>
+			<Flow>
+                <Forward result="0" path=""></Forward>
+            </Flow>
+		</Action>
+    </Operation>
+</Sunline>

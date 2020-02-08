@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="gbk"?>
+<configuration>
+    <platform>
+		<task taskno="1" tasktype="create_table" taskname="2.create_table_pcmc.sql" objectname="platform_create" taskdesc="知识库创建" filepath="2.create_table_pcmc.sql" />
+		<task taskno="2" tasktype="init_data" taskname="3.init_pcmc_data.sql" objectname="platform_init" taskdesc="注册服务" filepath="" />
+		<task taskno="3" tasktype="init_data" taskname="4.应用表create_tables.sql" objectname="platform_init" taskdesc="知识库数据初始化" filepath="" />
+		<task taskno="4" tasktype="init_data" taskname="5.数据字典.sql" objectname="platform_init" taskdesc="知识库数据初始化" filepath="" />
+	</platform>
+</configuration>

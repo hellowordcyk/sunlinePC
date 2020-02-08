@@ -1,0 +1,13 @@
+        <Field name="usidsession" title="" type="String" maxlen="5" defaultval=""/>
+        <Field name="userid" title="" type="String" maxlen="5" defaultval=""/>
+    	<Field name="brchno" title="" type="String" maxlen="4" defaultval=""/>
+        <Field name="prcscd" title="" type="String" maxlen="6" defaultval=""/>
+        <Field name="servtp" title="" type="String" maxlen="20" defaultval="BMA"/>
+        <Field name="csbxno" title="" type="String" maxlen="6" defaultval=""/>
+        <Field name="tmnlno" title="" type="String" maxlen="6" defaultval=""/>
+        <Field name="winame" title="" type="String" maxlen="6" defaultval="" desc="prcscd"/>
+        <Field name="authsq" title="" type="String" maxlen="6" defaultval=""/>
+        <Field name="cnfmsq" title="" type="String" maxlen="6" defaultval=""/>
+        <Field name="cityno" title="" type="String" maxlen="6" defaultval=""/>
+        <Field name="sessionid" title="" type="String" maxlen="16" defaultval=""/>
+        <Field name="tmnlip" title="" type="String" maxlen="16" defaultval=""/>

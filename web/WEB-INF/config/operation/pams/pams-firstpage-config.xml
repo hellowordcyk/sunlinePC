@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="gb2312"?>
+<!-- 描述各个功能模块，以及各个具体的功能点  -->
+<Sunline>
+    <Session></Session>
+    <Operation id="businessPlan" bean="com.sunline.pams.firstpage.BusinessPlan" desc="mvp分析">
+        <Action name="getBusinessPlanCompleteData" desc="" acttype="query"/>
+    </Operation>
+    <Operation id="branchPlan" bean="com.sunline.pams.firstpage.BranchPlan" desc="mvp分析">
+        <Action name="getBranchPlanData" desc="" acttype="query"/>
+    </Operation>
+    <Operation id="linePlan" bean="com.sunline.pams.firstpage.LinePlan" desc="mvp分析">
+        <Action name="getLinePlanData" desc="" acttype="query"/>
+    </Operation>
+    <Operation id="specialPlan" bean="com.sunline.pams.firstpage.SpecialPlan" desc="mvp分析">
+        <Action name="getSpecialPlanData" desc="" acttype="query"/>
+    </Operation>
+
+</Sunline>

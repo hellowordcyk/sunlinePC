@@ -1,0 +1,1045 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="com.sunline.pams.mybatis.public.optransfer" >
+	<resultMap type="java.util.HashMap" id="OpAsnInfoMap">
+		<result column="ASN_ID" property="asnID" javaType="String"/>
+		<result column="CUST_NO" property="custNo" javaType="String"/>
+		<result column="CUST_NAME" property="custName" javaType="String"/>
+		<result column="ACCTLOANNO" property="acctLoanNo" javaType="String"/>
+		<result column="CUR_ASN_RATE" property="rate" javaType="String"/>
+		<result column="ASN_TYPE" property="asnType" javaType="String"/>
+		<result column="START_DATE" property="startDate" javaType="String"/>
+		<result column="END_DATE" property="endDate" javaType="String"/>
+		<result column="numOftype" property="numOftype" javaType="String"/>
+		<result column="CARD_NO" property="cardNo" javaType="String"/>
+		<result column="DEPTNAME" property="deptName" javaType="String"/>
+	</resultMap> 	   
+	<select id="queryOpAsnInfo" parameterType="java.util.HashMap" resultMap="OpAsnInfoMap">
+		SELECT DISTINCT
+			A.ASN_ID,
+		    A.CUST_NO, 
+		    A.CUST_NAME,
+		    A.${columnName} AS ACCTLOANNO,
+		    B.DEPTNAME,
+		    A.CUR_ASN_RATE,
+		    A.ASN_TYPE,
+		    A.START_DATE,
+		    A.END_DATE,
+		    A.BAL
+		FROM ${tableName} A
+		LEFT JOIN PCMC_DEPT B ON A.ORG_NO = B.DEPTCODE AND A.AREA_NO = B.CORPCODE
+		<!-- LEFT JOIN ${orgTable} C ON A.${filterColumn} = C.${filterColumn} AND A.AREA_NO = B.AREANO -->
+		WHERE 
+		A.AREA_NO = #{areaNo} 
+		AND A.START_DATE = (SELECT MAX(A.START_DATE) FROM ${tableName} WHERE AREA_NO = A.AREA_NO AND ${filterColumn} = A.${filterColumn} ) 
+		AND A.END_DATE >= #{backDate}
+		<if test = "acctLoanNo != null and acctLoanNo != ''">  
+		    AND A.${filterColumn} = #{acctLoanNo}
+		</if>
+		<if test = "custNo != null and custNo != ''">  
+		    AND A.CUST_NO = #{custNo}
+		</if>
+		<if test = "userCode != null and userCode != ''">  
+		    AND A.ASN_IN_OBJ = #{userCode}
+		</if>
+		ORDER BY A.${filterColumn},START_DATE
+	</select>
+	
+	<select id="queryOpAsnInfo4" parameterType="java.util.HashMap" resultMap="OpAsnInfoMap">
+		SELECT DISTINCT
+			A.ASN_ID,
+		    A.CARD_NO, 
+		    A.CUST_NAME,
+		    A.${columnName} AS ACCTLOANNO,
+		    B.DEPTNAME,
+		    A.CUR_ASN_RATE,
+		    A.ASN_TYPE,
+		    A.START_DATE,
+		    A.END_DATE,
+		    A.BAL
+		FROM ${tableName} A
+		LEFT JOIN PCMC_DEPT B ON A.ORG_NO = B.DEPTCODE AND A.AREA_NO = B.CORPCODE
+		<!-- LEFT JOIN ${orgTable} C ON A.${filterColumn} = C.${filterColumn} AND A.AREA_NO = B.AREANO -->
+		WHERE 
+		A.AREA_NO = #{areaNo} 
+		AND A.START_DATE = (SELECT MAX(A.START_DATE) FROM ${tableName} WHERE AREA_NO = A.AREA_NO AND ${filterColumn} = A.${filterColumn} ) 
+		AND A.END_DATE >= #{backDate}
+		<if test = "acctLoanNo != null and acctLoanNo != ''">  
+		    AND A.${filterColumn} = #{acctLoanNo}
+		</if>
+		<if test = "cardNo != null and cardNo != ''">  
+		    AND A.CARD_NO = #{cardNo}
+		</if>
+		<if test = "userCode != null and userCode != ''">  
+		    AND A.ASN_IN_OBJ = #{userCode}
+		</if>
+		ORDER BY A.${filterColumn},START_DATE
+	</select>
+	
+	<select id="queryOpAsnInfo3" parameterType="java.util.HashMap" resultMap="OpAsnInfoMap">
+		SELECT DISTINCT
+			A.ASN_ID,
+		    A.CUST_NO, 
+		    A.CUST_NAME,
+		    A.${columnName} AS ACCTLOANNO,
+		    B.DEPTNAME,
+		    A.CUR_ASN_RATE,
+		    A.ASN_TYPE,
+		    A.START_DATE,
+		    A.END_DATE
+		FROM ${tableName} A
+		LEFT JOIN PCMC_DEPT B ON A.ORG_NO = B.DEPTCODE AND A.AREA_NO = B.CORPCODE
+		<!-- LEFT JOIN ${orgTable} C ON A.${filterColumn} = C.${filterColumn} AND A.AREA_NO = B.AREANO -->
+		WHERE 
+		A.AREA_NO = #{areaNo} 
+		AND A.START_DATE = (SELECT MAX(A.START_DATE) FROM ${tableName} WHERE AREA_NO = A.AREA_NO AND ${filterColumn} = A.${filterColumn} ) 
+		AND A.END_DATE >= #{backDate}
+		<if test = "acctLoanNo != null and acctLoanNo != ''">  
+		    AND A.${filterColumn} = #{acctLoanNo}
+		</if>
+		<if test = "custNo != null and custNo != ''">  
+		    AND A.CUST_NO = #{custNo}
+		</if>
+		<if test = "userCode != null and userCode != ''">  
+		    AND A.ASN_IN_OBJ = #{userCode}
+		</if>
+		ORDER BY A.${filterColumn},START_DATE
+	</select>
+	
+	<select id="queryOpAsnInfo1" parameterType="java.util.HashMap" resultMap="OpAsnInfoMap">
+		SELECT DISTINCT
+			A.ASN_ID,
+		    A.CUST_NO, 
+		    A.CUST_NAME,
+		    A.${columnName1} AS ACCTLOANNO,
+		    B.DEPTNAME,
+		    A.CUR_ASN_RATE,
+		    A.ASN_TYPE,
+		    A.START_DATE,
+		    A.END_DATE,
+		    A.BAL,
+		    '1' as numOftype
+		FROM ${tableName1} A
+		LEFT JOIN PCMC_DEPT B ON A.ORG_NO = B.DEPTCODE AND A.AREA_NO = B.CORPCODE
+		<!-- LEFT JOIN ${orgTable1} C ON A.${filterColumn1} = C.${filterColumn1} AND A.AREA_NO = B.AREANO -->
+		WHERE 
+		A.AREA_NO = #{areaNo} 
+		AND A.START_DATE = (SELECT MAX(A.START_DATE) FROM ${tableName1} WHERE AREA_NO = A.AREA_NO AND ${filterColumn1} = A.${filterColumn1} ) 
+		AND A.END_DATE >= #{backDate}
+		<if test = "acctLoanNo != null and acctLoanNo != ''">  
+		    AND A.${filterColumn1} = #{acctLoanNo}
+		</if>
+		<if test = "custNo != null and custNo != ''">  
+		    AND A.CUST_NO = #{custNo}
+		</if>
+		<if test = "userCode != null and userCode != ''">  
+		    AND A.ASN_IN_OBJ = #{userCode}
+		</if>
+		union
+     SELECT DISTINCT
+			A.ASN_ID,
+		    A.CUST_NO, 
+		    A.CUST_NAME,
+		    A.${columnName2} AS ACCTLOANNO,
+		    B.DEPTNAME,
+		    A.CUR_ASN_RATE,
+		    A.ASN_TYPE,
+		    A.START_DATE,
+		    A.END_DATE,
+		    A.BAL,
+		    '2' as numOftype
+		FROM ${tableName2} A
+		LEFT JOIN PCMC_DEPT B ON A.ORG_NO = B.DEPTCODE AND A.AREA_NO = B.CORPCODE
+		<!-- LEFT JOIN ${orgTable2} C ON A.${filterColumn2} = C.${filterColumn2} AND A.AREA_NO = B.AREANO -->
+		WHERE 
+		A.AREA_NO = #{areaNo} 
+		AND A.START_DATE = (SELECT MAX(A.START_DATE) FROM ${tableName2} WHERE AREA_NO = A.AREA_NO AND ${filterColumn2} = A.${filterColumn2} ) 
+		AND A.END_DATE >= #{backDate}
+		<if test = "acctLoanNo != null and acctLoanNo != ''">  
+		    AND A.${filterColumn2} = #{acctLoanNo}
+		</if>
+		<if test = "custNo != null and custNo != ''">  
+		    AND A.CUST_NO = #{custNo}
+		</if>
+		<if test = "userCode != null and userCode != ''">  
+		    AND A.ASN_IN_OBJ = #{userCode}
+		</if>
+		union
+      SELECT DISTINCT
+			A.ASN_ID,
+		    A.CUST_NO, 
+		    A.CUST_NAME,
+		    A.${columnName3} AS ACCTLOANNO,
+		    B.DEPTNAME,
+		    A.CUR_ASN_RATE,
+		    A.ASN_TYPE,
+		    A.START_DATE,
+		    A.END_DATE,
+		    A.BAL,
+		    '3' as numOftype
+		FROM ${tableName3} A
+		LEFT JOIN PCMC_DEPT B ON A.ORG_NO = B.DEPTCODE AND A.AREA_NO = B.CORPCODE
+		<!-- LEFT JOIN ${orgTable3} C ON A.${filterColumn3} = C.${filterColumn3} AND A.AREA_NO = B.AREANO -->
+		WHERE 
+		A.AREA_NO = #{areaNo} 
+		AND A.START_DATE = (SELECT MAX(A.START_DATE) FROM ${tableName3} WHERE AREA_NO = A.AREA_NO AND ${filterColumn3} = A.${filterColumn3} ) 
+		AND A.END_DATE >= #{backDate}
+		<if test = "acctLoanNo != null and acctLoanNo != ''">  
+		    AND A.${filterColumn3} = #{acctLoanNo}
+		</if>
+		<if test = "custNo != null and custNo != ''">  
+		    AND A.CUST_NO = #{custNo}
+		</if>
+		<if test = "userCode != null and userCode != ''">  
+		    AND A.ASN_IN_OBJ = #{userCode}
+		</if>
+		union
+     SELECT DISTINCT
+			A.ASN_ID,
+		    A.CUST_NO, 
+		    A.CUST_NAME,
+		    A.${columnName4} AS ACCTLOANNO,
+		    B.DEPTNAME,
+		    A.CUR_ASN_RATE,
+		    A.ASN_TYPE,
+		    A.START_DATE,
+		    A.END_DATE,
+		    A.BAL,
+		    '4' as numOftype
+		FROM ${tableName4} A
+		LEFT JOIN PCMC_DEPT B ON A.ORG_NO = B.DEPTCODE AND A.AREA_NO = B.CORPCODE
+		<!-- LEFT JOIN ${orgTable4} C ON A.${filterColumn4} = C.${filterColumn4} AND A.AREA_NO = B.AREANO -->
+		WHERE 
+		A.AREA_NO = #{areaNo} 
+		AND A.START_DATE = (SELECT MAX(A.START_DATE) FROM ${tableName4} WHERE AREA_NO = A.AREA_NO AND ${filterColumn4} = A.${filterColumn4} ) 
+		AND A.END_DATE >= #{backDate}
+		<if test = "acctLoanNo != null and acctLoanNo != ''">  
+		    AND A.${filterColumn4} = #{acctLoanNo}
+		</if>
+		<if test = "custNo != null and custNo != ''">  
+		    AND A.CUST_NO = #{custNo}
+		</if>
+		<if test = "userCode != null and userCode != ''">  
+		    AND A.ASN_IN_OBJ = #{userCode}
+		</if>
+	</select>
+	
+	
+	<select id="queryOpAsnInfo2" parameterType="java.util.HashMap" resultMap="OpAsnInfoMap">
+		SELECT DISTINCT
+			A.ASN_ID,
+		    A.CUST_NO, 
+		    A.CUST_NAME,
+		    A.${columnName1} AS ACCTLOANNO,
+		    B.DEPTNAME,
+		    A.CUR_ASN_RATE,
+		    A.ASN_TYPE,
+		    A.START_DATE,
+		    A.END_DATE,
+		    '5' as numOftype
+		FROM ${tableName1} A
+		LEFT JOIN PCMC_DEPT B ON A.ORG_NO = B.DEPTCODE AND A.AREA_NO = B.CORPCODE
+		<!-- LEFT JOIN ${orgTable1} C ON A.${filterColumn1} = C.${filterColumn1} AND A.AREA_NO = B.AREANO -->
+		WHERE 
+		A.AREA_NO = #{areaNo} 
+		AND A.START_DATE = (SELECT MAX(A.START_DATE) FROM ${tableName1} WHERE AREA_NO = A.AREA_NO AND ${filterColumn1} = A.${filterColumn1} ) 
+		AND A.END_DATE >= #{backDate}
+		<if test = "acctLoanNo != null and acctLoanNo != ''">  
+		    AND A.${filterColumn1} = #{acctLoanNo}
+		</if>
+		<if test = "custNo != null and custNo != ''">  
+		    AND A.CUST_NO = #{custNo}
+		</if>
+		<if test = "userCode != null and userCode != ''">  
+		    AND A.ASN_IN_OBJ = #{userCode}
+		</if>
+		union
+SELECT DISTINCT
+			A.ASN_ID,
+		    A.CUST_NO, 
+		    A.CUST_NAME,
+		    A.${columnName2} AS ACCTLOANNO,
+		    B.DEPTNAME,
+		    A.CUR_ASN_RATE,
+		    A.ASN_TYPE,
+		    A.START_DATE,
+		    A.END_DATE,
+		    '6' as numOftype
+		FROM ${tableName2} A
+		LEFT JOIN PCMC_DEPT B ON A.ORG_NO = B.DEPTCODE AND A.AREA_NO = B.CORPCODE
+		<!-- LEFT JOIN ${orgTable2} C ON A.${filterColumn2} = C.${filterColumn2} AND A.AREA_NO = B.AREANO -->
+		WHERE 
+		A.AREA_NO = #{areaNo} 
+		AND A.START_DATE = (SELECT MAX(A.START_DATE) FROM ${tableName2} WHERE AREA_NO = A.AREA_NO AND ${filterColumn2} = A.${filterColumn2} ) 
+		AND A.END_DATE >= #{backDate}
+		<if test = "acctLoanNo != null and acctLoanNo != ''">  
+		    AND A.${filterColumn2} = #{acctLoanNo}
+		</if>
+		<if test = "custNo != null and custNo != ''">  
+		    AND A.CUST_NO = #{custNo}
+		</if>
+		<if test = "userCode != null and userCode != ''">  
+		    AND A.ASN_IN_OBJ = #{userCode}
+		</if>
+	</select>
+	
+	<select id="queryOpAsnInfoByAcctLoanNo" parameterType="java.util.HashMap" resultMap="OpAsnInfoMap">
+		SELECT DISTINCT
+			A.ASN_ID AS ASNID,
+			A.AREA_NO AS AREANO,
+			A.${columnName} AS ACCTLOANNO,
+			A.ORG_NO AS ORGNO,
+			A.CUST_NO AS CUSTNO,
+			A.CUST_TYPE AS CUSTTYPE,
+			A.CUST_NAME AS CUSTNAME,
+			A.PRODUCT_NO AS PRODUCTNO,
+			A.START_DATE AS STARTDATE,
+		    A.END_DATE AS ENDDATE,
+		    A.CUR_ASN_RATE AS RATE,
+		    A.ASN_IN_OBJ AS USERCODE
+		FROM ${tableName} A
+		WHERE A.START_DATE = (SELECT MAX(A.START_DATE) FROM ${tableName} WHERE ${filterColumn} = A.${filterColumn} AND area_no = #{areaNo} ) 
+		AND A.${filterColumn} = #{acctLoanNo}  AND area_no = #{areaNo}
+	</select>
+	
+	<update id="updateOpAsnInfo" parameterType="java.util.HashMap">
+		UPDATE ${tableName} SET
+			END_DATE = #{updateDate},
+			OPERATOR = #{operator}
+		WHERE ${filterColumn} = #{acctLoanNo} AND area_no = #{areaNo} AND START_DATE = #{startDate} AND END_DATE = #{endDate}
+	</update>
+	
+	<insert id="addOpAsnInfo" parameterType="java.util.HashMap">
+		INSERT INTO ${tableName}(ASN_ID,AREA_NO,${columnName},ORG_NO,CUST_NO,CUST_TYPE,CUST_NAME,PRODUCT_NO,START_DATE,END_DATE,ASN_TYPE,ASN_IN_OBJ,CUR_ASN_RATE,OPERATOR,ASN_SRC,STATUS,ASN_TIME) 
+		VALUES(${tableName}_SEQ.NEXTVAL,#{areaNo},#{acctLoanNo},#{orgNo},#{custNo},#{custType},#{custName},#{productNo},#{startDate},#{endDate},1,#{userCode},#{rate},#{operator},3,1,#{asnTime})
+	</insert>
+	
+	<!-- 对公存款判断移交人在移交时间是否存在业绩 -->
+	<select id="queryToUserCodeOpAsnDepositUnitIsExisted" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		select ${filterColumn},ASN_IN_OBJ
+		from ${tableName}
+		WHERE ${filterColumn} = #{acctLoanNo} AND AREA_NO = #{areaNo} AND ASN_IN_OBJ = #{toUserCode} AND START_DATE = #{transferDate} AND END_DATE = #{endDate}
+	</select>
+	<!-- 对公存款判断移交人在移交时间是否存在业绩 -->
+	<select id="qryToUserCodeOpAsnDepositUnitIsExisted" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		select ${filterColumn},ASN_IN_OBJ
+		from ${tableName}
+		WHERE ${filterColumn} = #{acctLoanNo} AND AREA_NO = #{areaNo} AND ASN_IN_OBJ = #{toUserCode} AND START_DATE = #{startDate} AND END_DATE = #{endDate}
+	</select>	
+	<!-- 对公存款判断被移交人在移交时间之内是否还有其他人员存在业绩 -->
+	<select id="queryOthersUserCodeOpAsnDepositUnitIsExisted" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		select ${filterColumn},ASN_IN_OBJ
+		from ${tableName}
+		WHERE ${filterColumn} = #{acctLoanNo} AND AREA_NO = #{areaNo}
+		AND ASN_IN_OBJ != #{userCode} AND START_DATE = #{startDate} AND END_DATE = #{endDate}
+	</select>
+	
+	<!-- 对公存款插入新的移交人业绩 -->
+	<insert id="updateNewOpAsnDepositUnit" parameterType="java.util.HashMap">
+		update ${tableName} 
+		set CUR_ASN_RATE = CUR_ASN_RATE + (select CUR_ASN_RATE from ${tableName} where AREA_NO = #{areaNo} and ${filterColumn} = #{acctLoanNo} and ASN_IN_OBJ = #{userCode} and START_DATE = #{startDate} and END_DATE = #{endDate})*${transferRate}/100,
+		ASN_TIME = #{asnTime},
+		OPERATOR = #{operator}
+		where ${filterColumn} = #{acctLoanNo} and AREA_NO = #{areaNo} and ASN_IN_OBJ = #{toUserCode} and START_DATE = #{transferDate} AND END_DATE = #{endDate}
+	</insert>	
+	
+	<insert id="updateNewOpAsnDepositUnit1" parameterType="java.util.HashMap">
+		update ${tableName} 
+		set CUR_ASN_RATE = CUR_ASN_RATE + (select CUR_ASN_RATE from ${tableName} where AREA_NO = #{areaNo} and ${filterColumn} = #{acctLoanNo} and ASN_IN_OBJ = #{userCode} and START_DATE = #{startDate} and END_DATE = #{endDate})*${transferRate}/100,
+		ASN_TIME = #{asnTime},
+		OPERATOR = #{operator}
+		where ${filterColumn} = #{acctLoanNo} and AREA_NO = #{areaNo} and ASN_IN_OBJ = #{toUserCode} and START_DATE = #{startDate} AND END_DATE = #{endDate}
+	</insert>
+	
+	<!-- 对公存款插入新的移交人业绩 当移交日期为开始日期 -->
+	<insert id="insertNewOpAsnDepositUnit" parameterType="java.util.HashMap">
+		INSERT INTO ${tableName} 
+		SELECT ${tableName}_SEQ.NEXTVAL,AREA_NO,${columnName},ORG_NO,CUST_NO,CUST_TYPE,CUST_NAME,PRODUCT_NO,
+				#{transferDate},#{endDate},ASN_TYPE,#{toUserCode},null,CUR_ASN_RATE*${transferRate}/100,START_AMT,END_AMT,
+				#{asnTime},#{operator},STATUS,ASN_SRC,BAL
+		FROM ${tableName} 
+		WHERE ${filterColumn} = #{acctLoanNo} AND area_no = #{areaNo} AND ASN_IN_OBJ = #{userCode} AND START_DATE = #{startDate} AND END_DATE = #{endDate}
+	</insert>
+	
+	<insert id="insertNewOpAsnDepositUnit2" parameterType="java.util.HashMap">
+		INSERT INTO ${tableName} 
+			SELECT ${tableName}_SEQ.NEXTVAL,AREA_NO,${columnName},CUST_NAME,ORG_NO,PRODUCT_NO,
+				#{transferDate},#{endDate},#{toUserCode},BEF_ASN_RATE,CUR_ASN_RATE*${transferRate}/100,
+				#{asnTime},#{operator},STATUS,ASN_SRC,ASN_TYPE,START_AMT,END_AMT,CUST_TYPE
+			FROM ${tableName} 
+		WHERE ${filterColumn} = #{acctLoanNo} AND area_no = #{areaNo} AND ASN_IN_OBJ = #{userCode} AND START_DATE = #{startDate} AND END_DATE = #{endDate}
+	</insert>
+	
+	<insert id="insertNewOpAsnDepositUnit5" parameterType="java.util.HashMap">
+		INSERT INTO ${tableName} 
+			SELECT ${tableName}_SEQ.NEXTVAL,AREA_NO,${columnName},CUST_NAME,ORG_NO,PRODUCT_NO,
+				#{startDate},#{endDate},#{toUserCode},BEF_ASN_RATE,CUR_ASN_RATE*${transferRate}/100,
+				#{asnTime},#{operator},STATUS,ASN_SRC,ASN_TYPE,START_AMT,END_AMT,CUST_TYPE
+			FROM ${tableName} 
+		WHERE ${filterColumn} = #{acctLoanNo} AND area_no = #{areaNo} AND ASN_IN_OBJ = #{userCode} AND START_DATE = #{startDate} AND END_DATE = #{endDate}
+	</insert>
+	
+	<insert id="insertNewOpAsnDepositUnit3" parameterType="java.util.HashMap">
+		INSERT INTO ${tableName} 
+			SELECT ${tableName}_SEQ.NEXTVAL,AREA_NO,${columnName},ORG_NO,CUST_NO,CUST_TYPE,CUST_NAME,
+        		#{transferDate},#{endDate},#{toUserCode},BEF_ASN_RATE,CUR_ASN_RATE*${transferRate}/100,
+        		#{asnTime},#{operator},STATUS,ASN_SRC,START_AMT,END_AMT,ASN_TYPE,BAL
+      		FROM ${tableName} 
+		WHERE ${filterColumn} = #{acctLoanNo} AND area_no = #{areaNo} AND ASN_IN_OBJ = #{userCode} AND START_DATE = #{startDate} AND END_DATE = #{endDate}
+	</insert>
+	
+	<insert id="insertNewOpAsnDepositUnit4" parameterType="java.util.HashMap">
+		INSERT INTO ${tableName} 
+			SELECT ${tableName}_SEQ.NEXTVAL,AREA_NO,${columnName},ORG_NO,CUST_NO,CUST_TYPE,CUST_NAME,
+        		#{startDate},#{endDate},#{toUserCode},BEF_ASN_RATE,CUR_ASN_RATE*${transferRate}/100,
+        		#{asnTime},#{operator},STATUS,ASN_SRC,START_AMT,END_AMT,ASN_TYPE,BAL
+      		FROM ${tableName} 
+		WHERE ${filterColumn} = #{acctLoanNo} AND area_no = #{areaNo} AND ASN_IN_OBJ = #{userCode} AND START_DATE = #{startDate} AND END_DATE = #{endDate}
+	</insert>
+		
+	<insert id="insertNewOpAsnDepositUnit1" parameterType="java.util.HashMap">
+		INSERT INTO ${tableName} 
+		SELECT ${tableName}_SEQ.NEXTVAL,AREA_NO,${columnName},ORG_NO,CUST_NO,CUST_TYPE,CUST_NAME,PRODUCT_NO,
+				#{startDate},#{endDate},ASN_TYPE,#{toUserCode},null,CUR_ASN_RATE*${transferRate}/100,START_AMT,END_AMT,
+				#{asnTime},#{operator},STATUS,ASN_SRC,BAL
+		FROM ${tableName} 
+		WHERE ${filterColumn} = #{acctLoanNo} AND area_no = #{areaNo} AND ASN_IN_OBJ = #{userCode} AND START_DATE = #{startDate} AND END_DATE = #{endDate}
+	</insert>
+	
+	<!-- 对公存款插入新的移交人业绩 当移交日期大于开始日期 -->
+	<insert id="insertNewOpAsnDepositUnitWhenTranferDateIsNotStartDate" parameterType="java.util.HashMap">
+		INSERT INTO ${tableName} 
+		SELECT ${tableName}_SEQ.NEXTVAL,AREA_NO,${columnName},ORG_NO,CUST_NO,CUST_TYPE,CUST_NAME,PRODUCT_NO,
+				#{transferDate},#{endDate},ASN_TYPE,#{toUserCode},null,CUR_ASN_RATE+(select CUR_ASN_RATE from ${tableName} where ${filterColumn} = #{acctLoanNo} and area_no = #{areaNo} and ASN_IN_OBJ = #{userCode} and START_DATE = #{startDate} and END_DATE = #{endDate})*${transferRate}/100,
+				START_AMT,END_AMT,
+				#{asnTime},#{operator},STATUS,ASN_SRC,BAL
+		FROM ${tableName} 
+		WHERE ${filterColumn} = #{acctLoanNo} AND area_no = #{areaNo} and ASN_IN_OBJ = #{toUserCode} AND START_DATE = #{transferDate} AND END_DATE = #{endDate}
+	</insert>
+	
+	<insert id="insertNewOpAsnDepositUnitWhenTranferDateIsNotStartDate2" parameterType="java.util.HashMap">
+		INSERT INTO ${tableName} 
+		  SELECT ${tableName}_SEQ.NEXTVAL,AREA_NO,${columnName},CUST_NAME,ORG_NO,PRODUCT_NO,
+        	#{transferDate},#{endDate},#{toUserCode},BEF_ASN_RATE,CUR_ASN_RATE+(select CUR_ASN_RATE from ${tableName} where ${filterColumn} = #{acctLoanNo} and area_no = #{areaNo} and ASN_IN_OBJ = #{userCode} and START_DATE = #{startDate} and END_DATE = #{endDate})*${transferRate}/100,
+        	#{asnTime},#{operator},STATUS,ASN_SRC,ASN_TYPE,START_AMT,END_AMT,CUST_TYPE
+    	  FROM ${tableName} 
+		WHERE ${filterColumn} = #{acctLoanNo} AND area_no = #{areaNo} and ASN_IN_OBJ = #{toUserCode} AND START_DATE = #{transferDate} AND END_DATE = #{endDate}
+	</insert>	
+	
+	<insert id="insertNewOpAsnDepositUnitWhenTranferDateIsNotStartDate1" parameterType="java.util.HashMap">
+		INSERT INTO ${tableName} 
+		  SELECT ${tableName}_SEQ.NEXTVAL,AREA_NO,${columnName},ORG_NO,CUST_NO,CUST_TYPE,CUST_NAME,
+        	#{transferDate},#{endDate},#{toUserCode},BEF_ASN_RATE,CUR_ASN_RATE+(select CUR_ASN_RATE from ${tableName} where ${filterColumn} = #{acctLoanNo} and area_no = #{areaNo} and ASN_IN_OBJ = #{userCode} and START_DATE = #{startDate} and END_DATE = #{endDate})*${transferRate}/100,
+        	#{asnTime},#{operator},STATUS,ASN_SRC,START_AMT,END_AMT,ASN_TYPE,BAL
+    	  FROM ${tableName} 
+		WHERE ${filterColumn} = #{acctLoanNo} AND area_no = #{areaNo} and ASN_IN_OBJ = #{toUserCode} AND START_DATE = #{transferDate} AND END_DATE = #{endDate}
+	</insert>
+	
+	
+	<!-- 对公存款插入新的被移交人业绩 当移交日期大于开始日期 -->
+	<insert id="insertOldOpAsnDepositUnitWhenTranferDateIsNotStartDate" parameterType="java.util.HashMap">
+		INSERT INTO ${tableName}
+		SELECT ${tableName}_SEQ.NEXTVAL,AREA_NO,${columnName},ORG_NO,CUST_NO,CUST_TYPE,CUST_NAME,PRODUCT_NO,
+				#{transferDate},#{endDate},ASN_TYPE,#{userCode},null,CUR_ASN_RATE-(select CUR_ASN_RATE from ${tableName} where ${filterColumn} = #{acctLoanNo} AND area_no = #{areaNo} and ASN_IN_OBJ = #{userCode} and START_DATE = #{startDate} and END_DATE = #{endDate})*${transferRate}/100,
+				START_AMT,END_AMT,
+				#{asnTime},#{operator},STATUS,ASN_SRC,BAL
+		FROM ${tableName}
+		WHERE ${filterColumn} = #{acctLoanNo} AND area_no = #{areaNo} and ASN_IN_OBJ = #{userCode} AND START_DATE = #{startDate} AND END_DATE = #{endDate}
+	</insert>
+	
+	<insert id="insertOldOpAsnDepositUnitWhenTranferDateIsNotStartDate2" parameterType="java.util.HashMap">
+		INSERT INTO ${tableName}
+		  SELECT ${tableName}_SEQ.NEXTVAL,AREA_NO,${columnName},CUST_NAME,ORG_NO,PRODUCT_NO,
+        	#{transferDate},#{endDate},#{userCode},BEF_ASN_RATE,CUR_ASN_RATE-(select CUR_ASN_RATE from ${tableName} where ${filterColumn} = #{acctLoanNo} AND area_no = #{areaNo} and ASN_IN_OBJ = #{userCode} and START_DATE = #{startDate} and END_DATE = #{endDate})*${transferRate}/100,
+        	#{asnTime},#{operator},STATUS,ASN_SRC,ASN_TYPE,START_AMT,END_AMT,CUST_TYPE
+    	  FROM ${tableName}
+		WHERE ${filterColumn} = #{acctLoanNo} AND area_no = #{areaNo} and ASN_IN_OBJ = #{userCode} AND START_DATE = #{startDate} AND END_DATE = #{endDate}
+	</insert>
+	<insert id="insertOldOpAsnDepositUnitWhenTranferDateIsNotStartDate1" parameterType="java.util.HashMap">
+		INSERT INTO ${tableName}
+		  SELECT ${tableName}_SEQ.NEXTVAL,AREA_NO,${columnName},ORG_NO,CUST_NO,CUST_TYPE,CUST_NAME,
+        	#{transferDate},#{endDate},#{toUserCode},BEF_ASN_RATE,CUR_ASN_RATE+(select CUR_ASN_RATE from ${tableName} where ${filterColumn} = #{acctLoanNo} and area_no = #{areaNo} and ASN_IN_OBJ = #{userCode} and START_DATE = #{startDate} and END_DATE = #{endDate})*${transferRate}/100,
+        	#{asnTime},#{operator},STATUS,ASN_SRC,START_AMT,END_AMT,ASN_TYPE,BAL
+    	  FROM ${tableName}
+		WHERE ${filterColumn} = #{acctLoanNo} AND area_no = #{areaNo} and ASN_IN_OBJ = #{userCode} AND START_DATE = #{startDate} AND END_DATE = #{endDate}
+	</insert>	
+	
+	<!-- 删除原移交人业绩 -->
+	<delete id="deleteOldOpAsnInfo" parameterType="java.util.HashMap">
+		DELETE FROM ${tableName} 
+		WHERE ${filterColumn} = #{acctLoanNo} AND area_no = #{areaNo} AND ASN_IN_OBJ = #{userCode} AND START_DATE = #{startDate} AND END_DATE = #{endDate}
+	</delete>
+	
+	<!-- 更新原移交人业绩 -->
+	<update id="updateOldOpAsnInfo" parameterType="java.util.HashMap">
+		UPDATE ${tableName} 
+		SET CUR_ASN_RATE = CUR_ASN_RATE - CUR_ASN_RATE*${transferRate}/100,
+		ASN_TIME = #{asnTime},
+		OPERATOR = #{operator}
+		WHERE ${filterColumn} = #{acctLoanNo} AND AREA_NO = #{areaNo} AND ASN_IN_OBJ = #{userCode} AND START_DATE = #{startDate} AND END_DATE = #{endDate}
+	</update>
+	
+	<!-- 将移交人或者被移交人的 结束日期 为移交日期-1 -->
+	<update id="updateOldOrNewOpAsnInfoEndDate" parameterType="java.util.HashMap">
+		UPDATE ${tableName} 
+		SET END_DATE = #{transferDate}-1,
+		ASN_TIME = #{asnTime},
+		OPERATOR = #{operator}
+		WHERE ${filterColumn} = #{acctLoanNo} AND area_no = #{areaNo} AND ASN_IN_OBJ = #{userCode} AND START_DATE = #{startDate} AND END_DATE = #{endDate}
+	</update>
+	
+	<!-- 对公存款插入新的与移交人在同一开始、结束日期其他人员的业绩 当移交日期大于开始日期 -->
+	<insert id="insertOtherOpAsnDepositUnitWhenTranferDateIsNotStartDate" parameterType="java.util.HashMap">
+		INSERT INTO ${tableName}
+		SELECT ${tableName}_SEQ.NEXTVAL,AREA_NO,${columnName},ORG_NO,CUST_NO,CUST_TYPE,CUST_NAME,PRODUCT_NO,
+				#{transferDate},#{endDate},ASN_TYPE,#{otherUserCode},null,CUR_ASN_RATE,
+				START_AMT,END_AMT,
+				#{asnTime},#{operator},STATUS,ASN_SRC,BAL
+		FROM ${tableName}
+		WHERE ${filterColumn} = #{acctLoanNo} AND area_no = #{areaNo} AND ASN_IN_OBJ = #{otherUserCode} AND START_DATE = #{startDate} AND END_DATE = #{endDate}
+	</insert>
+	
+	
+	<insert id="insertOtherOpAsnDepositUnitWhenTranferDateIsNotStartDate2" parameterType="java.util.HashMap">
+		INSERT INTO ${tableName}
+		  SELECT ${tableName}_SEQ.NEXTVAL,AREA_NO,${columnName},CUST_NAME,ORG_NO,PRODUCT_NO,
+        	#{transferDate},#{endDate},#{otherUserCode},BEF_ASN_RATE,CUR_ASN_RATE,
+       		#{asnTime},#{operator},STATUS,ASN_SRC,ASN_TYPE,START_AMT,END_AMT,CUST_TYPE,BAL
+    	  FROM ${tableName}
+		WHERE ${filterColumn} = #{acctLoanNo} AND area_no = #{areaNo} AND ASN_IN_OBJ = #{otherUserCode} AND START_DATE = #{startDate} AND END_DATE = #{endDate}
+	</insert>
+	
+	<!-- 将与移交人在存在同一开始、 结束日期日期的的结束日 更新 为移交日期-1 -->
+	<update id="updateOtherNewOpAsnInfoEndDate" parameterType="java.util.HashMap">
+		UPDATE ${tableName} 
+		SET END_DATE = #{transferDate}-1,
+		ASN_TIME = #{asnTime},
+		OPERATOR = #{operator}
+		WHERE ${filterColumn} = #{acctLoanNo} AND area_no = #{areaNo} AND ASN_IN_OBJ != #{userCode} AND START_DATE = #{startDate} AND END_DATE = #{endDate}
+	</update>
+	
+	<select id="queryOpAsnInfolistPage" parameterType="java.util.HashMap" resultMap="OpAsnInfoMap">
+		SELECT DISTINCT
+			A.ASN_ID,
+		    A.CUST_NO, 
+		    A.CUST_NAME,
+		    A.${columnName} AS ACCTLOANNO,
+		    B.DEPTNAME,
+		    A.CUR_ASN_RATE,
+		    A.ASN_TYPE,
+		    A.START_DATE,
+		    A.END_DATE,
+		    A.BAL
+		FROM ${tableName} A
+		LEFT JOIN PCMC_DEPT B ON A.ORG_NO = B.DEPTCODE AND A.AREA_NO = B.CORPCODE
+		<!-- LEFT JOIN ${orgTable} C ON A.${filterColumn} = C.${filterColumn} AND A.AREA_NO = B.AREANO -->
+		WHERE 
+		A.AREA_NO = #{areaNo} 
+		AND A.START_DATE = (SELECT MAX(A.START_DATE) FROM ${tableName} WHERE AREA_NO = A.AREA_NO AND ${filterColumn} = A.${filterColumn} ) 
+		AND A.END_DATE >= #{backDate}
+		<if test = "acctLoanNo != null and acctLoanNo != ''">  
+		    AND A.${filterColumn} = #{acctLoanNo}
+		</if>
+		<if test = "custNo != null and custNo != ''">  
+		    AND A.CUST_NO = #{custNo}
+		</if>
+		<if test = "userCode != null and userCode != ''">  
+		    AND A.ASN_IN_OBJ = #{userCode}
+		</if>
+		ORDER BY A.${filterColumn},START_DATE
+	</select>
+	
+	<select id="queryOpAsnInfo4listPage" parameterType="java.util.HashMap" resultMap="OpAsnInfoMap">
+		SELECT DISTINCT
+			A.ASN_ID,
+		    A.CARD_NO, 
+		    A.CUST_NAME,
+		    A.${columnName} AS ACCTLOANNO,
+		    B.DEPTNAME,
+		    A.CUR_ASN_RATE,
+		    A.ASN_TYPE,
+		    A.START_DATE,
+		    A.END_DATE,
+		    A.BAL
+		FROM ${tableName} A
+		LEFT JOIN PCMC_DEPT B ON A.ORG_NO = B.DEPTCODE AND A.AREA_NO = B.CORPCODE
+		<!-- LEFT JOIN ${orgTable} C ON A.${filterColumn} = C.${filterColumn} AND A.AREA_NO = B.AREANO -->
+		WHERE 
+		A.AREA_NO = #{areaNo} 
+		AND A.START_DATE = (SELECT MAX(A.START_DATE) FROM ${tableName} WHERE AREA_NO = A.AREA_NO AND ${filterColumn} = A.${filterColumn} ) 
+		AND A.END_DATE >= #{backDate}
+		<if test = "acctLoanNo != null and acctLoanNo != ''">  
+		    AND A.${filterColumn} = #{acctLoanNo}
+		</if>
+		<if test = "cardNo != null and cardNo != ''">  
+		    AND A.CARD_NO = #{cardNo}
+		</if>
+		<if test = "userCode != null and userCode != ''">  
+		    AND A.ASN_IN_OBJ = #{userCode}
+		</if>
+		ORDER BY A.${filterColumn},START_DATE
+	</select>
+	
+	<select id="queryOpAsnInfo3listPage" parameterType="java.util.HashMap" resultMap="OpAsnInfoMap">
+		SELECT DISTINCT
+			A.ASN_ID,
+		    A.CUST_NO, 
+		    A.CUST_NAME,
+		    A.${columnName} AS ACCTLOANNO,
+		    B.DEPTNAME,
+		    A.CUR_ASN_RATE,
+		    A.ASN_TYPE,
+		    A.START_DATE,
+		    A.END_DATE
+		FROM ${tableName} A
+		LEFT JOIN PCMC_DEPT B ON A.ORG_NO = B.DEPTCODE AND A.AREA_NO = B.CORPCODE
+		<!-- LEFT JOIN ${orgTable} C ON A.${filterColumn} = C.${filterColumn} AND A.AREA_NO = B.AREANO -->
+		WHERE 
+		A.AREA_NO = #{areaNo} 
+		AND A.START_DATE = (SELECT MAX(A.START_DATE) FROM ${tableName} WHERE AREA_NO = A.AREA_NO AND ${filterColumn} = A.${filterColumn} ) 
+		AND A.END_DATE >= #{backDate}
+		<if test = "acctLoanNo != null and acctLoanNo != ''">  
+		    AND A.${filterColumn} = #{acctLoanNo}
+		</if>
+		<if test = "custNo != null and custNo != ''">  
+		    AND A.CUST_NO = #{custNo}
+		</if>
+		<if test = "userCode != null and userCode != ''">  
+		    AND A.ASN_IN_OBJ = #{userCode}
+		</if>
+		ORDER BY A.${filterColumn},START_DATE
+	</select>
+	
+	<select id="queryOpAsnInfo1listPage" parameterType="java.util.HashMap" resultMap="OpAsnInfoMap">
+		SELECT DISTINCT
+			A.ASN_ID,
+		    A.CUST_NO, 
+		    A.CUST_NAME,
+		    A.${columnName1} AS ACCTLOANNO,
+		    B.DEPTNAME,
+		    A.CUR_ASN_RATE,
+		    A.ASN_TYPE,
+		    A.START_DATE,
+		    A.END_DATE,
+		    A.BAL,
+		    '1' as numOftype
+		FROM ${tableName1} A
+		LEFT JOIN PCMC_DEPT B ON A.ORG_NO = B.DEPTCODE AND A.AREA_NO = B.CORPCODE
+		<!-- LEFT JOIN ${orgTable1} C ON A.${filterColumn1} = C.${filterColumn1} AND A.AREA_NO = B.AREANO -->
+		WHERE 
+		A.AREA_NO = #{areaNo} 
+		AND A.START_DATE = (SELECT MAX(A.START_DATE) FROM ${tableName1} WHERE AREA_NO = A.AREA_NO AND ${filterColumn1} = A.${filterColumn1} ) 
+		AND A.END_DATE >= #{backDate}
+		<if test = "acctLoanNo != null and acctLoanNo != ''">  
+		    AND A.${filterColumn1} = #{acctLoanNo}
+		</if>
+		<if test = "custNo != null and custNo != ''">  
+		    AND A.CUST_NO = #{custNo}
+		</if>
+		<if test = "userCode != null and userCode != ''">  
+		    AND A.ASN_IN_OBJ = #{userCode}
+		</if>
+		union
+      SELECT DISTINCT
+			A.ASN_ID,
+		    A.CUST_NO, 
+		    A.CUST_NAME,
+		    A.${columnName2} AS ACCTLOANNO,
+		    B.DEPTNAME,
+		    A.CUR_ASN_RATE,
+		    A.ASN_TYPE,
+		    A.START_DATE,
+		    A.END_DATE,
+		    A.BAL,
+		    '2' as numOftype
+		FROM ${tableName2} A
+		LEFT JOIN PCMC_DEPT B ON A.ORG_NO = B.DEPTCODE AND A.AREA_NO = B.CORPCODE
+		<!-- LEFT JOIN ${orgTable2} C ON A.${filterColumn2} = C.${filterColumn2} AND A.AREA_NO = B.AREANO -->
+		WHERE 
+		A.AREA_NO = #{areaNo} 
+		AND A.START_DATE = (SELECT MAX(A.START_DATE) FROM ${tableName2} WHERE AREA_NO = A.AREA_NO AND ${filterColumn2} = A.${filterColumn2} ) 
+		AND A.END_DATE >= #{backDate}
+		<if test = "acctLoanNo != null and acctLoanNo != ''">  
+		    AND A.${filterColumn2} = #{acctLoanNo}
+		</if>
+		<if test = "custNo != null and custNo != ''">  
+		    AND A.CUST_NO = #{custNo}
+		</if>
+		<if test = "userCode != null and userCode != ''">  
+		    AND A.ASN_IN_OBJ = #{userCode}
+		</if>
+		union
+       SELECT DISTINCT
+			A.ASN_ID,
+		    A.CUST_NO, 
+		    A.CUST_NAME,
+		    A.${columnName3} AS ACCTLOANNO,
+		    B.DEPTNAME,
+		    A.CUR_ASN_RATE,
+		    A.ASN_TYPE,
+		    A.START_DATE,
+		    A.END_DATE,
+		    A.BAL,
+		    '3' as numOftype
+		FROM ${tableName3} A
+		LEFT JOIN PCMC_DEPT B ON A.ORG_NO = B.DEPTCODE AND A.AREA_NO = B.CORPCODE
+		<!-- LEFT JOIN ${orgTable3} C ON A.${filterColumn3} = C.${filterColumn3} AND A.AREA_NO = B.AREANO -->
+		WHERE 
+		A.AREA_NO = #{areaNo} 
+		AND A.START_DATE = (SELECT MAX(A.START_DATE) FROM ${tableName3} WHERE AREA_NO = A.AREA_NO AND ${filterColumn3} = A.${filterColumn3} ) 
+		AND A.END_DATE >= #{backDate}
+		<if test = "acctLoanNo != null and acctLoanNo != ''">  
+		    AND A.${filterColumn3} = #{acctLoanNo}
+		</if>
+		<if test = "custNo != null and custNo != ''">  
+		    AND A.CUST_NO = #{custNo}
+		</if>
+		<if test = "userCode != null and userCode != ''">  
+		    AND A.ASN_IN_OBJ = #{userCode}
+		</if>
+		union
+        SELECT DISTINCT
+			A.ASN_ID,
+		    A.CUST_NO, 
+		    A.CUST_NAME,
+		    A.${columnName4} AS ACCTLOANNO,
+		    B.DEPTNAME,
+		    A.CUR_ASN_RATE,
+		    A.ASN_TYPE,
+		    A.START_DATE,
+		    A.END_DATE,
+		    A.BAL,
+		    '4' as numOftype
+		FROM ${tableName4} A
+		LEFT JOIN PCMC_DEPT B ON A.ORG_NO = B.DEPTCODE AND A.AREA_NO = B.CORPCODE
+		<!-- LEFT JOIN ${orgTable4} C ON A.${filterColumn4} = C.${filterColumn4} AND A.AREA_NO = B.AREANO -->
+		WHERE 
+		A.AREA_NO = #{areaNo} 
+		AND A.START_DATE = (SELECT MAX(A.START_DATE) FROM ${tableName4} WHERE AREA_NO = A.AREA_NO AND ${filterColumn4} = A.${filterColumn4} ) 
+		AND A.END_DATE >= #{backDate}
+		<if test = "acctLoanNo != null and acctLoanNo != ''">  
+		    AND A.${filterColumn4} = #{acctLoanNo}
+		</if>
+		<if test = "custNo != null and custNo != ''">  
+		    AND A.CUST_NO = #{custNo}
+		</if>
+		<if test = "userCode != null and userCode != ''">  
+		    AND A.ASN_IN_OBJ = #{userCode}
+		</if>
+	</select>
+	
+	
+	<select id="queryOpAsnInfo2listPage" parameterType="java.util.HashMap" resultMap="OpAsnInfoMap">
+		SELECT DISTINCT
+			A.ASN_ID,
+		    A.CUST_NO, 
+		    A.CUST_NAME,
+		    A.${columnName1} AS ACCTLOANNO,
+		    B.DEPTNAME,
+		    A.CUR_ASN_RATE,
+		    A.ASN_TYPE,
+		    A.START_DATE,
+		    A.END_DATE,
+		    '5' as numOftype
+		FROM ${tableName1} A
+		LEFT JOIN PCMC_DEPT B ON A.ORG_NO = B.DEPTCODE AND A.AREA_NO = B.CORPCODE
+		<!-- LEFT JOIN ${orgTable1} C ON A.${filterColumn1} = C.${filterColumn1} AND A.AREA_NO = B.AREANO -->
+		WHERE 
+		A.AREA_NO = #{areaNo} 
+		AND A.START_DATE = (SELECT MAX(A.START_DATE) FROM ${tableName1} WHERE AREA_NO = A.AREA_NO AND ${filterColumn1} = A.${filterColumn1} ) 
+		AND A.END_DATE >= #{backDate}
+		<if test = "acctLoanNo != null and acctLoanNo != ''">  
+		    AND A.${filterColumn1} = #{acctLoanNo}
+		</if>
+		<if test = "custNo != null and custNo != ''">  
+		    AND A.CUST_NO = #{custNo}
+		</if>
+		<if test = "userCode != null and userCode != ''">  
+		    AND A.ASN_IN_OBJ = #{userCode}
+		</if>
+		union
+        SELECT DISTINCT
+			A.ASN_ID,
+		    A.CUST_NO, 
+		    A.CUST_NAME,
+		    A.${columnName2} AS ACCTLOANNO,
+		    B.DEPTNAME,
+		    A.CUR_ASN_RATE,
+		    A.ASN_TYPE,
+		    A.START_DATE,
+		    A.END_DATE,
+		    '6' as numOftype
+		FROM ${tableName2} A
+		LEFT JOIN PCMC_DEPT B ON A.ORG_NO = B.DEPTCODE AND A.AREA_NO = B.CORPCODE
+		<!-- LEFT JOIN ${orgTable2} C ON A.${filterColumn2} = C.${filterColumn2} AND A.AREA_NO = B.AREANO -->
+		WHERE 
+		A.AREA_NO = #{areaNo} 
+		AND A.START_DATE = (SELECT MAX(A.START_DATE) FROM ${tableName2} WHERE AREA_NO = A.AREA_NO AND ${filterColumn2} = A.${filterColumn2} ) 
+		AND A.END_DATE >= #{backDate}
+		<if test = "acctLoanNo != null and acctLoanNo != ''">  
+		    AND A.${filterColumn2} = #{acctLoanNo}
+		</if>
+		<if test = "custNo != null and custNo != ''">  
+		    AND A.CUST_NO = #{custNo}
+		</if>
+		<if test = "userCode != null and userCode != ''">  
+		    AND A.ASN_IN_OBJ = #{userCode}
+		</if>
+	</select>
+	<!-- 查询数据库表中字段信息 -->
+	<select id="qryOpAsnTableColumnDetil"  parameterType="java.util.HashMap" resultType="java.util.HashMap" >
+	   select column_name "colmna",data_type "datatp" from dba_tab_columns where table_name =#{tableName}
+	</select>
+	<!-- 查询需要移交的数据 -->
+	<select id="qryOpAsnTableValueDetil"  parameterType="java.util.HashMap" resultType="java.util.HashMap" >
+	   select * from ${tableName} where asn_in_obj = #{userCode} and ( to_date(#{transferDate},'yyyy-MM-dd') <![CDATA[<]]> start_date or to_date(#{transferDate},'yyyy-MM-dd') between start_date and end_date )
+	</select>
+	<!-- 查询被移交的数据是否存在(移交时间之内的业绩) -->
+	<select id="qryOpAsnAchievementIsExistedByTrFer"  parameterType="java.util.HashMap" resultType="java.util.HashMap" >
+	   select count(*) from ${tableName} where asn_in_obj = #{userCode} and start_date = to_date(#{transferDate},'yyyy-MM-dd') and end_date =#{endDate}
+	</select>
+	<!-- 查询被移交的数据是否存在(移交时间之外的业绩)-->
+	<select id="qryOpAsnAchievementIsExistedByStart"  parameterType="java.util.HashMap" resultType="java.util.HashMap" >
+	   select count(*) from ${tableName} where asn_in_obj = #{userCode} and start_date = #{startDate} and end_date =#{endDate}
+	</select>
+	<!-- 插入移交后的分配关系  -->
+	<insert id="insertNewOrOldOpAsnMsg" parameterType="java.util.HashMap">
+		INSERT INTO ${tableName}(
+		<foreach collection="pkInfo" item="pk" separator=",">
+ 			${pk.pkName}
+ 		</foreach>
+ 		)
+		 values(
+		<foreach collection="pkInfo" item="pk" separator=",">
+		    <if test="pk.pkName == 'ASN_ID'">
+ 			${tableName}_SEQ.NEXTVAL
+ 			</if>
+ 			<if test="pk.pkName != 'ASN_ID'">
+ 			 	#{pk.pkValue,${pk.pkType}}
+ 			    <!--<if test ="pk.pkType == 'VARCHAR' ">
+ 			       #{pk.pkValue,jdbcType=VARCHAR}
+ 			    </if>
+ 			    <if test ="pk.pkType == 'DATE' ">
+ 			       #{pk.pkValue,jdbcType=DATE}
+ 			    </if>
+  			    <if test ="pk.pkType == 'NUMERIC' ">
+ 			       #{pk.pkValue,jdbcType=NUMERIC}
+ 			    </if>
+ 			    <if test ="pk.pkType == 'TIMESTAMP' ">
+ 			       #{pk.pkValue,jdbcType=TIMESTAMP}
+ 			    </if>
+ 			     <if test ="pk.pkType == 'CHAR' ">
+ 			       #{pk.pkValue,jdbcType=CHAR}
+ 			    </if>-->
+ 			</if>
+ 		</foreach>
+ 		)
+ 	</insert>
+ 	<!--利用mege into 插入新的分配关系 -->
+ 	<insert id="mergeIntoNewOrOldOpAsnMsg" parameterType="java.util.HashMap">
+ 	    MERGE INTO  ${tableName} A 
+ 	    USING(SELECT 		     
+ 	            <foreach collection="pkInfo" item="pk" separator=",">
+ 	               #{pk.pkValue,${pk.pkType}} as ${pk.pkName}
+		        </foreach>
+ 	          FROM dual 
+ 	          ) B
+        ON ( <foreach collection="ckInfo" item="ck" separator=" AND ">A.${ck.pkName}＝B.${ck.pkName} </foreach>)
+        WHEN MATCHED THEN
+             UPDATE　SET 
+               <foreach collection="pkInfo" item="pk" separator=",">
+		            <if test="pk.pkName == 'CUR_ASN_RATE'">
+ 		     	        ${pk.pkName}＝#{pk.pkValue}+B.CUR_ASN_RATE
+ 			         </if>
+ 			         <if test="pk.pkName == 'ASN_TIME'">
+ 		     	        ${pk.pkName}＝#{pk.pkValue}
+ 			         </if>
+ 			         <if test="pk.pkName == 'OPERATOR'">
+ 		     	        ${pk.pkName}＝#{pk.pkValue}
+ 			         </if>
+               </foreach>
+        WHEN NOT MATCHED THEN
+ 	         INSERT(
+	         <foreach collection="pkInfo" item="pk" separator=",">
+ 		     	${pk.pkName}
+ 		     </foreach>
+ 		      )
+		      VALUES(
+		     <foreach collection="pkInfo" item="pk" separator=",">
+		        <if test="pk.pkName == 'ASN_ID'">
+ 		     	     ${tableName}_SEQ.NEXTVAL
+ 			    </if>
+ 			    <if test="pk.pkName != 'ASN_ID'">
+ 			 	    #{pk.pkValue,${pk.pkType}}
+ 			    <!--<if test ="pk.pkType == 'VARCHAR' ">
+ 			       #{pk.pkValue,jdbcType=VARCHAR}
+ 			    </if>
+ 			    <if test ="pk.pkType == 'DATE' ">
+ 			       #{pk.pkValue,jdbcType=DATE}
+ 			    </if>
+  			    <if test ="pk.pkType == 'NUMERIC' ">
+ 			       #{pk.pkValue,jdbcType=NUMERIC}
+ 			    </if>
+ 			    <if test ="pk.pkType == 'TIMESTAMP' ">
+ 			       #{pk.pkValue,jdbcType=TIMESTAMP}
+ 			    </if>
+ 			     <if test ="pk.pkType == 'CHAR' ">
+ 			       #{pk.pkValue,jdbcType=CHAR}
+ 			    </if>-->
+ 			    </if>
+ 		    </foreach>
+ 		     )
+ 	</insert>
+ 		
+ 	<select id="getOPAsnConfigId"  parameterType="java.util.HashMap" resultType="Integer" >
+        select config_id from op_asn_config a where a.asn_table = #{tableName} and rownum=1	
+    </select>
+ 	<!-- 删除原有的分配关系  -->
+ 	<delete id="delOldOpAsnDetilMsg" parameterType="java.util.HashMap">
+		delete ${tableName} a
+        where a.start_date = #{START_DATE} and a.end_date = #{END_DATE} and a.ASN_IN_OBJ = #{ASN_IN_OBJ} 
+	 	<foreach collection="pkInfo" item="pk">
+	 		<if test="pk.pkName != 'DATA_DATE' ">
+	 			AND a.${pk.pkName} = #{pk.pkValue}
+	 		</if>
+ 			<if test="pk.pkName == 'DATA_DATE' ">
+	 			AND a.${pk.pkName} = to_date(substr(#{pk.pkValue},1,10),'yyyy-mm-dd') 
+	 		</if>
+	 	</foreach>
+	</delete>
+	<!-- 更新原有的分配关系 的开始时间-->
+ 	<update id="updateOldOpAsnDetilMsg" parameterType="java.util.HashMap">
+		UPDATE ${tableName} a
+		SET END_DATE = #{transferDate}-1,
+		ASN_TIME = #{asnTime},
+		OPERATOR = #{operator}
+        where a.start_date = #{START_DATE} and a.end_date = #{END_DATE} and a.ASN_IN_OBJ = #{ASN_IN_OBJ} 
+	 	<foreach collection="pkInfo" item="pk">
+	 		<if test="pk.pkName != 'DATA_DATE' ">
+	 			AND a.${pk.pkName} = #{pk.pkValue}
+	 		</if>
+ 			<if test="pk.pkName == 'DATA_DATE' ">
+	 			AND a.${pk.pkName} = to_date(substr(#{pk.pkValue},1,10),'yyyy-mm-dd') 
+	 		</if>
+	 	</foreach>	
+	 </update>
+	
+	<!-- 查询需要移交的数据 -->
+	<select id="qryOpAsnTableValueCount"  parameterType="java.util.HashMap" resultType="Integer" >
+	   select count(1) from ${tableName} where asn_in_obj = #{userCode} and ( to_date(#{transferDate},'yyyy-MM-dd') <![CDATA[<]]> start_date or to_date(#{transferDate},'yyyy-MM-dd') between start_date and end_date )
+	</select>
+	<!--利用mege into 批量插入新的分配关系 -->
+ 	<insert id="mergeIntoBathNewOrOldOpAsnMsg" parameterType="java.util.HashMap">
+ 	    MERGE INTO  ${tableName} A 
+ 	    USING(SELECT
+ 	            <foreach collection="pkInfo" item="pk" separator=",">
+ 	                 <if test="pk.pkName != 'ASN_IN_OBJ' and pk.pkName != 'START_DATE' and pk.pkName != 'OPERATOR' and pk.pkName != 'ASN_TIME' ">
+ 		     	          C.${pk.pkName}
+ 			         </if>
+ 	                 <if test="pk.pkName == 'START_DATE' ">
+ 		     	         CASE
+                              WHEN C.Start_Date > to_date(#{transferDate},'yyyy-MM-dd') THEN
+                               C.Start_Date
+                              ELSE
+                               to_date(#{transferDate},'yyyy-MM-dd')
+                          END AS ${pk.pkName}
+ 			         </if>
+ 			         <if test="pk.pkName == 'ASN_IN_OBJ' ">
+ 		     	          #{toUsercd} AS ${pk.pkName}
+ 			         </if>
+ 			         <if test="pk.pkName == 'OPERATOR' or pk.pkName == 'ASN_TIME'  ">
+ 		     	          #{pk.pkValue,${pk.pkType}} AS ${pk.pkName}
+ 			         </if>
+		        </foreach>
+ 	           FROM ${tableName} C
+               WHERE C.ASN_IN_OBJ = #{userCode}
+                AND (to_date(#{transferDate},'yyyy-MM-dd') <![CDATA[<]]> C.START_DATE or to_date(#{transferDate},'yyyy-MM-dd') BETWEEN C.START_DATE and C.END_DATE )
+                ) B
+        ON ( <foreach collection="ckInfo" item="ck" separator=" AND ">A.${ck.pkName}＝B.${ck.pkName} </foreach>)
+        WHEN MATCHED THEN
+             UPDATE　SET 
+               <foreach collection="pkInfo" item="pk" separator=",">
+		            <if test="pk.pkName == 'CUR_ASN_RATE'">
+ 		     	        ${pk.pkName}＝#{pk.pkValue}+B.CUR_ASN_RATE
+ 			         </if>
+ 			         <if test="pk.pkName == 'ASN_TIME'">
+ 		     	        ${pk.pkName}＝#{pk.pkValue}
+ 			         </if>
+ 			         <if test="pk.pkName == 'OPERATOR'">
+ 		     	        ${pk.pkName}＝#{pk.pkValue}
+ 			         </if>
+               </foreach>
+        WHEN NOT MATCHED THEN
+ 	         INSERT(
+	         <foreach collection="pkInfo" item="pk" separator=",">
+ 		     	${pk.pkName}
+ 		     </foreach>
+ 		      )
+		      VALUES(
+		     <foreach collection="pkInfo" item="pk" separator=",">
+		        <if test="pk.pkName == 'ASN_ID'">
+ 		     	     ${tableName}_SEQ.NEXTVAL
+ 			    </if>
+ 			    <if test="pk.pkName != 'ASN_ID'">
+ 			 	    B.${pk.pkName}
+ 			    </if>
+ 		    </foreach>
+ 		     )
+ 	</insert>
+ 	<!--批量 删除原有的分配关系  -->
+ 	<delete id="delBathOldOpAsnDetilMsg" parameterType="java.util.HashMap">
+		DELETE ${tableName} a
+        WHERE a.ASN_IN_OBJ = #{userCode} AND a.START_DATE <![CDATA[>]]> a.END_DATE
+	</delete>
+	<!-- 批量更新原有的分配关系 的开始时间-->
+ 	<update id="updateBathOldOpAsnDetilMsg" parameterType="java.util.HashMap">
+		UPDATE ${tableName} a
+		SET a.END_DATE = #{transferDate}-1,
+		    a.ASN_TIME = #{asnTime},
+		    a.OPERATOR = #{operator}
+        WHERE a.ASN_IN_OBJ = #{userCode} 
+        AND ( #{transferDate} <![CDATA[<]]> a.START_DATE OR #{transferDate} BETWEEN a.START_DATE AND a.END_DATE)
+	 </update>
+	  	
+	 <insert id="insertTranHandOver" parameterType="java.util.HashMap">
+ 	    INSERT INTO TRAN_HAND_OVER  
+               SELECT 
+				to_char(systimestamp,'yyyyMMddhh24missff') TIME_TAMP,
+				#{transferDate,jdbcType=VARCHAR} DATA_DATE,
+			    #{operator,jdbcType=VARCHAR} USER_CODE,
+                #{opername,jdbcType=VARCHAR} USER_NAME,
+                #{operdept,jdbcType=VARCHAR} DEPT_CODE,
+                #{operdpna,jdbcType=VARCHAR} DEPT_NAME,
+                #{tableName,jdbcType=VARCHAR} VIEW_TABL,
+                #{userCode,jdbcType=VARCHAR} COME_USER,
+                (select username from pcmc_user where usercode= #{userCode}) COME_NAME,
+                #{toUsercd,jdbcType=VARCHAR} INTO_USER,
+                (select username from pcmc_user where usercode= #{toUsercd}) INTO_NAME
+                FROM DUAL
+ 	</insert>
+
+ 	<select id="getTranHandOverList"  parameterType="java.util.HashMap" resultType="java.util.HashMap" >
+           SELECT *
+          FROM Tran_Hand_Over a
+         WHERE 1=1
+         <if test="userCode != null and userCode !='' ">
+           AND a.Data_Date = #{transferDate}
+         </if>
+         <if test="userCode != null and userCode !='' ">
+           AND a.Come_User = #{userCode}
+         </if>
+         <if test="toUsercd != null and toUsercd !='' ">
+           AND a.Into_User = #{toUsercd}
+         </if>
+         <if test="tableName != null and tableName !='' ">
+           AND a.View_Tabl = #{tableName}
+         </if>
+         <if test="operator != null and operator !='' ">
+           AND a.User_Code = #{operator}
+         </if>
+         <if test="sqlCrtl != null and sqlCrtl !='' ">
+           AND a.Dept_Code in (${sqlCrtl})
+         </if>
+    </select>
+</mapper> 	  
+ 	 

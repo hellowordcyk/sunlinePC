@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="com.sunline.bimis.pcmc.mybatis.sysparam" >
+	
+	<!-- 平台业务参数 操作SQL -->
+	
+	
+	<resultMap type="com.sunline.bimis.pcmc.parameter.para.bean.SysParam" id="sysParamMap">
+		<result column="para_code" property="paraCode"/>
+		<result column="para_name" property="paraName"/>
+		<result column="value_type" property="valueType"/>
+		<result column="para_value" property="paraValue"/>
+		<result column="remark" property="remark"/>
+		<result column="i18n_code" property="i18nCode"/>
+	</resultMap>
+	
+	<select id="queryParaByParamlistPage" parameterType="java.util.HashMap" resultMap="sysParamMap">
+		select 
+			para_code,
+			para_name,
+			value_type,
+			para_value,
+			remark,
+			i18n_code
+		 from sys_pub_para
+		<where>
+			<if test="paraCode !=null and paraCode.trim()!=''">
+				and para_code = #{paraCode}
+			</if>
+			<if test="valueType !=null and valueType.trim()!=''">
+				and value_type = #{valueType}
+			</if>
+			<if test="paraName !=null and paraName.trim()!=''">
+				and para_name like %#{paraName}%
+			</if>
+			<if test="paraValue !=null and paraValue.trim()!=''">
+				and para_value = #{paraValue}
+			</if>
+		</where>
+		order by para_code,para_name,value_type,para_value asc
+	</select>
+	
+	
+	<select id="existParam" parameterType="java.util.HashMap" resultType="java.lang.Integer">
+		select 
+			count(1)
+		 from sys_pub_para
+		<where>
+			<if test="paraCode !=null and paraCode.trim()!=''">
+				and para_code = #{paraCode}
+			</if>
+			<if test="valueType !=null and valueType.trim()!=''">
+				and value_type = #{valueType}
+			</if>
+			<if test="paraName !=null and paraName.trim()!=''">
+				and para_name like %#{paraName}%
+			</if>
+			<if test="paraValue !=null and paraValue.trim()!=''">
+				and para_value = #{paraValue}
+			</if>
+		</where>
+	</select>
+	
+</mapper> 	  

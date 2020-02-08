@@ -1,0 +1,1 @@
+﻿        <Field name="pckgsq" title="报文流水" type="String" maxlen="8" defaultval=""/>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="gb2312"?>
+<!-- 功能页面  -->
+<Sunline>
+    <Session></Session>
+    
+    <Operation id="holiday"  bean="com.sunline.funcpub.holiday.actor.HolidayActor"  
+        desc="假日管理操作类" >
+        <Action name="addHoliday" desc="新增" acttype="add"></Action>
+        <Action name="addBacthHoliday" desc="新增" acttype="add"></Action>
+         <Action name="updateHoliday" desc="修改" acttype="update"></Action>
+         <Action name="deleteHoliday" desc="删除" acttype="delete"/>
+        <Action name="queryHolidayListPage" desc="查询" acttype="query"/>
+       	<Action name="getHoliday" desc="查询" acttype="query" />
+    </Operation>
+</Sunline>

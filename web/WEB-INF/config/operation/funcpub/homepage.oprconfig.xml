@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="gb2312"?>
+<!-- 首页管理  -->
+<Sunline>
+    <Session></Session>
+    
+    <Operation id="aphmp-functionRegister"  bean="com.sunline.funcpub.aphmp.AphmpFunctionRegister"  
+        desc="首页功能注册管理" filterpath="/funcpub/aphmp/register/">
+        <Action name="getFunctionRegisterList" desc="获取首页功能注册表数据"/>
+        <Action name="addFunctionRegister" desc="添加首页功能"/>
+        <Action name="delFunctionRegister" desc="删除首页功能"/>
+        <Action name="getFunctionRegisterById" desc="删除首页功能"/>
+        <Action name="updateFunctionRegister" desc="修改首页功能"/>
+        <Action name="getRole" desc="获取角色信息"/>
+        <Action name="getRoleCoordinate" desc="获取角色首页配置信息"/>
+        <Action name="editRoleCoordinate" desc="编辑角色首页配置信息"/>
+        <Action name="getRoleFunction" desc="初始化首页布局">
+            <Flow>
+                <Forward result="0" path="/funcpub/aphmp/addRoleFunction.jsp"></Forward>
+                <Forward result="1" path="/jui/callMessage.jsp"></Forward>
+            </Flow> 
+        </Action>
+        <Action name="editRoleFunction" desc="初始化首页布局"/>
+        
+        <Action name="initHomePage" desc="初始化首页布局"/>
+        
+        <Action name="checkRoleCoordinate" desc="初始化首页布局"/>
+        <Action name="functionRegister_import" desc="导入" acttype="import"/>
+       <Action name="downLoadFunctionRegisterTemplate" desc="模板" acttype="import"/>
+       <Action name="functionRegister_export" desc="导出" acttype="export"/>
+    </Operation>
+    
+    <Operation id="aphmp-roleFunc"  bean="com.sunline.funcpub.aphmp.RoleFunctionActor"  
+        desc="" filterpath="/funcpub/aphmp/coordinate/">
+        <Action name="getRoleFuncPage" desc="获取配置的首页项"/>
+        <Action name="getRoleFuncDetail" desc="获取配置详情"/>
+        <Action name="deleteRoleFunc" desc="删除配置项"/>
+        <Action name="addRoleFunc" desc="添加配置项"/>
+        <Action name="updateRoleFunc" desc="修改配置项"/>
+        <Action name="getRoleFunction" desc="获取首页显示选项"/>
+        <Action name="aphmp_import" desc="导入" acttype="import"/>
+        <Action name="downLoadAphmpConfigTemplate" desc="模板1" acttype="import"/>
+        <Action name="downLoadAphmpTabTemplate" desc="模板2" acttype="import"/>
+        <Action name="aphmp_export" desc="导出" acttype="export"/>
+    </Operation>
+        
+    <Operation id="initHome"  bean="com.sunline.funcpub.portal.home.HomePageActor"  
+        desc="主页信息">
+        <Action name="queryHomePageInfo" desc="查询首页配置" acttype="query" />
+        <Action name="queryUserRoles" desc="查询用户角色" acttype="query" />
+        <Action name="updateDefaultRole" desc="更改默认角色" acttype="update" />
+        <Action name="judgeHasRole" desc="判断用户是否拥有角色" acttype="update" />
+         <Action name="queryDataDate" desc="获取数据日期"/>
+    </Operation>
+    
+</Sunline>

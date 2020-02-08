@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="com.sunline.pams.mybatis.public.oprecheck" >
+ 	<!-- resultMap -->
+ 	<resultMap id="claInfoMap" type="java.util.HashMap">
+ 		<result column="STARTDATE" property="startDate" javaType="String"/>
+ 		<result column="ENDDATE" property="endDate" javaType="String"/>
+ 		<result column="CLATYPE" property="claType" javaType="String"/>
+ 		<result column="STARTAMT" property="startAmt" javaType="String"/>
+ 		<result column="ENDAMT" property="endAmt" javaType="String"/>
+ 		<result column="USERCODE" property="userCode" javaType="String"/>
+ 		<result column="USERNAME" property="userName" javaType="String"/>
+ 		<result column="RATE" property="rate" javaType="String"/>
+ 	</resultMap>
+ 	
+ 	<resultMap id="opClaFlowInfoMap" type="java.util.HashMap">
+ 		<result column="SORTNO" property="sortNo" javaType="int"/>
+ 		<result column="STATUS" property="status"/>
+ 		<result column="STATUS_NAME" property="statusName"/>
+ 		<result column="ROLEID" property="roleID"/>
+ 		<result column="YES_NEXT_STATUS" property="yesNextStatus"/>
+ 		<result column="NO_NEXT_STATUS" property="noNextStatus"/>
+ 	</resultMap>
+ 	
+ 	<resultMap type="java.util.HashMap" id="isRecheckOverMap">
+ 		<result column="RECHECK" property="reCheck"/>
+ 	</resultMap>
+ 	
+ 	<!-- 查询需要复核的认领信息 -->
+ 	<select id="queryClaInfo" parameterType="java.util.HashMap" resultMap="claInfoMap">
+ 		SELECT 
+		    A.START_DATE AS STARTDATE,
+		    A.END_DATE AS ENDDATE,
+		    A.CLA_TYPE AS CLATYPE,
+		    A.START_AMT AS STARTAMT,
+		    A.END_AMT AS ENDAMT,
+		    B.USERCODE AS USERCODE,
+		    B.USERNAME AS USERNAME,
+		    A.CUR_CLA_RATE AS RATE
+		FROM ${claTable} A
+		LEFT JOIN PCMC_USER B ON A.CLA_IN_OBJ = B.USERCODE
+		WHERE A.FLOW_ID = #{flowID}
+ 	</select>
+ 	
+ 	<!-- 查询流程模板信息 -->
+ 	<select id="queryOpClaFlowInfo" parameterType="String" resultMap="opClaFlowInfoMap">
+ 		SELECT SORTNO,STATUS,STATUS_NAME,ROLEID,YES_NEXT_STATUS,NO_NEXT_STATUS FROM OP_CLA_FLOWINFO
+ 		WHERE TEMPLATE_CODE = #{_parameter} ORDER BY SORTNO
+ 	</select>
+ 	
+ 	<update id="reCheck" parameterType="java.util.HashMap">
+ 		UPDATE ${claTable} SET
+ 			RECHECK = #{reCheck}
+ 		WHERE FLOW_ID = #{flowID} AND CLA_IN_OBJ = #{userCode}
+ 	</update>
+ 	
+ 	<!-- 是否复核完成 -->
+ 	<select id="isRecheckOver" parameterType="java.util.HashMap" resultMap="isRecheckOverMap">
+ 		SELECT RECHECK FROM ${claTable} WHERE FLOW_ID = #{flowID}
+ 	</select>
+ 	
+ 	<!-- 添加流程信息 -->
+ 	<insert id="addOpClaFlow" parameterType="java.util.HashMap">
+ 		INSERT INTO OP_CLA_FLOW(FLOW_ID,TEMPLATE_CODE,START_TIME,STATUS,ROLEID,AREA_NO,OPERATOR)
+ 		VALUES(#{flowID},#{templateCode},#{startTime},#{status},#{roleID},#{areaNo},#{operator})
+ 	</insert>
+ 	
+ 	<!-- 查询需要复核的认领数据 -->
+ 	<select id="queryRecheckDatalistPage" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+ 		<foreach item="claTable" collection="claTableArrray" separator="UNION">
+	 		SELECT A.FLOW_ID,
+	 			<foreach collection="selectColumnList" item="column" separator="," >
+	 				${column}
+				</foreach>
+			FROM ${claTable} A
+			<foreach collection="leftJoinList" item="leftJoin" separator=" ">
+				${leftJoin}
+			</foreach>
+			<where>
+				<foreach collection="queryConditionList" item="queryCondition" separator=" ">
+					<if test="queryCondition.andOr == null or queryCondition.andOr == '' ">AND</if>  
+					<if test="queryCondition.andOr != null and queryCondition.andOr != '' ">${queryCondition.andOr}</if>  
+					A.${queryCondition.colName} <![CDATA[${queryCondition.operator}]]> 
+					<if test="queryCondition.operator == 'IN' ">${queryCondition.colValue}</if> 
+					<if test="queryCondition.operator != 'IN' ">#{queryCondition.colValue}</if> 
+				</foreach>
+				AND A.AREA_NO = #{corpCode} AND A.CLA_IN_OBJ = #{userCode} AND A.RECHECK = '0'
+			</where>
+		</foreach>
+ 	</select>
+</mapper> 	  
+ 	 

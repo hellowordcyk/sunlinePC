@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="gb2312"?>
+<Sunline>
+    <Session></Session>
+    <Operation id="UserSyncActor" bean="com.sunline.bimis.pcmc.esb.UserSyncActor" desc="用户数据同步">
+        <Action name="addUser" desc="新增用户">
+            <Request multi="false">
+                <Field name="deptcode" title="部门编号" type="String" maxlen="19" notnull="true"/>
+                <Field name="usercode" title="操作员编号" type="String" minlen="2" maxlen="20" notnull="true"/>
+                <Field name="username" title="操作员姓名" type="String" maxlen="40" notnull="true"/>
+                <Field name="userpwd" title="操作员口令" type="String" minlen="3" maxlen="100" notnull="true"/>
+                <Field name="phone" title="办公电话" type="String" maxlen="60" notnull="false"/>
+                <Field name="pagesize" title="每页显示记录数" type="long" maxlen="3" notnull="true"/>
+                <Field name="menutype" title="菜单类型" type="String" maxlen="3" notnull="false"/>
+                <Field name="disable" title="是否冻结" type="String" maxlen="1" minlen="1" notnull="true"/>
+                <Field name="remark" title="备注" type="String" maxlen="200" notnull="false"/>
+            </Request>
+            <!-- 
+            <requestFlow>
+                <handler type="DuplicateAction">
+                    <parameter name="toSession" value="ws.bfms"/>
+                </handler>                  
+            </requestFlow>
+             -->
+        </Action>
+        <Action name="updateUser" desc="修改用户信息">
+            <Request multi="false">
+                <Field name="deptcode" title="部门编号" type="String" maxlen="19" notnull="true"/>
+                <Field name="usercode" title="操作员编号" type="String" minlen="2" maxlen="20" notnull="true"/>
+                <Field name="username" title="操作员姓名" type="String" maxlen="40" notnull="true"/>
+                <Field name="userpwd" title="操作员口令" type="String" minlen="3" maxlen="100" notnull="true"/>
+                <Field name="phone" title="办公电话" type="String" maxlen="60" notnull="false"/>
+                <Field name="pagesize" title="每页显示记录数" type="long" maxlen="3" notnull="true"/>
+                <Field name="menutype" title="菜单类型" type="String" maxlen="3" notnull="false"/>
+                <Field name="disable" title="是否冻结" type="String" maxlen="1" minlen="1" notnull="true"/>
+                <Field name="remark" title="备注" type="String" maxlen="200" notnull="false"/>
+            </Request>
+            <!-- 
+              <requestFlow>
+                  <handler type="DuplicateAction">
+                      <parameter name="toSession" value="ws.bfms"/>
+                  </handler>                  
+              </requestFlow>
+               -->
+        </Action>
+        <Action name="removeUser" desc="删除用户">
+            <Request multi="false">
+                <Field name="usercode" title="操作员编号" type="String" minlen="2" maxlen="20" notnull="true"/>
+            </Request>
+              <!-- 
+            <requestFlow>
+                <handler type="DuplicateAction">
+                    <parameter name="toSession" value="ws.bfms"/>
+                </handler>                  
+            </requestFlow>
+             -->
+        </Action>
+        <Action name="changePassword" desc="修改用户密码">
+            <Request multi="false">
+                <Field name="usercode" title="操作员编号" type="String" minlen="2" maxlen="20" notnull="true"/>
+                <Field name="userpwd" title="操作员口令" type="String" minlen="3" maxlen="100" notnull="true"/>
+            </Request>
+          <!-- 
+            <requestFlow>
+                <handler type="DuplicateAction">
+                    <parameter name="toSession" value="ws.bfms"/>
+                </handler>                  
+            </requestFlow>
+             -->
+        </Action>
+        <Action name="getUser" desc="取用户信息">
+            <Request multi="false">
+                <Field name="usercode" title="操作员编号" type="String" minlen="2" maxlen="20" notnull="true"/>
+            </Request>
+        </Action>
+
+        <Action name="addDepartment" desc="添加部门">
+            <Request multi="false">
+                <Field name="deptcode" title="部门编号" type="String" maxlen="20" notnull="true"/>
+                <Field name="parentCode" title="上级部门编号" type="String" maxlen="20" notnull="false"/>
+                <Field name="deptname" title="部门名称" type="String" maxlen="100" notnull="true"/>
+                <Field name="linkman" title="联系人" type="String" maxlen="40" notnull="false"/>
+                <Field name="phone" title="联系电话" type="String" maxlen="60" notnull="false"/>
+                <Field name="remark" title="备注" type="String" maxlen="200" notnull="false"/>
+            </Request>
+          <!-- 
+            <requestFlow>
+                <handler type="DuplicateAction">
+                    <parameter name="toSession" value="ws.bfms"/>
+                </handler>                  
+            </requestFlow>
+             -->
+        </Action>
+        <Action name="updateDepartment" desc="修改部门">
+            <Request multi="false">
+                <Field name="deptcode" title="部门编号" type="String" maxlen="20" notnull="true"/>
+                <Field name="parentCode" title="上级部门编号" type="String" maxlen="20" notnull="false"/>
+                <Field name="deptname" title="部门名称" type="String" maxlen="100" notnull="true"/>
+                <Field name="linkman" title="联系人" type="String" maxlen="40" notnull="false"/>
+                <Field name="phone" title="联系电话" type="String" maxlen="60" notnull="false"/>
+                <Field name="remark" title="备注" type="String" maxlen="200" notnull="false"/>
+            </Request>
+          <!-- 
+            <requestFlow>
+                <handler type="DuplicateAction">
+                    <parameter name="toSession" value="ws.bfms"/>
+                </handler>                  
+            </requestFlow>
+             -->
+        </Action>
+        <Action name="removeDepartment" desc="删除部门">
+            <Request multi="false">
+                <Field name="deptcode" title="部门编号" type="String" maxlen="20" notnull="true"/>
+            </Request>
+          <!-- 
+            <requestFlow>
+                <handler type="DuplicateAction">
+                    <parameter name="toSession" value="ws.bfms"/>
+                </handler>                  
+            </requestFlow>
+             -->
+        </Action>
+        <Action name="getDepartment" desc="取部门信息(根据部门号)">
+            <Request multi="false">
+                <Field name="deptcode" title="部门编号" type="String" maxlen="20" notnull="true"/>
+            </Request>
+        </Action>
+    </Operation>
+
+</Sunline>

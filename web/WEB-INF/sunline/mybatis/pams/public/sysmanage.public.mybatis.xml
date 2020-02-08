@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="com.sunline.pams.mybatis.public.sysmanage" >
+ 	 
+ 	 <!-- 获得某个机构的机构Id -->
+ 	 <select id="getSomeOneOrgId" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		select a.DEPTCODE "orgCode",a.DEPTID "orgId"
+		from pcmc_dept a
+		where a.DEPTCODE = #{orgNo} 
+		and a.DISABLE = '0'
+ 	 </select>
+ 	 
+ 	 
+ 	 <!-- 获得该orgSeq下的所有子机构 -->
+ 	 <select id="getUnderOrgSeqOrgs" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		select a.DEPTCODE "orgCode",a.DEPTID "orgId"
+		from pcmc_dept a
+		where a.ORGSEQ like '%.${orgId}.%' 
+		and a.DISABLE = '0'
+ 	 </select>
+ 	 
+ 	  <!-- 获得该orgSeq下的一层子机构 -->
+ 	 <select id="getUnderOrgSeqOrgsOnlyOneLevel" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		select a.DEPTCODE "orgCode",a.DEPTID "orgId"
+		from pcmc_dept a
+		where (a.PDEPTID = #{orgId} OR A.DEPTID = #{orgId} ) 
+		and a.DISABLE = '0'
+ 	 </select>
+ 	 
+ 	 <!-- 查询管辖的机构人员信息 -->
+ 	 <select id="queryOrgManagerPermissionlistPage" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		select a.USERCODE "managerNo",a.USERNAME "managerName",a.USERID "userId",
+        	   b.DEPTCODE "orgNo",b.DEPTNAME "orgName"
+		from pcmc_user a
+		inner join pcmc_dept b on a.deptid = b.deptid and b.DISABLE = '0'
+		where exists (select 1 from v_auth_org c where a.deptid = c.deptid and userid = #{userId})
+		and a.DISABLE != '1' 
+		<if test="orgCodes!=null and orgCodes!=''">
+			and b.deptcode in ${orgCodes}
+		</if>
+		<if test="managerNo!=null and managerNo!=''">
+			and a.usercode in (${managerNo})
+		</if>
+ 	 </select>
+ 	 
+ 	 <!-- 查询该人员所拥有的角色 -->
+ 	 <select id="getSelectedUserRole" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		select USERROLEID as "userRoleId",ROLEID as "roleId" from PCMC_USER_ROLE WHERE USERID = #{userId}
+	 </select>
+ 	 
+ 	 <!-- 查询所有登录人能查到的角色信息 -->
+ 	 <select id="queryPcmcRolelistPage" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		<![CDATA[ 
+			 SELECT A.ROLEID    'roleId'  ,
+				    A.SUBSYSID  'subsysid',
+				    A.ROLENAME  'roleName',
+				    A.REMARK    'remark'  ,
+				    A.DEPTID    'deptid'  ,
+					C.GORGTYPE  'gorgtype',
+					E.DEPTNAME  'deptName',
+					C.GORGTYPE  'gorgtype1',
+					B.CNNAME	'cnName',
+					D.PARANA	'parana',
+					(case when f.deptcode is null then 0 else 1 end ) as 'isRule',
+					(case when E.AREANO = '0000' then 1 else 0 end ) as 'isPublicRole'
+			 FROM PCMC_ROLE A 
+			 INNER JOIN PCMC_SUBSYS B ON A.SUBSYSID = B.SUBSYSID AND (B.ISSYSTEM='1' OR B.ISSYSTEM IS NULL) 
+			 LEFT JOIN PCMC_ROLE_ORG C ON  A.ROLEID = C.ROLEID 
+			 LEFT JOIN PCMC_KNP_PARA D ON  D.SUBSCD = 'pcmc' AND D.PARATP = 'rlorgtp' AND C.GORGTYPE = D.PARACD 
+			 LEFT JOIN PCMC_DEPT E ON  A.DEPTID = E.DEPTID and E.DISABLE = '0'
+			 left join v_auth_org F on a.deptid = F.deptid and f.userid = #{userId}
+			 
+			 
+			 WHERE A.DEPTID in (select deptid from pcmc_dept where deptcode in ${ruleOrg} and DISABLE = '0')
+			 and (A.DEPTID = (select c.ORG_STR 
+							from pcmc_user a
+							inner join pcmc_dept b on a.DEPTID = b.DEPTID  
+							inner join sys_pub_area c on b.AREANO = c.AREA_NO
+							where USERID = #{userId}) or A.DEPTID = (select ORG_STR from sys_pub_area where area_no = '0000'))
+		]]>
+		<if test= "subsys1 != null and subsys1 != ''">
+			AND A.SUBSYSID= #{subsys1}
+        </if>
+        <if test= "roleName != null and roleName != ''">
+			AND A.ROLENAME LIKE '%${roleName}%'
+        </if>
+        <if test= "roleId != null and roleId != ''">
+			AND A.ROLEID = #{roleId}
+        </if>
+        <if test= "areaNo != null and areaNo != ''">
+			AND E.AREANO = #{areaNo}
+        </if>
+        
+       	union
+       	
+       	SELECT  A.ROLEID    'roleId'  ,
+			    A.SUBSYSID  'subsysid',
+			    A.ROLENAME  'roleName',
+			    A.REMARK    'remark'  ,
+			    A.DEPTID    'deptid'  ,
+				C.GORGTYPE  'gorgtype',
+				E.DEPTNAME  'deptName',
+				C.GORGTYPE  'gorgtype1',
+				B.CNNAME	'cnName',
+				D.PARANA	'parana',
+				(case when f.deptcode is null then 0 else 1 end ) as 'isRule',
+				(case when E.AREANO = '0000' then 1 else 0 end ) as 'isPublicRole'
+		 FROM PCMC_ROLE A 
+		 INNER JOIN PCMC_SUBSYS B ON A.SUBSYSID = B.SUBSYSID AND (B.ISSYSTEM='1' OR B.ISSYSTEM IS NULL) 
+		 LEFT JOIN PCMC_ROLE_ORG C ON  A.ROLEID = C.ROLEID 
+		 LEFT JOIN PCMC_KNP_PARA D ON  D.SUBSCD = 'pcmc' AND D.PARATP = 'rlorgtp' AND C.GORGTYPE = D.PARACD 
+		 LEFT JOIN PCMC_DEPT E ON  A.DEPTID = E.DEPTID and E.DISABLE = '0'
+		 left join v_auth_org F on a.deptid = F.deptid and f.userid = #{userId}
+		 where a.ROLEID in ('11','12')
+		 <if test= "subsys1 != null and subsys1 != ''">
+			AND A.SUBSYSID= #{subsys1}
+        </if>
+        <if test= "roleName != null and roleName != ''">
+			AND A.ROLENAME LIKE '%${roleName}%'
+        </if>
+        <if test= "roleId != null and roleId != ''">
+			AND A.ROLEID = #{roleId}
+        </if>
+        <if test= "areaNo != null and areaNo != ''">
+			AND E.AREANO = #{areaNo}
+        </if>
+    </select>    
+    
+    <delete id="delRoleUser" parameterType="java.util.HashMap">
+		<![CDATA[
+			delete from pcmc_user_role where roleid = #{roleid} and userid = #{userid}
+		]]>
+	</delete>
+	
+	<insert id="addRoleUser" parameterType="java.util.HashMap">
+		<![CDATA[
+			insert into pcmc_user_role values(${userroleid},#{userid},#{roleid})
+		]]>
+	</insert>
+	
+</mapper> 	  

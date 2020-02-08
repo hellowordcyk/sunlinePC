@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="com.sunline.funcpub.mybatis.public.deptuserareautil" >
+	<resultMap type="java.util.HashMap" id="deptMap">
+		<result property="deptid" column="deptid"/>
+		<result property="deptcode" column="deptcode"/>
+		<result property="pdeptid" column="pdeptid"/>
+		<result property="levelp" column="levelp"/>
+		<result property="deptname" column="deptname"/>
+		<result property="orgtype" column="orgtype"/>
+		<result property="orgseq" column="orgseq"/>
+		<result property="linkman" column="linkman"/>
+		<result property="phone" column="phone"/>
+		<result property="brsmna" column="brsmna"/>
+		<result property="areano" column="areano"/>
+		<result property="orgbusssize" column="orgbusssize"/>
+		<result property="orgnaturetype" column="orgnaturetype"/>
+		<result property="orgbusstype" column="orgbusstype"/>
+		<result property="remark" column="remark"/>
+		<result property="disable" column="disable"/>
+	</resultMap>
+	<select id="queryDeptInfo" parameterType="java.util.HashMap" resultMap="deptMap">
+		select deptid, deptcode, pdeptid, levelp, deptname, orgtype, orgseq, linkman, 
+			   phone, brsmna, areano, orgbusssize, orgnaturetype, orgbusstype, remark, disable
+		from pcmc_dept
+		where disable = 0 and corpcode=#{corpcode}
+			<if test="deptid != null and deptid != ''">
+				and deptid = #{deptid}
+			</if>
+			<if test="deptcode != null and deptcode != ''">
+				and deptcode = #{deptcode}
+			</if>
+			<if test="deptname != null and deptname != ''">
+				and deptname = #{deptname}
+			</if>
+			<if test="levelp != null and levelp != ''">
+				and levelp = #{levelp}
+			</if>
+	</select>
+	
+	<resultMap type="java.util.HashMap" id="userMap">
+		<result property="userid" column="userid"/>
+		<result property="deptid" column="deptid"/>
+		<result property="usercode" column="usercode"/>
+		<result property="username" column="username"/>
+		<result property="userpwd" column="userpwd"/>
+		<result property="phone" column="phone"/>
+		<result property="pagesize" column="pagesize"/>
+		<result property="menutype" column="menutype"/>
+		<result property="disable" column="disable"/>
+		<result property="remark" column="remark"/>
+		<result property="ussatg" column="ussatg"/>
+		<result property="chpwtm" column="chpwtm"/>
+		<result property="skinname" column="skinname"/>
+		<result property="email" column="email"/>
+		<result property="postcode" column="postcode"/>
+
+		<result property="default_role" column="default_role"/>
+	</resultMap>
+	<select id="queryUserInfo" parameterType="java.util.HashMap" resultMap="userMap">
+		select userid, deptid, usercode, username, userpwd, phone, pagesize, menutype, disable, remark,
+			   ussatg, chpwtm, skinname, email, postcode, default_role 
+		from pcmc_user
+		<where> 
+		   corpcode=#{corpcode}
+			<if test="userid != null and userid != ''">
+				and userid = #{userid}
+			</if>
+			<if test="usercode != null and usercode != ''">
+				and usercode = #{usercode}
+			</if>
+			<if test="username != null and username != ''">
+				and username = #{username}
+			</if>
+		</where>
+	</select>
+	
+	<resultMap type="java.util.HashMap" id="areaMap">
+		<result property="areano" column="area_no"/>
+		<result property="areaname" column="area_name"/>
+	</resultMap>
+	<select id="queryRuleArea" parameterType="java.util.HashMap" resultMap="areaMap">
+		select area_no,area_name from sys_pub_area 
+			where area_no in( 
+				select areano from pcmc_dept  where corpcode=#{corpcode} and  deptcode in 
+                <foreach collection="deptcode" index="index" item="code" open="(" close=")" separator=",">
+                   #{code}
+               </foreach>
+			)
+	</select>
+	<select id="queryArea" parameterType="java.util.HashMap" resultMap="areaMap">
+		select area_no,area_name from sys_pub_area 
+		<where>
+			<if test="useFlag!=null and useFlag==true">
+				and ho_flag = '1'
+			</if>
+			<if test="useFlag!=null and useFlag==false">
+				and ho_flag = '0'
+			</if>
+		</where>
+	</select>
+	
+	<select id="isRuleUser" parameterType="java.util.HashMap" resultMap="areaMap">
+		select userid,usercode,username from pcmc_user where usercode = #{usercode} and corpcode=#{corpcode}
+		and deptid in (select deptid from pcmc_dept where corpcode=#{corpcode} and deptcode in        
+		<foreach collection="deptcode" index="index" item="code" open="(" close=")" separator=",">
+             #{code}
+       </foreach>
+	</select>
+	 
+</mapper> 	  
+ 	 

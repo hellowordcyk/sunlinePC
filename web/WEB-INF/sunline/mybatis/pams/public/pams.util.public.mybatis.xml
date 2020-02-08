@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="com.sunline.pams.mybatis.public.pamsutil" >
+
+ 	 <select id="queryBackCalcDate" parameterType="String" resultType="String">
+		SELECT PARA_VALUE FROM SYS_PUB_PARA WHERE PARA_CODE = 'backCalcDate'
+ 	 </select> 	
+ 	 <select id="queryDataDate" parameterType="String" resultType="String">
+		SELECT PARA_VALUE FROM SYS_PUB_PARA WHERE PARA_CODE = 'sysDataDate'
+ 	 </select>
+ 	 <select id="queryTopArea" parameterType="String" resultType="String">
+		SELECT AREA_NO FROM SYS_PUB_AREA WHERE HQ_FLAG = 1
+ 	 </select> 	
+ 	 <select id="getAuthOrgList" parameterType="java.util.HashMap" resultType="String">
+		SELECT deptcode 
+		FROM V_AUTH_ORG 
+		where 1=1
+		<if test="userid != null and userid != '' ">
+		 and userid = #{userid}
+		</if>
+		<if test="levelp !=null and levelp !='' "> 
+		 and levelp = #{levelp}
+		 </if> 
+ 	 </select>
+ 	 <select id="queryTopDept" parameterType="String" resultType="String">
+ 	 	SELECT DEPTCODE FROM PCMC_DEPT WHERE DISABLE = '0' AND PDEPTID NOT IN (SELECT DEPTID FROM PCMC_DEPT)
+ 	 </select>
+ 	 
+ 	 <!-- 岗位映射 -->
+ 	 <resultMap type="java.util.HashMap" id="postMap">
+ 	     <result column="PARACD" property="postCode"/>
+ 	     <result column="PARANA" property="postName"/>
+ 	 </resultMap>
+ 	 <!-- 查询岗位 -->
+ 	 <select id="queryAllPostlistPage" parameterType="java.util.HashMap" resultMap="postMap">
+ 	     SELECT PARACD,PARANA
+ 	     FROM pcmc_knp_para 
+ 	     where paratp='post'
+ 	     <if test=" postNameLike != null and  postNameLike!= '' ">
+ 	         and PARANA LIKE #{postNameLike}
+ 	     </if> 
+ 	     <if test=" filterPost != null and filterPost !='' ">
+ 	         and PARACD != #{filterPost}
+ 	     </if>
+ 	     <if test=" postIn != null and postIn != '' ">
+ 	         and PARACD in (${postIn})
+ 	     </if>
+ 	 </select>
+ 	 
+ 	 	<!-- 查询系统参数表中 方案执行程序的路径 -->
+	<select id="querySysPubPara" resultType="String">
+		SELECT PARA_VALUE
+		FROM sys_pub_para
+		<where>
+			<if test=" paraCode != null and paraCode != '' ">
+				PARA_CODE = #{paraCode}
+			</if>
+		</where>
+
+	</select>
+ 	 
+ 	 <!-- 用户映射 -->
+ 	 <resultMap type="com.sunline.pams.entity.PcmcUser" id="pcmcUser">
+ 	     <result column="MANAGER_NO" property="userCode" jdbcType="VARCHAR" />
+ 	     <result column="AREA_NO" property="areaNo" jdbcType="VARCHAR" />
+ 	     <result column="MANAGER_NAME" property="userName" jdbcType="VARCHAR" />
+ 	 </resultMap>
+ 	 <!-- 查询用户 -->
+ 	 <select id="queryUserList" parameterType="java.util.HashMap" resultMap="pcmcUser">
+ 	     SELECT 
+ 	         MANAGER_NO ,
+ 	         AREA_NO,
+ 	         MANAGER_NAME 
+ 	     FROM sys_pub_manager 
+         WHERE #{dataDate}  BETWEEN START_DATE AND coalesce(end_date,#{dataDate})
+ 	     <if test=" areaNo != null and areaNo != '' ">
+ 	         AND AREA_NON = #{areaNo}
+ 	     </if>
+ 	 </select>
+ 	 
+ 	 <resultMap type="com.sunline.bimis.pcmc.db.PcmcDept" id="pcmcDeptResult">
+ 	     <result column="DEPTID" property="deptid" jdbcType="NUMERIC" />
+ 	     <result column="DEPTCODE" property="deptcode" jdbcType="NUMERIC" />
+ 	     <result column="DEPTNAME" property="deptname" jdbcType="NUMERIC" />
+ 	     <result column="AREANO" property="areano" jdbcType="NUMERIC" />
+ 	 </resultMap>
+ 	 <!-- 查询权限机构，过滤失效-->
+ 	 <select id="quryDeptList" parameterType="java.util.HashMap" resultMap="pcmcDeptResult">
+ 	     SELECT distinct vorg.DEPTID, vorg.DEPTCODE, dept.DEPTNAME, dept.AREANO
+ 	     FROM V_AUTH_ORG vorg
+ 	     inner join pcmc_dept dept on vorg.deptid = dept.deptid
+ 	     where dept.disable ='0' and vorg.userid = #{userid}
+ 	 </select>
+ 	 
+ 	 
+ 	 <select id="queryKeyValue" parameterType="java.util.HashMap" resultType="String">
+ 	 	  select para_value as "paraval" from sys_pub_para where rownum=1 and para_code=#{backCalcDays}
+ 	 </select>
+ 	 
+ 	 <select id="getOrgLevel" parameterType="java.util.HashMap" resultType="String">
+ 	       select max(org_level) from sys_pub_org_sub_v where org_no in (<foreach item="deptcode" collection="codeList" separator=",">#{deptcode}</foreach>)
+ 	 </select>
+ 	 
+ 	 <select id="getUserLegal" parameterType="java.util.HashMap" resultType="String">
+ 	   SELECT min(Deptcode) deptcode
+        FROM v_Auth_Org
+       WHERE Usercode = #{userCode}
+         AND Levelp = (SELECT MIN(Levelp) FROM v_Auth_Org WHERE Usercode = #{userCode})
+ 	 </select>
+ 	 
+ 	 <select id="getPermUserByUser" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+         SELECT a.Etlcd,
+                a.Etlna,
+                a.Permtp,
+                a.Typecd,
+                a.Typena,
+                a.Authtp,
+                a.Smrytx,
+                a.Offout
+           FROM Perm_User a
+          WHERE a.Etlcd  = #{etlModel}
+            and a.Typecd = #{usercd} 
+            and a.Permtp = 'USER'
+ 	 </select>
+ 	 <select id="getPermUserByRole" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+         SELECT a.Etlcd,
+                a.Etlna,
+                a.Permtp,
+                a.Typecd,
+                a.Typena,
+                a.Authtp,
+                a.Smrytx,
+                a.Offout
+           FROM Perm_User a
+          WHERE a.Etlcd  = #{etlModel}
+            and a.Typecd = #{roleid} 
+            and a.Permtp = 'ROLE'
+ 	 </select>
+ 	 
+ 	  	
+ 	<select id="getTableSeqNextVal" parameterType="java.util.HashMap" resultType="Long">
+ 	    SELECT ${tableName}_seq.Nextval FROM dual
+ 	</select>
+ 	
+</mapper> 	  
+ 	 

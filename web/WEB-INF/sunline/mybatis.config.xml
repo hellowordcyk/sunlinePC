@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>     
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">  
+<configuration>
+	<settings>
+      <setting name="callSettersOnNulls" value="true" />
+  	</settings>
+    <plugins>
+        <plugin interceptor="com.sunline.funcpub.privilege.mybatis.plugins.MybatisPagePlugin">
+            <property name="pageSqlId" value=".*listPage.*"/>
+            <property name="pageSqlNoCountId" value=".*PageNoCount.*"/>
+            <property name="dataprivId" value=".*datapriv.*"/>
+        </plugin>
+    </plugins>
+    <mappers>
+        <mapper resource="com/sunline/governor/mybatis/governor_initconfig.mybatis.xml"/>
+    </mappers>
+</configuration>

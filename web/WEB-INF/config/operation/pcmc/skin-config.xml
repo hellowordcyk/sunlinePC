@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="gb2312"?>
+<Sunline>
+	<Session></Session>
+	<Operation id="SkinUtilActor" bean="com.sunline.bimis.pcmc.skin.SkinUtilActor">
+		<Action name="changeSkinname" desc="更改皮肤名称"/>
+	</Operation>
+</Sunline>

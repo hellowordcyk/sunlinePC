@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="com.sunline.funcpub.mybatis.public.pcmcuserh" >
+ 	<resultMap type="com.sunline.funcpub.service.pcmcuserh.PcmcUserPasswordH" id="PcmcUserPasswordH">
+ 		<result column="CORPCODE" property="corpCode"/>
+ 		<result column="USERCODE" property="userCode"/>
+ 		<result column="USERNAME" property="userName"/>
+ 		<result column="USERPWD" property="userPwd"/>
+ 		<result column="DEPTID" property="deptID"/>
+ 		<result column="POSTCODE" property="postCode"/>
+ 		<result column="START_DATE" property="startDate" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+ 		<result column="END_DATE" property="endDate" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+ 	</resultMap>
+	<select id="getPcmcUserPasswordH" parameterType="java.util.HashMap" resultMap="PcmcUserPasswordH">
+		SELECT CORPCODE, USERCODE, USERNAME, USERPWD, DEPTID, POSTCODE, START_DATE, END_DATE FROM PCMC_USER_PASSWORD_H
+		<where>
+			<if test="corpCode != null and corpCode != '' ">
+				AND CORPCODE = #{corpCode}
+			</if>
+			<if test="userCode != null and userCode != '' ">
+				AND USERCODE = #{userCode}
+			</if>
+		</where>
+		ORDER BY START_DATE DESC
+	</select>
+	
+	<update id="updatePrevEndDate" parameterType="java.util.HashMap">
+		UPDATE PCMC_USER_PASSWORD_H SET 
+			END_DATE = #{prevEndDate}
+		WHERE CORPCODE = #{corpCode} AND USERCODE = #{userCode} AND END_DATE = #{maxEndDate}
+	</update>
+	
+	<insert id="inserPcmcUserPasswordH" parameterType="java.util.HashMap">
+		INSERT INTO PCMC_USER_PASSWORD_H(CORPCODE, USERCODE, USERNAME, USERPWD, DEPTID, POSTCODE, START_DATE, END_DATE)
+		SELECT 
+		     CORPCODE, USERCODE, USERNAME, USERPWD, DEPTID, POSTCODE,
+		     #{startDate} AS START_DATE,
+		     #{maxEndDate} AS END_DATE 
+		FROM PCMC_USER 
+		WHERE CORPCODE = #{corpCode} AND USERCODE = #{userCode}
+	</insert>
+</mapper> 	  

@@ -1,0 +1,435 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sunline.pams.mybatis.public.opasnimport" >
+	<!-- resultMap -->
+ 	<resultMap id="opClaFlowInfoMap" type="java.util.HashMap">
+ 		<result column="SORTNO" property="sortNo"/>
+ 		<result column="STATUS" property="status"/>
+ 		<result column="STATUS_NAME" property="statusName"/>
+ 		<result column="ROLEID" property="roleID"/>
+ 		<result column="YES_NEXT_STATUS" property="yesNextStatus"/>
+ 		<result column="NO_NEXT_STATUS" property="noNextStatus"/>
+ 	</resultMap>
+
+	<!-- 判断临时表是否存在 -->
+ 	<select id="existTable" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+ 		SELECT TABLE_NAME,COLUMN_NAME FROM USER_TAB_COLUMNS 
+ 		WHERE TABLE_NAME = #{_parameter}		
+ 	</select>
+ 	
+ 	<!-- 创建临时表 -->
+ 	<update id="createTempTable" parameterType="java.util.HashMap">
+ 		CREATE TABLE ${tempTableName}(
+ 			BEATCH_NO VARCHAR(20),
+ 			<foreach collection="columnArray" item="column">
+ 				${column} VARCHAR(100),
+ 			</foreach>
+ 			START_DATE VARCHAR(20),
+ 			END_DATE VARCHAR(20),
+ 			ASN_IN_OBJ VARCHAR(100),
+ 			CUR_ASN_RATE VARCHAR(100),
+ 			FLAG CHAR(1),
+ 			ERR_MSG VARCHAR(1000),
+ 			DATE_FMT_FLAG CHAR(1) DEFAULT '1',
+ 			RATE_FMT_FLAG CHAR(1) DEFAULT '1',
+ 			CLA_ASN_ID NUMERIC(19,0),
+ 			FLOW_ID NUMERIC(19,0)
+ 		)
+ 	</update>
+ 	
+ 	<!-- 删除临时表 -->
+ 	<update id="dropTempTable" parameterType="String">
+ 		DROP TABLE ${_parameter}
+ 	</update>
+ 	
+ 	<!-- 删除临时表数据 -->
+ 	<delete id="deleteTempTable" parameterType="java.util.HashMap">
+ 		DELETE FROM ${tempTableName} WHERE BEATCH_NO = #{beatchNo}
+ 	</delete>
+ 	
+ 	<!-- 将Excel数据插入临时表 -->
+ 	<insert id="insertToTempTable" parameterType="java.util.HashMap">
+ 		INSERT INTO ${tempTableName}(
+ 			<foreach collection="columnArray" item="column" separator=",">
+ 				${column.columnName}
+ 			</foreach>
+ 		)
+ 		VALUES(
+ 			<foreach collection="columnArray" item="column" separator=",">
+ 				#{column.columnValue}
+ 			</foreach>
+ 		)
+ 	</insert>
+ 	
+ 	<!-- 校验是否通过 -->
+ 	<select id="isPassChech" parameterType="java.util.HashMap" resultType="String">
+ 		SELECT COUNT(1) FROM ${tempTableName}
+ 		WHERE FLAG = '0' 
+ 		AND BEATCH_NO = #{beatchNo}
+ 	</select>
+ 	
+ 	<!-- 查询临时表数据 -->
+ 	<select id="queryTempTable" parameterType="String" resultType="java.util.HashMap">
+ 		SELECT 
+ 			<foreach collection="bizPKArray" item="bizPK" separator="," close=",">
+ 				${bizPK}
+ 			</foreach>
+ 			START_DATE, 
+ 			END_DATE,
+ 			ASN_IN_OBJ,
+ 			CUR_ASN_RATE,
+ 			ERR_MSG
+ 		FROM ${tempTableName}
+ 		WHERE BEATCH_NO = #{beatchNo}
+ 	</select>
+ 	
+ 	<!-- 校验业务表中管辖范围内主键是否存在-->
+ 	<update id="checkBizPkIsExist" parameterType="java.util.HashMap">
+ 		UPDATE ${tempTableName} A SET
+		    A.FLAG = '0',
+		    A.ERR_MSG = CONCAT(A.ERR_MSG,#{errMsg})
+		WHERE A.BEATCH_NO = #{beatchNo}
+		AND NOT EXISTS(
+		    SELECT 1 FROM ${bizTable} B 
+		    WHERE <foreach collection="bizPKArray" item="bizPK" separator="AND">A.${bizPK} = B.${bizPK}</foreach>
+		    AND B.ORG_NO IN (${orgPrivilegeSql})
+		)
+ 	</update>
+ 	
+ 	<!-- 校验业绩是否在审批流程中 -->
+ 	<update id="checkBizIsInCla" parameterType="java.util.HashMap">
+ 		UPDATE ${tempTableName} A SET
+		    A.FLAG = '0',
+		    A.ERR_MSG = CONCAT(A.ERR_MSG,#{errMsg})
+		WHERE A.BEATCH_NO = #{beatchNo}
+		AND EXISTS(
+		    SELECT 1 FROM ${bizTable} B
+		    INNER JOIN ${claTable} C 
+		    	ON <foreach collection="bizPKArray" item="bizPK" separator="AND">B.${bizPK} = C.${bizPK}</foreach>
+		    INNER JOIN OP_CLA_FLOW D 
+		    	ON C.FLOW_ID = D.FLOW_ID 
+		    	AND D.STATUS IN (SELECT STATUS FROM OP_FLOW_NODE WHERE TEMPLATE_CODE = #{templateCode})
+		    WHERE <foreach collection="bizPKArray" item="bizPK" separator="AND">A.${bizPK} = B.${bizPK}</foreach>
+		    AND B.ORG_NO IN (${orgPrivilegeSql})
+		)
+ 	</update>
+ 	
+ 	<!-- 同一业绩一次只能导入一个时间区间 -->
+ 	<update id="checkOnlyOneDateArea" parameterType="java.util.HashMap">
+		UPDATE ${tempTableName} A SET
+			A.FLAG = '0',
+		    A.ERR_MSG = CONCAT(A.ERR_MSG,#{errMsg})
+		WHERE A.BEATCH_NO = #{beatchNo}
+		AND A.DATE_FMT_FLAG = '1'
+		AND EXISTS(
+			SELECT 1 FROM(
+				SELECT 
+					<foreach collection="bizPKArray" item="bizPK" separator="," close=",">
+		     			${bizPK}
+		     		</foreach>
+		     		COUNT(*) AS COUNT
+		     	FROM(
+					SELECT
+						<foreach collection="bizPKArray" item="bizPK" separator="," close=",">
+			     			${bizPK}
+			     		</foreach>
+			     		START_DATE,
+			     		END_DATE
+					FROM ${tempTableName} 
+					WHERE BEATCH_NO = #{beatchNo} AND DATE_FMT_FLAG = '1'
+					GROUP BY <foreach collection="bizPKArray" item="bizPK" separator="," close=",">${bizPK}</foreach>START_DATE,END_DATE
+				)T
+				GROUP BY <foreach collection="bizPKArray" item="bizPK" separator=",">${bizPK}</foreach>
+			)B
+			WHERE B.COUNT <![CDATA[>]]> 1
+			AND <foreach collection="bizPKArray" item="bizPK" separator="AND">A.${bizPK} = B.${bizPK}</foreach>
+		)
+ 	</update>
+ 	
+ 	<!-- 开始日期不能大于结束日期 -->
+	<update id="checkStartDateLTEndDate" parameterType="java.util.HashMap">
+		UPDATE ${tempTableName} A SET
+		    A.FLAG = '0',
+		    A.ERR_MSG = CONCAT(A.ERR_MSG,#{errMsg})
+		WHERE A.BEATCH_NO = #{beatchNo}
+		AND A.DATE_FMT_FLAG = '1'
+		AND EXISTS(
+		    SELECT 1 FROM(
+		        SELECT 
+		            <foreach collection="bizPKArray" item="bizPK" separator="," close=",">
+		     			${bizPK}
+		     		</foreach>
+		            START_DATE,
+		            END_DATE,    
+		            CASE WHEN(STR_TO_DATE(START_DATE,'%Y-%m-%d') <![CDATA[>]]> STR_TO_DATE(END_DATE,'%Y-%m-%d')) THEN 0 ELSE 1 END AS DATE_FLAG 
+		        FROM ${tempTableName}
+		        WHERE BEATCH_NO = #{beatchNo} AND DATE_FMT_FLAG = '1'
+		    )B 
+		    WHERE B.DATE_FLAG = 0 
+		    AND A.START_DATE = B.START_DATE 
+		    AND A.END_DATE = B.END_DATE
+		    AND <foreach collection="bizPKArray" item="bizPK" separator="AND">A.${bizPK} = B.${bizPK}</foreach>
+		)				
+	</update>
+	
+	<!-- 开始日期必须大于该业绩已生效的最大结束日期 -->
+	<update id="checkStartDateGTMaxEndDate" parameterType="java.util.HashMap">
+		UPDATE ${tempTableName} A SET
+		    A.FLAG = '0',
+		    A.ERR_MSG = CONCAT(A.ERR_MSG,#{errMsg},'最大结束日期:',END_DATE)
+		WHERE A.BEATCH_NO = #{beatchNo}
+		AND DATE_FMT_FLAG = '1'
+		AND EXISTS(
+		    SELECT END_DATE FROM(
+		        SELECT 
+		            <foreach collection="bizPKArray" item="bizPK" separator="," close=",">
+		                ${bizPK}
+		            </foreach>
+		            MAX(CASE WHEN END_DATE IS NULL OR END_DATE = '' THEN STR_TO_DATE('2099-12-31','%Y-%m-%d') ELSE END_DATE END) AS END_DATE
+		        FROM ${asnTable}
+		        GROUP BY<foreach collection="bizPKArray" item="bizPK" separator="," >${bizPK}</foreach>
+		    )B
+		    WHERE STR_TO_DATE(A.START_DATE,'%Y-%m-%d')- B.END_DATE <![CDATA[<=]]> 0
+		    AND <foreach collection="bizPKArray" item="bizPK" separator=" AND ">A.${bizPK} = B.${bizPK}</foreach>
+		)
+	</update>
+	
+	<!-- 校验分入对象：同一账号不能有相同的分入对象 -->
+	<update id="checkNoSameAsnInObject" parameterType="java.util.HashMap">
+		UPDATE ${tempTableName} A SET
+			A.FLAG = '0',
+		    A.ERR_MSG = CONCAT(A.ERR_MSG,#{errMsg})
+		WHERE A.BEATCH_NO = #{beatchNo}
+		AND EXISTS(
+			SELECT 1 FROM(
+				SELECT 
+					<foreach collection="bizPKArray" item="bizPK" separator="," close=",">
+		     			${bizPK}
+		     		</foreach>
+		     		ASN_IN_OBJ,
+		     		COUNT(ASN_IN_OBJ) AS ASN_IN_OBJ_COUNT 
+				FROM ${tempTableName} WHERE BEATCH_NO = #{beatchNo}
+				GROUP BY ASN_IN_OBJ<foreach collection="bizPKArray" item="bizPK" separator="," open=",">${bizPK}</foreach>
+			)B
+			WHERE B.ASN_IN_OBJ_COUNT <![CDATA[>]]> 1
+			AND A.ASN_IN_OBJ = B.ASN_IN_OBJ
+			AND <foreach collection="bizPKArray" item="bizPK" separator="AND">A.${bizPK} = B.${bizPK}</foreach>
+		)
+	</update>
+	
+	<!-- 校验分入对象：是否存在，是否在权限范围内 -->
+	<update id="checkAsnInObjectIsExist" parameterType="java.util.HashMap">
+		UPDATE ${tempTableName} A SET
+			A.FLAG = '0',
+		    A.ERR_MSG = CONCAT(A.ERR_MSG,#{errMsg})
+		WHERE A.BEATCH_NO = #{beatchNo}
+		AND NOT EXISTS(
+			SELECT 1 FROM PCMC_USER B
+			WHERE A.ASN_IN_OBJ = B.USERCODE
+			AND B.USERCODE IN (${userPrivilegeSql})
+		)
+	</update>
+	
+	<!-- 校验分入对象：同一账号一个时间段的分入对象上限 -->
+	<update id="checkObjTop" parameterType="java.util.HashMap">
+		UPDATE ${tempTableName} A SET
+			A.FLAG = '0',
+		    A.ERR_MSG = CONCAT(A.ERR_MSG,#{errMsg})
+		WHERE A.BEATCH_NO = #{beatchNo}
+		AND EXISTS(
+			SELECT 1 FROM (
+				SELECT 
+					<foreach collection="bizPKArray" item="bizPK" separator="," close=",">
+		     			${bizPK}
+		     		</foreach>
+		     		START_DATE,
+		     		END_DATE,
+		     		COUNT(ASN_IN_OBJ) AS OBJ_TOP
+				FROM ${tempTableName}
+				WHERE BEATCH_NO = #{beatchNo}
+				GROUP BY <foreach collection="bizPKArray" item="bizPK" separator=",">${bizPK}</foreach>,START_DATE,END_DATE,
+			)B
+			WHERE B.OBJ_TOP <![CDATA[>]]> #{ObjTop}
+		)
+	</update>
+	
+	
+	
+	
+	<!-- 校验分配比例：不能为空 -->
+	<update id="checkRateNotNull" parameterType="java.util.HashMap">
+		UPDATE ${tempTableName} SET
+			FLAG = '0',
+		    ERR_MSG = CONCAT(ERR_MSG,#{errMsg})
+		WHERE BEATCH_NO = #{beatchNo} 
+		AND (CUR_ASN_RATE IS NULL OR CUR_ASN_RATE = '' OR  TO_NUMBER(CUR_ASN_RATE) <![CDATA[<=]]> 0 )
+	</update>
+	
+	<!-- 校验分配比例：同一账号同一时间区间总和不能超过比例上限 -->
+	<update id="checkRateTop" parameterType="java.util.HashMap">
+		UPDATE ${tempTableName} A SET
+			A.FLAG = '0',
+		    A.ERR_MSG = CONCAT(ERR_MSG,#{errMsg})
+		WHERE A.BEATCH_NO = #{beatchNo} 
+		AND A.RATE_FMT_FLAG = '1'
+		AND EXISTS(
+			SELECT 1 FROM(
+				SELECT 
+			        <foreach collection="bizPKArray" item="bizPK" separator="," close=",">
+		     			${bizPK}
+		     		</foreach>
+			        SUM(TO_NUMBER(CUR_ASN_RATE)) AS CUR_ASN_RATE_COUNT
+			    FROM ${tempTableName}
+			    WHERE RATE_FMT_FLAG = '1' AND BEATCH_NO = #{beatchNo} 
+			    GROUP BY <foreach collection="bizPKArray" item="bizPK" separator="," >${bizPK}</foreach>
+			)B
+			WHERE B.CUR_ASN_RATE_COUNT <![CDATA[>]]> #{rateTop}
+			AND<foreach collection="bizPKArray" item="bizPK" separator="AND">A.${bizPK} = B.${bizPK}</foreach>
+		)
+	</update>
+	
+	<!-- 校验分配比例：是否强制完全比例 -->
+	<update id="checkForceRateAll" parameterType="java.util.HashMap">
+		UPDATE ${tempTableName} A SET
+			A.FLAG = '0',
+		    A.ERR_MSG = CONCAT(ERR_MSG,#{errMsg})
+		WHERE A.BEATCH_NO = #{beatchNo} 
+		AND A.RATE_FMT_FLAG = '1'
+		AND NOT EXISTS(
+			SELECT 1 FROM(
+				SELECT 
+			        <foreach collection="bizPKArray" item="bizPK" separator="," close=",">
+		     			${bizPK}
+		     		</foreach>
+			        SUM(TO_NUMBER(CUR_ASN_RATE)) AS CUR_ASN_RATE_COUNT
+			    FROM ${tempTableName}
+			    WHERE RATE_FMT_FLAG = '1'
+			    AND BEATCH_NO = #{beatchNo} 
+			    GROUP BY <foreach collection="bizPKArray" item="bizPK" separator="," >${bizPK}</foreach>
+			)B
+			WHERE B.CUR_ASN_RATE_COUNT = #{rateTop}
+			AND<foreach collection="bizPKArray" item="bizPK" separator="AND">A.${bizPK} = B.${bizPK}</foreach>
+		)
+	</update>
+	
+	<!-- 更新临时表中自增长字段 -->
+	<update id="updateTempTableColumn" parameterType="java.util.HashMap">
+		UPDATE ${tempTableName} A SET
+			${column} = (SELECT IDX FROM SEQ_BLOCK WHERE NAME = #{tableName}) + TO_NUMBER(${column})
+		WHERE A.BEATCH_NO = #{beatchNo} 
+	</update>
+	
+	<!-- 查询有多少账号导入分配信息 -->
+	<select id="queryBizPK" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		SELECT DISTINCT ${bizPK} FROM(
+			<foreach item="tempTableName" collection="tempTableNameList" separator="UNION">
+				SELECT ${bizPK} FROM ${tempTableName} WHERE BEATCH_NO = ${beatchNo}
+			</foreach>
+		) T
+	</select>
+	
+	<!-- 更新临时表中流程ID -->
+	<update id="updateTempTableFlowID" parameterType="java.util.HashMap">
+		UPDATE ${tempTableName} SET
+			FLOW_ID = #{flowID}
+		WHERE BEATCH_NO = #{beatchNo}
+		<foreach item="pk" collection="pkList">
+			AND ${pk.pkColumn} = #{pk.pkValue}
+		</foreach>
+	</update>
+	
+	<!-- 更新 SEQ_BLOCK 表中的值 -->
+	<update id="updateSeqBolck" parameterType="java.util.HashMap">
+		UPDATE SEQ_BLOCK SET
+			IDX = IDX+(
+				SELECT 
+					(CASE 
+						WHEN MAX(${column}) IS NULL OR MAX(${column}) = '' THEN 0 
+						ELSE MAX(${column}) END
+					)+1 
+				FROM ${tempTableName} 
+			)
+		WHERE NAME = #{tableName}
+	</update>
+	
+	<!-- 将校验通过的数据插入认领表 -->
+	<insert id="insertDataCla" parameterType="java.util.HashMap">
+		INSERT INTO ${claTable}(
+			CLA_ID,FLOW_ID,START_DATE,END_DATE,CLA_IN_OBJ,
+			CUR_CLA_RATE,RECHECK,CLA_TYPE,START_AMT,END_AMT
+			<foreach collection="claColStrGetArray" item="claColStrGet" separator="," open=",">
+				${claColStrGet}
+			</foreach>
+		)SELECT 
+			A.CLA_ASN_ID AS CLA_ID,
+			A.FLOW_ID AS FLOW_ID,
+			TO_DATE(A.START_DATE,'yyyy-MM-dd') AS START_DATE,
+			TO_DATE(A.END_DATE,'yyyy-MM-dd') AS END_DATE,
+			A.ASN_IN_OBJ AS CLA_IN_OBJ,
+			TO_NUMBER(A.CUR_ASN_RATE)/100 AS CUR_CLA_RATE,
+			'0' AS RECHECK,
+			'1' AS CLA_TYPE,
+			NULL AS START_AMT,
+			NULL AS END_AMT
+			<foreach collection="claColStrGetArray" item="claColStrGet" separator="," open=",">
+				B.${claColStrGet}
+			</foreach>
+		FROM ${tempTableName} A
+		LEFT JOIN ${bizTable} B ON <foreach collection="bizPKArray" item="bizPK" separator="AND">A.${bizPK} = B.${bizPK}</foreach>
+		WHERE A.BEATCH_NO = #{beatchNo}
+	</insert>
+	<!-- 将校验通过的数据插入分配表 -->
+	<insert id="insertDataAsn" parameterType="java.util.HashMap">
+		INSERT INTO ${asnTable}(
+			ASN_ID,START_DATE,END_DATE,ASN_TYPE,ASN_IN_OBJ,
+			CUR_ASN_RATE,START_AMT,END_AMT,ASN_TIME,OPERATOR,STATUS,ASN_SRC
+			<foreach collection="asnColStrGetArray" item="asnColStrGet" separator="," open=",">
+				${asnColStrGet}
+			</foreach>
+		)
+		SELECT 
+			A.CLA_ASN_ID AS ASN_ID,
+			TO_DATE(A.START_DATE,'yyyy-MM-dd') AS START_DATE,
+			TO_DATE(A.END_DATE,'yyyy-MM-dd') AS END_DATE,
+			'1' AS ASN_TYPE,
+			A.ASN_IN_OBJ AS ASN_IN_OBJ,
+			TO_NUMBER(A.CUR_ASN_RATE)/100 AS CUR_ASN_RATE,
+			NULL AS START_AMT,
+			NULL AS END_AMT,
+			#{currentTime} AS ASN_TIME,
+			#{userCode} AS OPERATOR,
+			'1' AS STATUS,
+			'2' AS ASN_SRC
+			<foreach collection="asnColStrGetArray" item="asnColStrGet" separator="," open=",">
+				B.${asnColStrGet}
+			</foreach>
+		FROM ${tempTableName} A
+		LEFT JOIN ${bizTable} B ON <foreach collection="bizPKArray" item="bizPK" separator="AND">A.${bizPK} = B.${bizPK}</foreach>
+		WHERE A.BEATCH_NO = #{beatchNo}
+	</insert>
+	
+	<!-- 查询流程模板信息 -->
+ 	<select id="queryOpClaFlowInfo" parameterType="String" resultMap="opClaFlowInfoMap">
+ 		SELECT SORTNO,STATUS,STATUS_NAME,ROLEID,YES_NEXT_STATUS,NO_NEXT_STATUS FROM OP_CLA_FLOWINFO
+ 		WHERE TEMPLATE_CODE = #{_parameter} ORDER BY SORTNO
+ 	</select>
+ 	
+ 	<!-- 添加流程信息 -->
+ 	<insert id="addOpClaFlow" parameterType="java.util.HashMap">
+ 		INSERT INTO OP_CLA_FLOW(FLOW_ID,TEMPLATE_CODE,START_TIME,STATUS,ROLEID,AREA_NO)
+ 		SELECT DISTINCT FLOW_ID,TEMPLATE_CODE,START_TIME,STATUS,ROLEID,AREA_NO, OPERATOR FROM(
+ 			<foreach item="tempTableName" collection="tempTableNameList" separator="UNION">
+ 				SELECT 
+		 			FLOW_ID,
+		 			#{templateCode} AS TEMPLATE_CODE,
+		 			#{startTime} AS START_TIME,
+		 			#{status} AS STATUS,
+		 			#{roleID} AS ROLEID,
+		 			#{areaNo} AS AREA_NO,
+		 			#{userCode} AS OPERATOR
+		 		FROM ${tempTableName}
+		 		WHERE BEATCH_NO = #{beatchNo}
+ 			</foreach>
+ 		)T
+ 	</insert>
+</mapper> 

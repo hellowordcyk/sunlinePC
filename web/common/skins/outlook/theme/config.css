@@ -1,0 +1,78 @@
+.body {
+	scrollbar-face-color: #e5f3fc;
+	scrollbar-highlight-color: #79abcf;
+	scrollbar-shadow-color: #4b7c9f;
+	scrollbar-3dlight-color: #f0f9ff;
+	scrollbar-arrow-color: #000000;
+	scrollbar-track-color: #e9f5fd;
+	scrollbar-darkshadow-color: #e7f5fe;
+	margin: 0px;
+	padding: 0px;
+	scroll: no;
+	overflow: hidden;
+	font-family: "宋体";
+	font-size: 12px;
+	background-color: #5db3d4;
+}
+.img_topbg{
+    background:url(../images/login/config/login_top_line.jpg) repeat right 0;/*---修改背景图片---lizhx*/
+}
+/*--------------新增后台登录界面style-----------------lizhx*/
+
+.congiflogin-table{
+	width: 501px;
+	height: 277px;
+	font-size:12px;
+	background: url(../images/login/config/login-table.jpg) no-repeat center 0; 
+	display: black;	
+	border-collapse: collapse;
+}
+.congiflogin-table tr{
+	padding:0;
+	margin:0;
+	height: 25px;
+}
+}
+.captionTd{
+	font-size: 12px;
+	font-family: Arial "宋体";
+	color: #005581;
+	height: 25px;
+	padding: 5px 0 0 25px;
+}
+
+.input-box {
+	width: 150px;
+	height: 20px;
+	background-color: #fff;
+	border: 1px solid #248cbe;
+}
+
+
+.btn, .btn-over{
+	font-family:Arial, Helvetica, sans-serif;
+ 	width:70px;
+ 	border:0;
+ 	height:25px;
+	line-height: 20px;	
+  	color:#000; 
+  	padding: 3px 7px 0;
+ 	font: 12px;
+  	cursor:pointer;
+	margin-right: 20px;
+}
+.btn{
+	background:url(../images/login/config/loginbutton.gif) no-repeat; 
+}
+.btn-over{
+	background:url(../images/login/config/login-button-hover.gif) no-repeat;
+ }
+.index-panel-title{
+	height: 31px;
+	line-height: 31px;
+	background:url(../images/login/config/index-title.gif) repeat-x;
+	font-size:12px;
+	font-weight:700;
+	padding-left: 15px;
+	color:#19537c;
+}

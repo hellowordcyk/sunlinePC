@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="com.sunline.bimis.pcmc.priv.db.MdsPrvBase" table="MDS_PRV_BASE">
+		<id name="bscode" type="string">
+			<column length="32" name="BSCODE" scale="0"/>
+		</id>
+		
+		<property name="bsname" type="string">
+			<column length="64" name="BSNAME"/>
+		</property>
+		<property name="status" type="string">
+			<column length="1" name="STATUS"/>
+		</property>
+		<property name="sysopr" type="string">
+			<column length="32" name="SYSOPR"/>
+		</property>
+		<property name="operna" type="string">
+			<column length="64" name="OPERNA"/>
+		</property>
+	</class>
+</hibernate-mapping>

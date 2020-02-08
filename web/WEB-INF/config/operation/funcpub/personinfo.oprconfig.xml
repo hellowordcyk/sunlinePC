@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="gb2312"?>
+<Sunline>
+	<Session></Session>
+	
+	<Operation id="EditPassword"  bean="com.sunline.funcpub.portal.password.EditPassword"
+	   desc="密码管理">
+		<Action name="updatePassword" desc="修改密码"/>					
+		<Action name="findPasswordById" desc="根据userid获取用户密码信息" />
+		<Action name="updateDate" desc="更新日期"/>
+	</Operation>
+	
+</Sunline>

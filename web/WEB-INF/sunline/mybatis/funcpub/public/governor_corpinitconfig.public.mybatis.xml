@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sunline.governor.mybatis.public.corpinitconfig">
+	
+	<resultMap id="initConfig_resultMap" type="java.util.HashMap">
+		<result property="functionId" column="function_id"/> 
+		<result property="sequenceField" column="sequence_field"/> 
+		<result property="systemCode" column="system_code"/> 
+		<result property="functionTitle" column="function_title"/> 
+		<result property="functionTable" column="function_table"/> 
+		<result property="functionSortno" column="function_sortno"/> 
+		<result property="corporationField" column="corporation_field"/> 
+		<result property="functionSelectable" column="function_selectable"/> 
+		<result property="functionMandatory" column="function_mandatory"/> 
+		<result property="executionSysname" column="execution_sysname"/> 
+		<result property="executionOprid" column="execution_oprid"/> 
+		<result property="executionActions" column="execution_actions"/>
+		<result property="refTables" column="ref_tables"/>
+		<result property="refColumns" column="ref_columns"/>
+		<result property="repairClassName" column="class_name"/>
+	</resultMap>
+	
+	<!-- 法人初始化配置列表分页查询 -->
+	<select id="queryInitConfiglistPage" parameterType="java.util.HashMap" resultMap="initConfig_resultMap">
+		select function_id, sequence_field, system_code, function_title, function_table, function_sortno, corporation_field, 
+			   function_selectable, function_mandatory, execution_sysname, execution_oprid, execution_actions,ref_tables,ref_columns,b.cnname
+		from sys_init_function a inner join pcmc_subsys b on a.system_code=b.shortname
+		<where>
+			<if test="systemCode != null and systemCode !='%%'">
+				and system_code like #{systemCode}
+			</if>
+			<if test="functionTitle != null and functionTitle !='%%'">
+				and function_title like #{functionTitle}
+			</if>
+		</where>
+		order by b.orderidx,function_sortno,function_id asc
+	</select>
+	
+	<!--新增法人初始化配置信息  -->
+	<insert id="addInitConfig" parameterType="java.util.HashMap">
+		insert into sys_init_function (function_id, sequence_field, system_code, function_title, function_table, function_sortno,corporation_field,
+									   function_selectable,function_mandatory,ref_tables,ref_columns,execution_sysname, execution_oprid, execution_actions,class_name) 
+		values(#{functionId}, #{sequenceField}, #{systemCode}, #{functionTitle}, #{functionTable}, #{functionSortno},#{corporationField},
+			   #{functionSelectable}, #{functionMandatory}, #{refTables},#{refColumns},#{executionSysname}, #{executionOprid}, #{executionActions},#{repairClassName})
+	</insert>
+	
+	<!--修改法人初始化配置    -->
+	<update id="updateInitConfig" parameterType="java.util.HashMap">
+		update sys_init_function 
+		set sequence_field=#{sequenceField}, system_code=#{systemCode}, function_title=#{functionTitle},function_table=#{functionTable}, 
+		function_sortno=#{functionSortno},corporation_field=#{corporationField},function_selectable=#{functionSelectable},
+		function_mandatory=#{functionMandatory},execution_sysname=#{executionSysname}, execution_oprid=#{executionOprid}, execution_actions=#{executionActions}
+		,ref_tables=#{refTables},ref_columns=#{refColumns},class_name=#{repairClassName} 
+		<where>
+			<if test="functionId != null and functionId !=''">
+				function_id = #{functionId}
+			</if>
+		</where>
+	</update>
+	
+	<!--获取单个法人初始化配置  -->
+	<select id="getCorpInitConfig" parameterType="Long" resultMap="initConfig_resultMap">
+		select function_id, sequence_field, system_code, function_title, function_table, function_sortno, corporation_field, 
+			   function_selectable, function_mandatory, execution_sysname, execution_oprid, execution_actions,ref_tables,ref_columns,class_name 
+		from sys_init_function 
+		<where>
+			<if test="_parameter != null and _parameter !=''">
+				function_id = #{_parameter}
+			</if>
+		</where>
+	</select>
+	
+	<!--删除法人初始化配置    -->
+	<delete id="delInitConfig" parameterType="Long">
+		delete from sys_init_function 
+		<where>
+			<if test="_parameter != null and _parameter !=''">
+				function_id = #{_parameter}
+			</if>
+		</where>
+	</delete>
+	
+</mapper>

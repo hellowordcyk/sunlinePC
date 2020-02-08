@@ -1,0 +1,358 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sunline.funcpub.mybatis.public.privileges">
+	<!-- 查询所有权限数据 -->
+	<select id="queryPrivilegeDatalistPage" parameterType="java.util.HashMap" resultType="com.sunline.funcpub.privilege.PrivilegeData">
+		select 
+		  '${subsysCode}' as subsysCode,
+		  '${privType}' as privType,
+		  ${resourceCodeCol} as privCode,
+		  ${resourceNameCol} as privName
+		from ${resourceTable}
+		<where>
+		    corpcode=#{corpcode}
+			<if test="privCdOrNa !=null and privCdOrNa!='%%'">
+				and (
+				${resourceCodeCol} like #{privCdOrNa}
+				or
+				${resourceNameCol} like #{privCdOrNa}
+				) 
+			</if>
+		</where>
+	</select>
+	
+	<!-- 
+	查询用户所拥有的根据角色授权的资源权限， 
+	assignmentTable这个表assigneeCol字段存角色ID，
+	通过用户查询 时需关联pcmc_user_role表
+	-->
+	<select id="queryGrantedPrivilegeDataWithRolelistPage" parameterType="java.util.HashMap" resultType="com.sunline.funcpub.privilege.PrivilegeData">
+		select 
+		  '${subsysCode}' as subsysCode,
+		  '${privType}' as privType,
+		  a.${resourceCodeCol} as privCode,
+		  a.${resourceNameCol} as privName
+		from ${resourceTable} a
+		inner join ${assignmentTable} b 
+		on a.${resourceCodeCol} = b.${resourceCol} and a.corpcode=b.corpcode 
+		inner join pcmc_user_role c
+		on b.${assigneeCol} = c.roleid
+		inner join pcmc_user d
+		on c.userid = d.userid and d.corpcode=#{corpcode}
+		where d.usercode = #{assignee} and a.corpcode=#{corpcode}
+		<if test="constraint">
+			and b.subsys_code = #{subsysCode}
+			and b.priv_type = #{privType}
+		</if>
+		<if test="resource!=null and resource!=''">
+			and b.${resourceCodeCol} = #{resource}
+		</if>
+		<if test="privCdOrNa !=null and privCdOrNa != '' and privCdOrNa!='%%'">
+				and (
+				a.${resourceCodeCol} like #{privCdOrNa}
+				or
+				a.${resourceNameCol} like #{privCdOrNa}
+				) 
+		</if>
+	</select>
+	
+	<!-- 
+	查询用户或角色所拥有的根据已授权的资源权限，
+	角色授权时assignmentTable这个表assigneeCol字段存角色ID，
+	用户授权时assignmentTable这个表assigneeCol字段存用户CODE   
+	-->
+	<select id="queryGrantedPrivilegeDatalistPage" parameterType="java.util.HashMap" resultType="com.sunline.funcpub.privilege.PrivilegeData">
+		select 
+		  '${subsysCode}' as subsysCode,
+		  '${privType}' as privType,
+		  a.${resourceCodeCol} as privCode,
+		  a.${resourceNameCol} as privName
+		from ${resourceTable} a
+		inner join ${assignmentTable} b
+		on a.${resourceCodeCol} = b.${resourceCol} and a.corpcode=b.corpcode 
+		where b.${assigneeCol} = #{assignee} and a.corpcode=#{corpcode}
+		<if test="constraint">
+			and b.subsys_code = #{subsysCode}
+			and b.priv_type = #{privType}
+		</if>
+		<if test="resource!=null and resource!=''">
+			and b.${resourceCodeCol} = #{resource}
+		</if>
+		<if test="privCdOrNa != null and privCdOrNa != '' and privCdOrNa != '%%'">
+			and (
+			a.${resourceNameCol} like #{privCdOrNa}
+			or a.${resourceCodeCol} like #{privCdOrNa})
+		</if>
+	</select>
+	
+	<!-- 查询未授权角色列表 -->
+	<select id="queryUngrantRolelistPage" parameterType="java.util.HashMap" resultType="com.sunline.funcpub.privilege.PrivilegeAssignee">
+		select a.roleid as assigneeCode,a.rolename as assigneeName
+		from pcmc_role a 
+		inner join pcmc_subsys s
+		on a.subsysid = s.subsysid and a.corpcode=#{corpcode}
+		<if test="subsysCode != 'pcmc'">
+		and s.shortname = #{subsysCode}
+        </if>
+		where not exists (
+			select 1 
+			from ${resourceTable} b
+			inner join ${assignmentTable} c 
+			on b.${resourceCodeCol} = c.${resourceCol} and b.corpcode=c.corpcode 
+			where c.${assigneeCol} = a.roleid and b.corpcode=#{corpcode}
+			<if test="constraint">
+				and c.subsys_code = #{subsysCode}
+				and c.priv_type = #{privType}
+			</if>
+			<if test="resource!=null and resource!=''">
+				and c.${resourceCol} = #{resource}
+			</if>
+		)
+		<if test="assignee!=null and assignee!='%%'">
+			and 
+			(
+			a.roleid like #{assignee} 
+			or 
+			a.rolename like #{assignee}
+			)
+		</if>
+	</select>
+	
+	<!-- 查询已授权角色列表 -->
+	<select id="queryGrantedRolelistPage" parameterType="java.util.HashMap" resultType="com.sunline.funcpub.privilege.PrivilegeAssignee">
+		select a.roleid as assigneeCode,a.rolename as assigneeName
+        from pcmc_role a 
+        inner join pcmc_subsys s
+        on a.subsysid = s.subsysid and a.corpcode=#{corpcode}
+        <if test="subsysCode != 'pcmc'">
+        and s.shortname = #{subsysCode}
+        </if>
+        where exists(
+            select 1 
+            from ${resourceTable} b
+            inner join ${assignmentTable} c
+            on b.${resourceCodeCol} = c.${resourceCol} and b.corpcode=c.corpcode 
+            where c.${assigneeCol} = a.roleid and b.corpcode=#{corpcode}
+            <if test="constraint">
+                and c.subsys_code = #{subsysCode}
+                and c.priv_type = #{privType}
+            </if>
+            <if test="resource!=null and resource!=''">
+                and c.${resourceCol} = #{resource}
+            </if>
+        )
+        <if test="assignee!=null and assignee!='%%'">
+            and 
+            (
+            a.roleid like #{assignee} 
+            or 
+            a.rolename like #{assignee}
+            )
+        </if>
+	</select>
+	
+	<!-- 查询未授权用户列表 -->
+	<select id="queryUngrantUserlistPage" parameterType="java.util.HashMap" resultType="com.sunline.funcpub.privilege.PrivilegeAssignee">
+		select 
+			a.usercode as assigneeCode,a.username as assigneeName,d.deptcode as deptCode,d.deptname as deptName
+		from pcmc_user a
+		inner join pcmc_dept d on a.deptid = d.deptid and a.corpcode=d.corpcode 
+		where a.corpcode=#{corpcode} and not exists (
+			select 1 from ${resourceTable} b
+			inner join ${assignmentTable} c on b.${resourceCodeCol} = c.${resourceCol} and b.corpcode=c.corpcode 
+			where c.${assigneeCol} = a.usercode and b.corpcode=#{corpcode}
+			<if test="constraint">
+				and c.subsys_code = #{subsysCode}
+				and c.priv_type = #{privType}
+			</if>
+			<if test="resource!=null and resource!=''">
+				and c.${resourceCol} = #{resource}
+			</if>
+		)
+		<if test="deptid != null and deptid!=''">and a.deptid = #{deptid}</if>
+		<if test="assignee!=null and assignee!='%%'">
+			and (a.usercode like #{assignee} or a.username like #{assignee})
+		</if>
+	</select>
+	
+	<!-- 查询已授权用户列表 -->
+    <select id="queryGrantedUserlistPage" parameterType="java.util.HashMap" resultType="com.sunline.funcpub.privilege.PrivilegeAssignee">
+        select 
+        	a.usercode as assigneeCode,a.username as assigneeName,d.deptcode as deptCode,d.deptname as deptName
+        from pcmc_user a
+        inner join pcmc_dept d on a.deptid = d.deptid and a.corpcode=d.corpcode
+			<if test="deptid != null and deptid!=''">and a.deptid = #{deptid}</if>
+        inner join ${assignmentTable} b on b.${assigneeCol} = a.usercode and a.corpcode=b.corpcode
+        where a.corpcode=#{corpcode}
+        <if test="constraint">
+	        and b.subsys_code = #{subsysCode} and b.priv_type = #{privType}
+        </if>
+        <if test="resource!=null and resource!=''">
+            and b.${resourceCol} = #{resource}
+        </if>
+        <if test="assignee!=null and assignee!='%%'">
+           and ( a.usercode like #{assignee} or a.username like #{assignee} )
+       	</if>
+    </select>
+	
+	
+	<!-- 
+	查询当前非管理员 用户所拥有且已 授权给指定 角色的权限， 
+	-->
+	<select id="queryUnAdminGrantedPrivilegeDataWithRolelistPage" parameterType="java.util.HashMap" resultType="com.sunline.funcpub.privilege.PrivilegeData">
+		select 
+		  '${subsysCode}' as subsysCode,
+		  '${privType}' as privType,
+		  a.${resourceCodeCol} as privCode,
+		  a.${resourceNameCol} as privName
+		from ${resourceTable} a
+		left join ${assignmentTable} b
+		on a.${resourceCodeCol} = b.${resourceCol}  and a.corpcode=b.corpcode
+		<if test="assignee != null and assignee != ''">
+			and b.${assigneeCol}=#{assignee}
+		</if>
+		<if test="constraint">
+			and b.subsys_code = #{subsysCode}
+			and b.priv_type = #{privType}
+		</if>
+		inner join pcmc_user_role c
+		on b.${assigneeCol} = c.roleid
+		inner join pcmc_user d 
+		on c.userid=d.userid and d.corpcode=#{corpcode}
+		<if test="userCode != null and userCode != ''">
+			and d.usercode=#{userCode}
+		</if>
+		<where>
+			a.corpcode=#{corpcode} and b.${resourceCol} is not null
+			<if test="qName != null and qName != ''">
+				and a.${resourceNameCol} like #{qName}
+			</if>
+		</where>
+	</select>
+	
+	<!-- 
+	查询当前非管理员 用户所拥有且未 授权给指定 角色的权限， 
+	-->
+	<select id="queryUnGrantPrivilegeDataWithRolelistPage" parameterType="java.util.HashMap" resultType="com.sunline.funcpub.privilege.PrivilegeData">
+		select 
+		  '${subsysCode}' as subsysCode,
+		  '${privType}' as privType,
+		  a.${resourceCodeCol} as privCode,
+		  a.${resourceNameCol} as privName
+		from ${resourceTable} a
+		left join ${assignmentTable} b
+		on a.${resourceCodeCol} = b.${resourceCol} and a.corpcode=b.corpcode
+		<if test="assignee != null and assignee != ''">
+			and b.${assigneeCol}=#{assignee}
+		</if>
+		<if test="constraint">
+			and b.subsys_code = #{subsysCode}
+			and b.priv_type = #{privType}
+		</if>
+		inner join pcmc_user_role c
+		on b.${assigneeCol} = c.roleid
+		inner join pcmc_user d 
+		on c.userid=d.userid and d.corpcode=#{corpcode}
+		<if test="userCode != null and userCode != ''">
+			and d.usercode=#{userCode}
+		</if>
+		 where b.${resourceCol} is null and a.corpcode=#{corpcode}
+		 <if test="qName != null and qName != ''">
+			and a.${resourceNameCol} like #{qName}
+		</if>
+	</select>
+	<!-- 
+	查询当前子系统所拥有且未 授权给指定 角色的权限， （管理员登录）
+	-->
+	<select id="queryAdminUnGrantPrivilegeDataWithRolelistPage" parameterType="java.util.HashMap" resultType="com.sunline.funcpub.privilege.PrivilegeData">
+		select 
+		  '${subsysCode}' as subsysCode,
+		  '${privType}' as privType,
+		  a.${resourceCodeCol} as privCode,
+		  a.${resourceNameCol} as privName
+		from ${resourceTable} a  left join ${assignmentTable} x 
+		on a.${resourceCodeCol}= x.${resourceCol} and a.corpcode=x.corpcode 
+		<if test="assignee != null and assignee != ''">
+			and x.${assigneeCol}=#{assignee} 
+		</if>
+		
+		<if test="constraint">
+			and x.subsys_code = #{subsysCode}
+			and x.priv_type = #{privType}
+		</if>
+		where x.${resourceCol} is null and a.corpcode=#{corpcode}
+		<if test="qName != null and qName != ''">
+			and a.${resourceNameCol} like #{qName} 
+		</if>
+	</select>
+	
+	<resultMap type="java.util.HashMap" id="subsysMap">
+ 		<result property="shortname" column="shortname" jdbcType="VARCHAR"/>
+ 		<result property="cnname" column="cnname" jdbcType="VARCHAR"/>
+ 	</resultMap>
+	
+	<!-- 获取指定用户 所在子系统列表 -->
+	<select id="querySubsysCodeByUserId" parameterType="java.util.HashMap" resultMap="subsysMap">
+		select a.shortname,a.cnname from pcmc_subsys a 
+		inner join pcmc_role b on a.subsysid=b.subsysid and b.corpcode=#{corpcode}
+		inner join pcmc_user_role c on b.roleid=c.roleid  
+			<if test="userId != null and userId != ''">
+			and c.userid=#{userId}
+			</if>
+	</select>
+	
+	<!-- 查询未授权给用户的 资源权限 ，不关注登录用户-->
+	<select id="queryUserUngrantprivilegeDatalistPage" parameterType="java.util.HashMap" resultType="com.sunline.funcpub.privilege.PrivilegeData">
+		select '${subsysCode}' as subsysCode,
+		  '${privType}' as privType,
+		  a.${resourceCodeCol} as privCode,
+		  a.${resourceNameCol} as privName
+		   from ${resourceTable} a left join ${assignmentTable} b 
+		   on a.${resourceCodeCol}= b.${resourceCol} and a.corpcode=b.corpcode
+		   <if test="constraint">
+			and b.subsys_code = #{subsysCode}
+			and b.priv_type = #{privType}
+		  </if>
+		  <if test="assignee != null and assignee != ''">
+			and b.${assigneeCol}=#{assignee} 
+		  </if>
+		    where b.${assigneeCol} is null and a.corpcode=#{corpcode}
+		  <if test="qName != null and qName != ''">
+			and a.${resourceNameCol} like #{qName} 
+		  </if>
+	</select>
+	
+	<!-- 查询已授权给用户的 资源权限 ，不关注登录用户-->
+	<select id="queryUserGrantedprivilegeDatalistPage" parameterType="java.util.HashMap" resultType="com.sunline.funcpub.privilege.PrivilegeData">
+		select '${subsysCode}' as subsysCode,
+		  '${privType}' as privType,
+		  a.${resourceCodeCol} as privCode,
+		  a.${resourceNameCol} as privName
+		   from ${resourceTable} a left join ${assignmentTable} b 
+		   on a.${resourceCodeCol}= b.${resourceCol} and a.corpcode=b.corpcode
+		   left join pcmc_user c on b.${assigneeCol}=c.userid and b.corpcode=c.corpcode
+		   <if test="constraint">
+			and b.subsys_code = #{subsysCode}
+			and b.priv_type = #{privType}
+		  </if>
+		  <if test="assignee != null and assignee != ''">
+			and b.${assigneeCol}=#{assignee} 
+		  </if>
+		    where b.${assigneeCol} is not null and a.corpcode=#{corpcode}
+		     <if test="qName != null and qName != ''">
+			and a.${resourceNameCol} like #{qName} 
+		  </if>
+	</select>
+	
+	<!-- 查询用户是否有该资源的权限 -->
+	<select id="hasPermission" parameterType="java.util.HashMap" resultType="Long">
+		select count(1) as count
+		from ${assignmentTable}
+		where ${resourceCol}=#{resourceCode}
+		and ${assigneeCol} = #{assignee} and corpcode=#{corpcode}
+		<if test="constraint">
+			and b.subsys_code = #{subsysCode}
+			and b.priv_type = #{privType}
+		</if>
+	</select>
+</mapper>

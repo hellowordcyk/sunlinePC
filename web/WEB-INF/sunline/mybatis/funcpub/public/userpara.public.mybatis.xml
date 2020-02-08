@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="com.sunline.funcpub.mybatis.public.userpara" >
+	<select id="queryUserparalistPage" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		select distinct a.para_code "paracode",a.area_no "areano",b.area_name "areaname",a.para_name "paraname" from mo_par_info_org a
+		left join sys_pub_area b on a.area_no = b.area_no where a.status != 2 
+		<if test="areano != null">
+		    and a.area_no in
+		 	  <foreach collection="areano" index="index" item="dc" open="(" separator="," close=")">
+                      #{dc}
+                  </foreach>
+		</if>
+		<if test="paraname != null and paraname !=''">
+			and a.para_name like #{paraname}
+		</if>
+		<if test="status != null and status !=''">
+			and a.status = #{status}
+		</if>
+	</select>
+	
+	<select id="getAreaSelect" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		select distinct a.area_no "areano",a.AREA_NAME "areaname" from sys_pub_area a
+		left join pcmc_dept b on a.AREA_NO = b.AREANO
+		left join v_auth_resc c on b.DEPTCODE = c.resccd
+		<where>
+			<if test="subsys != null and subsys !=''">
+				and c.subsys = #{subsys}
+			</if>
+			<if test="resctp != null and resctp !=''">
+				and c.resctp = #{resctp}
+			</if>
+			<if test="userid != null and userid !=''">
+				and c.userid = #{userid}
+			</if>
+		</where>
+	</select>
+	<select id="getRuleAndParentArea" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		select distinct a.area_no "areano",a.AREA_NAME "areaname" from sys_pub_area a
+		left join pcmc_dept b on a.AREA_NO = b.AREANO
+		left join v_auth_resc c on b.DEPTCODE = c.resccd and b.corpcode=c.corpcode
+		<where>
+			b.corpcode=#{corpcode}
+			<if test="subsys != null and subsys !=''">
+				and c.subsys = #{subsys}
+			</if>
+			<if test="resctp != null and resctp !=''">
+				and c.resctp = #{resctp}
+			</if>
+			<if test="userid != null and userid !=''">
+				and c.userid = #{userid}
+			</if>
+		</where>
+		or a.area_no = (select areano from pcmc_dept where deptid = #{deptid} and corpcode=#{corpcode}) 
+	</select>
+	
+	<resultMap type="java.util.HashMap" id="checkParaName_rsm">
+	   <result column="para_code" property="para_code"/>
+	   <result column="para_name" property="para_name"/>
+	</resultMap>
+	<select id="checkParaName" parameterType="java.util.HashMap" resultMap="checkParaName_rsm">
+		select para_code,para_name from mo_par_info_org where para_name = #{paraname}
+	</select>
+	
+	<select id="getRuleDept" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		select deptid "deptid",deptcode "deptcode",deptname "deptname" from pcmc_dept where areano = #{areano} and (
+		deptid in 
+			(select deptid from pcmc_dept a 
+				left join v_auth_resc b on a.deptcode = b.resccd
+		        	where b.subsys = #{subsys} and b.resctp = #{resctp} and b.userid = #{userid}) 
+		or pdeptid in 
+			(select deptid from pcmc_dept a
+		    	left join v_auth_resc b on a.deptcode = b.resccd
+		        	where b.subsys = #{subsys} and b.resctp = #{resctp} and b.userid = #{userid})
+		)
+		group by deptid        	
+	</select>
+	<select id="getOrgseq" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		select  orgseq "orgseq" from pcmc_dept where deptid = #{deptid} 
+	</select>
+	<select id="getParentAndRuleDept" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		select deptid "deptid",deptcode "deptcode",deptname "deptname" from pcmc_dept where (areano = #{areano} and (
+		deptid in 
+			(select deptid from pcmc_dept a 
+				left join v_auth_resc b on a.deptcode = b.resccd
+		        	where b.subsys = #{subsys} and b.resctp = #{resctp} and b.userid = #{userid}) 
+		or pdeptid in 
+			(select deptid from pcmc_dept a
+		    	left join v_auth_resc b on a.deptcode = b.resccd
+		        	where b.subsys = #{subsys} and b.resctp = #{resctp} and b.userid = #{userid})
+		)) 
+			<if test="deptid != null">
+		     or deptid in 
+		 	  <foreach collection="deptid" index="index" item="dc" open="(" separator="," close=")">
+                       #{dc}
+                 </foreach>
+		</if>
+		group by deptid      
+	</select>
+	
+	<insert id="addMoParInfoOrg" parameterType="java.util.HashMap">
+		insert into mo_par_info_org(para_code,area_no,para_name,status,remark)
+		values(#{paracode,jdbcType=VARCHAR},#{areano,jdbcType=CHAR},#{paraname,jdbcType=VARCHAR},#{status,jdbcType=VARCHAR},#{remark,jdbcType=VARCHAR})
+	</insert>
+	
+	<insert id="addMoParDetailOrg" parameterType="java.util.HashMap">
+		insert into mo_par_detail_org(para_code,org_no,enable_date,disenable_date,area_no,para_value,operator,create_time)
+		values(#{paracode,jdbcType=VARCHAR},#{orgno,jdbcType=VARCHAR},#{enabledate,jdbcType=DATE},#{disenabledate,jdbcType=DATE},#{areano,jdbcType=CHAR},#{paravalue,jdbcType=NUMERIC},#{operator,jdbcType=CHAR},#{createtime})
+	</insert>
+	
+	<select id="getPdeptid" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		select pdeptid "pdeptid" from pcmc_dept where deptid = #{deptid}
+	</select>
+	
+	<update id="deleteUserpara" parameterType="java.util.HashMap">
+		update mo_par_info_org set status = 2 where para_code = #{paracode}
+	</update>
+	
+	<select id="queryMoParInfoOrg" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		select para_code "paracode",area_no "areano",para_name "paraname",status "status",remark "remark" from mo_par_info_org
+		where para_code = #{paracode}
+		<if test="areano != null and areano !=''">
+			and area_no = #{areano}
+		</if>
+	</select>
+	<select id="queryDateArea" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		select enable_date "enabledate",disenable_date "disenabledate" from mo_par_detail_org 
+		where para_code = #{paracode}  
+		<if test="areano != null and areano !=''">
+			and area_no = #{areano}
+		</if>
+		group by enable_date,disenable_date
+	</select>
+	<resultMap type="java.util.HashMap" id="detail">
+		<result column="para_code" property="paracode" javaType="string"/> 
+		<result column="org_no" property="orgno" javaType="string"/> 
+		<result column="enable_date" property="enabledate" javaType="string"/> 
+		<result column="disenable_date" property="disenabledate" javaType="string"/> 
+		<result column="area_no" property="areano" javaType="string"/> 
+		<result column="para_value" property="paravalue" javaType="int"/> 
+	</resultMap>
+	
+	<select id="queryMoParDetailOrg" parameterType="java.util.HashMap" resultMap="detail">
+		select para_code,org_no,enable_date,disenable_date ,area_no ,para_value 
+		from mo_par_detail_org where para_code = #{paracode}
+		<if test="areano != null and areano !=''">
+			and area_no = #{areano}
+		</if>
+		order by org_no
+	</select>
+	
+	<update id="updateMoParInfoOrg" parameterType="java.util.HashMap">
+		update mo_par_info_org set
+			area_no = #{areano},
+			para_name = #{paraname},
+			status = #{status},
+			remark = #{remark}
+		where para_code = #{paracode}
+	</update>
+	<delete id="deleteMoParDetailOrg" parameterType="java.util.HashMap">
+		delete from mo_par_detail_org where para_code = #{paracode}
+	</delete>
+	
+</mapper> 	  
+ 	 

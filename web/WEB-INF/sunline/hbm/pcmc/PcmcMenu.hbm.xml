@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 2006-1-9 20:10:32 by Hibernate Tools 3.1.0 beta1JBIDERC2 -->
+<hibernate-mapping>
+    <class name="com.sunline.bimis.pcmc.db.PcmcMenu" table="pcmc_menu">
+        <id name="menuid" type="java.lang.Long">
+            <column name="menuid" scale="0" />
+      		<generator class="com.sunline.jraf.id.HBNIDGenerator" >
+			    <param name="seqname">pcmc_menu</param>
+			    <param name="column">menuid</param>
+			</generator>
+        </id>
+        <many-to-one name="pcmcSubsys" class="com.sunline.bimis.pcmc.db.PcmcSubsys" fetch="select">
+            <column name="subsysid" scale="0" not-null="true" />
+        </many-to-one>
+        <property name="pmenuid" type="java.lang.Long">
+            <column name="pmenuid" scale="0" />
+        </property>
+        <property name="levelp" type="java.lang.Long">
+            <column name="levelp" precision="3" scale="0" not-null="true" />
+        </property>
+        <property name="menuname" type="string">
+            <column name="menuname" length="50" not-null="true" />
+        </property>
+        <property name="imgurl" type="string">
+            <column name="imgurl" length="100" />
+        </property>
+        <property name="linkurl" type="string">
+            <column name="linkurl" length="200" />
+        </property>
+        <property name="isinternet" type="string">
+            <column name="isinternet" length="1" />
+        </property>
+        <property name="remark" type="string">
+            <column name="remark" length="200" />
+        </property>
+        <property name="sortno" type="java.lang.Long">
+            <column name="sortno" precision="2" scale="0" />
+        </property>
+    </class>
+</hibernate-mapping>

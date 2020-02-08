@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="gb2312"?>
+<!-- 描述各个功能模块，以及各个具体的功能点  -->
+<Sunline>
+	<Session></Session>
+    <Operation id="organizationActor" bean="com.sunline.funcpub.actor.organization.OrganizationActor" 
+        desc="组织管理 ">
+        <Action name="query" desc="查询数据" acttype="query" />
+        <Action name="add" desc="增加数据" acttype="add" />
+        <Action name="update" desc="修改数据" acttype="update" />
+        <Action name="delete" desc="删除数据" acttype="delete" />
+        <Action name="queryNoPager" desc="查询不分页" acttype="query"></Action>
+        <Action name="organization_import" desc="导入不分页" acttype="import"></Action>
+        <Action name="downLoadOrganizationTemplate" desc="下载模板不分页" acttype="upload"></Action>
+        <Action name="organization_export" desc="导出不分页" acttype="export"></Action>
+    </Operation>
+</Sunline>

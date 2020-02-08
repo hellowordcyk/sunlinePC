@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="com.sunline.funcpub.mybatis.public.commonmenu" >
+	<!-- 获取一级菜单 -->
+	 <select id="getOneLevelMenu" parameterType="java.util.HashMap"   resultType="java.util.HashMap" >
+         select a.menuid "menuid",a.menuname "menuname",a.levelp "levelp",(select count(1) 
+         	from SYS_MENU_FAVOR b inner join pcmc_role_menu c on b.menuid = c.menuid  
+         	where a.menuid = b.menuid and b.userCode = #{userCode} 
+         	<if test="roleId!=null and roleId!=''">
+         		and c.roleid=#{roleId}
+         	</if>
+         	) as "checked" 
+         from pcmc_menu a 
+         <if test="roleId!=null and roleId!=''">
+         	inner join pcmc_role_menu b on a.menuid = b.menuid
+         </if> 
+         where a.levelp = 1  
+         <if test="subsysid!=null and subsysid!=''">
+         	and a.subsysid=#{subsysid} 
+         </if>
+         <if test="roleId!=null and roleId!=''">
+         	and b.roleid=#{roleId} 
+         </if>
+         <if test="corpcode!=null and corpcode!=''">
+         	and a.corpcode=#{corpcode} 
+         </if>
+         order by sortno
+    </select>
+    <!-- 获取子菜单 -->
+	 <select id="getChildMenu" parameterType="java.util.HashMap"   resultType="java.util.HashMap" >
+		  SELECT DISTINCT
+             A.menuid "menuid",
+             A.menuname "menuname",
+             A.levelp "levelp",
+             A.is_leaf "isleaf",
+           (
+                SELECT
+                    count(1)
+                FROM
+                    SYS_MENU_FAVOR D inner join pcmc_role_menu F on D.menuid = F.menuid
+                WHERE
+                    a.menuid = D.menuid 
+                AND d.userCode = #{userCode} 
+                <if test="roleId!=null and roleId!=''">
+                	AND F.roleid= #{roleId}
+                </if>
+                ) as "checked" 
+                  FROM
+                    pcmc_menu A 
+                    inner join pcmc_role_menu B on b.MENUID = A.MENUID 
+                    left join  pcmc_user_role C on  C.ROLEID = b.ROLEID
+                    left join  SYS_MENU_FAVOR D on  D.MENUID = B.MENUID
+                  WHERE
+                    c.userId=#{userId} 
+                    <if test="roleId!=null and roleId!=''">
+                    	and B.roleid= #{roleId}
+                    </if>
+                    and A. pmenuid = #{menuid}
+     </select>
+     <!-- 查询常用菜单 -->
+      <select id="queryCommonMenu"  parameterType="java.util.HashMap" resultType="java.lang.Integer">
+       select count(*) from SYS_MENU_FAVOR  where MENUID =#{menuId} AND userCode=#{userCode} 
+      </select>
+      <!-- 根据菜单编号查看是否是末级菜单 -->
+      <resultMap type="java.util.HashMap" id="queryCommonMenu_rsm">
+        <result column="is_leaf" property="is_leaf"/>
+      </resultMap>
+       <select id="queryIS_LEAF"  parameterType="java.util.HashMap" resultMap="queryCommonMenu_rsm">
+         select is_leaf  FROM pcmc_menu WHERE  MENUID =#{menuId} and corpcode=#{corpcode}
+      </select>
+     <!-- 添加常用菜单 -->
+    <insert id="addCommonMenu" parameterType="java.util.HashMap"  >
+       INSERT INTO SYS_MENU_FAVOR(userCode,MENUID) VALUES (#{userCode},#{menuId})
+    </insert>
+    
+ 	<!-- 删除常用菜单 -->
+ 	<delete id="delCommonMenu" parameterType="java.util.HashMap">
+ 	  DELETE FROM SYS_MENU_FAVOR WHERE MENUID=#{menuId} AND userCode=#{userCode} 
+ 	</delete>
+ 	<!-- -->
+ 	<select id="queryUserMenu" parameterType="java.util.HashMap"   resultType="java.util.HashMap" >
+     SELECT distinct
+            A.MENUID "menuid",
+            B.MENUNAME "menuname",
+            B.LINKURL "linkurl",
+            B.IS_LEAF "isleaf",
+            B.DISPLAYTYPE "displaytype"
+        FROM SYS_MENU_FAVOR A 
+        inner join pcmc_role_menu C on A.menuid = C.menuid , pcmc_menu  B
+        WHERE 
+           A.MENUID=B.MENUID
+           AND B.IS_LEAF='1'
+         <if test="roleId!=null and roleId!=''">
+           AND C.roleid = #{roleId,jdbcType=NUMERIC}
+         </if>
+          AND A.userCode = #{userCode,jdbcType=VARCHAR}
+    </select>
+    <select id="queryMax" parameterType="java.util.HashMap"   resultType="Integer"  >
+     select count(*) as max from SYS_MENU_FAVOR a
+     inner join PCMC_ROLE_MENU b
+     on a.menuid = b.menuid 
+     WHERE a.userCode=#{userCode} 
+     <if test="roleId!=null and roleId!=''">
+        and b.roleid=#{roleId}
+     </if>
+    </select>
+    
+    <select id="favorGetSubsys" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+    	select distinct sub.subsysid "subsysid",sub.cnname as "cnname"
+	       from pcmc_user u
+	      inner join pcmc_user_role ur
+	         on u.userid = ur.userid
+	         <if test="userId!=null">
+	         	and u.userid=#{userId}
+	         </if>
+	         <if test="roleId!=null">
+	         	and ur.roleid=#{roleId}
+	         </if>
+	      inner join pcmc_role_menu rm
+	         on ur.roleid = rm.roleid
+	      inner join pcmc_menu m
+	         on rm.menuid=m.menuid
+	      inner join pcmc_subsys sub
+	         on m.subsysid=sub.subsysid
+    </select>
+</mapper> 	  

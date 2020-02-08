@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="gb2312"?>
+<!-- 功能页面  -->
+<Sunline>
+    <Session></Session>
+    
+    <Operation id="sysFuncPageActor"  bean="com.sunline.funcpub.portal.func.page.actor.SysFuncPageActor"  
+        desc="系统功能页面操作类" >
+        <Action name="addSysFuncPage" desc="新增系统功能页面" acttype="add"/>
+        <Action name="addSysFuncPages" desc="批量新增系统功能页面" acttype="add"/>
+        <Action name="updateSysFuncPage" desc="修改系统功能页面" acttype="update"/>
+        <Action name="querySysFuncPage" desc="查询系统功能页面" acttype="query"/>
+        <Action name="deleteSysFuncPage" desc="删除系统功能页面" acttype="delete"/>
+        <Action name="deleteSysFuncPages" desc="批量删除系统功能页面" acttype="delete"/>
+        <Action name="getSysFuncPage" desc="获取系统功能页面" acttype="query"/>
+        <Action name="initSystemPageFile" desc="初始化系统功能页面" acttype="deal"/>
+        <Action name="sysFunc_import" desc="导入" acttype="import"/>
+        <Action name="downLoadSysFuncTemplate" desc="模板" acttype="import"/>
+        <Action name="sysFunc_export" desc="导出" acttype="export"/>
+    </Operation>
+    
+</Sunline>

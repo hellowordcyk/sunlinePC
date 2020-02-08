@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="com.sunline.funcpub.mybatis.public.syspara" >
+	<select id="querySysparalistPage" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		select para_code "paracode", para_name "paraname", value_type "valuetype", para_value "paravalue", remark "remark" from sys_pub_para
+		<where>
+			<if test="paracode != null and paracode !=''">
+				and para_code = #{paracode}
+			</if>
+			<if test="paraname != null and paraname !=''">
+				and para_name like #{paraname}
+			</if>
+		</where>
+	</select>
+	
+	<resultMap id="sysPara_resultMap" type="java.util.HashMap">
+		 <result property="paraCode" column="para_code"/>     
+		 <result property="paraName" column="para_name"/>     
+		 <result property="valueType" column="value_type"/>     
+		 <result property="paraValue" column="para_value"/>     
+		 <result property="remark" column="remark"/>     
+		 <result property="paraType" column="para_type"/>     
+		 <result property="inputType" column="input_type"/>     
+		 <result property="inputCheck" column="input_check"/>     
+		 <result property="scType" column="select_dicttype"/>     
+	</resultMap>
+	
+	<select id="querySysparaByParaType" parameterType="string" resultMap="sysPara_resultMap">
+		select para_code, para_name , value_type , para_value , input_check, remark ,para_type, input_type, select_dicttype from sys_pub_para
+		<where>
+			<if test="_parameter != null and _parameter !=''">
+				para_type = #{_parameter}
+			</if>
+		</where>
+		order by sortno asc
+	</select>
+	
+	<update id="updateSyspara"  parameterType="java.util.HashMap">
+		update sys_pub_para set 
+			para_value = #{paravalue,jdbcType=VARCHAR},
+			remark = #{remark,jdbcType=VARCHAR}
+		where para_code = #{paracode}
+	</update>
+	
+	<select id="queryBasicInfo" parameterType="java.util.HashMap" resultMap="sysparaMap">
+		select a.PARA_VALUE as sitename, b.PARA_VALUE as loginfooter, c.PARA_VALUE as footer, d.PARA_VALUE as bankpic from SYS_PUB_PARA a, SYS_PUB_PARA b, SYS_PUB_PARA c, SYS_PUB_PARA d 
+		where a.PARA_CODE = 'sitename' and b.PARA_CODE = 'loginfooter' and c.PARA_CODE = 'footer'  and d.PARA_CODE = 'bankpic'
+	</select>
+	
+	<update id="updateBasicInfoSitename"  parameterType="java.util.HashMap">
+		update sys_pub_para set 
+			para_value = #{sitename,jdbcType=VARCHAR}
+		where para_code = 'sitename'
+	</update>
+	
+	<update id="updateBasicInfoLoginfooter"  parameterType="java.util.HashMap">
+		update sys_pub_para set 
+			para_value = #{loginfooter,jdbcType=VARCHAR}
+		where para_code = 'loginfooter'
+	</update>
+	
+	<update id="updateBasicInfoFooter"  parameterType="java.util.HashMap">
+		update sys_pub_para set 
+			para_value = #{footer,jdbcType=VARCHAR}
+		where para_code = 'footer'
+	</update>
+	
+	<update id="updateBasicInfoBankpic"  parameterType="java.util.HashMap">
+		update sys_pub_para set 
+			para_value = #{bankpic,jdbcType=VARCHAR}
+		where para_code = 'bankpic'
+	</update>
+	
+	<select id="queryLoginInfo" parameterType="java.util.HashMap" resultMap="sysparaMap">
+		select a.PARA_VALUE as sitename, b.PARA_VALUE as loginfooter, c.PARA_VALUE as bankpic from SYS_PUB_PARA a, SYS_PUB_PARA b, SYS_PUB_PARA c, SYS_PUB_PARA d 
+		where a.PARA_CODE = 'sitename' and b.PARA_CODE = 'loginfooter' and c.PARA_CODE = 'bankpic'
+	</select>
+	
+	<select id="queryIndexInfo" parameterType="java.util.HashMap" resultMap="sysparaMap">
+		select a.PARA_VALUE as sitename, b.PARA_VALUE as footer, c.PARA_VALUE as bankpic from SYS_PUB_PARA a, SYS_PUB_PARA b, SYS_PUB_PARA c, SYS_PUB_PARA d 
+		where a.PARA_CODE = 'sitename' and b.PARA_CODE = 'footer' and c.PARA_CODE = 'bankpic'
+	</select>
+	
+	<resultMap type="java.util.HashMap" id="sysparaMap">
+    	<result column="sitename" property="sitename"/>
+    	<result column="loginfooter" property="loginfooter"/>
+    	<result column="footer" property="footer"/>
+    	<result column="bankpic" property="bankpic"/>
+    </resultMap>
+</mapper> 	  
+ 	 

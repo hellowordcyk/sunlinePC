@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="gb2312"?>
+<!-- 公共功能  -->
+<Sunline>
+	<Session></Session>
+	<!-- 文档管理 -->
+	<Operation id="loginLogActor"
+		bean="com.sunline.funcpub.log.actor.LoginLogActor" desc="登录日志管理"
+		filterpath="/funcpub/log/login/">
+		<Action name="queryLoginLogList" desc="查询系统登录日志" acttype="query" />
+		<Action name="getLoginLogUserDetail" desc="统计单个用户登录信息" acttype="query" />
+	</Operation>
+</Sunline>

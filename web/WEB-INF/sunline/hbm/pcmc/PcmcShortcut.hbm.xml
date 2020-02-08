@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 2006-1-9 20:10:32 by Hibernate Tools 3.1.0 beta1JBIDERC2 -->
+<hibernate-mapping>
+    <class name="com.sunline.bimis.pcmc.db.PcmcShortcut" table="pcmc_shortcut">
+        <id name="shortcutid" type="java.lang.Long">
+            <column name="shortcutid" scale="0" />
+      		<generator class="com.sunline.jraf.id.HBNIDGenerator" >
+			    <param name="seqname">pcmc_shortcut</param>
+			    <param name="column">shortcutid</param>
+			</generator>
+        </id>
+        <many-to-one name="pcmcUser" class="com.sunline.bimis.pcmc.db.PcmcUser" fetch="select">
+            <column name="userid" scale="0" not-null="true" />
+        </many-to-one>
+        <many-to-one name="pcmcMenu" class="com.sunline.bimis.pcmc.db.PcmcMenu" fetch="select">
+            <column name="menuid" scale="0" not-null="true" />
+        </many-to-one>
+        <property name="hint" type="string">
+            <column name="hint" length="50" />
+        </property>
+    </class>
+</hibernate-mapping>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="com.sunline.pams.mybatis.public.opmix" >
+ 	
+ 	<select id="getMaxEndDate" parameterType="java.util.HashMap" resultType="java.util.Date">
+ 		SELECT 
+		    MAX(
+		    	CASE 
+		    		WHEN END_DATE IS NULL OR END_DATE = '' OR END_DATE = STR_TO_DATE('2099-12-31','%Y-%m-%d') THEN START_DATE
+		    		ELSE END_DATE 
+		    	END
+		    ) AS END_DATE
+		FROM ${asnTable}
+		<foreach collection="bizPKList" item="bizPK" open="WHERE" separator=" OR ">
+			<foreach collection="bizPK" item="pk" open="(" separator=" AND " close=")">
+			
+				<if test="pk.colName != 'DATA_DATE' ">
+					 ${pk.colName} = #{pk.colValue}
+				</if>
+				<if test="pk.colName == 'DATA_DATE' ">
+					 ${pk.colName}  = to_date(substr(#{pk.colValue},1,10),'yyyy-mm-dd') 
+				</if>
+			</foreach>
+		</foreach>
+ 	</select>
+ 	
+ 	<update id="updateEndDate">
+ 		UPDATE ${asnTable} SET
+ 			END_DATE = #{endDate}
+ 		WHERE END_DATE = STR_TO_DATE('2099-12-31','%Y-%m-%d')
+		<foreach collection="pkInfo" item="pk">
+ 			<if test="pk.pkName != 'DATA_DATE' ">
+				AND ${pk.pkName} = #{pk.pkValue}
+			</if>
+			<if test="pk.pkName == 'DATA_DATE' ">
+				AND ${pk.pkName}  = to_date(substr(#{pk.pkValue},1,10),'yyyy-mm-dd') 
+			</if>
+ 		</foreach>
+ 	</update>
+</mapper> 	  
+ 	 

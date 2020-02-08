@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sunline.bimis.pcmc.mybatis">
+	<insert id="insertRole" parameterType="java.util.HashMap">
+		insert into pcmc_role(roleid,rolename,subsysid,remark,deptid,corpcode) values(#{roleid},#{rolename},#{subsysid},#{remark},#{deptid},#{corpcode})
+	</insert>
+	<insert id="insertRoleOrg" parameterType="java.util.HashMap">
+		insert into PCMC_ROLE_ORG(roleid,gorgtype) values(#{roleid},#{gorgtype})
+	</insert>
+	<update id="updateRole" parameterType="java.util.HashMap" >
+		update pcmc_role set rolename=#{rolename},subsysid=#{subsysid},deptid=#{deptid},remark=#{remark} where roleid=#{roleid}
+	</update>
+	<update id="delRoleOrg" parameterType="java.util.HashMap" >
+		delete from pcmc_role_org where roleid=#{roleid}
+	</update>
+</mapper>

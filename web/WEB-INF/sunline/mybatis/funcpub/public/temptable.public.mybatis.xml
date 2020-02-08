@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="com.sunline.funcpub.mybatis.public.temptable" >
+ 
+    <!-- 插入临时表时查询sysSchema -->
+	<select id="querySchemaSql" resultType="java.util.HashMap">
+		select para_value "val" from sys_pub_para where para_code = 'sysSchema' and #{id} = #{id}
+ 	</select> 	
+ 	 
+    <!-- 查询临时表是否存在 -->
+    <select id="queryExistSql" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+       select count(*) "tcount" from information_schema.tables  
+       where table_namE = #{tableName} and table_schema = #{sysSchema}
+    </select>   
+    
+</mapper> 	  

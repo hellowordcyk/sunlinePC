@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="com.sunline.pams.mybatis.public.kpireportconfig" >
+	 <insert id="addApPsnKpiReport" parameterType="java.util.HashMap">
+	 	INSERT INTO AP_PSN_KPI_REPORT(RPT_ID,AREA_NO,RPT_NAME,APPLY_TYPE,USE_FLAG,OPERATER,OP_TIME) 
+	 	VALUES(#{rptID},#{areaNo},#{rptName},#{applyType},1,#{operater},to_date(#{opTime},'yyyy-MM-dd'))
+	 </insert>
+	 <insert id="addApPsnKpiRepportDet" parameterType="java.util.HashMap">
+	 	INSERT INTO AP_PSN_KPI_REPORT_DET(RPT_ID,KPI_CODE,KPI_NAME,ITERM_SEQ,SORT_NO) 
+	 	VALUES(#{rptID},#{kpiCode},#{kpiName},#{itermSeq},#{sortNo})
+	 </insert>
+	 <select id="queryKpiReportlistPage" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		SELECT a.RPT_ID as "rptID",a.RPT_NAME as "rptName",a.APPLY_TYPE as "applyType",a.OPERATER as "operater",to_char(a.OP_TIME,'yyyy-MM-dd') as "opTime",b.USERNAME as "managerName" 
+		FROM AP_PSN_KPI_REPORT a 
+		LEFT JOIN PCMC_USER b on a.OPERATER = b.USERCODE
+		WHERE a.USE_FLAG = 1
+		<if test= "areaNo != null and areaNo != ''">
+		 	AND a.AREA_NO = #{areaNo}
+		</if>
+		<if test= "rptName != null and rptName != ''">
+		 	AND a.RPT_NAME LIKE #{rptName}
+		</if>
+		<if test= "applyType != null and applyType != ''">
+		 	AND a.APPLY_TYPE = #{applyType}
+		</if>
+	 </select>
+	 <update id="delKpiReport" parameterType="java.util.HashMap">
+	 	UPDATE AP_PSN_KPI_REPORT SET USE_FLAG = 0 WHERE RPT_ID = #{rptID}
+	 </update>
+	 <select id="getKpiReportConfig" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+	 	SELECT DISTINCT A.RPT_ID as "rptID",A.RPT_NAME as "rptName",A.APPLY_TYPE as "applyType",B.ITERM_SEQ as "itermSeq"
+	 	FROM AP_PSN_KPI_REPORT A,AP_PSN_KPI_REPORT_DET B
+		WHERE A.RPT_ID = B.RPT_ID  AND A.RPT_ID = #{rptID}
+	 </select>
+	 <select id="getKpiReportConfigDet" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+	 	SELECT RPT_ID as "rptID",KPI_CODE as "kpiCode",KPI_NAME as "kpiName",SORT_NO as "sortNo",ITERM_SEQ as "itermSeq"  FROM AP_PSN_KPI_REPORT_DET
+		WHERE RPT_ID = #{rptID} ORDER BY SORT_NO 
+	 </select>
+	 <update id="updateApPsnKpiReport" parameterType="java.util.HashMap">
+	 	UPDATE AP_PSN_KPI_REPORT SET
+	 		RPT_NAME = #{rptName},
+	 		APPLY_TYPE = #{applyType},
+	 		OPERATER = #{operater},
+	 		OP_TIME = to_date(#{opTime},'yyyy-MM-dd')
+	 	WHERE RPT_ID = #{rptID}
+	 </update>
+	 <delete id="delKpiReportConfigDet" parameterType="java.util.HashMap" >
+	 	DELETE FROM AP_PSN_KPI_REPORT_DET WHERE RPT_ID = #{rptID}
+	 </delete>
+	 
+	 
+	 
+	 <!-- 自定义指标报表查询 -->
+	 <select id="getApplyType" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+	 		SELECT APPLY_TYPE AS "applyType",RPT_NAME AS "rptName" FROM AP_PSN_KPI_REPORT WHERE RPT_ID = #{_parameter}
+	 </select>
+	 <select id="queryPiOrgKpilistPage" parameterType="String" resultType="java.util.HashMap">
+	 	${_parameter}
+	 </select>
+	
+</mapper> 	  
+ 	 

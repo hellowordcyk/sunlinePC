@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="gb2312"?>
+<!-- 功能页面  -->
+<Sunline>
+    <Session></Session>
+    
+    <Operation id="menuLogActor"  bean="com.sunline.funcpub.actor.menuvisitlog.MenuVisitLogActor"  
+        desc="菜单访问日志记录操作类" >
+        <Action name="insertMenuVisitLog" desc="新增系统功能页面" acttype="insert"/>
+        <Action name="queryMenuVisitLog" desc="按条件查询菜单访问日志" acttype="query"/>
+        <Action name="getMenuVisitLogStatus" desc="获取是否记录日志状态" acttype="query"/>
+    </Operation>
+    
+</Sunline>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="gb2312"?>
+<Sunline>
+	<Session></Session>
+	
+	<!-- 法人交易配置 -->
+	<Operation id="upgradeActor" bean="com.sunline.governor.actor.UpgradeActor" desc="系统升级管理" >
+		<Action name="getUserPwdCount" desc="查询DES,MD5密码个数" acttype="query" />
+		<Action name="convertPwd2MD5" desc="将密码转换为MD5加密" acttype="edit" />
+	</Operation>
+	
+	
+</Sunline>

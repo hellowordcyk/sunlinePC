@@ -1,0 +1,562 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="com.sunline.pams.mybatis.public.analyze" >
+ 	  
+ 	  <resultMap type="java.util.HashMap" id="queryMvpPasetlistPage_map">
+ 	  		<result column="SUM_TYPE" property="sum_type"/>
+ 	  		<result column="SUM_SUBTYPE" property="sum_subtype"/>
+ 	  		<result column="KPI_CODE" property="kpi_code"/>
+ 	  		<result column="KPI_NAME" property="kpi_name"/>
+ 	  </resultMap>
+	 	   
+ 	 <!--MVP业绩配置表信息维护 -->
+ 	 <select id="queryMvpPasetlistPage" parameterType="java.util.HashMap" resultMap="queryMvpPasetlistPage_map">
+		select  
+		sum_type  as SUM_TYPE,
+		sum_subtype as  SUM_SUBTYPE,
+		kpi_code  as KPI_CODE,
+		kpi_name as KPI_NAME
+		from md_mvp_paset 
+		<where>
+			<if test= "kpi_name != null and kpi_name != ''"> 
+				and kpi_name like #{kpi_name} <!-- 模糊查询 -->
+			</if>	
+			<if test= "kpi_code != null and kpi_code != ''"> 
+				and kpi_code like #{kpi_code} <!-- 模糊查询 -->
+			</if>
+			<if test= "sum_type != null and sum_type != ''"> 
+				and sum_type like #{sum_type} <!-- 模糊查询 -->
+			</if>
+			<if test= "sum_subtype != null and sum_subtype != ''"> 
+				and sum_subtype like #{sum_subtype} <!-- 模糊查询 -->
+			</if>
+		</where>
+ 	 </select> 	
+ 	 
+ 	 <insert id="insertMvpPaset" parameterType="java.util.HashMap" >
+	 	insert into md_mvp_paset 
+	 	(sum_type,
+	 	sum_subtype,
+	 	kpi_code,
+	 	kpi_name) 
+	 	values
+	 	(#{sum_type},
+	 	#{sum_subtype},
+	 	#{kpi_code},
+	 	#{kpi_name})
+ 	 </insert>
+
+     <update id="updateMvpPaset" parameterType="java.util.HashMap" >  
+        update md_mvp_paset set 
+        sum_type=#{sum_type},
+        sum_subtype=#{sum_subtype},
+        kpi_code=#{kpi_code},
+        kpi_name=#{kpi_name} 
+        where 1=1
+        and kpi_code=#{kpi_code}
+     </update>
+     
+     <delete id="deleteMvpPaset" parameterType="java.util.HashMap" >
+    	delete from md_mvp_paset 
+    	where kpi_code=#{kpi_code}
+     </delete>
+     
+       <resultMap type="java.util.HashMap" id="queryMvpPasetById_map">
+ 	  		<result column="SUM_TYPE" property="sum_type"/>
+ 	  		<result column="SUM_SUBTYPE" property="sum_subtype"/>
+ 	  		<result column="KPI_CODE" property="kpi_code"/>
+ 	  		<result column="KPI_NAME" property="kpi_name"/>
+ 	  </resultMap>
+     <select id="queryMvpPasetById" parameterType="java.util.HashMap" resultMap="queryMvpPasetById_map">
+		select  
+		sum_type as SUM_TYPE,
+		sum_subtype as SUM_SUBTYPE,
+		kpi_code as KPI_CODE,
+		kpi_name as  KPI_NAME
+		from md_mvp_paset 
+		<where> 
+	        <if test= "kpi_code != null and kpi_code != ''"> 
+				and kpi_code = #{kpi_code} 
+			</if>	
+		</where>
+ 	 </select> 
+ 	 
+ 	 <resultMap type="java.util.HashMap" id="queryMvpSdlistPage_map">
+ 	  		<result column="SD_ID" property="sd_id"/>
+ 	  		<result column="WAY_CODE" property="way_code"/>
+ 	  		<result column="SCORE_SD" property="score_sd"/>
+ 	  		<result column="RANK_SD" property="rank_sd"/>
+ 	  </resultMap>
+ 	 <!--MVP标准配置表信息维护-->
+ 	 <select id="queryMvpSdlistPage" parameterType="java.util.HashMap" resultMap="queryMvpSdlistPage_map">
+		select  
+		sd_id as SD_ID,
+		way_code as WAY_CODE,
+		score_sd as SCORE_SD,
+		rank_sd as RANK_SD
+		from md_mvp_sd 
+		<where>
+			<if test= "sd_id != null and sd_id != ''"> 
+				and sd_id like #{sd_id} <!-- 模糊查询 -->
+			</if>	
+			<if test= "way_code != null and way_code != ''"> 
+				and way_code like #{way_code} <!-- 模糊查询 -->
+			</if>	
+			<if test= "score_sd != null and score_sd != ''"> 
+				and score_sd like #{score_sd} <!-- 模糊查询 -->
+			</if>	
+			<if test= "rank_sd != null and rank_sd != ''"> 
+				and rank_sd like #{rank_sd} <!-- 模糊查询 -->
+			</if>	
+		</where>
+ 	 </select> 	
+ 	 
+ 	 <insert id="insertMvpSd" parameterType="java.util.HashMap" >
+	 	insert into md_mvp_sd 
+	 	(sd_id,
+	 	way_code,
+	 	score_sd,
+	 	rank_sd) 
+	 	values
+	 	(#{sd_id},
+	 	#{way_code},
+	 	#{score_sd},
+	 	#{rank_sd})
+ 	 </insert>
+
+     <update id="updateMvpSd" parameterType="java.util.HashMap" >  
+        update md_mvp_sd set 
+        sd_id=#{sd_id},
+        way_code=#{way_code},
+        score_sd=#{score_sd},
+        rank_sd=#{rank_sd} 
+        where 1=1
+        and sd_id=#{sd_id}
+     </update>
+     
+     <delete id="deleteMvpSd" parameterType="java.util.HashMap" >
+    	delete from md_mvp_sd 
+    	where sd_id=#{sd_id}
+     </delete>
+     
+      <resultMap type="java.util.HashMap" id="queryMvpSdById_map">
+ 	  		<result column="SD_ID" property="sd_id"/>
+ 	  		<result column="WAY_CODE" property="way_code"/>
+ 	  		<result column="SCORE_SD" property="score_sd"/>
+ 	  		<result column="RANK_SD" property="rank_sd"/>
+ 	  </resultMap>
+     <select id="queryMvpSdById" parameterType="java.util.HashMap" resultMap="queryMvpSdById_map">
+		select  
+		sd_id as SD_ID,
+		way_code as WAY_CODE,
+		score_sd as SCORE_SD,
+		rank_sd as RANK_SD
+		from md_mvp_sd 
+		<where>
+	        <if test= "sd_id != null and sd_id != ''"> 
+				and sd_id = #{sd_id} 
+			</if>
+		</where>	
+ 	 </select> 
+     
+     <resultMap type="java.util.HashMap" id="pams_mvp_age_map">
+ 	  		<result column="SUBSCD" property="SUBSCD"/>
+ 	  		<result column="PARATP" property="paratp"/>
+ 	  		<result column="PARACD" property="paracd"/>
+ 	  		<result column="PARANA" property="parana"/>
+ 	  </resultMap>
+     <select id="pams_mvp_age" parameterType="java.util.HashMap" resultMap="pams_mvp_age_map">
+	    SELECT  
+	    SUBSCD as SUBSCD,
+	    PARATP as PARATP,
+	    PARACD as PARACD,
+	    PARANA as PARANA
+		FROM pcmc_knp_para 
+  		where
+		SUBSCD = 'PAMS'
+        AND PARACD != '%'  
+        AND PARATP = 'age'
+ 	 </select>
+ 	 
+ 	 <resultMap type="java.util.HashMap" id="pams_mvp_education_map">
+ 	  		<result column="SUBSCD" property="SUBSCD"/>
+ 	  		<result column="PARATP" property="paratp"/>
+ 	  		<result column="PARACD" property="paracd"/>
+ 	  		<result column="PARANA" property="parana"/>
+ 	  </resultMap>
+ 	  <select id="pams_mvp_education" parameterType="java.util.HashMap" resultMap="pams_mvp_education_map">
+	    SELECT  SUBSCD as SUBSCD,
+	    PARATP as PARATP,
+	    PARACD as PARACD,
+	    PARANA as PARANA
+		FROM pcmc_knp_para  where
+			SUBSCD = 'PAMS'
+	        AND PARACD != '%'
+	        AND PARATP = 'education'
+ 	 </select> 	 
+ 	 
+ 	 <resultMap type="java.util.HashMap" id="pams_mvp_gender_map">
+ 	  		<result column="SUBSCD" property="SUBSCD"/>
+ 	  		<result column="PARATP" property="paratp"/>
+ 	  		<result column="PARACD" property="paracd"/>
+ 	  		<result column="PARANA" property="parana"/>
+ 	  </resultMap>
+ 	 <select id="pams_mvp_gender" parameterType="java.util.HashMap" resultMap="pams_mvp_gender_map">
+	    SELECT 
+	    SUBSCD as SUBSCD,
+	    PARATP as PARATP,
+	    PARACD as PARACD,
+	    PARANA as PARANA
+		FROM pcmc_knp_para WHERE SUBSCD = 'PAMS'
+        AND PARACD != '%'
+        AND PARATP = 'gender'
+ 	 </select>
+ 	 
+ 	  <resultMap type="java.util.HashMap" id="pams_mvp_industry_age_map">
+ 	  		<result column="SUBSCD" property="SUBSCD"/>
+ 	  		<result column="PARATP" property="paratp"/>
+ 	  		<result column="PARACD" property="paracd"/>
+ 	  		<result column="PARANA" property="parana"/>
+ 	  </resultMap> 	 
+ 	 <select id="pams_mvp_industry_age" parameterType="java.util.HashMap" resultMap="pams_mvp_industry_age_map">
+	    SELECT 
+	    SUBSCD as SUBSCD,
+	    PARATP as PARATP,
+	    PARACD as PARACD,
+	    PARANA as PARANA
+		FROM pcmc_knp_para WHERE 
+		SUBSCD = 'PAMS'
+        AND PARACD != '%'
+        AND PARATP = 'industry_age' 
+ 	 </select> 	
+ 	 
+ 	 <resultMap type="java.util.HashMap" id="pams_mvp_partition_init_map">
+ 	  		<result column="SUBSCD" property="SUBSCD"/>
+ 	  		<result column="PARATP" property="paratp"/>
+ 	  		<result column="PARACD" property="paracd"/>
+ 	  		<result column="PARANA" property="parana"/>
+ 	  </resultMap>  
+ 	 <select id="pams_mvp_partition_init" parameterType="java.util.HashMap" resultMap="pams_mvp_partition_init_map">
+	    SELECT   
+	    SUBSCD as SUBSCD,
+	    PARATP as PARATP,
+	    PARACD as PARACD,
+	    PARANA as PARANA
+		FROM pcmc_knp_para WHERE 
+		SUBSCD = 'PAMS'
+        AND PARACD != '%'
+        AND PARATP = 'partition_init' 
+ 	 </select>
+ 	 
+ 	  <resultMap type="java.util.HashMap" id="pams_mvp_school_type_map">
+ 	  		<result column="SUBSCD" property="SUBSCD"/>
+ 	  		<result column="PARATP" property="paratp"/>
+ 	  		<result column="PARACD" property="paracd"/>
+ 	  		<result column="PARANA" property="parana"/>
+ 	  </resultMap> 	 
+ 	 <select id="pams_mvp_school_type" parameterType="java.util.HashMap" resultMap="pams_mvp_school_type_map">
+	    SELECT   
+	    SUBSCD as SUBSCD,
+	    PARATP as PARATP,
+	    PARACD as PARACD,
+	    PARANA as PARANA
+		FROM pcmc_knp_para WHERE
+		SUBSCD = 'PAMS'
+        AND PARACD != '%'
+        AND PARATP = 'school_type'  
+ 	 </select> 
+ 	 
+ 	 <resultMap type="java.util.HashMap" id="pams_mvp_work_age_map">
+ 	  		<result column="SUBSCD" property="SUBSCD"/>
+ 	  		<result column="PARATP" property="paratp"/>
+ 	  		<result column="PARACD" property="paracd"/>
+ 	  		<result column="PARANA" property="parana"/>
+ 	  </resultMap>	 
+ 	 <select id="pams_mvp_work_age" parameterType="java.util.HashMap" resultMap="pams_mvp_work_age_map">
+	    SELECT  
+		SUBSCD as SUBSCD,
+	    PARATP as PARATP,
+	    PARACD as PARACD,
+	    PARANA as PARANA
+		FROM pcmc_knp_para WHERE 
+		SUBSCD = 'PAMS'
+        AND PARACD != '%'
+        AND PARATP = 'work_age' 
+ 	 </select> 	 
+ 	 
+ 	  <resultMap type="java.util.HashMap" id="pams_mvp_work_area_map">
+ 	  		<result column="SUBSCD" property="SUBSCD"/>
+ 	  		<result column="PARATP" property="paratp"/>
+ 	  		<result column="PARACD" property="paracd"/>
+ 	  		<result column="PARANA" property="parana"/>
+ 	  </resultMap>
+ 	 <select id="pams_mvp_work_area" parameterType="java.util.HashMap" resultMap="pams_mvp_work_area_map">
+	    SELECT
+	    SUBSCD as SUBSCD,
+	    PARATP as PARATP,
+	    PARACD as PARACD,
+	    PARANA as PARANA
+		FROM pcmc_knp_para WHERE 
+		SUBSCD = 'PAMS'
+        AND PARACD != '%'
+        AND PARATP = 'work_area'
+ 	 </select> 	 	
+ 	 
+ 	 <resultMap type="java.util.HashMap" id="pams_mvp_pie_map">
+ 	  		<result column="NAME" property="name"/>
+ 	  		<result column="SUM" property="sum"/>
+ 	  </resultMap>
+ 	 <select id="pams_mvp_pie" parameterType="java.util.HashMap" resultMap="pams_mvp_pie_map">
+ 	   <![CDATA[
+ 	   Select ${resultStr} as NAME ,count(1) as SUM from md_mvp_info t  ]]>
+       
+        <if  test="ageStr !='' and ageStr !=null">
+       <![CDATA[inner join pcmc_knp_para b on t.AGE>=b.parach and t.AGE<=b.PARBCH and b.SUBSCD = 'pams' and b.paratp = 'age'  and b.PARACD in (${ageStr})]]>
+       </if>
+       
+        <if test="educationStr !='' and educationStr !=null">
+       <![CDATA[inner join pcmc_knp_para c on t.education=c.parach and c.SUBSCD = 'pams' and c.paratp = 'education'  and c.PARACD in (${educationStr})]]>
+       </if>
+       
+        <if test="genderStr !='' and genderStr !=null">
+       <![CDATA[inner join pcmc_knp_para d on t.gender=d.parana and d.SUBSCD = 'pams' and d.paratp = 'gender'  and d.PARACD in (${genderStr})]]>
+       </if>
+       
+        <if test="industry_ageStr !=''and industry_ageStr !=null">
+       <![CDATA[
+       		inner join pcmc_knp_para e on t.industry_age>=e.parach and t.industry_age<=e.PARBCH and e.SUBSCD = 'pams' and e.paratp = 'industry_age'  and e.PARACD in (${industry_ageStr})
+       ]]>
+       </if>
+       
+        <if test="partition_initStr !='' and partition_initStr !=null">
+        <![CDATA[inner join pcmc_knp_para f on t.partition_init=f.parach and f.SUBSCD = 'pams' and f.paratp = 'partition_init'  and f.PARACD in (${partition_initStr})]]>
+       </if>
+       
+        <if test="school_typeStr !='' and school_typeStr !=null">
+        <![CDATA[inner join pcmc_knp_para g on t.school_type=g.parach and g.SUBSCD = 'pams' and g.paratp = 'school_type'  and g.PARACD in (${school_typeStr})]]>
+       </if>
+       
+        <if test="work_ageStr !='' and work_ageStr !=null">
+       <![CDATA[inner join pcmc_knp_para h on t.work_age>=h.parach and t.work_age<=h.PARBCH and h.SUBSCD = 'pams' and h.paratp = 'work_age'  and h.PARACD in (${work_ageStr})]]>
+       </if>
+       
+        <if test="work_areaStr !='' and work_areaStr !=null">
+        <![CDATA[inner join pcmc_knp_para i on t.work_area=i.parach and i.SUBSCD = 'pams' and i.paratp = 'work_area'  and i.PARACD in (${work_areaStr})]]>
+       </if>
+       group by ${resultStr}
+     </select>
+     
+      <resultMap type="java.util.HashMap" id="pams_rank_age_map">
+ 	  		<result column="SUBSCD" property="SUBSCD"/>
+ 	  		<result column="PARATP" property="paratp"/>
+ 	  		<result column="PARACD" property="paracd"/>
+ 	  		<result column="PARANA" property="parana"/>
+ 	  </resultMap>
+     <select id="pams_rank_age" parameterType="java.util.HashMap" resultMap="pams_rank_age_map">
+	    SELECT
+	    SUBSCD as SUBSCD,
+	    PARATP as PARATP,
+	    PARACD as PARACD,
+	    PARANA as PARANA
+		FROM pcmc_knp_para WHERE
+		SUBSCD = 'PAMS'
+        AND PARACD != '%'  
+        AND PARATP = 'age'
+     
+ 	 </select>
+ 	 
+ 	 <resultMap type="java.util.HashMap" id="pams_rank_education_map">
+ 	  		<result column="SUBSCD" property="SUBSCD"/>
+ 	  		<result column="PARATP" property="paratp"/>
+ 	  		<result column="PARACD" property="paracd"/>
+ 	  		<result column="PARANA" property="parana"/>
+ 	  </resultMap>
+ 	  <select id="pams_rank_education" parameterType="java.util.HashMap" resultMap="pams_rank_education_map">
+	    SELECT 
+	    SUBSCD as SUBSCD,
+	    PARATP as PARATP,
+	    PARACD as PARACD,
+	    PARANA as PARANA
+		FROM pcmc_knp_para WHERE
+		SUBSCD = 'PAMS'
+        AND PARACD != '%'
+        AND PARATP = 'education'
+ 	 </select> 	 
+ 	 
+ 	  <resultMap type="java.util.HashMap" id="pams_rank_gender_map">
+ 	  		<result column="SUBSCD" property="SUBSCD"/>
+ 	  		<result column="PARATP" property="paratp"/>
+ 	  		<result column="PARACD" property="paracd"/>
+ 	  		<result column="PARANA" property="parana"/>
+ 	  </resultMap>
+ 	 <select id="pams_rank_gender_map" parameterType="java.util.HashMap" resultMap="pams_rank_gender_map">
+	    SELECT 
+	    SUBSCD as SUBSCD,
+	    PARATP as PARATP,
+	    PARACD as PARACD,
+	    PARANA as PARANA
+		FROM pcmc_knp_para WHERE
+		SUBSCD = 'PAMS'
+        AND PARACD != '%'
+        AND PARATP = 'gender'
+ 	 </select> 	
+ 	 
+ 	  <resultMap type="java.util.HashMap" id="pams_rank_industry_age_map">
+ 	  		<result column="SUBSCD" property="SUBSCD"/>
+ 	  		<result column="PARATP" property="paratp"/>
+ 	  		<result column="PARACD" property="paracd"/>
+ 	  		<result column="PARANA" property="parana"/>
+ 	  </resultMap> 
+ 	 <select id="pams_rank_industry_age" parameterType="java.util.HashMap" resultMap="pams_rank_industry_age_map">
+	    SELECT 
+	    SUBSCD as SUBSCD,
+	    PARATP as PARATP,
+	    PARACD as PARACD,
+	    PARANA as PARANA
+		FROM pcmc_knp_para WHERE
+		SUBSCD = 'PAMS'
+        AND PARACD != '%'
+        AND PARATP = 'industry_age' 
+ 	 </select> 
+ 	 
+ 	 <resultMap type="java.util.HashMap" id="pams_rank_partition_init_map">
+ 	  		<result column="SUBSCD" property="SUBSCD"/>
+ 	  		<result column="PARATP" property="paratp"/>
+ 	  		<result column="PARACD" property="paracd"/>
+ 	  		<result column="PARANA" property="parana"/>
+ 	  </resultMap> 	 
+ 	 <select id="pams_rank_partition_init" parameterType="java.util.HashMap" resultMap="pams_rank_partition_init_map">
+	    SELECT 
+	    SUBSCD as SUBSCD,
+	    PARATP as PARATP,
+	    PARACD as PARACD,
+	    PARANA as PARANA
+		FROM pcmc_knp_para WHERE
+		SUBSCD = 'PAMS'
+        AND PARACD != '%'
+        AND PARATP = 'partition_init' 
+ 	 </select>
+ 	 
+ 	  <resultMap type="java.util.HashMap" id="pams_rank_school_type_map">
+ 	  		<result column="SUBSCD" property="SUBSCD"/>
+ 	  		<result column="PARATP" property="paratp"/>
+ 	  		<result column="PARACD" property="paracd"/>
+ 	  		<result column="PARANA" property="parana"/>
+ 	  </resultMap> 	 
+ 	 <select id="pams_rank_school_type" parameterType="java.util.HashMap" resultMap="pams_rank_school_type_map">
+	    SELECT 
+	    SUBSCD as SUBSCD,
+	    PARATP as PARATP,
+	    PARACD as PARACD,
+	    PARANA as PARANA
+		FROM pcmc_knp_para WHERE
+		SUBSCD = 'PAMS'
+        AND PARACD != '%'
+        AND PARATP = 'school_type'  
+ 	 </select> 
+ 	 
+ 	  <resultMap type="java.util.HashMap" id="pams_rank_work_age_map">
+ 	  		<result column="SUBSCD" property="SUBSCD"/>
+ 	  		<result column="PARATP" property="paratp"/>
+ 	  		<result column="PARACD" property="paracd"/>
+ 	  		<result column="PARANA" property="parana"/>
+ 	  </resultMap>	 
+ 	 <select id="pams_rank_work_age" parameterType="java.util.HashMap" resultMap="pams_rank_work_age_map">
+	    SELECT
+		SUBSCD as SUBSCD,
+	    PARATP as PARATP,
+	    PARACD as PARACD,
+	    PARANA as PARANA
+		FROM pcmc_knp_para WHERE
+		SUBSCD = 'PAMS'
+        AND PARACD != '%'
+        AND PARATP = 'work_age' 
+ 	 </select> 
+ 	 
+ 	 <resultMap type="java.util.HashMap" id="pams_rank_org_no_map">
+ 	  		<result column="SUBSCD" property="SUBSCD"/>
+ 	  		<result column="PARATP" property="paratp"/>
+ 	  		<result column="PARACD" property="paracd"/>
+ 	  		<result column="PARANA" property="parana"/>
+ 	  </resultMap>	 
+ 	 <select id="pams_rank_org_no" parameterType="java.util.HashMap" resultMap="pams_rank_org_no_map">
+	    SELECT
+		SUBSCD as SUBSCD,
+	    PARATP as PARATP,
+	    PARACD as PARACD,
+	    PARANA as PARANA
+		FROM pcmc_knp_para WHERE
+		SUBSCD = 'PAMS'
+        AND PARACD != '%'
+        AND PARATP = 'org_no'
+ 	 </select> 	
+ 	 
+ 	  <resultMap type="java.util.HashMap" id="pams_rank_bar_map">
+ 	  		<result column="NAME" property="name"/>
+ 	  </resultMap>
+ 	 <select id="pams_rank_bar" parameterType="java.util.HashMap" resultType="java.util.HashMap"> 
+ 	 Select t.manager_name as NAME,a.kpi_value from SYS_PUB_MANAGER t 
+ 	 <if  test="ageStr !='' and ageStr !=null">
+     <![CDATA[inner join pcmc_knp_para b on t.AGE>=b.parach and t.AGE<=b.PARBCH and b.SUBSCD = 'pams' and b.paratp = 'age' and b.PARACD in (${ageStr}) ]]>
+     </if>
+     <if  test="educationStr !='' and educationStr !=null">
+     <![CDATA[inner join pcmc_knp_para c on t.education=c.parach and c.SUBSCD = 'pams' and c.paratp = 'education' and c.PARACD in (${educationStr})]]> 
+     </if>
+     <if  test="genderStr !='' and genderStr !=null">
+     <![CDATA[inner join pcmc_knp_para d on t.gender=d.parana and d.SUBSCD = 'pams' and d.paratp = 'gender' and d.PARACD in (${genderStr})]]>
+     </if>
+     <if  test="industry_ageStr !='' and industry_ageStr !=null">
+     <![CDATA[inner join pcmc_knp_para e on t.industry_age>=e.parach and t.industry_age<=e.PARBCH and e.SUBSCD = 'pams' and e.paratp = 'industry_age' and e.PARACD in (${industry_ageStr})]]>
+     </if>
+     <if  test="partition_initStr !='' and partition_initStr !=null"> 
+     <![CDATA[inner join pcmc_knp_para f on t.partition_init=f.parach and f.SUBSCD = 'pams' and f.paratp = 'partition_init' and f.PARACD in (${partition_initStr})]]> 
+     </if>
+     <if  test="school_typeStr !='' and school_typeStr !=null">
+     <![CDATA[inner join pcmc_knp_para g on t.school_type=g.parach and g.SUBSCD = 'pams' and g.paratp = 'school_type' and g.PARACD in (${school_typeStr}) ]]>
+     </if>
+     <if  test="work_ageStr !='' and work_ageStr !=null">
+     <![CDATA[inner join pcmc_knp_para h on t.work_age>=h.parach and t.work_age<=h.PARBCH and h.SUBSCD = 'pams' and h.paratp = 'work_age' and h.PARACD in (${work_ageStr}) ]]>
+     </if>
+     <if  test="org_noStr !='' and org_noStr !=null">
+     <![CDATA[inner join pcmc_knp_para i on t.org_no=i.parach and i.SUBSCD = 'pams' and i.paratp = 'org_no' and i.PARACD in (${org_noStr}) ]]>
+     </if>
+     <![CDATA[inner join MD_RANK_PA a on a.MANAGER_NO = t.MANAGER_NO	]]>
+     order by kpi_value DESC
+     </select>
+     
+      <resultMap type="java.util.HashMap" id="Customer_RankMagSrclistPage_map">
+ 	  		<result column="SUM_TYPE" property="sum_type"/>
+ 	  		<result column="SUM_SUBTYPE" property="sum_subtype"/>
+ 	  		<result column="KPI_CODE" property="kpi_code"/>
+ 	  		<result column="KPI_NAME" property="kpi_name"/>
+ 	  </resultMap>	
+      <select id="Customer_RankMagSrclistPage" parameterType="java.util.HashMap" resultMap="Customer_RankMagSrclistPage_map">
+		SELECT  
+		SUM_TYPE as SUM_TYPE,
+		SUM_SUBTYPE as SUM_SUBTYPE,
+		KPI_CODE as KPI_CODE,
+		KPI_NAME as KPI_NAME
+		FROM MD_RANK_PASET 
+	<where>
+    	<if test= "kpi_code != null and kpi_code != ''">
+			AND KPI_CODE LIKE '%${kpi_code}%'
+        </if>
+        <if test= "sum_type != null and sum_type != ''">
+			AND sum_type =  #{sum_type} 
+		</if>	
+	</where>
+ 	 </select> 	
+ 	 
+ 	 <insert id="insertCustomer_RankMag" parameterType="java.util.HashMap" >
+	 	INSERT INTO MD_RANK_PASET (SUM_TYPE,SUM_SUBTYPE,KPI_CODE,KPI_NAME) VALUES(#{sum_type},#{sum_subtype},#{kpi_code},#{kpi_name})
+ 	 </insert>
+
+     <update id="updateCustomer_RankMag" parameterType="java.util.HashMap" >  
+        UPDATE MD_RANK_PASET SET SUM_TYPE=#{sum_type},SUM_SUBTYPE=#{sum_subtype},KPI_CODE=#{kpi_code},KPI_NAME=#{kpi_name}  WHERE SUM_TYPE=#{sum_type}
+     </update>
+     
+     <delete id="delCustomer_RankMag" parameterType="java.util.HashMap" >
+    	DELETE FROM MD_RANK_PASET WHERE SUM_TYPE=#{sum_type}
+     </delete>
+</mapper> 	  
+ 	 

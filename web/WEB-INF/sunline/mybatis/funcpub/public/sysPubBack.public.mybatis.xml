@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sunline.funcpub.mybatis.public.sysPubBack" >
+	<select id="querySysPubBacklistPage" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		<![CDATA[ 
+			SELECT  FUNCTYPE	"functype",
+					DBTYPE		"dbtype",
+					EXESQL		"exesql",
+					PARANAME	"paraname",
+					PARAVALUE	"paravalue",
+					REMARK 		"remark",
+                    B.PARANA 	"funcname",
+                    C.PARANA 	"dbname"
+			FROM SYS_PUB_DIFFSQL A
+			LEFT JOIN PCMC_KNP_PARA B ON A.FUNCTYPE = B.PARACD AND B.PARATP = 'funcType'  AND B.PARACD <>'%'
+			LEFT JOIN PCMC_KNP_PARA C ON A.DBTYPE = C.PARACD AND C.PARATP = 'dbType' AND C.PARACD <>'%'
+		]]>
+		<where>
+			<if test= "functype != null and functype != ''">
+				AND FUNCTYPE= #{functype}
+	        </if>
+	        <if test= "dbtype != null and dbtype != ''">
+				AND DBTYPE = #{dbtype}
+	        </if>
+	    </where>
+           ORDER by FUNCTYPE ,DBTYPE
+    </select>
+	
+	<!-- 判断相同的备份配置是否存在，一种备份类型和数据库类型是联合主键 edit by longjian-->
+	<select id="existSysPubBack" parameterType="java.util.HashMap" resultType="java.lang.Integer">
+	   SELECT count(*) FROM SYS_PUB_DIFFSQL 
+        <where>
+            <if test="functype !=null and functype!=''">
+                AND FUNCTYPE=#{functype}
+            </if>
+            <if test="dbtype !=null and dbtype!=''">
+                AND DBTYPE=#{dbtype}
+            </if>
+        </where> 
+	</select>
+	
+	<insert id="addSysPubBack" parameterType="java.util.HashMap" >
+		<![CDATA[
+			INSERT INTO SYS_PUB_DIFFSQL VALUES(#{functype,jdbcType=NUMERIC},#{dbtype,jdbcType=VARCHAR},#{exesql,jdbcType=VARCHAR},#{paraname,jdbcType=VARCHAR},#{paravalue,jdbcType=VARCHAR},#{remark,jdbcType=VARCHAR})
+		]]>
+	</insert>
+	
+	<delete id="deteleSysPubBack" parameterType="java.util.HashMap" >
+		<![CDATA[
+			DELETE FROM SYS_PUB_DIFFSQL WHERE FUNCTYPE = #{functype} AND DBTYPE = #{dbtype}
+		]]>
+	</delete>
+	
+	<update id="updateSysPubBack" parameterType="java.util.HashMap" >
+		<![CDATA[
+			UPDATE SYS_PUB_DIFFSQL SET EXESQL = #{exesql,jdbcType=VARCHAR},PARANAME = #{paraname,jdbcType=VARCHAR},PARAVALUE = #{paravalue,jdbcType=VARCHAR},REMARK = #{remark,jdbcType=VARCHAR}
+			WHERE FUNCTYPE = #{functype} AND DBTYPE = #{dbtype}
+		]]>
+	</update>
+	
+</mapper> 	  
+ 	 

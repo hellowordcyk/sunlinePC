@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 2006-10-19 9:58:55 by Hibernate Tools 3.2.0.beta6a -->
+<hibernate-mapping>
+    <class name="com.sunline.bimis.pcmc.db.PcmcAdou" table="pcmc_adou" schema="dbo">
+        <id name="guid" type="string">
+            <column name="GUID" length="260" />
+            <generator class="assigned" />
+        </id>
+        <many-to-one name="pcmcAdobj" class="com.sunline.bimis.pcmc.db.PcmcAdobj" update="false" insert="false" fetch="select">
+            <column name="GUID" length="260" not-null="true" unique="true" />
+        </many-to-one>
+        <property name="ou" type="string">
+            <column name="ou" length="50" not-null="true" />
+        </property>
+        <property name="co" type="string">
+            <column name="co" length="50" />
+        </property>
+        <property name="countryCode" type="string">
+            <column name="countryCode" length="10" />
+        </property>
+        <property name="l" type="string">
+            <column name="l" length="50" />
+        </property>
+        <property name="st" type="string">
+            <column name="st" length="50" />
+        </property>
+        <property name="street" type="string">
+            <column name="street" length="100" />
+        </property>
+        <property name="postalCode" type="string">
+            <column name="postalCode" length="10" />
+        </property>
+        <set name="pcmcAdoudepts" inverse="true">
+            <key>
+                <column name="GUID" length="260" not-null="true" />
+            </key>
+            <one-to-many class="com.sunline.bimis.pcmc.db.PcmcAdoudept" />
+        </set>
+        <set name="pcmcAdoumembers" inverse="true">
+            <key>
+                <column name="ouGUID" length="260" not-null="true" />
+            </key>
+            <one-to-many class="com.sunline.bimis.pcmc.db.PcmcAdoumember" />
+        </set>
+    </class>
+</hibernate-mapping>

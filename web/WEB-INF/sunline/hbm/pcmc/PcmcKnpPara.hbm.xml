@@ -1,0 +1,52 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 2006-2-16 11:58:48 by Hibernate Tools 3.1.0.beta4 -->
+<hibernate-mapping>
+    <class name="com.sunline.bimis.pcmc.db.PcmcKnpPara" table="pcmc_knp_para" >
+        <composite-id name="id" class="com.sunline.bimis.pcmc.db.PcmcKnpParaId">
+            <key-property name="subscd" type="string">
+                <column name="subscd" length="4" />
+            </key-property>
+            <key-property name="paratp" type="string">
+                <column name="paratp" length="8" />
+            </key-property>
+            <key-property name="paracd" type="string">
+                <column name="paracd" length="8" />
+            </key-property>
+            <key-property name="corpcode" type="string">
+                <column name="corpcode" length="16" />
+            </key-property>
+        </composite-id>
+        <property name="parana" type="string">
+            <column name="parana" length="80" />
+        </property>
+        <property name="paraam" type="big_decimal">
+            <column name="paraam" scale="4" />
+        </property>
+        <property name="paradt" type="timestamp">
+            <column name="paradt" length="23" />
+        </property>
+        <property name="parach" type="string">
+            <column name="parach" length="50" />
+        </property>
+        <property name="parbch" type="string">
+            <column name="parbch" length="50" />
+        </property>
+        <property name="parcch" type="string">
+            <column name="parcch" length="50" />
+        </property>
+        <property name="pardch" type="string">
+            <column name="pardch" length="50" />
+        </property>
+        <property name="parech" type="string">
+            <column name="parech" length="50" />
+        </property>
+        <property name="i18nCode" type="string">
+            <column name="i18n_code" length="100" />
+        </property>
+        <property name="disable" type="string">
+            <column name="disable" length="8" />
+        </property>
+    </class>
+</hibernate-mapping>

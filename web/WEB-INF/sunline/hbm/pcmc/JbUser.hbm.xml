@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 2006-2-9 18:26:18 by Hibernate Tools 3.1.0.beta4 -->
+<hibernate-mapping>
+    <class name="com.sunline.bimis.pcmc.db.JbUser" table="JB_USER">
+        <id name="IUserid" type="integer">
+            <column name="I_USERID" />
+            <generator class="assigned" />
+        </id>
+        <property name="VUsername" type="string">
+            <column name="V_USERNAME" not-null="true" />
+        </property>
+        <property name="VPassword" type="string">
+            <column name="V_PASSWORD" length="32" not-null="true" />
+        </property>
+        <property name="CAddtime" type="string">
+            <column name="C_ADDTIME" length="17" not-null="true" />
+        </property>
+        <property name="VQuestion" type="string">
+            <column name="V_QUESTION" />
+        </property>
+        <property name="VAnswer" type="string">
+            <column name="V_ANSWER" />
+        </property>
+        <property name="VEmail" type="string">
+            <column name="V_EMAIL" not-null="true" />
+        </property>
+        <property name="VRealname" type="string">
+            <column name="V_REALNAME" />
+        </property>
+        <set name="jbGroupusers" inverse="true">
+            <key>
+                <column name="I_USERID" not-null="true" />
+            </key>
+            <one-to-many class="com.sunline.bimis.pcmc.db.JbGroupuser" />
+        </set>
+        <set name="jbUserpropses" inverse="true">
+            <key>
+                <column name="I_USERID" not-null="true" unique="true" />
+            </key>
+            <one-to-many class="com.sunline.bimis.pcmc.db.JbUserprops" />
+        </set>
+    </class>
+</hibernate-mapping>

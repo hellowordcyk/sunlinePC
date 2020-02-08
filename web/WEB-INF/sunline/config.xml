@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--DOCTYPE commonfield [ <!ENTITY bcrm_index SYSTEM "./datacenter/index.xml"> ] -->
+<config>
+	<temppath desc="上传文件临时目录"></temppath>
+	<debug>true</debug>
+	<bimisconfig>
+		<appname desc="应用系统名称">综合管理平台</appname>
+		<sitename desc="站点名称">综合管理平台</sitename>
+		<!-- <bankpic desc="银行图片位置">/common/images/pic01/hengfeng_banklogo.gif</bankpic> -->
+		<bankpic desc="银行图片位置">/jui/themes/css/images/login_logo.gif</bankpic>
+		<!-- 优先级：
+		     1:程序直接new 
+		     2:System.setProperty("sunline.DataSourceProvider",?) 
+			 3:此处的配置 -->
+		<!-- 可用:JndiDataSource,C3p0DataSource,ProxoolDataSource -->
+		<DataSourceProvider desc="数据源提供者类名" type="com.sunline.jraf.db.ds.ProxoolDataSource" />
+		<!-- applogpath: 不以“/”（linux）或包含“：”（window）的路径，为相对路径 -->
+		<applogpath desc="日志路径">log</applogpath>
+		<log4jconfig propfile="../classes/log4j.properties" />
+		<systempath desc="系统路径">C:\</systempath>
+		<!-- datacenterparam>&bcrm_index;</datacenterparam -->
+		<jsp encoding="ISO8859-1" desc="当前JSP容器缺省编码" />
+		
+		<!-- 单点登录一个用户只能在一个地址登录  默认false-->
+		<ssologin desc="单点登录">false</ssologin>
+	</bimisconfig>
+	
+	<!-- use属性值true/false  使用redis/不使用redis -->
+	<redisConfig use="false">
+		<!-- ip和port指部署了redis的ip和端口号，redis默认端口为6379 -->
+		<!-- master为主服务，如果不是用切片，就只要初始化master即可  -->
+		<master ip="10.24.1.11" port="6379"></master>
+		<!-- slave为从服务，redis切片时使用，可以配置其他IP地址或端口，默认不配置。 现有功能暂不处理支持切片 -->
+		<!-- <slave ip="127.0.0.1" port="7379"></slave> -->
+	</redisConfig>
+	
+	<pcmcconfig>
+		<sitename desc="站点名称">综合管理平台</sitename>
+		<loginfooter desc="登录页面页脚">Copyright &amp;copy; 2018 sunline Co.,Ltd. All Rights Reserved.</loginfooter>
+		<bankpic desc="登录页面银行图片位置">/jui/themes/css/images/login_logo.gif</bankpic>
+		<footer desc="主页面系统页脚">Copyright &amp;copy; 2018 sunline Co.,Ltd. All Rights Reserved.</footer>
+		<i18n desc="是否支持国际化语言">false</i18n>
+		<defaultcorpcode desc="默认多法人编码">9999</defaultcorpcode>
+	</pcmcconfig>
+
+	<applications>
+		<!-- 此节点暂无意义 -->
+		<opconfig desc="交易配置文件" class="">"../config/index.xml"</opconfig>
+		<!-- 参数定义： 各子系统各自定义-->
+		<parameters factory="com.sunline.bimis.pcmc.factory.ParameterFactory">
+		</parameters>
+		<!-- session定义 -->
+		<!-- 属性定义: 
+				type:session类型名称,必须 factory:session的工厂类名,必须 
+				dataSource:数据源jndi,可选,无则使用上级session的连接，如有设置则新建连接 
+				jndiName:工厂类的jndi名称，可选，用于分布式应用时 
+				configResource:session配置文件资源路径(Hibernate配置,无则表示共用上级session的配置)，可选 
+		-->
+		<session type="bimis" descript="综合信息" configResource="sunline.hibernate.cfg.xml" myBatisConfigResource="mybatis.config.xml" factory="com.sunline.jraf.db.BimisSessionFactory" dataSource="sunline.database">
+		</session>
+
+		<!-- 系统初始化装入程序 -->
+		<initializers>
+			<step class="com.sunline.jraf.util.ConfigDocument" desc="初始化交易配置">
+				<configFile>/WEB-INF/config/index.xml</configFile>
+			</step>
+			<!--<step class="com.sunline.hadoop.hbase.HbaseConfiguration" desc="初始化HBase配置信息">
+				<configFile>/WEB-INF/config/hbase-site.xml</configFile>
+			</step>-->
+			<step class="com.sunline.jraf.framework.FrameWorkConfiguration" desc="初始化license">
+			</step>
+			<step class="com.sunline.jraf.db.SessionIPL" desc="初始化HibernateSession配置">
+				<!--sessionType>cifs</sessionType -->
+				<!-- sessionType>bcrm</sessionType -->
+				<!--sessionType>meta</sessionType -->
+			</step>
+			<step class="com.sunline.funcpub.privilege.conf.PrivilegeConfigInitializer" desc="初始化权限服务">
+			</step>
+			<step class="com.sunline.jraf.util.DeptUserConfig" desc="初始化dept更新历史表控制开关">
+			</step>
+		</initializers>
+	</applications>
+
+	<!-- 安全设置 -->
+	<security>
+		<jaas>
+			<property name="java.security.krb5.realm" value="HNCCCB.COM" />
+			<property name="java.security.krb5.kdc" value="portal.hncccb.com" />
+			<property name="javax.security.auth.useSubjectCredsOnly" value="false" />
+			<property name="sun.security.krb5.debug" value="false" />
+			<!-- default config file is %sunlinehome%/jaas.config = WEB-INF/sunline/jaas.config 
+				<property name="java.security.auth.login.config" value=""/> -->
+		</jaas>
+	</security>
+	<!-- 权限配置 -->
+	<auth>
+		<!-- check 权限检查的主服务器用户,也是用户信息的标准 local 本地存储用户 -->
+		<users check="bimis" local="bimis">
+			<!-- 必须的属性: name 用户服务名称 enable 启用 true/false sync 是否需要同步 true/false repository 
+				管理用户的类可选属性: table 用户管理表名称含义： bimis： OAMS系统 james： 电子邮件系统 cnjbb： 电子论坛系统 hrbase： 
+				人事档案系统 ggtxl： 公共通讯录 ltts： 业务系统 -->
+			<user name="bimis" enable="true" sync="true" repository="com.sunline.bimis.pcmc.auth.LocalUser" />
+		</users>
+	</auth>
+	<!-- 门户设置 http://localhost:8080/index.jsp, http://portal.nccb.com/index.jsp -->
+	<portal loginurl="http://localhost:8088/login.jsp">
+	</portal>
+
+	<!-- 文件服务配置 -->
+	<FileService>
+		<!-- 文件数据保存在磁盘文件中时打开此项 <Repository destination="D:/imps/web/upload/" type="FILE"> -->
+
+		<!--文件数据保存在数据库中时打开此项 -->
+		<Repository destination="" type="FILE" />
+		<!-- 上传文件的最大大小(byte) -->
+		<maxsize>10240000</maxsize>
+		<!-- 上传文件时最大占用内存大小(byte),超过时存在临时文件中(参见：temppath) -->
+		<SizeThreshold>10240</SizeThreshold>
+		<accept>xls,xlsx,txt,zip,rar,pdf,doc,docx,ppt,pptx,htm,html</accept>
+	</FileService>
+
+</config>

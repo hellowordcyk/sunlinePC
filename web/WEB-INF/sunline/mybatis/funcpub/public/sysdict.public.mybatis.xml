@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="com.sunline.funcpub.mybatis.public.sysdict" >
+	<select id="getSysdict" parameterType="java.util.HashMap" resultMap="sysdict_resultMap">
+		select dict_code, dict_name from sys_pub_dict
+		where  dict_code != '%'
+		<if test="syscode != null and syscode !=''">
+			and sys_code = #{syscode}
+		</if>
+		<if test="dictType != null and dictType !=''">
+			and dict_type =#{dictType}
+		</if>
+	</select>
+	
+	<resultMap id="sysdict_resultMap" type="java.util.HashMap">
+		 <result property="dictCode" column="dict_code"/>     
+		 <result property="dictName" column="dict_name"/>     
+	</resultMap>
+	
+</mapper> 	  
+ 	 

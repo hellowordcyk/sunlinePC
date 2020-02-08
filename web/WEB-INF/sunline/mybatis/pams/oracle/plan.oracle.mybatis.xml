@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sunline.pams.mybatis.public.plan">
+	<!-- 查询机构考核方案 -->
+	<resultMap type="com.sunline.pams.plan.bean.MoWayOrg" id="moWayOrgResult_special">
+		<result column="way_code" property="wayCode" jdbcType="VARCHAR" />
+		<result column="area_no" property="areaNo" jdbcType="CHAR" />
+		<result column="way_type" property="wayType" jdbcType="VARCHAR" />
+		<result column="way_name" property="wayName" jdbcType="VARCHAR" />
+		<result column="way_range" property="wayRange" jdbcType="VARCHAR" />
+		<result column="all_score" property="allScore" jdbcType="VARCHAR" />
+		<result column="org_level" property="orgLevel" jdbcType="VARCHAR" />
+		<result column="org_type" property="orgType" jdbcType="VARCHAR" />
+		<result column="white_list" property="whiteList" jdbcType="VARCHAR" />
+		<result column="black_list" property="blackList" jdbcType="VARCHAR" />
+		<result column="start_dat" property="startDate" jdbcType="DATE" />
+		<result column="end_dat" property="endDate" jdbcType="DATE" />
+		<result column="way_cycle" property="wayCycle" jdbcType="CHAR" />
+		<result column="edit_org" property="editOrg" jdbcType="VARCHAR" />
+		<result column="edit_role" property="editRole" jdbcType="VARCHAR" />
+		<result column="way_desc" property="wayDesc" jdbcType="VARCHAR" />
+		<result column="status" property="status" jdbcType="VARCHAR" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="operator" property="operator" jdbcType="VARCHAR" />
+		<result column="review_man" property="reviewMan" jdbcType="VARCHAR" />
+		<result column="review_time" property="reviewTime" jdbcType="TIMESTAMP" />
+		<result column="review_status" property="reviewStatus" jdbcType="VARCHAR" />
+		<result column="review_opinion" property="reviewOpinion" jdbcType="VARCHAR" />
+		<result column="is_exe" property="isExe" jdbcType="CHAR" />
+		<result column="exeStatus" property="exeStatus"  />
+		<result column="WAY_LEVEL" property="wayLevel" jdbcType="VARCHAR"  />
+	</resultMap>
+	<resultMap type="com.sunline.pams.plan.bean.MoWayPerson" id="moWayPersonResult_special">
+		<result column="way_code" property="wayCode" jdbcType="VARCHAR" />
+		<result column="area_no" property="areaNo" jdbcType="CHAR" />
+		<result column="way_type" property="wayType" jdbcType="VARCHAR" />
+		<result column="way_name" property="wayName" jdbcType="VARCHAR" />
+		<result column="way_range" property="wayRange" jdbcType="VARCHAR" />
+		<result column="all_score" property="allScore" jdbcType="NUMERIC" />
+		<result column="org_level" property="orgLevel" jdbcType="VARCHAR" />
+		<result column="org_type" property="orgType" jdbcType="VARCHAR" />
+		<result column="way_post" property="wayPost" jdbcType="VARCHAR" />
+		<result column="white_list" property="whiteList" jdbcType="VARCHAR" />
+		<result column="black_list" property="blackList" jdbcType="VARCHAR" />
+		<result column="start_dat" property="startDate" jdbcType="DATE" />
+		<result column="end_dat" property="endDate" jdbcType="DATE" />
+		<result column="way_cycle" property="wayCycle" jdbcType="CHAR" />
+		<result column="edit_org" property="editOrg" jdbcType="VARCHAR" />
+		<result column="edit_role" property="editRole" jdbcType="VARCHAR" />
+		<result column="way_desc" property="wayDesc" jdbcType="VARCHAR" />
+		<result column="status" property="status" jdbcType="VARCHAR" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="operator" property="operator" jdbcType="VARCHAR" />
+		<result column="review_man" property="reviewMan" jdbcType="VARCHAR" />
+		<result column="review_time" property="reviewTime" jdbcType="TIMESTAMP" />
+		<result column="review_status" property="reviewStatus"
+			jdbcType="VARCHAR" />
+		<result column="review_opinion" property="reviewOpinion"
+			jdbcType="VARCHAR" />
+		<result column="is_exe" property="isExe" jdbcType="CHAR" />
+		<result column="exeStatus" property="exeStatus" />
+		<result column="WAY_LEVEL" property="wayLevel" jdbcType="VARCHAR" />
+	</resultMap>
+	<resultMap type="java.util.HashMap" id="query_org_scorelistPage_map">
+		<result column="way_code" property="wayCode"/>
+		<result column="way_name" property="wayName"/>
+		<result column="start_dat" property="startDate"/>
+		<result column="endDat" property="endDat"/>
+		<result column="wayCycle" property="wayCycle"/>
+		<result column="edit_org" property="editOrg"/>
+		<result column="status" property="status"/>
+		<result column="create_time" property="createTime"/>
+		<result column="area_no" property="area_no"/>
+	</resultMap>
+
+	<select id="queryMoWayOrglistPage" parameterType="java.util.HashMap"
+		resultMap="moWayOrgResult_special">
+		select 
+		    WAY_CODE
+		    ,AREA_NO
+		    ,WAY_TYPE
+		    ,WAY_NAME
+		    ,WAY_RANGE
+		    ,ALL_SCORE
+		    ,ORG_LEVEL
+		    ,ORG_TYPE
+		    ,WHITE_LIST
+		    ,BLACK_LIST
+		    ,START_DAT
+		    ,END_DAT
+		    ,WAY_CYCLE
+		    ,EDIT_ORG
+		    ,EDIT_ROLE
+		    ,WAY_DESC
+		    ,STATUS
+		    ,CREATE_TIME
+		    ,OPERATOR
+		    ,REVIEW_MAN
+		    ,REVIEW_TIME
+		    ,REVIEW_STATUS
+		    ,REVIEW_OPINION
+		    ,IS_EXE
+		    ,WAY_LEVEL
+		from MO_WAY_ORG  A 
+		where A.area_no = #{areaNo}
+		AND (
+		   (
+		    EXISTS (SELECT 1 FROM V_AUTH_ORG WHERE AREA_NO = #{areaNo} AND USERID=#{userid} AND  INSTR(','||NVL(A.EDIT_ORG,DEPTCODE)||',',','||DEPTCODE||',')<![CDATA[>]]>0)
+		    and EXISTS (SELECT 1 FROM pcmc_user_role WHERE USERID=#{userid} AND  INSTR(','||NVL(A.EDIT_ROLE,ROLEID)||',',','||ROLEID||',')<![CDATA[>]]>0)
+		    AND (A.EDIT_ORG IS NOT NULL OR A.EDIT_ROLE IS NOT NULL)
+		   ) 
+		   OR (A.EDIT_ORG IS NULL  AND A.EDIT_ROLE IS NULL AND A.OPERATOR = #{usercode})
+		 )
+		<if test="wayCode != null and wayCode != ''">
+			and a.way_code = #{wayCode}
+		</if>
+		<if test="wayName != null and wayName != ''">
+			and a.way_name = #{wayName}
+		</if>
+		<if test="wayNameLike != null and wayNameLike != ''">
+			and a.way_name like #{wayNameLike}
+		</if>
+		<if test="wayType!=null and wayType != ''">
+			and a.way_type = #{wayType}
+		</if>
+		<if test="startDate!=null">
+			and a.start_dat <![CDATA[>=]]> #{startDate}
+		</if>
+		<if test=" wayCycle !=null and wayCycle != ''">
+			and a.way_cycle = #{wayCycle}
+		</if>
+		<if test="endDate != null">
+			and a.end_dat <![CDATA[<=]]> #{endDate}
+		</if>
+		<if test=" wayStatus !=null and wayStatus != ''  ">
+			and a.status = #{wayStatus}
+		</if>
+		and a.status <![CDATA[<>]]> 'DEL'
+		order by a.way_code
+	</select>
+	
+	<select id="queryMoWayPersonlistPage" parameterType="java.util.HashMap"
+		resultMap="moWayPersonResult_special">
+		select 
+		    WAY_CODE
+		    ,AREA_NO
+		    ,WAY_TYPE
+		    ,WAY_NAME
+		    ,WAY_RANGE
+		    ,ALL_SCORE
+		    ,ORG_LEVEL
+		    ,ORG_TYPE
+		    ,WHITE_LIST
+		    ,BLACK_LIST
+		    ,START_DAT
+		    ,END_DAT
+		    ,WAY_CYCLE
+		    ,EDIT_ORG
+		    ,EDIT_ROLE
+		    ,WAY_DESC
+		    ,STATUS
+		    ,CREATE_TIME
+		    ,OPERATOR
+		    ,REVIEW_MAN
+		    ,REVIEW_TIME
+		    ,REVIEW_STATUS
+		    ,REVIEW_OPINION
+		    ,IS_EXE
+		    ,WAY_LEVEL
+		from MO_WAY_PERSON  A 
+		where A.area_no = #{areaNo}
+		AND (
+		   (
+		    EXISTS (SELECT 1 FROM V_AUTH_ORG WHERE A.AREA_NO = AREA_NO AND AREA_NO = #{areaNo} AND USERID=#{userid} AND  INSTR(','||NVL(A.EDIT_ORG,DEPTCODE)||',',','||DEPTCODE||',')>0)
+		    and EXISTS (SELECT 1 FROM pcmc_user_role WHERE USERID=#{userid} AND  INSTR(','||NVL(A.EDIT_ROLE,ROLEID)||',',','||ROLEID||',')>0)
+		    AND (A.EDIT_ORG IS NOT NULL OR A.EDIT_ROLE IS NOT NULL)
+		   ) 
+		   OR (A.EDIT_ORG IS NULL  AND A.EDIT_ROLE IS NULL AND A.OPERATOR = #{usercode})
+		 )
+		<if test="wayCode != null and wayCode != ''">
+			and a.way_code = #{wayCode}
+		</if>
+		<if test="wayName != null and wayName != ''">
+			and a.way_name = #{wayName}
+		</if>
+		<if test="wayNameLike != null and wayNameLike != ''">
+			and a.way_name like #{wayNameLike}
+		</if>
+		<if test="wayType!=null and wayType != ''">
+			and a.way_type = #{wayType}
+		</if>
+		<if test="startDate!=null">
+			and a.start_dat &gt;= #{startDate}
+		</if>
+		<if test="endDate">
+			and a.end_dat &lt;= #{endDate}
+		</if>
+		<if test=" wayStatus !=null and wayStatus != ''  ">
+			and a.status = #{wayStatus}
+		</if>
+		<if test=" wayCycle !=null and wayCycle != ''  ">
+			and a.way_cycle = #{wayCycle}
+		</if>
+		and a.status &lt;&gt; 'DEL'
+		order by way_code
+	</select>
+
+	
+	<!-- 查询用户有权限的方案信息 -->
+	<resultMap type="java.util.HashMap" id="userWayList">
+	    <result column="WAY_CODE" property="wayCode" jdbcType="VARCHAR" />
+	    <result column="WAY_NAME" property="wayName" jdbcType="VARCHAR" />
+	    <result column="OBJTYPE" property="objType" jdbcType="VARCHAR" />
+	</resultMap>
+	<select id="queryUserWaylistPage" parameterType="java.util.HashMap" resultMap="userWayList">
+	    select  a.WAY_CODE,a.WAY_NAME,a.OBJTYPE from  ( 
+	    select  way_code,way_name,'ORG' AS objType ,edit_role,edit_org,area_no,OPERATOR
+	    FROM MO_WAY_ORG  WHERE STATUS='FORMAL'
+	    UNION
+	    select way_code,way_name,'PERSON' AS objType  ,edit_role,edit_org,area_no,OPERATOR
+	    FROM MO_WAY_PERSON WHERE STATUS='FORMAL'
+	    ) a 
+	    where  area_no = #{areaNo}
+		AND (
+		   (
+		    EXISTS (SELECT 1 FROM V_AUTH_ORG WHERE USERID=#{userid} AND  INSTR(','||NVL(A.EDIT_ORG,DEPTCODE)||',',','||DEPTCODE||',')>0)
+		    and EXISTS (SELECT 1 FROM pcmc_user_role WHERE USERID=#{userid} AND  INSTR(','||NVL(A.EDIT_ROLE,ROLEID)||',',','||ROLEID||',')>0)
+		    AND (A.EDIT_ORG IS NOT NULL OR A.EDIT_ROLE IS NOT NULL)
+		   ) 
+		   OR (A.EDIT_ORG IS NULL  AND A.EDIT_ROLE IS NULL AND A.OPERATOR = #{usercode})
+		 )
+	    <if test=" wayName != null and wayName !='' ">
+	        AND A.WAY_NAME like #{wayName}
+	    </if>
+	    <if test=" wayCode != null and wayCode !='' ">
+	        AND A.WAY_CODE = #{wayCode}
+	    </if>
+	    <if test=" objtype != null and objtype !='' ">
+	        AND A.OBJTYPE = #{objtype}
+	    </if>
+	    <if test=" selected != null and selected !='' ">
+	        AND A.WAY_CODE in (#{selected})
+	    </if>
+	     order by A.WAY_CODE 
+	</select>
+</mapper> 	  

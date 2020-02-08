@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="com.sunline.funcpub.mybatis.public.pageNoCount" >
+	
+	<resultMap type="com.sunline.funcpub.portal.post.bean.Post" id="post_rsm">
+		<result column="post_id" property="postId"/>
+		<result column="post_code" property="postCode"/>
+		<result column="post_title" property="postTitle"/>
+		<result column="post_description" property="postDescription"/>
+		<result column="sort_no" property="sortNo"/>
+	</resultMap>
+	
+	<select id="queryPostPageNoCount" parameterType="java.util.HashMap" resultMap="post_rsm">
+		select 
+			post_id,
+			post_code,
+			post_title,
+			post_description,
+			sort_no
+		 from sys_pub_post
+		<where>
+			corpcode=#{corpcode}
+			<if test="postId !=null and postId !=''">
+				and post_id = #{postId}
+			</if>
+			<if test="postCode !=null and postCode.trim() !=''">
+				and post_code = #{postCode}
+			</if>
+			<if test="qName !=null and qName.trim()!=''">
+				and post_title like '%#{qName}%'
+			</if>
+		</where>
+		order by sort_no asc
+	</select>
+</mapper> 	  

@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="com.sunline.bimis.pcmc.flow.db.MdsFlwMain" table="MDS_FLW_MAIN">
+        <id name="flowid" type="java.lang.Long">
+            <column name="FLOWID" scale="0"/>
+      		<generator class="com.sunline.jraf.id.HBNIDGenerator" >
+			    <param name="seqname">MDS_FLW_MAIN</param>
+			    <param name="column">FLOWID</param>
+			</generator>
+        </id>
+        
+        <property name="flowna" type="string">
+            <column length="64" name="FLOWNA"/>
+        </property>
+        <property name="isclos" type="string">
+            <column length="32" name="ISCLOS"/>
+        </property>
+        <property name="begndt" type="timestamp">
+            <column name="BEGNDT"/>
+        </property>
+        <property name="overdt" type="timestamp">
+            <column name="OVERDT"/>
+        </property>
+        <property name="remark" type="string">
+            <column length="256" name="REMARK"/>
+        </property>
+        <property name="creaus" type="string">
+            <column length="256" name="CREAUS"/>
+        </property>
+        <property name="creatm" type="timestamp">
+            <column name="CREATM"/>
+        </property>
+        <property name="editus" type="string">
+            <column length="256" name="EDITUS"/>
+        </property>
+        <property name="edittm" type="timestamp">
+            <column name="EDITTM"/>
+        </property>
+    </class>
+</hibernate-mapping>

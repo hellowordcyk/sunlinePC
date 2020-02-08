@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="gb2312"?>
+<!-- 监管平台系统管理  -->
+<Sunline>
+	<Session></Session>
+	
+	<Operation id="sys_res" bean="com.sunline.funcpub.portal.resource.actor.SysResourseActor"  desc="系统资源信息" 
+	filterpath="/funcpub/portal/resource/">
+    	<Action name="addSysResourse" desc="新增系统资源" acttype="add" ></Action>
+    	
+        <Action name="querySysResourseWithPage" desc="查询系统资源--带分页" acttype="query" ></Action>
+        
+        <Action name="querySysResourseForList" desc="查询系统资源--不带分页" acttype="query" ></Action>
+
+        <Action name="querySysResourseById" desc="通过id查询系统资源" acttype="query"></Action>
+         
+        <Action name="updateSysResourse" desc="更新系统资源" acttype="update"></Action>
+         
+        <Action name="deleteSysResourse" desc="删除系统资源" acttype="delete"></Action>
+         
+        <Action name="RefreshResc" desc="刷新系统资源" acttype="query"  ></Action>  
+    </Operation>
+    
+      <!-- 系统资源组管理 -->
+	<Operation id="sys_res_gp" bean="com.sunline.funcpub.portal.resource.actor.SysResourseGpActor" desc="系统资源组管理" 
+	filterpath="/funcpub/portal/resource/">
+      	<Action name="querySysResourseGp" desc="查询系统组资源信息" acttype="query" >
+        </Action>
+        <Action name="updateSysResourseGr" desc="更新系统资源组信息" acttype="update" >
+        </Action>
+        <Action name="querySysResourseGpById" desc="通过id查询系统资源组信息" acttype="query" >
+        </Action>
+        <Action name="queryRsgroupRescInfo" desc="查询资源组的资源信息" acttype="query" >
+        </Action>
+        <Action name="queryNotInGroupResc" desc="查询不在资源组中资源" acttype="query" >
+        </Action>
+        <Action name="updateResGp" desc="维护系统资源组" acttype="update" >     
+        </Action>
+        
+        <Action name="querySysRescType" desc="查询资源类型" acttype="query" >
+        </Action>
+         <Action name="querySubsys" desc="查询子系统" acttype="query" >
+        </Action>
+         <Action name="deleteRsgp" desc="删除子系统" acttype="delete" >
+        </Action>
+        
+        <Action name="addRescToGroup" desc="添加资源到资源组" acttype="add" >
+        </Action>
+        <Action name="deleteRescFromGroup" desc="删除资源组中资源" acttype="delete" >
+        </Action>
+        
+         <Action name="queryGroupList" desc="查询资源组信息" acttype="query" >
+        </Action>
+        <Action name="addRescGroup" desc="新增资源组" acttype="add" >
+        </Action>
+        <Action name="queryRescGroupById" desc="根据ID查询资源组" acttype="query" >
+        </Action>  
+        <Action name="updateRescGroup" desc="更新资源组信息" acttype="update" >
+        </Action>
+        <Action name="deleteRsgp" desc="删除资源组" acttype="delete" >
+        </Action>
+
+  </Operation>
+    
+    <!-- 系统资源组授权 -->
+	<Operation id="sys_res_gr" bean="com.sunline.funcpub.portal.resource.actor.SysResourseGrActor" desc="系统资源组授权 " 
+	filterpath="/funcpub/portal/resource/">
+      	<Action name="querySysResourseGr" desc="查询系统资源/组授权信息" acttype="query" >
+        </Action>
+        <Action name="grantSysResourse" desc="保存系统资源/组授权信息" acttype="update" >
+        </Action>
+        <Action name="queryUnGrantUser" desc="查询资源未授权用户信息" acttype="query" >
+        </Action>
+    </Operation>
+    
+    <Operation id="bdss_resc_grant" bean="com.sunline.funcpub.portal.resource.actor.SysResourceGrantActor" desc="字典参数管理" 
+    filterpath="/funcpub/portal/resource/">
+      		<Action name="queryUserListLike" desc="模糊查询用户信息" acttype="query" />
+      		<Action name="queryUserRescList" desc="查询用户有权限的资源" acttype="query" />
+      		<Action name="queryUserUnGrantResource" desc="查询用户未授权的资源" acttype="query" />
+      		
+      		<Action name="addUserGrantResource" desc="用户资源授权" acttype="update" />
+      		<Action name="deleteUserGrantResource" desc="删除用户授权资源信息" acttype="update" />
+      		
+      		<Action name="queryRoleListLike" desc="模糊查询角色信息" acttype="query" />
+      		<Action name="queryRoleRescList" desc="查询角色有权限的资源" acttype="query" />
+      		<Action name="queryRoleUnGrantResource" desc="查询角色未授权的资源" acttype="query"/>
+      		
+      		<Action name="addRoleGrantResource" desc="角色资源授权" acttype="update" />
+    	</Operation>
+  
+          <!--下拉框权限控制 -->
+ 	<Operation id="resourceActor" bean="com.sunline.funcpub.portal.resource.actor.ResourceActor" desc="下拉框权限控制 " >
+      	<Action name="getResourceElement" desc="查询下拉框权限" acttype="query" >
+        </Action>
+        <Action name="RefreshResc" desc="刷新资源" acttype="deal"/>
+        <Action name="expResc" desc="导出资源" acttype="deal"/>
+     </Operation>
+	  
+</Sunline>

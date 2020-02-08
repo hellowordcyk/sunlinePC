@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="com.sunline.pams.mybatis.public.exportsql" >
+	<insert id="executeInsert" parameterType="java.util.HashMap">
+		${sql}
+	</insert>
+	
+	<delete id="deleteTable" parameterType="java.util.HashMap" >
+		delete from ${tablename}
+	</delete>
+	
+	<resultMap type="java.util.HashMap" id="OpDataColMap">
+		<result property="biz_table" column="biz_table"/>
+		<result property="table_column" column="table_column"/>
+		<result property="table_column_cn" column="table_column_cn"/>
+		<result property="input_box_type" column="input_box_type"/>
+		<result property="dict_type" column="dict_type"/>
+		<result property="use_flag" column="use_flag"/>
+		<result property="remark" column="remark"/>
+	</resultMap>
+	<select id="queryOpDataCol" parameterType="java.util.HashMap" resultMap="OpDataColMap">
+		select biz_table, table_column, table_column_cn, input_box_type, dict_type, use_flag, remark from op_data_col
+	</select>
+	
+	<resultMap type="java.util.HashMap" id="OpClaFlowinfoMap">
+		<result property="template_code" column="template_code"/>
+		<result property="sortno" column="sortno"/>
+		<result property="status" column="status"/>
+		<result property="status_name" column="status_name"/>
+		<result property="roleid" column="roleid"/>
+		<result property="yes_next_status" column="yes_next_status"/>
+		<result property="no_next_status" column="no_next_status"/>
+	</resultMap>
+	<select id="queryOpClaFlowinfo" parameterType="java.util.HashMap" resultMap="OpClaFlowinfoMap">
+		select template_code, sortno, status, status_name, roleid, yes_next_status, no_next_status from op_cla_flowinfo	
+	</select>
+	
+	<resultMap type="java.util.HashMap" id="OpFlowTemplateMap">
+		<result property="template_code" column="template_code"/>
+		<result property="template_name" column="template_name"/>
+		<result property="success_status" column="success_status"/>
+		<result property="failure_status" column="failure_status"/>
+	</resultMap>
+	<select id="queryOpFlowTemplate" parameterType="java.util.HashMap" resultMap="OpFlowTemplateMap">
+		select template_code,template_name,success_status,failure_status from op_flow_template
+	</select>
+	
+	<resultMap type="java.util.HashMap" id="OpFlowNodeMap">
+		<result property="template_code" column="template_code"/>
+		<result property="status" column="status"/>
+		<result property="status_name" column="status_name"/>
+	</resultMap>
+	<select id="queryOpFlowNode" parameterType="java.util.HashMap" resultMap="OpFlowNodeMap">
+		select template_code,status,status_name from op_flow_node
+	</select>
+	
+	<resultMap type="java.util.HashMap" id="OpClaConfigMap">
+		<result property="config_id" column="config_id"/>
+		<result property="config_name" column="config_name"/>
+		<result property="config_type" column="config_type"/>
+		<result property="biz_table" column="biz_table"/>
+		<result property="biz_pk" column="biz_pk"/>
+		<result property="biz_show" column="biz_show"/>
+		<result property="biz_give" column="biz_give"/>
+		<result property="biz_scope" column="biz_scope"/>
+		<result property="biz_condition" column="biz_condition"/>
+		<result property="cla_table" column="cla_table"/>
+		<result property="cla_colstr_get" column="cla_colstr_get"/>
+		<result property="cla_type" column="cla_type"/>
+		<result property="cla_in_obj_scope" column="cla_in_obj_scope"/>
+		<result property="rate_top" column="rate_top"/>
+		<result property="force_rateall_flag" column="force_rateall_flag"/>
+		<result property="asn_virtual_flag" column="asn_virtual_flag"/>
+		<result property="template_code" column="template_code"/>
+		<result property="asn_table" column="asn_table"/>
+		<result property="asn_colstr_get" column="asn_colstr_get"/>
+		<result property="biz_check_table" column="biz_check_table"/>
+		<result property="biz_check_pk" column="biz_check_pk"/>
+		<result property="biz_check_show" column="biz_check_show"/>
+		<result property="biz_check_scope" column="biz_check_scope"/>
+		<result property="biz_check_condition" column="biz_check_condition"/>
+	</resultMap>
+	<select id="queryOpClaConfig" parameterType="java.util.HashMap" resultMap="OpClaConfigMap">
+		select config_id, config_name, config_type, biz_table, biz_pk, biz_show, biz_give, 
+			biz_scope, biz_condition, cla_table, cla_colstr_get, cla_type, cla_in_obj_scope, rate_top,
+			 force_rateall_flag, asn_virtual_flag, template_code, asn_table, asn_colstr_get, biz_check_table, 
+			biz_check_pk, biz_check_show, biz_check_scope, biz_check_condition 
+		from op_cla_config
+	</select>
+	
+	<resultMap type="java.util.HashMap" id="OpAsnConfigMap">
+		<result property="config_id" column="config_id"/>
+		<result property="config_name" column="config_name"/>
+		<result property="config_type" column="config_type"/>
+		<result property="biz_table" column="biz_table"/>
+		<result property="biz_pk" column="biz_pk"/>
+		<result property="biz_show" column="biz_show"/>
+		<result property="biz_give" column="biz_give"/>
+		<result property="biz_scope" column="biz_scope"/>
+		<result property="biz_condition" column="biz_condition"/>
+		<result property="asn_table" column="asn_table"/>
+		<result property="asn_colstr_get" column="asn_colstr_get"/>
+		<result property="asn_type" column="asn_type"/>
+		<result property="asn_in_obj_scope" column="asn_in_obj_scope"/>
+		<result property="rate_top" column="rate_top"/>
+		<result property="force_rateall_flag" column="force_rateall_flag"/>
+		<result property="asn_virtual_flag" column="asn_virtual_flag"/>
+		<result property="template_code" column="template_code"/>
+		<result property="cla_table" column="cla_table"/>
+		<result property="cla_colstr_get" column="cla_colstr_get"/>
+		<result property="biz_check_table" column="biz_check_table"/>
+		<result property="biz_check_pk" column="biz_check_pk"/>
+		<result property="biz_check_show" column="biz_check_show"/>
+		<result property="biz_check_scope" column="biz_check_scope"/>
+		<result property="biz_check_condition" column="biz_check_condition"/>
+	</resultMap>
+	<select id="queryOpAsnConfig" parameterType="java.util.HashMap" resultMap="OpAsnConfigMap">
+		select  config_id, config_name, config_type, biz_table, biz_pk, 
+				biz_show, biz_give, biz_scope, biz_condition, asn_table, 
+				asn_colstr_get, asn_type, asn_in_obj_scope, rate_top, force_rateall_flag, 
+				asn_virtual_flag, template_code, cla_table, cla_colstr_get, biz_check_table, 
+				biz_check_pk, biz_check_show, biz_check_scope, biz_check_condition 
+		from op_asn_config
+	</select>
+	
+	
+</mapper> 	  
+ 	 

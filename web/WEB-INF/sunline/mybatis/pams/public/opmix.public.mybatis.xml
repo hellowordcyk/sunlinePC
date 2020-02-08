@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="com.sunline.pams.mybatis.public.opmix" >
+ 	
+ 	<!-- resultMap -->
+ 	<resultMap id="opClaFlowInfoMap" type="java.util.HashMap">
+ 		<result column="SORTNO" property="sortNo"/>
+ 		<result column="STATUS" property="status"/>
+ 		<result column="STATUS_NAME" property="statusName"/>
+ 		<result column="ROLEID" property="roleID"/>
+ 		<result column="YES_NEXT_STATUS" property="yesNextStatus"/>
+ 		<result column="NO_NEXT_STATUS" property="noNextStatus"/>
+ 	</resultMap>
+ 	
+ 	<!-- 添加认领信息 -->
+ 	<insert id="addClaInfo" parameterType="java.util.HashMap">
+ 		INSERT INTO ${tableName}(CLA_ID,FLOW_ID,START_DATE,END_DATE,CLA_IN_OBJ,CUR_CLA_RATE,RECHECK,CLA_TYPE,
+ 		<if test="startAmt != null">
+ 			START_AMT,
+ 		</if>
+ 		<if test="endAmt != null">
+ 			END_AMT,
+ 		</if>
+ 		<foreach collection="claColStrGetList" item="claColStrGet" separator=",">
+ 			<if test="claColStrGet.colValue != null">
+ 				${claColStrGet.colName}
+ 			</if>
+ 		</foreach>
+ 		)
+ 		VALUES(${tableName}_SEQ.NEXTVAL,#{flowID},#{startDate},#{endDate, jdbcType=DATE},#{userCode},#{rate},#{reCheck,jdbcType=VARCHAR},#{claType},
+ 		<if test="startAmt != null">
+ 			#{startAmt},
+ 		</if>
+ 		<if test="endAmt != null">
+ 			#{endAmt},
+ 		</if>
+ 		<foreach collection="claColStrGetList" item="claColStrGet" separator=",">
+ 			<if test="claColStrGet.colValue != null">
+ 				#{claColStrGet.colValue}
+ 			</if>
+ 		</foreach>
+ 		)
+ 	</insert>
+ 	
+ 	<!-- 添加分配信息 -->
+ 	<insert id="addAsnInfo" parameterType="java.util.HashMap">
+ 		INSERT INTO ${tableName}(ASN_ID,START_DATE,END_DATE,ASN_TYPE,ASN_IN_OBJ,CUR_ASN_RATE,ASN_TIME,OPERATOR,STATUS,ASN_SRC,
+ 		<if test="startAmt != null">
+ 			START_AMT,
+ 		</if>
+ 		<if test="endAmt != null">
+ 			END_AMT,
+ 		</if>
+ 		<foreach collection="asnColStrGetList" item="asnColStrGet" separator=",">
+ 			<if test="asnColStrGet.colValue != null">
+ 				${asnColStrGet.colName}
+ 			</if>
+ 		</foreach>
+ 		)
+ 		VALUES(${tableName}_SEQ.NEXTVAL,#{startDate},#{endDate, jdbcType=DATE},#{claType},#{userCode},#{rate},#{asnTime},#{operator},#{asnStatus},#{asnSrc},
+ 		<if test="startAmt != null">
+ 			#{startAmt},
+ 		</if>
+ 		<if test="endAmt != null">
+ 			#{endAmt},
+ 		</if>
+ 		<foreach collection="asnColStrGetList" item="asnColStrGet" separator=",">
+ 			<if test="asnColStrGet.colValue != null">
+ 				#{asnColStrGet.colValue}
+ 			</if>
+ 		</foreach>
+ 		)
+ 	</insert>
+ 	
+ 	<!-- 添加流程信息 -->
+ 	<insert id="addOpClaFlow" parameterType="java.util.HashMap">
+ 		INSERT INTO OP_CLA_FLOW(FLOW_ID,TEMPLATE_CODE,START_TIME,STATUS,ROLEID,AREA_NO,OPERATOR)
+ 		VALUES(#{flowID},#{templateCode},#{startTime},#{status},#{roleID},#{areaNo},#{operator})
+ 	</insert>
+ 	
+ 	<!-- 查询流程模板信息 -->
+	<select id="queryOpClaFlowInfo" parameterType="String" resultMap="opClaFlowInfoMap">
+ 		SELECT SORTNO,STATUS,STATUS_NAME,ROLEID,YES_NEXT_STATUS,NO_NEXT_STATUS FROM OP_CLA_FLOWINFO
+ 		WHERE TEMPLATE_CODE = #{_parameter} ORDER BY SORTNO
+ 	</select>
+ 	
+ 	<select id="getConfigKeyValue" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+ 	    select T.* from (select ${bizPK}
+ 	    from ${bizTable}
+ 	    where rownum=1 and org_no is not null) T
+ 	</select>
+ 	
+ 	<select id="queryOpcherkUser" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+ 		 select usercode,username 
+       from pcmc_user 
+       where deptid in (
+          select pd.deptid from pcmc_dept pd where pd.deptcode in ( select b.org_no from op_Cla_flow a 
+        left join  ${claTable} b on a.flow_id=b.flow_id
+        where a.flow_id=#{flowID})
+        union all
+        select pd.pdeptid from pcmc_dept pd where pd.deptcode in ( select b.org_no from op_Cla_flow a 
+        left join  ${claTable} b on a.flow_id=b.flow_id
+        where a.flow_id=#{flowID})
+       ) 
+        and userid in (select userid from pcmc_user_role where roleid in ( SELECT Regexp_Substr(clf.Roleid,
+                                       '[^,]+',
+                                       1,
+                                       x.n) AS Roleid
+                    FROM Op_Cla_Flow clf,
+                         (SELECT Rownum n FROM Dual CONNECT BY Rownum <![CDATA[<=]]> 10) x where clf.flow_id=#{flowID}))
+ 	</select>
+ 	 
+ 	<select id="getOpClaByUserCodelistPage" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+      select * from (
+       SELECT A.MODLNA,
+              A.CUST_NO,
+              A.CUST_NAME,
+              A.ACLOCD,
+              PCMC_DEPT.DEPTNAME AS DEPTNAME,
+              A.CLA_IN_OBJ,
+              A.CUR_CLA_RATE*100 CUR_CLA_RATE,
+              A.CLA_TYPE,
+              A.AREA_NO,
+              to_char(A.START_DATE,'yyyy-mm-dd') START_DATE,
+              to_char(A.END_DATE,'yyyy-mm-dd') END_DATE,
+              A.FLOW_ID,
+              B.STATUS,
+              to_char(B.END_TIME, 'yyyy-mm-dd') END_TIME,
+              to_char(B.START_TIME, 'yyyy-mm-dd') START_TIME,
+              (CASE
+                WHEN B.STATUS = D.SUCCESS_STATUS THEN
+                 '通过'
+                WHEN B.STATUS = D.FAILURE_STATUS THEN
+                 '退回'
+                ELSE
+                 C.STATUS_NAME
+              END) AS STATUS_NAME
+         FROM OP_CLA_MSG A
+         LEFT JOIN OP_CLA_FLOW B
+           ON A.FLOW_ID = B.FLOW_ID
+         LEFT JOIN OP_FLOW_NODE C
+           ON B.TEMPLATE_CODE = C.TEMPLATE_CODE
+          AND B.STATUS = C.STATUS
+         LEFT JOIN OP_FLOW_TEMPLATE D
+           ON B.TEMPLATE_CODE = D.TEMPLATE_CODE
+         LEFT JOIN PCMC_DEPT
+           ON A.ORG_NO = PCMC_DEPT.DEPTCODE
+          AND A.AREA_NO = PCMC_DEPT.AREANO ) T
+         WHERE　1=1
+         <if test="userCode != null and userCode !='' ">
+          and  T.CLA_IN_OBJ = #{userCode}
+         </if>
+         <if test="userCode == null and userCode =='' ">
+          and  1 = 2
+         </if>
+         <if test="startDate != null and startDate !='' ">
+          and  T.START_TIME <![CDATA[>=]]> #{startDate}
+         </if>
+         <if test="endDate != null and endDate !='' ">
+          and  T.START_TIME <![CDATA[<]]> #{endDate}
+         </if>
+          <if test="statna != null and statna !='' ">
+          and  T.STATUS_NAME = #{statna}
+         </if>
+         order by T.START_TIME desc
+ 	</select>
+ 	
+ 	<select id="getAsnClaLoglistPage" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+ 	    SELECT to_char(to_timestamp(Time_Tamp,'yyyyMMddhh24missff'),'yyyy-MM-dd hh:mm:ss') Time_Tamp,
+               Oper_Mode,
+               Data_Date,
+               User_Code,
+               User_Name,
+               Dept_Code,
+               Dept_Name,
+               View_Tabl,
+               Work_Modl,
+               Chek_Mesg,
+               Asncla_Id,
+               to_char(Start_Date,'yyyy-MM-dd') Start_Date,
+               to_char(End_Date,'yyyy-MM-dd') End_Date,
+               In_Obj,
+               In_ObjNa,
+               nvl(Cur_Rate,0)*100 Cur_Rate,
+               Log_Type,
+               Start_Amt,
+               End_Amt,
+               Kyno_Vale
+          FROM Cla_Asn_Log a
+          where 1=1
+          <if test="userCode !=null and userCode !='' ">
+              and a.User_code=#{userCode}
+          </if>
+          <if test="deptCode !=null and deptCode !='' ">
+              and a.Dept_Code=#{deptCode}
+          </if>
+          <if test="deptCodeSql != null and deptCodeSql != ''">
+ 			  and a.Dept_Code in (${deptCodeSql})
+ 		  </if>
+ 		  <if test="modeOp != null and modeOp !=''">
+ 		      and a.View_Tabl = #{modeOp}
+ 		  </if>
+          <if test="kynoVale !=null and kynoVale !='' ">
+              and a.Kyno_Vale = #{kynoVale}
+          </if>
+           <if test="inObj != null and inObj !='' ">
+              and a.In_Obj = #{inObj}
+          </if>
+          order by Kyno_Vale,Time_Tamp
+ 	</select>
+</mapper> 	  
+ 	 

@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sunline.governor.mybatis.public.corpinit">
+	
+	<resultMap id="corpInit_rsm" type="com.sunline.funcpub.pojo.corpinit.SysInitFunction">
+		<result property="functionId" column="function_id"/> 
+		<result property="sequenceField" column="sequence_field"/> 
+		<result property="systemCode" column="system_code"/> 
+		<result property="functionTitle" column="function_title"/> 
+		<result property="functionTable" column="function_table"/> 
+		<result property="functionSortNo" column="function_sortno"/> 
+		<result property="corporationField" column="corporation_field"/> 
+		<result property="functionSelectable" column="function_selectable"/> 
+		<result property="functionMandatory" column="function_mandatory"/> 
+		<result property="executionSysname" column="execution_sysname"/> 
+		<result property="executionOprid" column="execution_oprid"/> 
+		<result property="executionActions" column="execution_actions"/>
+		<result property="systemName" column="systemName"/>
+		<result property="executionStatus" column="execution_status"/>
+		<result property="refColumns" column="ref_columns"/>
+		<result property="refTables" column="ref_tables"/>
+		<result property="className" column="class_name"/>
+	</resultMap>
+	
+	<!-- 法人初始化配置列表分页查询 -->
+	<select id="queryCorpInitConfiglistPage" parameterType="java.util.HashMap" resultMap="corpInit_rsm">
+		select 
+			a.function_id,
+			a.system_code,
+			a.function_title,
+			a.function_table,
+			a.function_sortno,
+			a.corporation_field,
+			a.function_selectable,
+			a.function_mandatory,
+			a.execution_sysname,
+			a.execution_oprid,
+			a.execution_actions,
+			a.sequence_field,
+			a.ref_columns,
+			a.ref_tables,
+			a.class_name,
+			b.cnname as systemName
+		from sys_init_function a inner join pcmc_subsys b on a.system_code=b.SHORTNAME 
+		<where>
+			<if test="functionId !=null and functionId!=''">
+				and a.function_id=#{functionId}
+			</if>
+			<if test="systemCode!=null and systemCode.trim()!=''">
+				and a.systemCode=#{systemCode}
+			</if>
+			<if test="functionIds != null and functionIds.size() > 0">
+               and (
+                <foreach collection="functionIds" index="index" item="dcs" open="" separator="" close="">
+                   <if test="index==0">
+                     function_id in
+                      <foreach collection="dcs" index="index" item="dc" open="(" separator="," close=")">
+                      #{dc}
+                  </foreach>
+                   </if>
+                   <if test="index > 0">
+                     or function_id in 
+                     <foreach collection="dcs" index="index" item="dc" open="(" separator="," close=")">
+                      #{dc}
+                  </foreach>
+                   </if>
+                </foreach>
+                )
+            </if>
+		</where>
+		order by b.orderidx,a.function_sortno asc
+	</select>
+	
+	<!-- 法人初始化配置列表分页查询 -->
+	<select id="queryCorpInitStatuslistPage" parameterType="java.util.HashMap" resultMap="corpInit_rsm">
+		select 
+			a.function_id,
+			a.system_code,
+			a.function_title,
+			a.function_table,
+			a.function_sortno,
+			a.corporation_field,
+			a.function_selectable,
+			a.function_mandatory,
+			a.execution_sysname,
+			a.execution_oprid,
+			a.execution_actions,
+			a.ref_columns,
+			a.ref_tables,
+			a.class_name,
+			a.sequence_field,
+			b.cnname as systemName,
+			c.execution_status
+		from sys_init_function a inner join pcmc_subsys b on a.system_code=b.SHORTNAME left join sys_init_log c on a.function_id=c.function_id and c.corpcode=#{corpcode}
+		<where>
+			<if test="functionId !=null and functionId!=''">
+				and a.function_id=#{functionId}
+			</if>
+			<if test="systemCode!=null and systemCode.trim()!=''">
+				and a.systemCode=#{systemCode}
+			</if>
+			<if test="functionIds != null and functionIds.size() > 0">
+               and (
+                <foreach collection="functionIds" index="index" item="dcs" open="" separator="" close="">
+                   <if test="index==0">
+                     a.function_id in 
+                      <foreach collection="dcs" index="index" item="dc" open="(" separator="," close=")">
+                      #{dc}
+                  </foreach>
+                   </if>
+                   <if test="index > 0">
+                     or a.function_id in 
+                     <foreach collection="dcs" index="index" item="dc" open="(" separator="," close=")">
+                      #{dc}
+                  </foreach>
+                   </if>
+                </foreach>
+                )
+            </if>
+		</where>
+		order by b.orderidx,a.function_sortno asc
+	</select>
+</mapper>

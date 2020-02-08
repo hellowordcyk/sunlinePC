@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sunline.funcpub.mybatis.public.menu" >
+
+	<select id="queryOneLevelMenu" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		select distinct a.sortno, a.menuid "menuid",a.menuname "menuname",a.imgurl "imgurl",a.linkurl "linkurl" from pcmc_menu a 
+		left join pcmc_role_menu b on a.menuid = b.menuid
+		where a.levelp = 1 and a.corpcode=#{corpcode} 
+		and b.roleid= #{roleid} 
+		order by a.sortno
+	</select>
+	<select id="querySubsysMenu" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		select distinct a.orderidx,a.subsysid "menuid",a.cnname "menuname",b.imgurl "imgurl",b.linkurl "linkurl" from pcmc_subsys a
+		left join pcmc_menu b on a.subsysid = b.subsysid and b.corpcode=#{corpcode}
+		left join pcmc_role_menu c on b.menuid = c.menuid
+		where c.ROLEID= #{roleid} 
+		order by a.orderidx
+	</select>
+	<select id="querySubsysMenuByUserId" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		select distinct a.orderidx,a.subsysid "menuid",a.cnname "menuname",b.imgurl "imgurl" from pcmc_subsys a
+		inner join pcmc_menu b on a.subsysid = b.subsysid and b.corpcode=#{corpcode}
+		inner join pcmc_role_menu c on b.menuid = c.menuid
+		inner join pcmc_user_role ur on ur.roleid = c.roleid
+		where ur.userid = #{_parameter} 
+		order by a.orderidx
+	</select>
+	<select id="queryNowDataDate" parameterType="java.util.HashMap" resultType="java.lang.String">
+		select PARA_VALUE "paraValue" 
+		from sys_pub_para where PARA_CODE = 'sysDataDate'
+	</select>
+	<select id="queryMenuByPid" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		select distinct a.sortno,a.menuid "menuid",a.menuname "menuname",a.imgurl "imgurl",a.linkurl "linkurl",a.is_leaf "isleaf", a.displaytype "displaytype" 
+		from pcmc_menu a 
+		left join pcmc_role_menu b on a.menuid = b.menuid
+		where b.roleid= #{roleid} and a.pmenuid = #{pmenuid} and a.menuid != #{pmenuid} and a.corpcode=#{corpcode}
+		order by a.sortno
+	</select>
+	<!--查询该角色下的所有菜单 -->
+	<select id="queryAllMenuByRole" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		select distinct a.sortno,a.menuid "menuid",a.pmenuid "pmenuid",a.menuname "menuname",a.imgurl "imgurl",a.linkurl "linkurl",a.is_leaf "isleaf", a.displaytype "displaytype" 
+		from pcmc_menu a 
+		left join pcmc_role_menu b on a.menuid = b.menuid
+		where b.roleid= #{roleid}  and a.corpcode=#{corpcode}
+		order by a.sortno
+	</select>
+	<select id="queryAllMenuByRoles" parameterType="java.util.HashMap" resultType="java.util.HashMap" >
+	   select distinct a.sortno,a.menuid "menuid",a.pmenuid "pmenuid",a.menuname "menuname",a.imgurl "imgurl",a.linkurl "linkurl",a.is_leaf "isleaf", a.displaytype "displaytype" 
+		from pcmc_menu a 
+		left join pcmc_role_menu b on a.menuid = b.menuid
+		where b.roleid in (
+			<foreach collection="roleidList" item="roleid" separator=",">
+				#{roleid}  
+			</foreach>
+		)
+		and a.corpcode=#{corpcode}
+		order by a.sortno
+	</select>
+	<select id="queryMenuByUidAndPid" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		select distinct a.sortno,a.menuid "menuid",a.menuname "menuname",a.imgurl "imgurl",a.linkurl "linkurl",a.is_leaf "isleaf" , a.displaytype "displaytype" from pcmc_menu a 
+		left join pcmc_role_menu b on a.menuid = b.menuid
+		left join pcmc_user_role ur on ur.roleid = b.roleid
+		where ur.userid = #{userid} and a.pmenuid = #{pmenuid} and a.menuid != #{pmenuid} and a.corpcode=#{corpcode}
+		order by a.sortno
+	</select>
+	<select id="queryMenuByUserIdAndPid" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		select distinct a.sortno,a.menuid "menuid",a.menuname "menuname",a.imgurl "imgurl",a.linkurl "linkurl",a.is_leaf "isleaf", a.displaytype "displaytype" from pcmc_menu a 
+		left join pcmc_role_menu b on a.menuid = b.menuid
+		left join pcmc_user_role ur on ur.roleid = b.roleid
+		where ur.userid = #{userid} and a.pmenuid = #{pmenuid} and a.menuid != #{pmenuid} and a.corpcode=#{corpcode}
+		order by a.sortno
+	</select>
+	<select id="queryOneLevelMenuBySubsysid" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		select distinct a.sortno,a.menuid "menuid",a.menuname "menuname",a.imgurl "imgurl",a.linkurl "linkurl",a.is_leaf "isleaf", a.displaytype "displaytype" from pcmc_menu a 
+		left join pcmc_role_menu b on a.menuid = b.menuid
+		where b.roleid= #{roleid} and a.levelp = 1 and a.subsysid = #{subsysid} and a.corpcode=#{corpcode}
+		order by a.sortno
+	</select>
+	<select id="queryOneLevelMenuByUidAndSubsysid" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		select distinct a.sortno,a.menuid "menuid",a.menuname "menuname",a.imgurl "imgurl",a.linkurl "linkurl",a.is_leaf "isleaf", a.displaytype "displaytype" from pcmc_menu a 
+		left join pcmc_role_menu b on a.menuid = b.menuid
+		left join pcmc_user_role ur on ur.roleid = b.roleid
+		where ur.userid = #{userid} and a.levelp = 1 and a.subsysid = #{subsysid} and a.corpcode=#{corpcode}
+		order by a.sortno
+	</select>
+	
+	<select id="queryOneLevelMenuByUserId" parameterType="object" resultType="java.util.HashMap">
+		select distinct a.sortno,a.menuid "menuid",a.menuname "menuname",a.imgurl "imgurl",a.linkurl "linkurl",a.is_leaf "isleaf" 
+	       from pcmc_menu a 
+			   inner join pcmc_role_menu b on a.menuid = b.menuid
+	       	   inner join pcmc_user_role ur on ur.roleid = b.roleid
+		   where ur.userid = #{_parameter} and a.levelp = 1 and a.corpcode=#{corpcode}
+		   order by a.sortno
+	</select>
+	
+	<select id="queryDefaultRoleidByuserid" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		select USERID "userid",DEFAULT_ROLE "default_role"
+	     from pcmc_user 
+		where 1=1
+		and userid = #{userid} and corpcode=#{corpcode}
+	</select>
+	
+	<select id="queryRoleidByuserid" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		select b.USERID "userid",b.ROLEID "roleid"
+	     from pcmc_user a inner join pcmc_user_role b on a.userid=b.userid
+		where 1=1
+		and b.userid = #{userid} and a.corpcode=#{corpcode}
+	</select>
+	
+	<select id="getMenuStyle" parameterType="java.util.HashMap" resultType="String">
+		select menutype "menutype" from pcmc_user
+		<where>
+			userid = #{userid} and corpcode=#{corpcode}
+		</where>
+	</select>
+</mapper> 	  

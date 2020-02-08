@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sunline.governor.mybatis.public.governor_upgrade">
+	<select id="queryAllPcmcUsers" parameterType="java.util.Map" resultType="com.sunline.funcpub.entity.PcmcUser"> 
+	  	select userid,userpwd,corpcode,usercode from pcmc_user 
+	</select>
+	<update id="updateUserpwd" parameterType="com.sunline.funcpub.entity.PcmcUser">
+		update pcmc_user set userpwd = #{userpwd} where userid = #{userid}
+	</update>
+	
+</mapper>

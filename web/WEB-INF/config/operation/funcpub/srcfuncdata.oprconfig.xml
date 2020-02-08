@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="gb2312"?>
+<!-- 监管平台系统管理  -->
+<Sunline>
+	<Session></Session>
+	
+		<!-- jui测试 -->
+		<Operation id="dataconf-jui-user"  bean="com.sunline.funcpub.TestUserActor"  desc="测试">
+			<Action name="getFuncMenu" desc="查询记录"/>
+			<Action name="addFuncMenu" desc="增加记录"/>
+			<Action name="updateFuncMenu" desc="增加记录"/>
+			<Action name="delFuncMenu" desc="删除记录"/>
+			<Action name="getfunmapbyid" desc="根据id获取记录"/>
+		</Operation>
+</Sunline>

@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="com.sunline.bimis.pcmc.flow.db.MdsFlwAppr" table="MDS_FLW_APPR">
+        <id name="apprid" type="java.lang.Long">
+            <column name="APPRID" scale="0"/>
+      		<generator class="com.sunline.jraf.id.HBNIDGenerator" >
+			    <param name="seqname">MDS_FLW_APPR</param>
+			    <param name="column">APPRID</param>
+			</generator>
+        </id>
+        
+        <property name="detlcd" type="string">
+            <column length="32" name="DETLCD"/>
+        </property>
+        <property name="flowid" type="long">
+            <column length="22" name="FLOWID"/>
+        </property>
+        <property name="bscode" type="string">
+            <column length="32" name="BSCODE"/>
+        </property>
+        <property name="funccd" type="string">
+            <column length="32" name="FUNCCD"/>
+        </property>
+        <property name="objscd" type="string">
+            <column length="64" name="OBJSCD"/>
+        </property>
+        <property name="apprdt" type="timestamp">
+            <column name="APPRDT"/>
+        </property>
+        <property name="apprst" type="string">
+            <column length="32" name="APPRST"/>
+        </property>
+        <property name="apprtx" type="string">
+            <column length="512" name="APPRTX"/>
+        </property>
+        <property name="userid" type="string">
+            <column length="32" name="USERID"/>
+        </property>
+        <property name="userna" type="string">
+            <column length="64" name="USERNA"/>
+        </property>
+    </class>
+</hibernate-mapping>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+    <!--是否启用监听：true/false-->
+	<Active>true</Active>
+	<!--  监听类配置 -->
+    <Listener class="com.sunline.governor.jdbmonitor.DataBaseDBListenerImpl" arg="dburl=jdbc:mysql://10.24.1.11:3306/corp_dev?useUnicode=true;user=corp_dev;password=sunline;logTable=sys_sql_execute_log" />
+    <JdbcDrivers>
+    	<JdbcDriver class="com.mysql.jdbc.Driver" />
+  	</JdbcDrivers>
+</config>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="gb2312"?>
+<Sunline>
+	<Session></Session>
+    <!-- 区域管理 -->
+    <Operation id="themeActor" bean="com.sunline.funcpub.ThemeActor" >
+        <Action name="queryTheme" desc="查询系统皮肤" acttype="query" />
+        <Action name="updateTheme" desc="修改用户皮肤" acttype="update" />
+    </Operation>
+
+</Sunline>

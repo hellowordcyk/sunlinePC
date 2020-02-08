@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="GB2312"?>
+<configuration>
+    <messageList>
+        <!--报文类型与描述器的对应关系-->
+        <msg_mapping>
+            <rec tasktype="5" msgverpos="0" msgverlength="3"/>
+        </msg_mapping>
+        <!--trimoption 1：不去空格 2：去前后半角 3：去前后全角半角 4：去所有全角半角-->
+        <message tasktype="5" version="1.0" headerLength="148" readerVersion="1.1" charset="GB18030">
+            <segment cnname="反馈报文头段" name="Head" segmentLength="148" opitional="false" unique="true">
+                <field cnname="报文格式版本号" name="Version" type="AN" trimoption="3" startPosition="0" endPosition="2" opitional="false"/>
+                <field cnname="报送机构代码  " name="FinianceCode" type="AN" trimoption="3" startPosition="3" endPosition="16" opitional="false"/>
+                <field cnname="报文生成时间  " name="CreatedTime" type="N" trimoption="3" startPosition="17" endPosition="30" opitional="false"/>
+                <field cnname="出错报文名    " name="FileName" type="AN" trimoption="3" startPosition="31" endPosition="60" opitional="false" />
+                <field cnname="出错原因代码  " name="ErrorReason" type="N" trimoption="3" startPosition="61" endPosition="62" opitional="true"/>
+                <field cnname="联系人        " name="LinkPerson" type="ANC" trimoption="4" startPosition="63" endPosition="92" opitional="true"/>
+                <field cnname="联系电话      " name="LinkPhone" type="ANC" trimoption="4" startPosition="93" endPosition="117" opitional="true"/>
+                <field cnname="预留字段      " name="reservered" type="AN" trimoption="3" startPosition="118" endPosition="147" length="30" opitional="true"/>
+            </segment>
+            <segment cnname="反馈错误段" name="Error" segmentLength="41" opitional="false" unique="false">
+                <field cnname="反馈原因" name="reason" type="N" trimoption="3" startPosition="0" endPosition="0" opitional="false"/>
+                <field cnname="出错信息" name="infoa" type="AN" trimoption="3" startPosition="1" endPosition="8" opitional="false"/>
+                <field cnname="出错信息" name="infob" type="AN" trimoption="3" startPosition="9" endPosition="16" opitional="true"/>
+                <field cnname="出错信息" name="infoc" type="AN" trimoption="3" startPosition="17" endPosition="24" opitional="true"/>
+                <field cnname="出错信息" name="infod" type="AN" trimoption="3" startPosition="25" endPosition="32" opitional="true" />
+                <field cnname="出错信息" name="infoe" type="AN" trimoption="3" startPosition="33" endPosition="40" opitional="true"/>
+            </segment>
+            <segment cnname="基础段" name="A" segmentLength="376" opitional="false" unique="true">
+                <field cnname="信息类别" name="A" type="AN" trimoption="3" startPosition="0" endPosition="0" opitional="false"/>
+                <field cnname="客户号              " name="CUSTOMID" type="AN" trimoption="3" startPosition="1" endPosition="40" opitional="false"/>
+                <field cnname="组织机构代码        " name="SDEPORGCODE" type="AN" trimoption="3" startPosition="41" endPosition="50" opitional="true"/>
+                <field cnname="登记注册号类型      " name="REGISTERTYPE" type="N" trimoption="2" startPosition="51" endPosition="52" opitional="true"/>
+                <field cnname="登记注册号码        " name="REGISTERCODE" type="ANC" trimoption="4" startPosition="53" endPosition="72" opitional="true"/>
+                <field cnname="纳税人识别号（国税）" name="SDEPNATIONALTAXCODE" type="ANC" trimoption="4" startPosition="73" endPosition="92" opitional="true"/>
+                <field cnname="纳税人识别号（地税）" name="SDEPLANDTAXCODE" type="ANC" trimoption="4" startPosition="93" endPosition="112" opitional="true"/>
+                <field cnname="开户许可证核准号    " name="SACCBASELICNO" type="AN" trimoption="3" startPosition="113" endPosition="132" opitional="true"/>
+                <field cnname="贷款卡编码          " name="LOANCARDCODE" type="AN" trimoption="3" startPosition="133" endPosition="148" opitional="true"/>
+                <field cnname="机构中文名称        " name="SDEPNAMEC" type="ANC" trimoption="4" startPosition="149" endPosition="228" opitional="true"/>
+                <field cnname="机构英文名称        " name="SDEPNAMEE" type="ANC" trimoption="4" startPosition="229" endPosition="308" opitional="true"/>
+                <field cnname="客户类型            " name="CUSTOMTYPE" type="AN" trimoption="3" startPosition="309" endPosition="309" opitional="false"/>
+                <field cnname="信息更新日期        " name="UPDATEDATE" type="N" trimoption="2" startPosition="310" endPosition="317" opitional="false"/>
+                <field cnname="机构信用代码        " name="CREDITCODE" type="AN" trimoption="3" startPosition="318" endPosition="335" opitional="true"/>
+                <field cnname="预留字段            " name="ReservedA" type="ANC" trimoption="4" startPosition="336" endPosition="375" opitional="true"/>
+            </segment>
+            <segment cnname="登记注册信息段" name="B" segmentLength="616" opitional="true" unique="true">
+                <field cnname="信息类别                      " name="B" type="AN" trimoption="3" startPosition="0" endPosition="0" opitional="false"/>
+                <field cnname="注册（登记）地址              " name="AREAADDR" type="ANC" trimoption="4" startPosition="1" endPosition="80" opitional="true"/>
+                <field cnname="国别                          " name="COUNTRY" type="AN" trimoption="3" startPosition="81" endPosition="83" opitional="true"/>
+                <field cnname="注册（登记）地行政区划        " name="AREACODE" type="N" trimoption="2" startPosition="84" endPosition="89" opitional="true"/>
+                <field cnname="成立日期                      " name="BUILDDATE" type="N" trimoption="2" startPosition="90" endPosition="97" opitional="true"/>
+                <field cnname="证书到期日                    " name="MATURITYDATE" type="N" trimoption="2" startPosition="98" endPosition="105" opitional="true"/>
+                <field cnname="经营（业务）范围              " name="SDEPWORK" type="ANC" trimoption="4" startPosition="106" endPosition="505" opitional="true"/>
+                <field cnname="注册资本币种                  " name="SDEPFUNDKIND" type="AN" trimoption="3" startPosition="506" endPosition="508" opitional="true"/>
+                <field cnname="注册资本（万元）              " name="SDEPFUND" type="AN" trimoption="3" startPosition="509" endPosition="518" opitional="true"/>
+                <field cnname="法定代表人（或负责人）姓名    " name="SDEPMANAGERNAME" type="ANC" trimoption="4" startPosition="519" endPosition="548" opitional="true"/>
+                <field cnname="法定代表人（或负责人）证件类型" name="SDEPMANAGERCREKIND" type="AN" trimoption="3" startPosition="549" endPosition="549" opitional="true"/>
+                <field cnname="法定代表人（或负责人）证件号码" name="SDEPMANAGERCRECODE" type="ANC" trimoption="4" startPosition="550" endPosition="567" opitional="true"/>
+                <field cnname="信息更新日期                  " name="UPDATEDATE" type="N" trimoption="5" startPosition="568" endPosition="575" opitional="false"/>
+                <field cnname="预留字段                      " name="ReservedB" type="ANC" trimoption="4" startPosition="576" endPosition="615" opitional="true"/>
+            </segment>
+            <segment cnname="其他属性段" name="C" segmentLength="61" opitional="true" unique="true">
+                <field cnname="信息类别    " name="C" type="AN" trimoption="3" startPosition="0" endPosition="0" opitional="false"/>
+                <field cnname="组织机构类别" name="ORGKIND" type="N" trimoption="2" startPosition="1" endPosition="2" opitional="true"/>
+                <field cnname="经济行业分类" name="VOCATIONTYPE" type="AN" trimoption="3" startPosition="3" endPosition="7" opitional="true"/>
+                <field cnname="经济类型    " name="ECONOMYTYPE" type="N" trimoption="2" startPosition="8" endPosition="9" opitional="true"/>
+                <field cnname="企业规模    " name="VOCATIONAMOUNT" type="N" trimoption="2" startPosition="10" endPosition="10" opitional="true"/>
+                <field cnname="机构状态    " name="ORGSTATE" type="N" trimoption="2" startPosition="11" endPosition="11" opitional="true"/>
+                <field cnname="基本户状态  " name="STATE" type="N" trimoption="2" startPosition="12" endPosition="12" opitional="true"/>
+                <field cnname="信息更新日期" name="UPDATEDATE" type="N" trimoption="2" startPosition="13" endPosition="20" opitional="false"/>
+                <field cnname="预留字段    " name="ReservedC" type="ANC" trimoption="4" startPosition="21" endPosition="60" opitional="true"/>
+            </segment>
+            <segment cnname="联络信息段" name="D" segmentLength="199" opitional="true" unique="true">
+                <field cnname="信息类别              " name="D" type="AN" trimoption="3" startPosition="0" endPosition="0" opitional="false"/>
+                <field cnname="办公（生产、经营）地址" name="WORKADDRESS" type="ANC" trimoption="4" startPosition="1" endPosition="80" opitional="true"/>
+                <field cnname="联系电话              " name="WORKTELEPHONE" type="AN" trimoption="3" startPosition="81" endPosition="115" opitional="true"/>
+                <field cnname="财务部联系电话        " name="FINANCETELEPHONE" type="AN" trimoption="3" startPosition="116" endPosition="150" opitional="true"/>
+                <field cnname="信息更新日期          " name="UPDATEDATE" type="N" trimoption="2" startPosition="151" endPosition="158" opitional="false"/>
+                <field cnname="预留字段              " name="ReservedD" type="ANC" trimoption="4" startPosition="159" endPosition="198" opitional="true"/>
+            </segment>
+            <segment cnname="股东信息段" name="E" segmentLength="175" opitional="true" unique="false">
+                <field cnname="信息类别    " name="E" type="AN" trimoption="3" startPosition="0" endPosition="0" opitional="false"></field>
+                <field cnname="股东类型    " name="PARTNERTYPE" type="N" trimoption="2" startPosition="1" endPosition="1" opitional="false"/>
+                <field cnname="名称（姓名）" name="PARTNERNAME" type="ANC" trimoption="4" startPosition="2" endPosition="81" opitional="false"/>
+                <field cnname="证件类型    " name="CERTIFITYPE" type="AN" trimoption="3" startPosition="82" endPosition="83" opitional="true"/>
+                <field cnname="证件号码    " name="CERTIFICODE" type="ANC" trimoption="4" startPosition="84" endPosition="103" opitional="true"/>
+                <field cnname="组织机构代码" name="SDEPORGCODE" type="AN" trimoption="3" startPosition="104" endPosition="113" opitional="true"/>
+                <field cnname="出资币种    " name="CURRENCY" type="AN" trimoption="3" startPosition="114" endPosition="116" opitional="true"/>
+                <field cnname="出资金额    " name="FUND" type="AN" trimoption="3" startPosition="117" endPosition="126" opitional="true"></field>
+                <field cnname="信息更新日期" name="UPDATEDATE" type="N" trimoption="2" startPosition="127" endPosition="134" opitional="false"/>
+                <field cnname="预留字段    " name="ReservedE" type="ANC" trimoption="4" startPosition="135" endPosition="174" opitional="true"/>
+            </segment>
+            <segment cnname="实际控制人段" name="F" segmentLength="162" opitional="true" unique="false">
+                <field cnname="信息类别      " name="F" type="AN" trimoption="3" startPosition="0" endPosition="0" opitional="false"></field>
+                <field cnname="实际控制人类型" name="CONTROLTYPE" type="N" trimoption="2" startPosition="1" endPosition="1" opitional="false"/>
+                <field cnname="名称（姓名）  " name="CONTROLER" type="ANC" trimoption="4" startPosition="2" endPosition="81" opitional="false"/>
+                <field cnname="证件类型      " name="CONTROLCERTITYPE" type="AN" trimoption="3" startPosition="82" endPosition="83" opitional="true"/>
+                <field cnname="证件号码      " name="CONTROLCERTIFICODE" type="ANC" trimoption="4" startPosition="84" endPosition="103" opitional="true"/>
+                <field cnname="组织机构代码  " name="SDEPORGCODE" type="AN" trimoption="3" startPosition="104" endPosition="113" opitional="true"/>
+                <field cnname="信息更新日期  " name="UPDATEDATE" type="N" trimoption="2" startPosition="114" endPosition="121" opitional="false"/>
+                <field cnname="预留字段      " name="ReservedF" type="ANC" trimoption="4" startPosition="122" endPosition="161" opitional="true"/>
+            </segment>
+            <segment cnname="高管信息段" name="G" segmentLength="101" opitional="true" unique="false">
+                <field cnname="信息类别    " name="G" type="AN" trimoption="3" startPosition="0" endPosition="0" opitional="false"/>
+                <field cnname="高管职务类型" name="MANAGERTYPE" type="AN" trimoption="3" startPosition="1" endPosition="1" opitional="false"/>
+                <field cnname="姓名        " name="MANAGERNAME" type="ANC" trimoption="4" startPosition="2" endPosition="31" opitional="false"/>
+                <field cnname="证件类型    " name="CERTIFITYPE" type="AN" trimoption="3" startPosition="32" endPosition="32" opitional="false"/>
+                <field cnname="证件号码    " name="CERTIFICODE" type="ANC" trimoption="4" startPosition="33" endPosition="52" opitional="false"/>
+                <field cnname="信息更新日期" name="UPDATEDATE" type="N" trimoption="2" startPosition="53" endPosition="60" opitional="false"/>
+                <field cnname="预留字段    " name="ReservedG" type="ANC" trimoption="4" startPosition="61" endPosition="100" opitional="true"/>
+            </segment>
+            <segment cnname="家族企业信息段" name="H" segmentLength="214" opitional="true" unique="false">
+                <field cnname="信息类别                      " name="H" type="AN" trimoption="3" startPosition="0" endPosition="0" opitional="false"/>
+                <field cnname="关联类型                      " name="RELATINGTYPE" type="N" trimoption="2" startPosition="1" endPosition="1" opitional="false"/>
+                <field cnname="家族成员姓名                  " name="MEMBERNAME" type="ANC" trimoption="4" startPosition="2" endPosition="31" opitional="true"/>
+                <field cnname="证件类型                      " name="SACCFILETYPE" type="AN" trimoption="3" startPosition="32" endPosition="32" opitional="true"/>
+                <field cnname="证件号码                      " name="SACCFILECODE" type="ANC" trimoption="3" startPosition="33" endPosition="52" opitional="true"/>
+                <field cnname="家族关系                      " name="FAMILYTYPE" type="N" trimoption="2" startPosition="53" endPosition="53" opitional="true"/>
+                <field cnname="家族成员所在机构名称          " name="ORGNAME" type="ANC" trimoption="4" startPosition="54" endPosition="133" opitional="false"/>
+                <field cnname="家族成员所在机构登记注册号类型" name="REGISTERTYPE" type="N" trimoption="2" startPosition="134" endPosition="135" opitional="true"/>
+                <field cnname="家族成员所在机构登记注册号码  " name="REGISTERTCODE" type="ANC" trimoption="4" startPosition="136" endPosition="155" opitional="true"/>
+                <field cnname="家族成员所在机构组织机构代码  " name="ORGCODE" type="AN" trimoption="3" startPosition="156" endPosition="165" opitional="true"/>
+                <field cnname="信息更新日期                  " name="UPDATEDATE" type="N" trimoption="2" startPosition="166" endPosition="173" opitional="false"/>
+                <field cnname="预留字段                      " name="ReservedH" type="ANC" trimoption="4" startPosition="174" endPosition="213" opitional="true"/>
+            </segment>
+             <segment cnname="上级机构段" name="I" segmentLength="161" opitional="true" unique="true">
+                <field cnname="信息类别      " name="I" type="AN" trimoption="3" startPosition="0" endPosition="0" opitional="false"/>
+                <field cnname="上级机构名称  " name="UPORGNAME" type="ANC" trimoption="4" startPosition="1" endPosition="80" opitional="false"/>
+                <field cnname="登记注册号类型" name="UPSACCFILETYPE" type="N" trimoption="2" startPosition="81" endPosition="82" opitional="true"/>
+                <field cnname="登记注册号    " name="UPSACCFILECODE" type="ANC" trimoption="4" startPosition="83" endPosition="102" opitional="true"/>
+                <field cnname="组织机构代码  " name="UPSDEPORGCODE" type="AN" trimoption="3" startPosition="103" endPosition="112" opitional="true"/>
+                <field cnname="信息更新日期  " name="UPDATEDATE" type="N" trimoption="2" startPosition="113" endPosition="120" opitional="false"/>
+                <field cnname="预留字段      " name="ReservedI" type="ANC" trimoption="4" startPosition="121" endPosition="160" opitional="true"/>
+            </segment>
+            <parserule>
+            <head>
+            			<rule errcode="01" errmsg="解密解压前读取失败" /> 
+						<rule errcode="02" errmsg="解密、解压失败" /> 
+						<rule errcode="03" errmsg="解密解压后读取失败" /> 
+						<rule errcode="04" errmsg="报文头解析错误" /> 
+						<rule errcode="05" errmsg="[数据格式版本号]必须是征信中心制定的报文格式版本号" /> 
+						<rule errcode="11" errmsg="[报送机构代码]必须与报文名中的[报送机构代码]一致" /> 
+						<rule errcode="12" errmsg="[报文生成时间]必须为有效时间，格式为[YYYYMMDDHHMMSS],年份在2012（含）以后" /> 
+						<rule errcode="13" errmsg="报文体中存在校验不通过的记录" /> 
+						<rule errcode="14" errmsg="[报文信息类别]必须与报文名第26位一致" /> 
+						<rule errcode="15" errmsg="存在不能被删除的记录" /> 
+						<rule errcode="16" errmsg="[应用系统代码]必须与报文名第27位一致" /> 
+						<rule errcode="17" errmsg="[报文类型]必须与报文名第28位一致" /> 
+						<rule errcode="18" errmsg="[反馈标志]必须与报文名第29位一致" />
+            </head>
+            <body>
+            			<rule errcode="0000" errmsg="其它错误" /> 
+						<rule errcode="0001" errmsg="报文体中每条记录长度或信息段不符合接口规范规定的长度" /> 
+						<rule errcode="0002" errmsg="记录格式解析失败" />
+						<rule errcode="0009" errmsg="某条信息记录删除不成功" /> 
+						<rule errcode="0011" errmsg="N型数据项不符合以下规定：每一位必须是0～9的数字，数字必须在ASCII码0X30-0X39范围里" /> 
+						<rule errcode="0012" errmsg="AN型数据项不符合以下规定：包含0－9的数字和不包括汉字在内的其他半角字符，其ASCII范围为0X20-0X7E" /> 
+						<rule errcode="0013" errmsg="ANC数据项不符合相关规定,ASCII编码范围有误" /> 
+						<rule errcode="0014" errmsg="与金额有关的数据项不符合以下规定：只由0～9的数字、小数点构成，小数点后的数字最多有2位，数字必须在ASCII码0X30-0X39范围里" /> 
+						<rule errcode="0015" errmsg="必填数据项为空" />   
+						<rule errcode="0016" errmsg="格式为[YYYYMMDD]的数据项，不是有效日期" /> 
+						<rule errcode="0017" errmsg="对于定义了数据字典的数据项，数据项未按照数据字典中的内容填写" /> 
+						<rule errcode="0018" errmsg="组织机构代码校验不通过" /> 
+						<rule errcode="0019" errmsg="开户许可证核准号校验不通过" /> 
+						<rule errcode="0020" errmsg="贷款卡编码校验不通过" /> 
+						<rule errcode="0021" errmsg="自然人身份证号码校验不通过" /> 
+						<rule errcode="0022" errmsg="自然人证件类型和证件号码未成对出现" /> 
+						<rule errcode="0023" errmsg="机构登记注册号类型和登记注册号未成对出现" /> 
+						<rule errcode="0024" errmsg="注册资金币种和注册资金金额未成对出现，股东注册币种和出资金额未成对出现" /> 
+						<rule errcode="0025" errmsg="组织机构代码和登记注册号同时为空" /> 
+						<rule errcode="0026" errmsg="纳税人识别号校验不通过" />  
+						<rule errcode="0027" errmsg="该条记录在系统中不存在" />
+            </body>
+            </parserule>
+        </message>
+    </messageList>
+</configuration>

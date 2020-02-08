@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 2006-1-9 20:10:32 by Hibernate Tools 3.1.0 beta1JBIDERC2 -->
+<hibernate-mapping>
+    <class name="com.sunline.bimis.pcmc.db.PcmcUserLogin" table="pcmc_user_login">
+        <id name="lognId" type="integer">
+            <column name="lognid" scale="0" />
+      		<generator class="com.sunline.jraf.id.HBNIDGenerator" >
+			    <param name="seqname">pcmc_user_login</param>
+			    <param name="column">lognId</param>
+			</generator>
+        </id>
+        <property name="userId" type="long">
+            <column name="userid" not-null="true"/>
+        </property>
+         <property name="lognTp" type="string">
+            <column name="logntp" not-null="true" length="8"/>
+        </property>
+        <property name="lognDt" type="timestamp">
+            <column name="logndt"/>
+        </property>
+        <property name="lognSt" type="string">
+            <column name="lognst" length="8"/>
+        </property>
+         <property name="erorNo" type="integer">
+            <column name="erorno" />
+        </property>
+        <property name="ulokId" type="long">
+            <column name="ulokid" />
+        </property>
+        <property name="ulokTm" type="timestamp">
+            <column name="uloktm" />
+        </property>
+        <property name="lognIp" type="string">
+            <column name="lognIp" />
+        </property>
+       
+    </class>
+</hibernate-mapping>

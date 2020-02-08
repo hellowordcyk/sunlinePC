@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sunline.funcpub.mybatis.public.pcmc_dept_ext" >
+	<resultMap type="com.sunline.funcpub.pojo.deptext.PcmcDeptExt" id="deptExt_rsm">
+		<result column="deptid" property="deptId"/>
+		<result column="attr_01" property="attr01"/>
+		<result column="attr_02" property="attr02"/>
+		<result column="attr_03" property="attr03"/>
+		<result column="attr_04" property="attr04"/>
+		<result column="attr_05" property="attr05"/>
+		<result column="attr_06" property="attr06"/>
+		<result column="attr_07" property="attr07"/>
+		<result column="attr_08" property="attr08"/>
+		<result column="attr_09" property="attr09"/>
+		<result column="attr_10" property="attr10"/>
+	</resultMap>
+	<select id="queryPcmcDeptExtlistPage" parameterType="com.sunline.funcpub.pojo.deptext.PcmcDeptExt" resultMap="deptExt_rsm">
+		select 
+		<include refid="deptExt_field"></include>
+		 from pcmc_dept_ext
+		 <where>
+		 	<include refid="deptExt_condition"></include>
+		 </where>
+	</select>
+	
+	<insert id="addPcmcDeptExt" parameterType="com.sunline.funcpub.pojo.deptext.PcmcDeptExt">
+		insert into pcmc_dept_ext
+		(
+			<include refid="deptExt_field"></include>
+		)values(
+			#{deptId},
+			#{attr01,jdbcType=VARCHAR},
+			#{attr02,jdbcType=VARCHAR},
+			#{attr03,jdbcType=VARCHAR},
+			#{attr04,jdbcType=VARCHAR},
+			#{attr05,jdbcType=VARCHAR},
+			#{attr06,jdbcType=VARCHAR},
+			#{attr07,jdbcType=VARCHAR},
+			#{attr08,jdbcType=VARCHAR},
+			#{attr09,jdbcType=VARCHAR},
+			#{attr10,jdbcType=VARCHAR}
+		)
+	</insert>
+	
+	<update id="updatePcmcDeptExt" parameterType="com.sunline.funcpub.pojo.deptext.PcmcDeptExt">
+		update pcmc_dept_ext
+			set 
+			attr_01=#{attr01,jdbcType=VARCHAR},
+			attr_02=#{attr02,jdbcType=VARCHAR},
+			attr_03=#{attr03,jdbcType=VARCHAR},
+			attr_04=#{attr04,jdbcType=VARCHAR},
+			attr_05=#{attr05,jdbcType=VARCHAR},
+			attr_06=#{attr06,jdbcType=VARCHAR},
+			attr_07=#{attr07,jdbcType=VARCHAR},
+			attr_08=#{attr08,jdbcType=VARCHAR},
+			attr_09=#{attr09,jdbcType=VARCHAR},
+			attr_10=#{attr10,jdbcType=VARCHAR}
+		<where>
+			<include refid="deptExt_condition"></include>
+		</where>
+	</update>
+	
+	<delete id="deletePcmcDeptExt" parameterType="com.sunline.funcpub.pojo.deptext.PcmcDeptExt">
+		delete from pcmc_dept_ext 
+		<where>
+			<include refid="deptExt_condition"></include>
+		</where>
+	</delete>
+	
+	<select id="isExist"  parameterType="com.sunline.funcpub.pojo.deptext.PcmcDeptExt" resultType="java.lang.Integer">
+		select count(1) from pcmc_dept_ext
+		<where>
+			<include refid="deptExt_condition"></include>
+		</where>
+	</select>
+	
+	<select id="queryDeptExt" parameterType="com.sunline.funcpub.pojo.deptext.PcmcDeptExt" resultMap="deptExt_rsm">
+		select 
+		  <include refid="deptExt_field"></include>
+		 from pcmc_dept_ext 
+		 <where>
+		 	<include refid="deptExt_condition"></include>
+		 </where>
+	</select>
+	
+	<sql id="deptExt_field">
+	   deptid,
+	   attr_01,
+	   attr_02,
+	   attr_03,
+	   attr_04,
+	   attr_05,
+	   attr_06,
+	   attr_07,
+	   attr_08,
+	   attr_09,
+	   attr_10
+	</sql>
+	
+	<sql id="deptExt_condition">
+		<if test="deptId!=null">
+	 		and deptid=#{deptId}
+	 	</if>
+	</sql>
+</mapper> 	  

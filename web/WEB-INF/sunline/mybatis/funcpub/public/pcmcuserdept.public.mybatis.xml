@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="com.sunline.funcpub.mybatis.public.pcmcuserdept" >
+ 	<delete id="deletePcmcUserDept" parameterType="java.util.HashMap">
+ 		delete from pcmc_user_dept
+ 		where usercode = #{userCode} and corpcode = #{corpCode}
+ 		and start_date <![CDATA[>=]]> #{changeDate}
+ 	</delete>
+ 
+	<update id="updateEndDate" parameterType="java.util.HashMap">
+		update pcmc_user_dept set
+			end_date = #{endDate}
+		where usercode = #{userCode} and corpcode = #{corpCode}
+		and end_date = #{maxEndDate}
+	</update>
+	
+	<insert id="addPcmcUserDept" parameterType="java.util.HashMap">
+		insert into pcmc_user_dept(usercode,username,corpcode,deptcode,deptname,start_date,end_date)
+		select 
+			a.usercode,a.username,a.corpcode,b.deptcode,b.deptname,
+			#{changeDate} as start_date, #{maxEndDate} as end_date
+		from pcmc_user a
+		left join pcmc_dept b on b.deptid = a.deptid and b.corpcode = #{corpCode}
+		where a.usercode = #{userCode} and a.corpcode = #{corpCode}
+	</insert>
+	
+	<select id="queryUserCode" parameterType="java.util.HashMap" resultType="String">
+		select usercode from pcmc_user 
+		where disable = 0 and corpcode= #{corpCode}
+		and deptid =(select deptid from pcmc_dept where deptcode = #{deptCode} and corpcode= #{corpCode})
+	</select>
+	
+	<select id="getPdeptCode" parameterType="java.util.HashMap" resultType="String">
+		select deptcode from pcmc_dept 
+		where corpcode= #{corpCode}
+		and deptid = (select pdeptid from pcmc_dept where deptcode = #{deptCode} and corpcode= #{corpCode})
+	</select>
+	
+	<!-- 更新用户i18nCode -->
+	<update id="updateUserI18n" parameterType="java.util.HashMap">
+		update pcmc_user set i18n_code=#{i18nCode,jdbcType=VARCHAR} 
+		where usercode=#{usercode,jdbcType=VARCHAR} and corpcode=#{corpcode,jdbcType=VARCHAR}
+	</update>
+</mapper> 	  

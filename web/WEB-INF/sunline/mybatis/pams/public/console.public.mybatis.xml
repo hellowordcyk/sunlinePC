@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sunline.pams.mybatis.public.console" >
+	<insert id="insertClaAsnLog" parameterType="java.util.HashMap" >
+		INSERT INTO Cla_Asn_Log
+		(Time_Tamp,
+		Oper_Mode,
+		Data_Date,
+		User_Code,
+		User_Name,
+		Dept_Code,
+		Dept_Name,
+		Kyno_Vale,
+		View_Tabl,
+		Work_Modl,
+		Chek_Mesg,
+		asncla_id,
+        start_date,
+        end_date,
+        in_obj,
+        in_objna,
+        cur_rate,
+        log_type,
+        start_amt,
+        end_amt)
+		<if test="workMode !=null and workMode != '' ">
+			<if test="workMode == 'ASN'">
+				select 
+				to_char(systimestamp,'yyyyMMddhh24missff'),
+				#{opertion},
+				#{dataDate},
+				#{userCode},
+				#{userName},
+				#{deptCode},
+				#{deptName},
+				#{kynoVale},
+				#{tablName},
+				#{workMode},
+				#{keyValue},
+				a.Asn_Id,
+                a.Start_Date,
+                a.End_Date,
+                a.Asn_In_Obj,
+                b.userName,
+                a.Cur_Asn_Rate,
+                a.Asn_Type,
+                a.Start_Amt,
+                a.End_Amt
+				from ${tablName} a
+				left join pcmc_user b
+				on a.Asn_In_Obj=b.userCode
+				where  1=1 
+				<foreach collection="pkInfo" item="pk">
+					<if test="pk.pkName != 'DATA_DATE' ">
+					    <if test="pk.pkValue != '' and pk.pkValue != null ">
+						AND ${pk.pkName} = #{pk.pkValue}
+						</if>
+					</if>
+ 					<if test="pk.pkName == 'DATA_DATE' ">
+ 						<if test="pk.pkValue != '' and pk.pkValue != null ">
+						AND ${pk.pkName} = to_date(substr(#{pk.pkValue},1,10),'yyyy-mm-dd') 
+						</if>
+					</if>
+				</foreach>
+				  AND NOT  EXISTS (SELECT 1
+                                   FROM Cla_Asn_Log b
+                                  WHERE a.Start_Date = b.Start_Date
+                                    AND a.End_Date = b.End_Date
+                                    AND a.Asn_In_Obj = b.In_Obj
+                                    AND a.Cur_Asn_Rate = b.Cur_Rate
+                                    AND a.Asn_Type = b.Log_Type
+                                    AND b.Work_Modl = #{workMode}
+                                    AND b.User_Code = #{userCode}
+                                    AND nvl(a.Start_Amt,0) = nvl(b.Start_Amt,0)
+                                    AND nvl(a.End_Amt,0) = nvl(b.End_Amt,0)
+                                    <foreach collection="pkInfo" item="pk">
+                                 	    <if test="pk.pkName != 'DATA_DATE' ">
+                                 	         <if test="pk.pkValue != '' and pk.pkValue != null ">
+			                                 AND INSTR(b.Chek_Mesg,a.${pk.pkName})>0
+			                                 </if>
+			                            </if>
+			                        </foreach>
+                                    )
+			</if>
+			<if test="workMode == 'CLA'">
+				select
+				to_char(systimestamp,'yyyyMMddhh24missff'),
+				#{opertion},
+				#{dataDate},
+				#{userCode},
+				#{userName},
+				#{deptCode},
+				#{deptName},
+				#{kynoVale},
+				#{tablName},
+				#{workMode},
+				#{keyValue},
+				a.Cla_Id,
+                a.Start_Date,
+                a.End_Date,
+                a.Cla_In_Obj,
+                b.Username,
+                a.Cur_Cla_Rate,
+                a.Cla_Type,
+                a.Start_Amt,
+                a.End_Amt
+				from ${tablName} a
+				left join pcmc_user b
+				 on a.Cla_In_Obj=b.USERCODE
+				where 1=1
+				<foreach collection="pkInfo" item="pk">
+					<if test="pk.pkName != 'DATA_DATE' ">
+					    <if test="pk.pkValue != '' and pk.pkValue != null ">
+						AND ${pk.pkName} = #{pk.pkValue}
+						</if>
+					</if>
+ 					<if test="pk.pkName == 'DATA_DATE' ">
+ 						<if test="pk.pkValue != '' and pk.pkValue != null ">
+						AND ${pk.pkName} = to_date(substr(#{pk.pkValue},1,10),'yyyy-mm-dd') 
+						</if>
+					</if>
+				</foreach>
+				AND NOT EXISTS (SELECT 1
+                                FROM Cla_Asn_Log b
+                               WHERE a.Start_Date = b.Start_Date
+                                 AND a.End_Date = b.End_Date
+                                 AND a.Cla_In_Obj = b.In_Obj
+                                 AND a.Cur_Cla_Rate = b.Cur_Rate
+                                 AND a.Cla_Type = b.Log_Type
+                                 AND b.Work_Modl = #{workMode}
+                                 AND b.User_Code = #{userCode}
+                                 AND Nvl(a.Start_Amt,0) = Nvl(b.Start_Amt,0)
+                                 AND Nvl(a.End_Amt,0) = Nvl(b.End_Amt,0)
+                                 <foreach collection="pkInfo" item="pk">
+                                 	 <if test="pk.pkName != 'DATA_DATE' ">
+                                 	     <if test="pk.pkValue != '' and pk.pkValue != null ">
+			                              AND INSTR(b.Chek_Mesg,a.${pk.pkName})>0
+			                              </if>
+			                         </if>
+			                     </foreach>
+			                        )
+			</if>
+		</if>
+	</insert>
+</mapper>

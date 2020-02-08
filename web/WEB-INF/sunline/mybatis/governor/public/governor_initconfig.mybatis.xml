@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sunline.governor.mybatis">
+	<select id="SunCrsProcCompileEntry" parameterType="java.util.Map" statementType="CALLABLE"> 
+	  {call Pro_Autocompile_Entry(#{proc_code,jdbcType=CLOB,mode=IN})}
+	</select>
+	<update id="OpenConfig" parameterType="HashMap">
+		update sys_sql_user_conf a
+		<set>
+			a.LOGFLAG ='1',
+	    </set>
+		<where>
+			<if test="userCode!=null and userCode!=''">
+				 a.USERCODE = #{userCode}
+			</if>
+		</where>
+	</update>
+	
+	<update id="CloseConfig" parameterType="HashMap">
+		update sys_sql_user_conf a
+		<set>
+			a.LOGFLAG ='2'
+	    </set>
+		<where>
+			<if test="userCode!= null and userCode!= ''">
+				a.USERCODE = #{userCode}
+			</if>
+		</where>
+	</update>
+	
+	<update id="deleteSqlMonitor" parameterType="HashMap">
+		update sys_sql_user_conf a
+		<set>
+			<if test="data!= null and data!= ''">
+				a.deleterate = #{data}
+			</if>
+	    </set>
+		<where>
+			<if test="userCode!= null and userCode!= ''">
+				a.USERCODE = #{userCode}
+			</if>
+		</where>
+	</update>
+	
+	<update id="manualUpdateSeqblock" parameterType="HashMap">
+	     update seq_block
+	     <set>
+	     	<if test="idx != null and idx != ''">
+				idx = #{idx}
+			</if>
+	     </set>
+	     <where>
+	     	<if test="tableName != null and tableName != ''">
+				name = #{tableName}
+			</if>
+	     </where>
+	 </update>
+	
+</mapper>

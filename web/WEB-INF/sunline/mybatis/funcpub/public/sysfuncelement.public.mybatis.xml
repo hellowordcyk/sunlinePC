@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="com.sunline.funcpub.mybatis.public.sysfuncelement" >
+ 
+ 	<insert id="addSysFuncElement" parameterType="java.util.HashMap">
+ 		insert into sys_func_element(
+ 			func_id,
+	       	func_pagecode,
+ 			func_inputid,
+	       	func_inputcode,
+	       	func_inputname,
+	       	func_inputdesc,
+	       	func_inputpriv,
+	       	func_inputtype,
+	       	func_input_ispriv
+	   )values(
+	       #{funcId, jdbcType=VARCHAR},
+	       #{funcPageCode, jdbcType=VARCHAR},
+	       #{funcInputId, jdbcType=VARCHAR},
+	       #{funcInputCode, jdbcType=VARCHAR},
+           #{funcInputName, jdbcType=VARCHAR},
+           #{funcInputDesc, jdbcType=VARCHAR},
+           #{funcInputPriv, jdbcType=VARCHAR},
+           #{funcInputType, jdbcType=VARCHAR},
+           #{funcInputIsPriv, jdbcType=VARCHAR}
+	   )
+	</insert>
+	
+	
+	<insert id="add" parameterType="com.sunline.funcpub.portal.func.element.bean.SysFuncElement">
+ 		insert into sys_func_element(
+ 			func_id,
+	       	func_pagecode,
+ 			func_inputid,
+	       	func_inputcode,
+	       	func_inputname,
+	       	func_inputdesc,
+	       	func_inputpriv,
+	       	func_inputtype,
+	       	func_input_ispriv
+	   )values(
+	       #{funcId, jdbcType=VARCHAR},
+	       #{funcPageCode, jdbcType=VARCHAR},
+	       #{funcInputId, jdbcType=VARCHAR},
+	       #{funcInputCode, jdbcType=VARCHAR},
+           #{funcInputName, jdbcType=VARCHAR},
+           #{funcInputDesc, jdbcType=VARCHAR},
+           #{funcInputPriv, jdbcType=VARCHAR},
+           #{funcInputType, jdbcType=VARCHAR},
+           #{funcInputIsPriv, jdbcType=VARCHAR}
+	   )
+	</insert>
+	
+	<update id="updateSysFuncElement" parameterType="java.util.HashMap">
+	   update sys_func_element set
+           func_inputid=#{funcInputId, jdbcType=VARCHAR},
+           func_inputcode=#{funcInputCode, jdbcType=VARCHAR},
+           func_inputname=#{funcInputName, jdbcType=VARCHAR},
+           func_inputdesc=#{funcInputDesc, jdbcType=VARCHAR},
+           func_inputpriv=#{funcInputPriv, jdbcType=VARCHAR},
+           func_inputtype=#{funcInputType, jdbcType=VARCHAR},
+           func_input_ispriv=#{funcInputIsPriv, jdbcType=VARCHAR}
+	   <where>
+	       func_id=#{funcId}
+	   </where>
+	</update>
+	
+	<resultMap type="com.sunline.funcpub.portal.func.element.bean.SysFuncElement" id="querySysFuncElementList_rsm">
+       <result column="func_id" property="funcId"/>
+       <result column="func_pagecode" property="funcPageCode"/>
+       <result column="func_inputid" property="funcInputId"/>
+       <result column="func_inputcode" property="funcInputCode"/>
+       <result column="func_inputname" property="funcInputName"/>
+       <result column="func_inputdesc" property="funcInputDesc"/>
+       <result column="func_inputpriv" property="funcInputPriv"/>
+       <result column="func_inputtype" property="funcInputType"/>
+       <result column="func_input_ispriv" property="funcInputIsPriv"/>
+	</resultMap>
+	
+	<select id="querySysFuncElementList" parameterType="java.util.HashMap" resultMap="querySysFuncElementList_rsm">
+		select 
+			func_id,
+           	func_pagecode,
+			func_inputid,
+           	func_inputcode,
+           	func_inputname,
+           	func_inputdesc,
+           	func_inputpriv,
+           	func_inputtype,
+	       	func_input_ispriv
+         from sys_func_element 
+       <where>
+          <if test="funcId != null and funcId.trim() !=''">
+            and func_id = #{funcId}
+          </if>
+          <if test="funcPageCode != null and funcPageCode.trim() !=''">
+            and func_pagecode = #{funcPageCode}
+          </if>
+          <if test="funcInputId != null and funcInputId.trim() !=''">
+            and func_inputid like #{funcInputId}
+          </if>
+          <if test="funcInputCode != null and funcInputCode.trim() !=''">
+            and func_inputcode like #{funcInputCode}
+          </if>
+          <if test="funcInputName != null and funcInputName.trim() !=''">
+            and func_inputname like #{funcInputName}
+          </if>
+          <if test="funcInputType != null and funcInputType.trim() !=''">
+            and func_inputtype = #{funcInputType}
+          </if>
+            <if test="funcPageCodes !=null and funcPageCodes.size()>0">
+                and (
+                <foreach collection="funcPageCodes" index="index" item="dcs" open="" separator="" close="">
+                   <if test="index==0">
+                     func_pagecode in  
+                     <foreach collection="dcs" index="index" item="dc" open="(" separator="," close=")">
+                     #{dc}
+                    </foreach>
+                   </if>
+                   <if test="index > 0">
+                     or func_pagecode in 
+                     <foreach collection="dcs" index="index" item="dc" open="(" separator="," close=")">
+                        #{dc}
+                    </foreach>
+                   </if>
+                </foreach>
+                )
+            </if>
+       </where>
+	</select>
+	
+	<select id="getSysFuncElement" parameterType="java.util.HashMap" resultMap="querySysFuncElementList_rsm">
+	   select 
+			func_id,
+           	func_pagecode,
+			func_inputid,
+           	func_inputcode,
+           	func_inputname,
+           	func_inputdesc,
+           	func_inputpriv,
+           	func_inputtype,
+	       	func_input_ispriv
+         from sys_func_element 
+       <where>
+            func_id = #{funcId}
+       </where>
+	</select>
+	
+	<delete id="deleteSysFuncElementById" parameterType="java.lang.String">
+	   delete from sys_func_element 
+	   <where>
+	       func_id=#{funcId}
+	   </where>
+	</delete>
+
+    
+	<delete id="deleteSysFuncElements" parameterType="java.util.HashMap">
+	   delete from sys_func_element 
+       <where>
+          <if test="funcIds != null and funcIds.size() > 0">
+               <foreach collection="funcIds" index="index" item="dcs" open="" separator="" close="">
+               <if test="dcs!=null">
+                  <if test="index==0">
+                    func_Id in    
+                    <foreach collection="dcs" index="index" item="dc" open="(" separator="," close=")">
+                     #{dc}
+                    </foreach>
+                  </if>
+                  <if test="index > 0">
+                    or func_Id in   
+                     <foreach collection="dcs" index="index" item="dc" open="(" separator="," close=")">
+                     #{dc}
+                    </foreach>
+                  </if>
+                  </if>
+               </foreach>
+           </if>
+           <if test="funcPageCode!=null and funcPageCode.trim()!=''">
+           	  and func_pagecode=#{funcPageCode,jdbcType=VARCHAR}
+           </if>
+       </where>
+	</delete>
+</mapper>

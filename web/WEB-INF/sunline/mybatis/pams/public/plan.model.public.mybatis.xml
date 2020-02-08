@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sunline.pams.mybatis.public.plan.model">
+
+    <!-- 方案映射 -->
+    <resultMap type="com.sunline.pams.plan.bean.MoWayModel" id="moWayModelResultMap">
+        <result column="MODEL_CODE" property="modelCode" jdbcType="VARCHAR"/>
+        <result column="WAY_TYPE" property="wayType" jdbcType="VARCHAR"/>
+        <result column="MODEL_NAME" property="modelName" jdbcType="VARCHAR"/>
+        <result column="MODEL_FC" property="modelFc" jdbcType="VARCHAR"/>
+        <result column="MODEL_FORMULA" property="modelFormula" jdbcType="VARCHAR"/>
+        <result column="MODEL_DESC" property="modelDesc" jdbcType="VARCHAR"/>
+        <result column="MODEL_ORDER" property="modelOrder" jdbcType="INTEGER"/>
+        <result column="STATUS" property="status" jdbcType="VARCHAR"/>
+        <result column="CREATE_TIME" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="OPERATOR" property="operator" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!-- 查询方案 -->
+    <select id="queryWayModellistPage" parameterType="java.util.HashMap" resultMap="moWayModelResultMap">
+        SELECT
+        MODEL_CODE
+        ,WAY_TYPE
+        ,MODEL_NAME
+        ,MODEL_FC
+        ,MODEL_FORMULA
+        ,MODEL_DESC
+        ,MODEL_ORDER
+        ,STATUS
+        ,CREATE_TIME
+        ,OPERATOR
+        FROM MO_WAY_MODEL
+        <where>
+            <if test=" wayType != null and wayType !='' ">
+                AND WAY_TYPE = #{wayType}
+            </if>
+            <if test=" statusNotIn != null and statusNotIn !='' ">
+                AND STATUS &lt;&gt; #{statusNotIn}
+            </if>
+        </where>
+    </select>
+
+    <select id="getModellistPage" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+        SELECT
+        MODEL_CODE AS "modelCode"
+        ,WAY_TYPE AS "wayType"
+        ,MODEL_NAME as "modelName"
+        ,MODEL_FC as "modelFc"
+        ,MODEL_FORMULA as "modelFormula"
+        ,MODEL_DESC as "modelDesc"
+        ,MODEL_ORDER as "modelOrder"
+        ,STATUS as "status"
+        ,CREATE_TIME as "createTime"
+        ,OPERATOR as "operator"
+        ,AREA_NO AS "areaNo"
+        ,MODEL_TYPE AS "modelType"
+        FROM MO_WAY_MODEL
+        <where>
+            <if test=" modelCode != null and modelCode !='' ">
+                AND MODEL_CODE  =  #{modelCode}
+            </if>
+            <if test=" modelName != null and modelName !='' ">
+                AND MODEL_NAME LIKE '%${modelName}%$'
+            </if>
+            <if test=" wayType != null and wayType !='' ">
+                AND WAY_TYPE = #{wayType}
+            </if>
+            <if test=" status != null and status !='' ">
+                AND STATUS  =  #{status}
+            </if>
+            <if test=" areaNo != null and areaNo !='' ">
+                AND AREA_NO  = #{areaNo}
+            </if>
+            <if test=" nodeCodeP != null and nodeCodeP !='' ">
+                AND AREA_NO ||'.'|| WAY_TYPE = #{nodeCodeP}
+            </if>
+        </where>
+        ORDER BY WAY_TYPE, MODEL_ORDER
+    </select>
+
+    <select id="getAreaNoNode" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		SELECT A.CORP_CODE AS "nodeCode",
+			   A.CORP_CODE AS "nodeName",
+			   -1          AS "nodeCodeP"
+		  FROM SYS_PUB_CORPORATION A
+		WHERE 1=1
+		 ORDER BY A.CORP_CODE
+	</select>
+
+    <select id="getWayTypeNode" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+        SELECT A.WAY_TYPE AS "nodeCode", A.WAY_TYPE AS "nodeName", 1 AS "nodeCodeP"
+            FROM MO_WAY_MODEL A
+            GROUP BY WAY_TYPE
+    </select>
+    <!--MO_WAY_MODEL-->
+    <insert id="insertMoWayModel" parameterType="java.util.Map">
+        INSERT INTO MO_WAY_MODEL
+          (MODEL_CODE,
+           WAY_TYPE,
+           MODEL_NAME,
+           MODEL_FORMULA,
+           MODEL_DESC,
+           STATUS,
+           CREATE_TIME,
+           OPERATOR,
+           AREA_NO,
+           MODEL_TYPE)
+        VALUES
+          (#{modelCode},
+           #{wayType},
+           #{modelName},
+           #{modelFormula},
+           #{modelDesc},
+           #{status},
+           SYSDATE,
+           #{userCode},
+           #{areaNo},
+           #{modelType})
+    </insert>
+    <insert id="insertMoEvaluateModel" parameterType="java.util.HashMap">
+        INSERT INTO MO_EVALUATE_MODEL
+          (MODEL_CODE, SEQ_NUM, MODEL_CONDITION, MODEL_RULE, REMARK)
+        VALUES
+          (#{modelCode}, #{seqNum}, #{modelCondition}, #{modelRule}, #{remark})
+    </insert>
+    <insert id="insertMoEvaluateVar" parameterType="java.util.HashMap">
+        INSERT INTO MO_EVALUATE_VAR
+          (MODEL_CODE, VAR_CODE, VAR_NAME, VAR_VALUE, VAR_TYPE, REMARK)
+        VALUES
+          (#{modelCode},
+           #{varCode},
+           #{varName},
+           #{varValue},
+           #{varType},
+           #{remark})
+    </insert>
+
+    <select id="queryMoEvaluateModel" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+       SELECT MODEL_CODE      AS "modelCode",
+              SEQ_NUM         AS "seqNum",
+              MODEL_CONDITION AS "modelCondition",
+              MODEL_RULE      AS "modelRule",
+              REMARK          AS "remark"
+         FROM MO_EVALUATE_MODEL
+         WHERE MODEL_CODE = #{modelCode}
+    </select>
+    <select id="queryMoEvaluateVar" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+     SELECT MODEL_CODE AS "modelCode",
+            VAR_CODE   AS "varCode",
+            VAR_NAME   AS "varName",
+            VAR_VALUE  AS "varValue",
+            VAR_TYPE   AS "varType",
+            REMARK     AS "remark"
+       FROM MO_EVALUATE_VAR
+       WHERE MODEL_CODE = #{modelCode}
+    </select>
+    <delete id="deleteMoWayModel" parameterType="java.util.HashMap">
+        DELETE FROM MO_WAY_MODEL WHERE MODEL_CODE = #{modelCode}
+    </delete>
+    <delete id="deleteMoEvaluateModel" parameterType="java.util.HashMap">
+        DELETE FROM MO_EVALUATE_MODEL WHERE MODEL_CODE = #{modelCode}
+    </delete>
+    <delete id="deleteMoEvaluateVar" parameterType="java.util.HashMap">
+        DELETE FROM MO_EVALUATE_VAR WHERE MODEL_CODE = #{modelCode}
+    </delete>
+</mapper> 	  

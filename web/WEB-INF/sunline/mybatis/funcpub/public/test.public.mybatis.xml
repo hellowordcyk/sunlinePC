@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="com.sunline.funcpub.mybatis.public.test" >
+ 
+ 	<resultMap type="java.util.HashMap" id="testMap">
+ 		<result column="TEST_ID" property="testID"/>
+ 		<result column="TEST_CODE" property="testCode"/>
+ 		<result column="TEST_NAME" property="testName"/>
+ 		<result column="TEST_NUM" property="testNum"/>
+ 		<result column="TEST_DATE" property="testDate" javaType="java.util.Date"/>
+ 	</resultMap>
+ 	<select id="queryTestTableList" parameterType="java.lang.String" resultMap="testMap">
+ 		SELECT TEST_ID, TEST_CODE, TEST_NAME, TEST_NUM, TEST_DATE FROM TEST_TABLE
+ 	</select>
+ 
+ 
+ 
+ 
+ 	<resultMap type="java.util.HashMap" id="dictMap">
+ 		<result column="SELECT_KEY" property="selectKey"/>
+ 		<result column="KEY_NAME" property="keyName"/>
+ 	</resultMap>
+	<select id="queryDictList" parameterType="java.lang.String" resultMap="dictMap">
+		SELECT 
+			T.SELECT_KEY,T.KEY_NAME
+		FROM(
+			SELECT 
+			  'knp'||'_'||SUBSCD||','||PARATP AS SELECT_KEY, 
+			  PARANA AS KEY_NAME,
+			  'knp' AS TABLE_NAME
+			FROM PCMC_KNP_PARA 
+			WHERE PARACD = '%' AND CORPCODE = 'DEFAULT'
+			UNION
+			SELECT 
+			  'dict'||'_'||SYS_CODE||','||DICT_TYPE AS SELECT_KEY,
+			  DICT_NAME AS  KEY_NAME,
+			  'dict' AS TABLE_NAME
+			FROM SYS_PUB_DICt
+			WHERE DICT_CODE = '%' 
+		) T WHERE T.TABLE_NAME = #{_parameter}
+	</select>
+	
+
+</mapper> 	  

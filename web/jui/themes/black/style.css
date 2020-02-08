@@ -1,0 +1,587 @@
+@charset "utf-8";
+/*
+1.改模板的颜色.panel .panelContent { border-color:#}全部为目标颜色
+2.改body的background
+3.改图片的路径
+4.改 #sidebar_s .collapse和#sidebar_s .collapse:hover颜色
+5.改.tree .selected { background:#d0fc68;}颜色
+*/
+.container-fluid ::-webkit-scrollbar
+ {
+     width: 16px;
+     height: 16px;
+     background-color: #F5F5F5;
+ }
+
+ /*定义滚动条轨道 内阴影+圆角*/
+ .container-fluid ::-webkit-scrollbar-track
+ {
+     -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+
+     background-color: #454F69;
+ }
+
+ /*定义滑块 内阴影+圆角*/
+.container-fluid ::-webkit-scrollbar-thumb
+ {
+     -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+     background-color: #293754;
+ }
+.blackbackground{
+	background:url("./images/blackbackground.png") !important;
+}
+#container .formBar{background:#323b58 !important;border:none !important;}
+#container .pagination a,#container .pagination li.hover a,#container .pagination li span,#container .pagination li.jumpto .textInput {
+    color: #ccc !important;
+}
+a.btnUnlock,
+a.btnAgency,
+a.btnDispatch,
+a.btnDistri,
+a.btnScore,
+a.btnMaintain,
+a.btnDown,
+a.btnAdd,
+a.btnDel,
+a.btnView,
+a.btnEdit,
+a.btnSelect,
+a.btnInfo,
+a.btnAssign,
+a.btnAttach,
+a.btnKey,
+a.btnMore, 
+a.btnCheck,
+a.btnRun, 
+a.btnSet{
+	color:#94c6f7;
+}
+table a.btnScore:hover,
+table a.btnUnlock:hover,
+table a.btnAgency:hover,
+table a.btnDispatch:hover,
+table a.btnSet:hover,
+table a.btnRun:hover,
+table a.btnCheck:hover,
+table a.btnDel:hover,
+table a.btnKey:hover,
+table a.btnDown:hover,
+table a.btnMore:hover,
+table a.btnView:hover,
+table a.btnEdit:hover{
+	border:1px solid #8ec8ef;
+	background-color:#384356 !important;
+	color:#94c6f7 !important;
+}
+.page{
+	background-color:rgba(255,255,255,.1) !important;
+}
+.transpatent{background-color: transparent !important;}
+.blackbg{background:rgba(255,255,255,.1) !important}
+#container{background: url("./images/blackbackground.png") !important;}
+#footer,.tabsHeader,.tabsContent,.tabsToggle li span{background: transparent !important;}
+#footer span{color:#ccc;}
+.tabsPage .tabsPageContent,.grid{background: transparent !important;}
+.homepage {
+    background-color: transparent !important;
+    background-size:contain ;
+}
+.panelBar .toolBar .import{
+	background-color: #ffa015; 
+}
+.panelBar .toolBar .export, .panelBar .toolBar .exportExcel {
+    background-color: #2bbc43;
+}
+#container .grid .gridTbody td,#container table.list td,
+#container .grid table td,
+#container .grid table
+{border-color:#727272 }
+.button, .querybtn, .resetbtn, .savebtn, a.close, button.close{
+	background:#7098F0;
+}
+.pagination .pege-num,
+.pagination li .last span, .pagination li .next span, .pagination li .previous span, .pagination li .first span{
+	border-color:#a8a8a8 !important 
+}
+.panelBar .toolBar .reset,.panelBar .toolBar .btnNormal,.panelBar .toolBar .btnSave,.panelBar .toolBar .btnClose, .panelBar .toolBar .btnDeploy, .panelBar .toolBar .run, .panelBar .toolBar .edit, .panelBar .toolBar .delete, .panelBar .toolBar .add {
+    color: #fff;
+    background-color: #7098F0;
+}
+#container button.resetbtn,#container button.close{
+	background-color: transparent !important;
+	color:#fff; 
+	border:1px solid #a8a8a8 !important;
+}
+/* .page .pageHeader,.pageContent{
+	background:rgba(255,255,255,.1);
+} */
+.tabsToggle li.selected a{
+	color:#fff !important;
+}
+.pagination li.jumpto .goto{
+	background: transparent !important;
+
+}
+.tabsToggle li.selected span{background:#ffd522 !important;}
+.keydata-3, .keydata-4, .keydata-5 {
+    background: transparent !important;
+}
+li.timeselected {
+    background: #6696f7 !important;
+    color:#fff !important;
+ 
+}
+.tabsPage .tabsPageHeader li.selected {
+    background: #2f3c5b;
+}
+.tabsPage .tabsPageHeader li a:hover{
+    color:#fff;
+}
+.tabsPage .tabsPageHeader li {
+     background-color: transparent; 
+}
+.tabsPage .tabsPageHeader li .close{
+	top:8px !important;
+}
+.page{
+
+}
+.timeinterval li,.checkterm>li,.select2-container--default .select2-selection--single,.combox{border-color: #a8a8a8 !important;}
+.select2-container--default .select2-selection--single .select2-selection__rendered{color:#fff !important;}
+.select2-container--default .select2-selection--single{ background: transparent !important;}
+.checkterm li input, .checkterm li select{ background: transparent !important;}
+.checkterm li select{color:#fff;}
+#container .tabs .tabsHeader{border-color:#3e4254;
+ }
+.data-compare>span{background: transparent !important;}
+.homepage .homepagecell{background: transparent !important;}
+/* Icon */
+.tabsHeader li.main a span span, #taskbar li .taskbutton span { background:url(../blue/images/icon.png) no-repeat;}
+
+/* Panel */
+.panel,
+.panel .panelHeader, .panel .panelHeaderContent, .panel .panelHeaderContent h1,
+/* .panel .panelFooter, .panel .panelFooterContent { background:url(../purple/images/panel/panel.png) no-repeat;}
+.panel .expandable, .panel .collapsable { background:url(../purple/images/panel/panel_icon.png) no-repeat;} */
+.panel .panelHeaderContent h1 { color:#2d3f00; }
+.panel .panelContent {  background:#F9E8F9;}
+
+#navTab{background:transparent !important;}
+/* Tabs */
+.tabs, .tabsHeader, .tabsHeaderContent,
+.tabs .tabsHeader ul, .tabs .tabsHeader li, .tabs .tabsHeader li a, .tabs .tabsHeader li span,
+/*.tabs .tabsFooter, .tabs .tabsFooterContent { background:url(../purple/images/tabs/tabspanel.png) no-repeat;}*/
+.tabs .tabsHeader li span { color:#ccc;}
+.tabs .tabsContent { background:#F9E8F9;}
+
+/* TabsPage */
+/*.tabsPage .tabsPageHeader, .tabsPage .tabsPageHeader li, .tabsPage .tabsPageHeader li a, .tabsPage .tabsPageHeader li span { background:url(../purple/images/tabs/tabspage.png) no-repeat;}*/
+.tabsPage .tabsPageHeader { background-color:rgba(255,255,255,.1);}
+/*.tabsPage .tabsPageHeader { border-color:#e29de2;}*/
+.tabsPage .tabsPageHeader li a { color:#ccc;}
+.tabsPage .tabsPageHeader li .close,
+.tabsPage .tabsPageHeader li.hover .close,
+.tabsPage .tabsPageHeader li.selected .close { background:url(../black/images/tabs/tabspage_icon.png) no-repeat;}
+/*.tabsPage .tabsLeft, .tabsPage .tabsRight, .tabsPage .tabsMore { background:url(../purple/images/tabs/tabscontrol.png) no-repeat;}*/
+.tabsPage .tabsMoreList { background:#FFF;}
+.tabsPage .tabsPageHeader .home_icon { background:url(../blue/images/icon.png) no-repeat;}
+
+
+/* Alert */
+/* .alert .alertFooter, .alert .alertFooter_r, .alert .alertFooter_c { background:url(../purple/images/alert/alertpanel.png) no-repeat;} */
+.alert .alertContent { border-color:#b8d0d6; background:#eef4f5;}
+.alert .warn .alertInner { border-color:#e83e09;}
+.alert .error .alertInner { border-color:#e50000;}
+.alert .correct .alertInner, .alert .info .alertInner { border-color:#b8d0d6;}
+.alert .confirm .alertInner { border-color:#b8d0d6; /* background:#fefacf; */}
+.alert h1 { background:url(../css/images/alert/alertpanel_icon.png) no-repeat;}
+
+/* Dialog */
+.dialog .dialogHeader, .dialog .dialogHeader_r, .dialog .dialogHeader_c,
+/*.dialog .dialogFooter, .dialog .dialogFooter_r, .dialog .dialogFooter_c { background:url(../purple/images/dialog/dialogpanel.png) no-repeat;}*/
+/*.dialog .dialogHeader h1, .dialog .dialogHeader .close, .dialog .dialogHeader .maximize, .dialog .dialogHeader .restore, .dialog .dialogHeader .minimize, .resizable_f_r { background:url(../purple/images/dialog/dialogpanel_icon.png) no-repeat;}*/
+.dialog .dialogHeader h1 { color:#2d3f00;}
+/*.dialog .dialogContent { border-color:#e29de2; background:#F9E8F9;}*/
+
+.resizable { border-color:#3b6200; background:#aae31d;}
+
+/* Shadow */
+.shadow .shadow_h_l { background:url(../blue/images/shadow/shadow_h_l.png) no-repeat;}
+.shadow .shadow_h_r { background:url(../blue/images/shadow/shadow_h_r.png) no-repeat;}
+.shadow .shadow_h_c { background:url(../blue/images/shadow/shadow_h_c.png) repeat-x;}
+.shadow .shadow_c_l { background:url(../blue/images/shadow/shadow_c_l.png) repeat-y;}
+.shadow .shadow_c_r { background:url(../blue/images/shadow/shadow_c_r.png) repeat-y;}
+.shadow .shadow_c_c { background:url(../blue/images/shadow/shadow_c_c.png) repeat;}
+.shadow .shadow_f_l { background:url(../blue/images/shadow/shadow_f_l.png) no-repeat;}
+.shadow .shadow_f_r { background:url(../blue/images/shadow/shadow_f_r.png) no-repeat;}
+.shadow .shadow_f_c { background:url(../blue/images/shadow/shadow_f_c.png) repeat-x;}
+
+/* Tree */
+.tree div div { background:url(../default/images/tree/tree.png) no-repeat;}
+.tree .folder_collapsable, .tree .folder_expandable, .tree .file {background:transparent url(../blue/images/tree/folder.png) no-repeat scroll 0 0;}
+.tree .checked, .tree .unchecked, .tree .indeterminate { background:url(../blue/images/tree/check.png) no-repeat;}
+.tree ul { background:#FFF;}
+.tree li a, .tree li span { color:#2d3f00;}
+/* .tree .hover { background:#f6f6f6;} */
+.tree .selected { background:#F9E8F9;}
+/* Accordion */
+.accordion {background:#1b2128;}
+.accordion .accordionHeader { background-color:#eaf4ff;}
+
+
+/* Grid */
+.panelBar,
+.toolBar li.hover, .toolBar li.hover a, .toolBar li.hover span, .toolBar span,
+.panelBar .pagination, .panelBar .pagination li.hover, .panelBar .pagination li.hover a, .panelBar .pagination li span,
+.panelBar .pagination li.disabled span span,
+/*.panelBar .line, .panelBar .pagination li.jumpto, .panelBar .pagination li.jumpto .goto { background:url(../purple/images/grid/grid.png) no-repeat;}*/
+
+.panelBar {  background-color:transparent;}
+
+#container .grid .gridHeader{ background:#404963;}
+#container .evenrow { background:#414c6b;}
+.grid { background:#FFF;}
+.grid table { border-color:#d0d0d0;}
+#container .grid .gridHeader th,#container table.list th,
+#container .grid .gridHeader,#container .grid .gridHeader th { color:#ccc !important;border-color:#727272!important;}
+.grid table th div { border-left-color:#EEE; border-right-color:#d0d0d0;}
+.grid table td { border-color:#ededed;}
+
+.grid .resizeMarker, .grid .resizeProxy { background:url(../blue/images/grid/resizeCol.png) repeat-y;}
+
+.grid .gridRowBg { background:#f7f7f7;}
+.grid .hover { background:transparent;}
+#container .grid .selected { background:#354059;}
+.grid .error{background:#fb7e81;}
+
+/* ProgressBar */
+.progressBar { border:solid 2px #86a5ad; background:#FFF url(../blue/images/progressBar/progressBar_m.gif) no-repeat 10px 10px;}
+
+/* ----------------------------------------------------------------- Form */
+/* TextInput */
+#container table .textInput,#container table input.focus,#container table input.required,#container table input.error,#container table input.readonly,table input.disabled,
+/*textarea.focus, textarea.required, textarea.error, textarea.readonly, textarea.disabled { background:url(../default/images/form/input_bg.png) no-repeat scroll;}*/
+
+#container table .textInput,#container table .textArea,#container table select { background: transparent;border:1px solid #727272;}
+
+table input:focus,table textarea:focus{
+    border:1px solid #94c6f7 !important;
+    background-color:transparent !important;
+}
+input.required, textarea.required { border-color:#a2bac0 #b8d0d6 #b8d0d6 #a2bac0;}
+input.error, textarea.error { border-color:#F80C11 #FB7E81 #FB7E81 #F80C11;}
+input.focus, textarea.focus { border-color:#64aabc #a9d7e3 #a9d7e3 #64aabc; background-color:#f8fafc;}
+/*input.readonly, textarea.readonly { border-color:#9eabb3 #d5dbdf #d5dbdf #9eabb3; background-color:#F6F6F6;}*/
+input.disabled, textarea.disabled { border-color:#9eabb3 #d5dbdf #d5dbdf #9eabb3; background-color:#F6F6F6;}
+
+.inputButton, .inputDateButton { background:url(../blue/images/form/input_bt.png) no-repeat;}
+
+/* Button */
+.button, .button span,
+.buttonDisabled, .buttonDisabled span,
+.buttonActive, .buttonActive span,
+.button .buttonContent, .buttonHover, .buttonHover .buttonContent,
+.buttonActive .buttonContent, .buttonActiveHover, .buttonActiveHover .buttonContent,
+/*.buttonDisabled .buttonContent { background:url(../purple/images/button/button_s.png) no-repeat;}*/
+
+.button span, .buttonDisabled span, .buttonActive span,
+.button .buttonContent, .buttonHover, .buttonHover .buttonContent,
+.buttonActive .buttonContent, .buttonDisabled .buttonContent,
+.button button, .buttonHover button,
+.buttonActive button, .buttonDisabled button { color:#fff;}
+
+.buttonDisabled span, .buttonDisabled:hover span,
+.buttonDisabled button { color:#999;}
+
+/* ----------------------------------------------------------------- Pages */
+/* Layout */
+/*body, #splitBar { background:#F9E8F9;}*/
+#splitBarProxy { border-color:#c0c0c0; background:#CCC;}
+
+/*#header, #header .headerNav { background:url(../purple/images/header_bg.png) repeat-x;}*/
+/*#header { background-color:#5b9700;}*/
+#header .logo { background:url(../default/images/logo.png) no-repeat;}
+#header .nav li { float:left; margin-left:-1px; padding:0 8px; line-height:11px;}
+#header .nav li a { color:#FFF;}
+/*#header .themeList li div { background:url(../default/images/themeButton.png) no-repeat;}*/
+
+/*.toggleCollapse, .toggleCollapse div { background:url(../purple/images/layout/toggleSidebar.png) no-repeat;}*/
+/*.toggleCollapse { border-style:solid; border-width:1px 1px 0 1px;background-color:#e7eff0;}*/
+.toggleCollapse h2 { color:#2d3f00;}
+#sidebar_s .collapse { background:#F9E8F9;}
+#sidebar_s .collapse:hover { background:#F9E8F9;}
+
+#taskbar, #taskbar li, #taskbar li .taskbutton { background:url(../blue/images/layout/taskbar.png) no-repeat;}
+#taskbar .close, #taskbar .restore, #taskbar .minimize { background:url(../blue/images/layout/taskbar_icon.png) no-repeat;}
+#taskbar li .taskbutton span { color:#FFF;}
+#taskbar .taskbarLeft, #taskbar .taskbarRight { background:url(../blue/images/layout/taskbar_control.png) no-repeat;}
+
+/* Menu */
+/*#navMenu, #navMenu li, #navMenu li.selected a, #navMenu li.selected span { background:url(../default/images/menu/menu.png) no-repeat;}*/
+.navbar-default { background-color: rgba(255,255,255,.2);}
+#navMenu li a, #navMenu li span { color:#FFF; }
+#navMenu li.selected span { color:#000; }
+#navbar #toggle,#navbar .dropdown-toggle{color:#fff}
+.navbar-default .navbar-nav>.open>a, .navbar-default .navbar-nav>.open>a:focus, .navbar-default .navbar-nav>.open>a:hover{background:#2f3c5b}
+/* Homepage */
+.sidebarContent { display:block; overflow:auto; height:500px; border:solid 1px #86B4EC; background:#FFF;}
+.accountInfo { display:block; overflow:hidden; height:60px; padding:0 10px; background:url(../blue/images/account_info_bg.png) repeat-x}
+.accountInfo p { padding:8px 0 0 0; line-height:19px;}
+.accountInfo p span { font-size:14px; font-weight:bold;}
+.accountInfo .right { float:right; padding-right:10px; text-align:right;}
+.accountInfo .alertInfo { float:right; width:300px; height:60px; padding-left:10px; border-left:solid 1px #accdf4;}
+.accountInfo .alertInfo h2 { padding:8px 0; line-height:17px;}
+.accountInfo .alertInfo a { padding:6px 0 0 0; line-height:21px;}
+
+/* Pages */
+.pageForm .inputInfo { color:#999;}
+
+/* Pages dialog */
+
+
+
+/* Pages default */
+/*.page .pageHeader, .formBar { border-color:#E29DE2; background:#ebf0f5 url(../default/images/pageHeader_bg.png) repeat-x;}*/
+.page .searchBar label { color:#183152;}
+
+/* Pages Form */
+
+.divider { border-color:#2d3f00;}
+
+/* combox */
+.combox .select a  { color:#183152; }
+.comboxop { border-color:#B8D0D6; }
+.combox, .combox div, .combox div a { background:url(../blue/images/search-bg.gif) no-repeat; }
+
+/*folderMenu*/
+#sidebar a {color: #fff;}
+#folderNavMenu > li > a.selected, #folderNavMenu > li > a:hover {
+    border-left-color: #ffd522;
+}
+#folderNavMenu > li > .selected, #folderNavMenu > li > a:hover, #folderNavMenu .tree li.first:hover, #folderNavMenu .tree li.first .selected {
+    background: #414c63;
+    color: #fff;
+}
+#folderNavMenu > li > ul .selected a, #folderNavMenu > li li:hover a {
+    color: #fff;
+    background: #414c63;
+    border-left-color: #ffd522;
+}
+/*首页样式*/
+.keydata-3>li,
+.keydata-4>li,
+.keydata-5>li{background:rgba(255,255,255,.1) !important;}
+.keydata-4 .data-desc {
+    color: #ccc !important;
+}
+.data-value{color:#ccc !important;}
+.data-value>span{color:#fff}
+
+.historycompare{color:#ccc;border:none;}
+
+.pagination li .next span:hover,
+.pagination li .last span:hover,
+.pagination li .first span:hover,
+.pagination li .previous span:hover,
+.pagination li.jumpto .goto:hover {
+  background-color: #7098F0 !important;
+  color:#fff;
+}
+.pagination li.disabled .last span,.pagination li.disabled .last span:hover,
+.pagination li.disabled .next span,.pagination li.disabled .next span:hover,
+.pagination li.disabled .previous span,.pagination li.disabled .previous span:hover,
+.pagination li.disabled .first span,.pagination li.disabled .first span:hover
+{
+	
+	color: #888;
+	font-weight: normal;
+	background-color:transparent;
+}
+/* .jf-shade-bg {
+    width: 100%;
+    height: 100%;
+    opacity: 0.4 !important;
+    filter: alpha(opacity = 40);
+    background: #000 !important;
+} */
+.pagination li.jumpto .textInput{
+	background: transparent;;
+}
+a.btnLook i, a.btnLook_clean i{
+	border-left:none !important;
+	background: transparent !important;
+}
+.data-compare>span {
+
+    color: #ccc;
+}
+/*弹框*/
+.dialog .pageContent .pageFormContent,
+.dialog .dialogContent,
+.statistics_title
+.dialog{
+	/*background: #1e3c66 !important;*/
+}
+.dialog input, textarea {
+    border-color: #d1d1d1;
+    /* background-color: #FFF; */
+}
+#container select option{
+	color:#000;
+}
+.tabsPage .tabsLeft, .tabsPage .tabsRight, .tabsPage .tabsMore {
+    background-image: url(./images/tabs/tabscontrol.png);
+}
+.data-compare .fa-long-arrow-up {
+    color: #ff6687;
+ 
+}
+.fa-window-maximize{
+	color:#999;
+}
+#container .fa-search,
+#container .jf-btn-calendar
+{
+	color:#fff;
+}
+#container table.list tbody {
+     background-color: transparent; 
+}
+#container table.list {
+    border: 1px solid #727272;
+}
+#container table td{
+	color:#fff;
+}
+#container td input{
+	background:transparent; 
+	border-color:#727272;
+}
+#container .combox .select a{
+	color:#fff !important;
+}
+
+
+#container .ztree li a{
+	color:#fff !important;
+}
+#container .prdinfoBox{
+	border-color:#727272 !important;
+}
+.tabsToggle li:hover > a > span {
+    border-bottom: 2px solid #ffd522;
+    background:#ffd522 !important;
+}
+#container .fa-close{
+	color:#a8a8a8;
+}
+.button, .querybtn, .resetbtn, .savebtn, a.close, button.close{
+	background:#7098F0;
+}
+table td .button{
+	background:#7098F0 !important;
+}
+#container table.list td{
+	border-bottom: 1px solid #727272;
+}
+/* 表格中自定义按钮（无图标） */
+.noiconbtn{
+	padding: 3px 8px;
+    color: #94c6f7;  
+    border: 1px solid transparent;  
+}
+.noiconbtn:hover{
+	border: 1px solid #94c6f7;
+	background-color:#384356;
+	border-radius:3px;
+}
+/*  */
+#container span.error{
+	background-color: #445370;
+	color: #ff6687;
+	border:none;
+}
+
+input.error,textarea.error,select.error {
+	border-color:#ff6687 !important;
+	-webkit-box-shadow: none;
+	box-shadow: none;
+	-moz-box-shadow: none;
+}
+#container input.readonly{
+    color: #fff;
+}
+span.info{
+	color: #ff6687 !important;
+}
+.redmust {
+   
+    color: #ff6687;
+    
+}
+.tabs .tabsHeader li.selected > a > span, .tabs .tabsHeader li:hover > a > span {
+    border-bottom: 2px solid #ffd522;
+}
+text{
+	fill:white;
+}
+.fieldset {
+  
+    border: 1px solid #727272 !important;
+   
+}
+.fieldset legend {
+  
+    color: #fff;
+}
+#container .grid .gridTbody .selected,#container table.list .selected {
+    background: #2F3C5B;
+}
+#container table.list thead{	
+	background:#464F5E;	
+}
+#topinfo{
+	color:#fff;
+}
+.select2-container--default .select2-selection--multiple{
+	background:transparent !important;
+}
+/* 机构考核方案计算 */
+.evawindow-left-box p, .evawindow-right-box p {
+    color:#fff !important;
+    border-bottom: 1px dashed #727272 !important;  
+}
+.evawindow-center-button,
+.evawindow-left-box,
+.evawindow-right-box {
+    border: 1px solid #727272 !important  
+}
+.evawindow-box-title {
+    background-color: #464F5E !important;    
+}
+.evawindow-center-button input {
+    background: #7098F0 !important;
+    border: none;
+    color: #fff;
+    padding: 4px 10px;
+    border-radius: 3px;
+}
+h2.contentTitle {
+ 
+    color: #fff;
+    background-color: transparent;
+    border-left: none;
+}
+.check.form-value input {
+    margin-left: 10px;
+    vertical-align: middle;
+    margin-top: 0;
+}
+caption{
+	background:transparent !important;
+	border-color:#727272 !important;
+	color:#fff !important;
+}
+.window-center-button{
+	border-color:#727272 !important;
+}

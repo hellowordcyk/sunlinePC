@@ -1,0 +1,2192 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sunline.pams.mybatis.public.rptmanager" >
+	<select id="getSubOrgList" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		select a.org_no 
+		from  sys_pub_org_sub_v a 
+		where  1=1
+		<if test="objCode != null and objCode != '' " >
+		 and a.parent_org_no in <foreach item="item" index="index" collection="objCode" open="(" separator="," close=")">#{item}</foreach>
+		</if>
+		<if test="level != null and level != '' " >
+		and a.org_level=#{level}  
+		</if>
+	</select>
+	<select id="getDeptNameByDeptCode" parameterType="java.util.HashMap" resultType="java.lang.String">
+		select deptname from pcmc_dept a where a.deptcode=#{deptCode}
+	</select>     
+	
+	<select id="qryDepostMouthTotallistPage" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		SELECT Obj_Code,
+			   Obj_Name,
+			   sum(Col001) Col001,
+			   sum(Col002) Col002,
+			   sum(Col003) Col003,
+			   sum(Col004) Col004,
+			   sum(Col005) Col005,
+			   sum(Col006) Col006,
+			   sum(Col007) Col007,
+			   sum(Col008) Col008,
+			   sum(Col009) Col009,
+			   sum(Col010) Col010
+		FROM Rpt_Data_Detail a
+		WHERE a.Rpt_Id = #{rptId} 
+		<if test="dataDate != null and dataDate != ''">
+			AND to_char(a.Data_Date,'yyyy-mm-dd') like #{dataDate}||'%'
+		</if>
+		<if test="editorgcode != null and editorgcode != ''">
+			and a.Obj_Code in <foreach item="obj" index="index" collection="editorgcode" open="(" separator="," close=")">#{obj}</foreach>
+		</if>
+		<if test="numCrontls !=null and numCrontls !='' ">
+			${numCrontls}
+		</if>
+		group by Obj_Code,
+			     Obj_Name
+		order by a.Obj_Code 
+	</select>
+	<!-- 查询报表 -->
+	<select id="qryDepositLoanRptlistPage" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		select * from rpt_data_detail  a where a.rpt_id=#{rptId}  
+			<if test="objCode == null and objCode == ''">
+				and a.obj_code=#{objCode}
+			</if>
+			<if test="COL001 != null and COL001 != ''">
+				and a.COL001=#{COL001}
+			</if>
+			<if test="dataDate != null and dataDate != ''">
+				and a.data_date=to_date(#{dataDate},'yyyy/mm/dd')
+			</if>
+			 <if test="dataDateSM != null and dataDateSM != ''">
+				and a.data_date>=to_date(#{dataDateSM},'yyyy/mm/dd')
+			</if>
+			 <if test="dataDateS != null and dataDateS != ''">
+				<![CDATA[
+				and a.data_date<=to_date(#{dataDateS},'yyyy/mm/dd')
+				]]>
+			</if>
+			
+			<if test="objName!= null and objName!=''">
+				and a.obj_name like #{objName}
+			</if>
+			
+			<if test="crcycd != null and crcycd!=''">
+				and a.curry=#{crcycd}
+			</if>
+			<if test="startDate != null and startDate!='' ">
+				and a.data_date  <![CDATA[ >= ]]> to_date(#{startDate},'yyyy-mm-dd')
+			</if>
+			<if test="endDate != null and endDate!='' ">
+				and a.data_date <![CDATA[ <= ]]> to_date(#{endDate},'yyyy-mm-dd')
+			</if>
+			<if test="rptId != null and rptId !='' and rptId=='strategicAccCondTotal' or rptId=='strategicAccCondDetail'">
+				<if test="period != null and period !=''">
+					and a.COL100=#{period}
+				</if>			
+			</if>
+			<if test="rptId != null and rptId !='' and rptId=='interBusSalDetail' ">
+				<if test="goodcode != null and goodcode!='' ">
+					and a.col001=#{goodcode}
+				</if>
+			</if>
+			<if test="rptId != null and rptId !='' and rptId=='nationalBusSettleDetail' ">
+				 <if test="custName != null and custName!='' ">
+					and a.col001 like '%${custName}%'
+				</if>
+				<if test="goodcode != null and goodcode!='' ">
+					and a.col006=#{goodcode}
+				</if>
+				<if test="nationType!=null and nationType!='' ">
+					and a.col003=#{nationType}
+				</if>
+			</if>
+			<if test="rptId != null and rptId !='' and rptId=='nationalBusSettleTotal' ">
+				<if test="goodcode != null and goodcode!='' ">
+					and a.col010=#{goodcode}
+				</if>
+			</if>
+			<if test="rptId != null and rptId !='' and rptId=='interBusSalDetail' ">
+				<if test="custName != null and custName!='' ">
+					and a.col001 like '%${custName}%'
+				</if>
+				<if test="productcode != null and productcode !='' ">
+					and a.col002  in <foreach item="varitem" index="index" collection="productcode" open="(" separator="," close=")">#{varitem}</foreach>
+				</if>
+			</if>
+			<if test="rptId != null and rptId !='' and rptId=='impKPICountRpt' ">
+				<if test="impKpi != null and impKpi !=''">
+					and a.col001=#{impKpi}
+				</if>
+			</if>
+			<if test="rptId !=null and rptId !='' and rptId=='firstProSalAccNumCount' ">
+				<if test="contrantNo != null and contrantNo != ''">
+					and a.col001=#{contrantNo}
+				</if>
+				<if test="acctNo != null and acctNo != ''">
+					and a.col002=#{acctNo}
+				</if>
+				<if test="acctName != null and acctName != ''">
+					and a.col003 like #{acctName}
+				</if>
+			    <if test="startAmt!=null and startAmt!='' ">
+					and a.col005<![CDATA[ >= ]]>${startAmt}
+				</if>
+				<if test="endAmt!=null and endAmt!= '' ">
+					and a.col005<![CDATA[ <= ]]>${endAmt}
+				</if>
+				<if test="startNum!=null and startNum!='' ">
+					and a.col006<![CDATA[ >= ]]>${startNum}
+				</if>
+				<if test="endNum!=null and endNum!='' ">
+					and a.col006<![CDATA[ <= ]]>${endNum}
+				</if>
+				<if test="startAvg!=null and startAvg!='' ">
+					and a.col007<![CDATA[ >= ]]>${startAvg}
+				</if>
+				<if test="endAvg!=null and endAvg!='' ">
+					and a.col007<![CDATA[ <= ]]>${endAvg}
+				</if>
+			</if>
+			<if test="objCode != null and objCode!='' ">
+				and a.obj_code in
+				<foreach item="objCode" index="index" collection="objCode" open="(" separator="," close=")">#{objCode}</foreach>
+			</if>
+			<if test="accCrtl != null and accCrtl != ''">
+			and <foreach collection="accCrtl" item="col" separator="and">
+					a.${col.pkName} in (${col.pkValue})
+				</foreach>
+			</if>
+			<if test="numCrontls !=null and numCrontls !='' ">
+				${numCrontls}
+			</if>
+		order by a.data_date desc,a.obj_code   
+	</select>	
+	<!-- 定期子户查询or导出-->
+	<select id="selOrExprtRptDataDingQilistPage" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+			select to_char(a.DATA_DATE,'yyyy-mm-dd')         "data_date",
+				a.ORG_NO            "org_no",
+				a.ORG_NAME          "org_name",
+				a.MAIN_ACCT_NO      "main_acct_no",
+				a.CUST_NO           "cust_no",
+				a.CUST_NAME         "cust_name",
+				a.ACCT_NO           "acct_no",
+				a.BAL               "bal",
+				a.BAL_AVG_Y         "bal_avg_y",
+				a.MANAGER_NO        "manager_no",
+				a.MANAGER_O_NAME    "manager_o_name",
+				a.MANAGER_ORG       "manager_org",
+				a.MANAGER_ORG_NAME  "manager_org_name",
+				a.SIMULATE_PROFIT_Y "simulate_profit_y",
+				a.card_no           "card_no"
+			 from rpt_data_dingqi a where 1=1   
+			<if test="dataDate != null and dataDate != ''">
+				and a.data_date = to_date(#{dataDate},'yyyy/mm/dd')
+			</if>   
+			<if test="startDate != null and startDate != ''">
+				and a.open_date <![CDATA[ >= ]]> to_date(#{startDate},'yyyy/mm/dd')
+			</if>  
+			<if test="endDate != null and endDate != ''">
+				and a.open_date <![CDATA[ < ]]> to_date(#{endDate},'yyyy/mm/dd')
+			</if>  
+			<if test="editorgcode != null and editorgcode !='' ">
+				and a.org_no in <foreach item="varitem" index="index" collection="editorgcode" open="(" separator="," close=")">#{varitem}</foreach>
+			</if>
+			<if test="mainAccNo != null and mainAccNo != ''">
+				and a.main_acct_no =#{mainAccNo}
+			</if>
+			<if test="custNo != null and custNo != ''">
+				and a.cust_no =#{custNo}
+			</if>
+			<if test="cardNo != null and cardNo != ''">
+				and a.card_no =#{cardNo}
+			</if>
+			<if test="accCrtl != null and accCrtl != ''">
+				and		<foreach collection="accCrtl" item="col" separator="and">
+						a.${col.pkName} in (${col.pkValue})
+						</foreach>
+			</if>
+			<if test="numCrontls !=null and numCrontls !='' ">
+			${numCrontls}
+			</if>
+	</select>
+	<!--机构产品明细查询-->
+	
+		<!--被机构认领汇总查询or导出-->
+    <select id="selOrExprtRptDataBeiTotallistPage" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+      select to_char(a.DATA_DATE,'yyyy-mm-dd')   "data_date",
+        a.BDEPTNO     "bdeptno",
+        a.BDEPTNAME   "bdeptname",
+        a.MANAGER_ORG "manager_org",
+        a.DEPTNAME    "deptname",
+        a.BAL         "bal",
+	    a.PRODUCT_NO  "product_no",
+	    a.PRODUCT_NAME "product_name"
+       from rpt_data_beitotal a
+       where 1=1 and a.BDEPTNO !=a.MANAGER_ORG and a.BAL !=0
+       <if test="dataDate != null and dataDate != ''">
+	     and a.data_date = to_date(#{dataDate},'yyyy/mm/dd')
+	   </if> 
+	   <if test="editorgcode != null and editorgcode !='' ">
+		 and a.bdeptno in <foreach item="varitem" index="index" collection="editorgcode" open="(" separator="," close=")">#{varitem}</foreach>
+		</if>
+		<if test="goodcode != null and goodcode !='' ">
+		 and (a.product_no in <foreach item="def" index="index" collection="goodcode" open="(" separator="," close=")">#{def}</foreach>
+		       or
+			  substr(a.product_no,7,4) in <foreach item="good" index="index" collection="goodcode" open="(" separator="," close=")">#{good}</foreach> 
+			 )
+		</if> 
+		<if test="accCrtl != null and accCrtl != ''">
+		   and  <foreach collection="accCrtl" item="col" separator="and">
+ 			        a.${col.pkName} in (${col.pkValue})
+ 		        </foreach>
+		</if>
+		<if test="numCrontls !=null and numCrontls !='' ">
+		${numCrontls}
+		</if>
+		order by a.manager_org
+	</select>
+     <!-- 跨行业绩认领汇总 -->
+	<select id="selOrExprtRptDataTotalTwolistPage" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		select to_char(a.DATA_DATE,'yyyy-mm-dd')   "data_date",
+		 a.BDEPTNO     "bdeptno",
+		 a.BDEPTNAME   "bdeptname",
+		 a.MANAGER_ORG "manager_org",
+		 a.DEPTNAME    "deptname",
+		 a.BAL         "bal",
+		 a.PRODUCT_NO  "product_no",
+		 a.PRODUCT_NAME "product_name"
+		from rpt_data_beitotal a
+		where 1=1 and a.BDEPTNO !=a.MANAGER_ORG and a.BAL!=0
+		<if test="dataDate != null and dataDate != ''">
+		 and a.data_date = to_date(#{dataDate},'yyyy/mm/dd')
+		</if> 
+		<if test="editorgcode != null and editorgcode !='' ">
+		 and a.manager_org in <foreach item="varitem" index="index" collection="editorgcode" open="(" separator="," close=")">#{varitem}</foreach>
+		</if>
+		<if test="goodcode != null and goodcode !='' ">
+		 and (a.product_no in <foreach item="def" index="index" collection="goodcode" open="(" separator="," close=")">#{def}</foreach>
+		       or
+			  substr(a.product_no,7,4) in <foreach item="good" index="index" collection="goodcode" open="(" separator="," close=")">#{good}</foreach> 
+			 )
+		</if> 
+		<if test="accCrtl != null and accCrtl != ''">
+		   and  <foreach collection="accCrtl" item="col" separator="and">
+ 			        a.${col.pkName} in (${col.pkValue})
+ 		        </foreach>
+		</if>
+		<if test="numCrontls !=null and numCrontls !='' ">
+		${numCrontls}
+		</if>
+		order by a.manager_org
+	</select>
+	 
+	<select id="brchDetillistPage" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		select to_char(a.DATA_DATE,'yyyy-mm-dd') "data_date",
+			a.ITEM_NO           "item_no",
+			a.MANAGER_ORG       "manager_org",
+			a.MANAGER_ORG_NAME  "manager_org_name",
+			a.PRODUCT_NO        "product_no",
+			a.PRODUCT_NAME      "product_name",
+			a.BAL               "bal",
+			a.BAL_AVG_Y         "bal_avg_y",
+			a.SIMULATE_PROFIT_Y "simulate_profit_y"
+		from rpt_data_beidetail_org a
+		where 1=1
+		<if test="goodcode != null and goodcode !='' ">
+		and (a.product_no in <foreach item="def" index="index" collection="goodcode" open="(" separator="," close=")">#{def}</foreach>
+			or
+			substr(a.product_no,7,4) in <foreach item="good" index="index" collection="goodcode" open="(" separator="," close=")">#{good}</foreach> 
+			)
+		</if>
+		<if test="dataDate != null and dataDate != ''">
+			and to_char(a.data_date,'yyyy-mm-dd')=#{dataDate}
+		</if> 
+		<if test="editorgcode != null and editorgcode !='' ">
+			and a.manager_org in <foreach item="editorgcode" index="index" collection="editorgcode" open="(" separator="," close=")">#{editorgcode}</foreach>
+		</if>
+		<if test="accCrtl != null and accCrtl != ''">
+			and  <foreach collection="accCrtl" item="col" separator="and">
+				a.${col.pkName} in (${col.pkValue})
+				</foreach>
+		</if>
+		<if test="numCrontls !=null and numCrontls !='' ">
+			${numCrontls}
+		</if>
+	  order by a.manager_org
+	</select>
+	<!--机构人员明细下钻-->
+	<select id="getCommUserDeptDetillistPage" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		<if test="prdt != null and prdt != ''">
+			select * from (
+			SELECT g."data_date",
+				g."item_no",
+				g."manager_org",
+				g."manager_org_name",
+				g."manager_no",
+				g."manager_no_name",
+				g."product_no",
+				g."product_name",
+				SUM(g."bal") "bal",
+				SUM(g."bal_avg_y") "bal_avg_y",
+				SUM(g."simulate_profit_y") "simulate_profit_y"
+			FROM (
+		</if>
+		SELECT a.Data_Date "data_date",
+				a.Item_No "item_no",
+				a.Acct_No "acct_no",
+				a.Cust_No "cust_no",
+				a.Cust_Name "cust_name",
+				a.Org_No "org_no",
+				b.Deptname "org_name",
+				a.Manager_Org "manager_org",
+				c.Deptname "manager_org_name",
+				a.Manager_No "manager_no",
+				d.Username "manager_no_name",
+				nvl(a.Cur_Asn_Rate,0) "cur_asn_rate",
+				a.Product_No "product_no",
+				a.Product_Name "product_name",
+				nvl(a.Bal,0) "bal",
+				nvl(a.Bal_Avg_y,0) "bal_avg_y",
+				nvl(a.Simulate_Profit_y,0) "simulate_profit_y"
+		FROM (SELECT t.Data_Date,
+					t.Item_No,
+					t.Acct_No,
+					t.Cust_No,
+					t.Cust_Name,
+					t.Org_No,
+					t.Manager_Org,
+					t.Manager_No,
+					t.Cur_Asn_Rate * 100 Cur_Asn_Rate,
+					t.Ae_Product_No Product_No,
+					t.Product_Name,
+					t.Bal * i.Mid_Rate / i.Exch_Unit Bal,
+					t.Bal_Avg_y * i.Mid_Rate / i.Exch_Unit Bal_Avg_y,
+					t.Simulate_Profit_y * i.Mid_Rate / i.Exch_Unit Simulate_Profit_y
+				FROM Pi_Org_Deposit_Unit t
+				LEFT JOIN Pi_Biz_Exch i
+				ON t.Currency = i.Currency
+				AND i.Exch_Currency = 'CNY'
+				AND i.Data_Date = t.Data_Date
+				where 1=1 and t.Product_No <![CDATA[ <> ]]>	'1299'		
+				<if test="dataDate != null and dataDate != ''">
+					and t.data_date = to_date(#{dataDate},'yyyy/mm/dd')
+				</if>
+				<if test="itemtp != null and itemtp != ''">
+					and t.Item_No like #{itemtp}||'%'
+				</if>    
+				<if test="editorgcode != null and editorgcode != '' ">
+					and t.manager_org   in <foreach item="orgno" index="index" collection="editorgcode" open="(" separator="," close=")">#{orgno}</foreach> 
+				</if>  
+				<if test="beditorgcode != null and beditorgcode != '' ">
+					and t.org_no   in <foreach item="borgno" index="index" collection="beditorgcode" open="(" separator="," close=")">#{borgno}</foreach> 
+				</if>
+				<if test="goodcode != null and goodcode !='' ">
+					and t.Ae_Product_No in <foreach item="def" index="index" collection="goodcode" open="(" separator="," close=")">#{def}</foreach>  
+				</if> 
+				<if test="userCode != null and userCode !='' ">
+					and t.manager_no in <foreach item="usercd" index="index" collection="userCode" open="(" separator="," close=")">#{usercd}</foreach>
+				</if>
+				<if test="accCrtl != null and accCrtl != ''">
+					and  <foreach collection="accCrtl" item="col" separator="and">
+						t.${col.pkName} in (${col.pkValue})
+						</foreach>
+					</if>
+					UNION ALL
+					SELECT T1.Data_Date,
+					       T1.Item_No,
+					       T1.Acct_No,
+					       T1.Cust_No,
+					       T1.Cust_Name,
+					       T1.Org_No,
+					       T1.Manager_Org,
+					       T1.Manager_No,
+					       T1.Cur_Asn_Rate * 100 Cur_Asn_Rate,
+					       T1.Ae_Product_No Product_No,
+					       T1.Product_Name,
+					       T1.Bal * i.Mid_Rate / i.Exch_Unit Bal,
+					       T1.Bal_Avg_y * i.Mid_Rate / i.Exch_Unit Bal_Avg_y,
+					       T1.Simulate_Profit_y * i.Mid_Rate / i.Exch_Unit Simulate_Profit_y
+					  FROM Pi_Org_Deposit_Person T1
+					  LEFT JOIN Pi_Biz_Exch i
+					    ON T1.Currency = i.Currency
+					   AND i.Exch_Currency = 'CNY'
+					   AND i.Data_Date = T1.Data_Date
+					   where 1=1	
+		        	<if test="dataDate != null and dataDate != ''">
+						 and T1.data_date = to_date(#{dataDate},'yyyy/mm/dd')
+					</if> 
+					<if test="itemtp != null and itemtp != ''">
+					  and T1.Item_No like #{itemtp}||'%'
+					</if> 
+					<if test="editorgcode != null and editorgcode != '' ">
+					 and T1.manager_org   in <foreach item="orgno" index="index" collection="editorgcode" open="(" separator="," close=")">#{orgno}</foreach> 
+					</if>  
+					<if test="beditorgcode != null and beditorgcode != '' ">
+					 and T1.org_no   in <foreach item="borgno" index="index" collection="beditorgcode" open="(" separator="," close=")">#{borgno}</foreach> 
+					</if>
+					<if test="goodcode != null and goodcode !='' ">
+					 and T1.Ae_Product_No in <foreach item="def" index="index" collection="goodcode" open="(" separator="," close=")">#{def}</foreach>
+					</if> 
+					<if test="userCode != null and userCode !='' ">
+					 and T1.manager_no in <foreach item="usercd" index="index" collection="userCode" open="(" separator="," close=")">#{usercd}</foreach>
+					</if>
+				    <if test="accCrtl != null and accCrtl != ''">
+				       and  <foreach collection="accCrtl" item="col" separator="and">
+				    	        T1.${col.pkName} in (${col.pkValue})
+				            </foreach>
+				    </if>
+				UNION ALL
+				SELECT T2.Data_Date,
+				       T2.Item_No,
+				       T2.Loan_No,
+				       T2.Cust_No,
+				       T2.Cust_Name,
+				       T2.Org_No,
+				       T2.Manager_Org,
+				       T2.Manager_No,
+				       T2.Cur_Asn_Rate * 100 Cur_Asn_Rate,
+				       T2.Ae_Product_No Product_No,
+				       T2.Product_Name,
+				       T2.Bal * i.Mid_Rate / i.Exch_Unit Bal,
+				       T2.Bal_Avg_y * i.Mid_Rate / i.Exch_Unit Bal_Avg_y,
+				       T2.Ftp_Lr_y * i.Mid_Rate / i.Exch_Unit Simulate_Profit_y
+				  FROM Pi_Org_Loan_Unit T2
+				  LEFT JOIN Pi_Biz_Exch i
+				    ON T2.Currency = i.Currency
+				   AND i.Exch_Currency = 'CNY'
+				   AND i.Data_Date = T2.Data_Date
+				   where 1=1
+				    <if test="dataDate != null and dataDate != ''">
+					  and T2.data_date = to_date(#{dataDate},'yyyy/mm/dd')
+					</if>
+				    <if test="itemtp != null and itemtp != ''">
+					  and T2.Item_No like #{itemtp}||'%'
+					</if>  
+					<if test="editorgcode != null and editorgcode != '' ">
+					 and T2.manager_org   in <foreach item="orgno" index="index" collection="editorgcode" open="(" separator="," close=")">#{orgno}</foreach> 
+					</if>  
+					<if test="beditorgcode != null and beditorgcode != '' ">
+					 and T2.org_no   in <foreach item="borgno" index="index" collection="beditorgcode" open="(" separator="," close=")">#{borgno}</foreach> 
+					</if>
+					<if test="goodcode != null and goodcode !='' ">
+					 and T2.Ae_Product_No in <foreach item="def" index="index" collection="goodcode" open="(" separator="," close=")">#{def}</foreach>
+					</if> 
+					<if test="userCode != null and userCode !='' ">
+					 and T2.manager_no in <foreach item="usercd" index="index" collection="userCode" open="(" separator="," close=")">#{usercd}</foreach>
+					</if>
+				    <if test="accCrtl != null and accCrtl != ''">
+				       and  <foreach collection="accCrtl" item="col" separator="and">
+				    	        T2.${col.pkName} in (${col.pkValue})
+				            </foreach>
+				    </if>
+				   UNION ALL
+				SELECT T3.Data_Date,
+				       T3.Item_No,
+				       T3.Loan_No,
+				       T3.Cust_No,
+				       r.Cust_Name,
+				       T3.Org_No,
+				       T3.Manager_Org,
+				       T3.Manager_No,
+				       T3.Cur_Asn_Rate * 100 Cur_Asn_Rate,
+				       T3.Product_No,
+				       T3.Product_Name,
+				       T3.Bal * i.Mid_Rate / i.Exch_Unit Bal,
+				       T3.Bal_Avg_y * i.Mid_Rate / i.Exch_Unit Bal_Avg_y,
+				       T3.Ftp_Lr_y * i.Mid_Rate / i.Exch_Unit Simulate_Profit_y
+				  FROM Pi_Org_Loan_Person T3
+				  LEFT JOIN Pi_Biz_Exch i
+				    ON T3.Currency = i.Currency
+				   AND i.Exch_Currency = 'CNY'
+				   AND i.Data_Date = T3.Data_Date
+				  LEFT JOIN Ci_Cus_Person r
+				    ON T3.Cust_No = r.Cust_No
+				   where 1=1
+				    <if test="dataDate != null and dataDate != ''">
+					  and T3.data_date = to_date(#{dataDate},'yyyy/mm/dd')
+					</if>
+				    <if test="itemtp != null and itemtp != ''">
+					  and T3.Item_No like #{itemtp}||'%'
+					</if>  
+					<if test="editorgcode != null and editorgcode != '' ">
+					 and T3.manager_org   in <foreach item="orgno" index="index" collection="editorgcode" open="(" separator="," close=")">#{orgno}</foreach> 
+					</if>  
+					<if test="beditorgcode != null and beditorgcode != '' ">
+					 and T3.org_no   in <foreach item="borgno" index="index" collection="beditorgcode" open="(" separator="," close=")">#{borgno}</foreach> 
+					</if>
+					<if test="goodcode != null and goodcode !='' ">
+					 and T3.Product_No in <foreach item="def" index="index" collection="goodcode" open="(" separator="," close=")">#{def}</foreach>
+					</if> 
+					<if test="userCode != null and userCode !='' ">
+					 and T3.manager_no in <foreach item="usercd" index="index" collection="userCode" open="(" separator="," close=")">#{usercd}</foreach>
+					</if>
+				    <if test="accCrtl != null and accCrtl != ''">
+				       and  <foreach collection="accCrtl" item="col" separator="and">
+				    	        T3.${col.pkName} in (${col.pkValue})
+				            </foreach>
+				    </if>
+					UNION ALL
+				SELECT T4.Data_Date,
+				       T4.Item_No,
+				       T4.Acct_No,
+				       T4.Cust_No,
+				       T4.Cust_Name,
+				       T4.Org_No,
+				       T4.Manager_Org,
+				       T4.Manager_No,
+				       T4.Cur_Asn_Rate * 100 Cur_Asn_Rate,
+				       T4.Product_No,
+				       CASE
+				           WHEN T4.Product_No = 'DF' THEN
+				            '代发工资'
+				           ELSE
+				            r.Prod_Nm
+				       END Product_Name,
+				       T4.Tran_Amt * i.Mid_Rate / i.Exch_Unit Bal,
+				       T4.Bal_Avg_y * i.Mid_Rate / i.Exch_Unit Bal_Avg_y,
+				       f.Ftp_Profit_y * i.Mid_Rate / i.Exch_Unit Simulate_Profit_y
+				  FROM Pi_Org_Mid_Tran T4
+				  LEFT JOIN Pi_Biz_Exch i
+				    ON T4.Currency = i.Currency
+				   AND i.Exch_Currency = 'CNY'
+				   AND i.Data_Date = T4.Data_Date
+				  LEFT JOIN Pi_Biz_Prod_Item r
+				    ON T4.Product_No = r.Prod_Cd
+				   AND r.Data_Date = T4.Data_Date
+				  LEFT JOIN Pi_Biz_Ftp f
+				    ON T4.Acct_No = f.Acct_No
+				   AND f.Data_Date = T4.Data_Date
+				 WHERE  1 = 1 
+				    <if test="dataDate != null and dataDate != ''">
+					  and T4.data_date = to_date(#{dataDate},'yyyy/mm/dd')
+					</if> 
+				    <if test="itemtp != null and itemtp != ''">
+					  and T4.Item_No like #{itemtp}||'%'
+					</if> 
+					<if test="editorgcode != null and editorgcode != '' ">
+					 and T4.manager_org   in <foreach item="orgno" index="index" collection="editorgcode" open="(" separator="," close=")">#{orgno}</foreach> 
+					</if>  
+					<if test="beditorgcode != null and beditorgcode != '' ">
+					 and T4.org_no  in <foreach item="borgno" index="index" collection="beditorgcode" open="(" separator="," close=")">#{borgno}</foreach> 
+					</if>
+					<if test="goodcode != null and goodcode !='' ">
+					 and T4.Product_No in <foreach item="def" index="index" collection="goodcode" open="(" separator="," close=")">#{def}</foreach>
+					</if> 
+					<if test="userCode != null and userCode !='' ">
+					 and T4.manager_no in <foreach item="usercd" index="index" collection="userCode" open="(" separator="," close=")">#{usercd}</foreach>
+					</if>
+				    <if test="accCrtl != null and accCrtl != ''">
+				       and  <foreach collection="accCrtl" item="col" separator="and">
+				    	        T4.${col.pkName} in (${col.pkValue})
+				            </foreach>
+				    </if>
+				    ) a
+		  LEFT JOIN Pcmc_Dept b
+		    ON a.Org_No = b.Deptcode
+		  LEFT JOIN Pcmc_Dept c
+		    ON a.Manager_Org = c.Deptcode
+		  LEFT JOIN Pcmc_User d
+		    ON a.Manager_No = d.Usercode
+		 where 1=1
+		 <if test="startAm != null and startAm != ''">
+			and nvl(a.Bal,0) <![CDATA[ >= ]]> #{startAm}
+		 </if>
+		 <if test="endAm != null and endAm != ''">
+			and nvl(a.Bal,0) <![CDATA[ < ]]> #{endAm}
+		 </if>
+		 <if test="curRate != null and curRate != ''">
+			 <if test="curRate == 0 ">
+				 and a.Cur_Asn_Rate = 0
+			 </if>
+			 <if test="curRate == 1 ">
+				 and a.Cur_Asn_Rate <![CDATA[ > ]]> 0
+			 </if>
+		 </if>	
+		 <if test="orgCrtl !=null and orgCrtl !='' ">
+		    ${orgCrtl}
+		 </if>
+		 <if test=" !_parameter.containsKey('prdt') ">
+			<if test="numCrontls !=null and numCrontls !='' ">
+			    ${numCrontls}
+			</if>
+		 </if>
+		 <if test="prdt != null and prdt != ''">
+		   ) g
+           GROUP BY g."data_date",
+				    g."item_no",
+				    g."manager_org",
+				    g."manager_org_name",
+				    g."manager_no",
+				    g."manager_no_name",
+				    g."product_no",
+				    g."product_name" )
+		   where 1=1
+			<if test="numCrontls !=null and numCrontls !='' ">
+				${numCrontls}
+			</if>
+		 </if>
+	</select>
+	 <!--机构或人员战略产品明细查询-->
+	<select id="brchOrUserStraCommlistPage" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		select to_char(a.data_date, 'yyyy-mm-dd') "data_date",
+		     <if test="brchtp != null and brchtp !=''">
+		     b.parent_org_no "manager_org",
+		     b.parent_org_name "manager_org_name",
+		     b.parent_org_level "org_level",
+		     </if>
+		     <if test="usertp != null and usertp !=''">
+		     a.manager_no "manager_no",
+		     a.manager_o_name "manager_o_name",
+		     a.manager_org "manager_org",
+		     a.manager_org_name "manager_org_name",
+		     </if>
+		     a.product_name "product_name",
+		     sum(a.bal) "bal",
+		     a.danjia "danjia",
+		     sum(a.dui_bal) "dui_bal"
+		from rpt_data_zhandetail a
+		<if test="brchtp != null and brchtp !=''">
+		left join sys_pub_org_sub_v b
+		on a.manager_org = b.org_no
+		</if>
+		where 1=1
+		<if test="dataDate != null and dataDate != ''">
+		and to_char(a.data_date,'yyyy-mm-dd')=#{dataDate}
+		</if> 
+		<if test="productcode != null and productcode !='' ">
+		and a.product_name in <foreach item="productcd" index="index" collection="productcode" open="(" separator="," close=")">#{productcd}</foreach>
+		</if>
+		<if test="userCode != null and userCode !='' ">
+		and a.manager_no in <foreach item="usercd" index="index" collection="userCode" open="(" separator="," close=")">#{usercd}</foreach>
+		</if>
+		<if test="brchtp != null and brchtp !=''">
+		<if test="editorgcode != null and editorgcode !='' ">
+		and b.parent_org_level in (
+			select to_number(org_level) lev  from sys_pub_org_sub_v where org_no in <foreach item="editorg" index="index" collection="editorgcode" open="(" separator="," close=")">#{editorg}</foreach>
+			union all
+			select to_number(org_level)+1 lev  from sys_pub_org_sub_v where org_no in <foreach item="code" index="index" collection="editorgcode" open="(" separator="," close=")">#{code}</foreach>
+			)
+		</if>
+		and b.parent_org_no in (select org_no from sys_pub_org_sub_v where 1=1  
+						<if test="editorgcode != null and editorgcode  !='' ">
+						and parent_org_no in <foreach item="ed" index="index" collection="editorgcode" open="(" separator="," close=")">#{ed}</foreach>
+						</if>
+						)
+		</if>
+		<if test="usertp != null and usertp !=''">
+			and a.manager_org in
+						(select org_no from sys_pub_org_sub_v where 1=1  
+						<if test="editorgcode != null and editorgcode !='' ">
+						and parent_org_no in <foreach item="edit" index="index" collection="editorgcode" open="(" separator="," close=")">#{edit}</foreach>
+						</if>
+						)
+		</if>
+		<if test="accCrtl != null and accCrtl != ''">
+		   and  <foreach collection="accCrtl" item="col" separator="and">
+			        a.${col.pkName} in (${col.pkValue})
+		        </foreach>
+		</if>
+	  group by to_char(a.data_date, 'yyyy-mm-dd'),
+	          <if test="brchtp != null and brchtp !=''">
+	           b.parent_org_no,
+	           b.parent_org_name,
+	           b.parent_org_level,
+	           </if>
+	           <if test="usertp != null and usertp !=''">
+	           a.manager_no,
+	           a.manager_o_name,
+	           a.manager_org,
+	           a.manager_org_name,
+	           </if>
+	           a.danjia,
+	           a.product_name
+	  <if test="brchtp != null and brchtp !=''">
+	  order by b.parent_org_no
+	  </if>
+	  <if test="usertp != null and usertp !=''">
+	  order by a.manager_org
+	  </if>
+	</select>
+	<select id="qryCurrAsnDatalistPage" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+      select a.SEQ          "seq",
+             a.DATA_DATE    "data_date",
+             a.ASN_TYPE     "asn_type",
+             a.CUST_NO      "cust_no",
+             a.CUST_NAME    "cust_name",
+             a.ACCT_NO      "acct_no",
+             a.ORG_NO       "org_no",
+             a.ORG_NAME     "org_name",
+             a.MANAGER_ORG  "manager_org",
+             a.MANAGER_NAME "manager_name",
+             a.ASN_IN_OBJ   "asn_in_obj",
+             a.USERNAME     "username",
+             a.START_DATE   "start_date",
+             a.END_DATE     "end_date",
+             a.CUR_ASN_RATE "cur_asn_rate"
+        from rpt_data_curasn a
+		where 1=1 
+		<if test="dataDate!= null and dataDate!='' ">
+		    and a.DATA_DATE = to_date(#{dataDate},'yyyy-mm-dd') 
+		</if> 
+		<if test="custNo!= null and custNo!='' ">
+		    and a.cust_no=#{custNo}
+		</if>
+		<if test="custName!= null and custName!='' ">
+		    and a.cust_name like '%'||#{custName}||'%'
+		</if>
+		<if test="acctNo!= null and acctNo!='' ">
+		    and a.acct_no=#{acctNo}
+		</if>
+	    <if test="org_no != null and org_no!='' ">
+	    	 and a.manager_org in <foreach item="org_no" index="index" collection="org_no" open="(" separator="," close=")">#{org_no}</foreach>
+	    </if> 
+	    <if test="userCode != null and userCode!='' ">
+	    	 and a.asn_in_obj in <foreach item="userCode" index="index" collection="userCode" open="(" separator="," close=")">#{userCode}</foreach>
+	    </if>
+		<if test="bal!= null and bal!='' ">
+		    and a.bal  <![CDATA[ >= ]]> #{bal}
+		</if>
+		<if test="start_Date!= null and start_Date!='' ">
+		    and a.start_date = to_date(#{start_Date},'yyyy-mm-dd')
+		</if>
+		<if test="end_Date!= null and end_Date!='' ">
+		    and a.end_date = to_date(#{end_Date},'yyyy-mm-dd')
+		</if>
+		<if test="asn_type!= null and asn_type!='' ">
+		    and a.asn_type=#{asn_type}
+		</if>
+		<if test="accCrtl != null and accCrtl != ''">
+		   and  <foreach collection="accCrtl" item="col" separator="and">
+ 			        a.${col.pkName} in (${col.pkValue})
+ 		        </foreach>
+		</if>
+		<if test="numCrontls !=null and numCrontls !='' ">
+		    ${numCrontls}
+	    </if>
+    </select>
+	<select id="qryMiddSalryDatalistPage" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		select to_char(a.DATA_DATE, 'yyyy-mm-dd') "data_date",
+		     a.PRODUCT_NO       "product_no",
+		     a.PRODUCT_NAME     "product_name",
+		     a.MANAGER_ORG      "manager_org",
+		     a.MANAGER_ORG_NAME "manager_org_name",
+		     a.MANAGER_NO       "manager_no",
+		     a.MANAGER_O_NAME   "manager_o_name",
+		     a.BAL_SUM_Y        "bal_sum_y"
+		from rpt_data_midtran a
+		where 1=1
+		<if test="dataDate!= null and dataDate!='' ">
+		  and a.data_date = to_date(#{dataDate},'yyyy/mm/dd')
+		</if> 
+		<if test="editorgcode != null and editorgcode !='' ">
+		 and a.manager_org in <foreach item="varitem" index="index" collection="editorgcode" open="(" separator="," close=")">#{varitem}</foreach>
+		</if>
+		<if test="userCode != null and userCode !='' ">
+		 and a.manager_no in <foreach item="userCode" index="index" collection="userCode" open="(" separator="," close=")">#{userCode}</foreach>
+		</if>
+		<if test="productcode!= null and productcode!='' ">
+		    and a.product_name in <foreach item="prodcode" index="index" collection="productcode" open="(" separator="," close=")">#{prodcode}</foreach>
+		</if>
+			<if test="accCrtl != null and accCrtl != ''">
+		    and  <foreach collection="accCrtl" item="col" separator="and">
+				        a.${col.pkName} in (${col.pkValue})
+			    </foreach>
+		</if>
+		<if test="numCrontls !=null and numCrontls !='' ">
+		   ${numCrontls}
+		</if>
+	</select> 
+	<!--存款产品人员区间日均 -->
+    <select id="selOrExprtRptDataDepositPersonlistPage" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+     select distinct to_char(begindate,'yyyy-mm-dd') "begindate",
+               to_char( enddate,'yyyy-mm-dd') "enddate",
+                manager_no "manager_no",
+                manager_o_name "manager_o_name",
+                product_no "product_no",
+                product_name "product_name",
+                manager_org "manager_org",
+                manager_org_name "manager_org_name",
+                sum(case
+                      when data_date = begindate then
+                       firblm
+                      else
+                       0
+                    end) over(partition by product_no, manager_org, manager_no) "firblm",
+                sum(case
+                      when data_date = enddate then
+                       firblm
+                      else
+                       0
+                    end) over(partition by product_no, manager_org, manager_no) "lasblm",
+                round(lasblm / (enddate - begindate + 1), '2') "avgblm"
+  from (select min(data_date) over(partition by product_no, manager_org, manager_no) begindate,
+               max(data_date) over(partition by product_no, manager_org, manager_no) enddate,
+               data_date,
+               manager_no,
+               manager_o_name,
+               product_no,
+               product_name,
+               manager_org,
+               manager_org_name,
+               sum(balance) over(partition by data_date, product_no, manager_org, manager_no) firblm,
+               sum(balance) over(partition by product_no, manager_org, manager_no) lasblm
+          from (select a.data_date,
+                       a.manager_no,
+                       a.manager_o_name,
+                       a.product_no,
+                       a.product_name,
+                       a.manager_org,
+                       a.manager_org_name,
+                       sum(a.bal) balance
+                  from rpt_data_deposit a
+                 where 1 = 1
+                      <if test="begindate != null and begindate != ''">
+	                    and a.data_date <![CDATA[ >= ]]> to_date(#{begindate},'yyyy/mm/dd')
+	                  </if>
+                      <if test="enddate != null and enddate != ''">
+	                    and a.data_date <![CDATA[ <= ]]> to_date(#{enddate},'yyyy/mm/dd')
+	                  </if> 
+	                  <if test="editorgcode != null and editorgcode  !='' ">
+	  	               and a.manager_org in <foreach item="varitem" index="index" collection="editorgcode" open="(" separator="," close=")">#{varitem}</foreach>
+	                  </if>
+	                  <if test="userCode != null and userCode !='' ">
+	  	               and a.manager_no in <foreach item="userCode" index="index" collection="userCode" open="(" separator="," close=")">#{userCode}</foreach>
+	                  </if>
+	                  <if test="goodcode != null and goodcode !='' ">
+	  	               and (a.product_no in <foreach item="def" index="index" collection="goodcode" open="(" separator="," close=")">#{def}</foreach>
+		                    or
+			                substr(a.product_no,7,4) in <foreach item="good" index="index" collection="goodcode" open="(" separator="," close=")">#{good}</foreach> 
+			               )
+	                  </if> 
+	                  
+						<if test="accCrtl != null and accCrtl != ''">
+						   and  <foreach collection="accCrtl" item="col" separator="and">
+ 							        a.${col.pkName} in (${col.pkValue})
+ 						        </foreach>
+						</if>
+
+                      group by a.data_date,
+                          a.manager_no,
+                          a.manager_o_name,
+                          a.product_no,
+                          a.product_name,
+                          a.manager_org,
+                          a.manager_org_name))
+			where 1=1  
+          <if test="numCrontls !=null and numCrontls !='' ">
+		        ${numCrontls}
+		  </if>
+     </select>
+	<!--存款产品机构区间日均 -->
+	<select id="selOrExprtRptDataDepositDeptlistPage" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+	   select distinct to_char(begindate, 'yyyy-mm-dd') "begindate",
+	                to_char(enddate, 'yyyy-mm-dd') "enddate",
+	                product_no "product_no",
+	                product_name "product_name",
+	                parent_org_level,
+	                manager_org "manager_org",
+	                manager_org_name "manager_org_name",
+	                sum(case
+	                      when data_date = begindate then
+	                       firblm
+	                      else
+	                       0
+	                    end) over(partition by product_no, manager_org) "firblm",
+	                sum(case
+	                      when data_date = enddate then
+	                       firblm
+	                      else
+	                       0
+	                    end) over(partition by product_no, manager_org) "lasblm",
+	                round(lasblm / (enddate - begindate + 1), '2') "avgblm"
+	  from (select min(data_date) over(partition by product_no, manager_org) begindate,
+	               max(data_date) over(partition by product_no, manager_org) enddate,
+	               data_date,
+	               product_no,
+	               product_name,
+	               parent_org_level,
+	               manager_org,
+	               manager_org_name,
+	               sum(balance) over(partition by data_date, product_no, manager_org) firblm,
+	               sum(balance) over(partition by product_no, manager_org) lasblm
+	          from (select a.data_date,
+	                       a.product_no,
+	                       a.product_name,
+	                       b.parent_org_no manager_org,
+	                       b.parent_org_name manager_org_name,
+	                       b.parent_org_level,
+	                       sum(a.bal) balance
+	                  from rpt_data_deposit a
+	                  left join sys_pub_org_sub_v b
+	                    on a.manager_org = b.org_no
+	                 where 1 = 1
+	                 <if test="begindate != null and begindate != ''">
+	                  and a.data_date <![CDATA[ >= ]]> to_date(#{begindate},'yyyy/mm/dd')
+	                </if>
+	                  <if test="enddate != null and enddate != ''">
+	                  and a.data_date <![CDATA[ <= ]]> to_date(#{enddate},'yyyy/mm/dd')
+	                </if> 
+	                <if test="editorgcode != null and editorgcode !='' ">
+	  	         and b.parent_org_level in (
+	  	         select to_number(org_level) lev  from sys_pub_org_sub_v where org_no in <foreach item="editorg" index="index" collection="editorgcode" open="(" separator="," close=")">#{editorg}</foreach>
+	                union all
+	                select to_number(org_level)+1 lev  from sys_pub_org_sub_v where org_no in <foreach item="code" index="index" collection="editorgcode" open="(" separator="," close=")">#{code}</foreach>)
+	  	         </if>
+	                 and b.parent_org_no in 
+	  			  (select org_no 
+	  			     from sys_pub_org_sub_v 
+	  			   where 1=1  
+	                  <if test="editorgcode != null and editorgcode  !='' ">
+	      	       and parent_org_no in <foreach item="editorgcode" index="index" collection="editorgcode" open="(" separator="," close=")">#{editorgcode}</foreach>
+	      	       </if>
+	                  )
+	                <if test="goodcode != null and goodcode  !='' ">
+	                 and (a.product_no in <foreach item="def" index="index" collection="goodcode" open="(" separator="," close=")">#{def}</foreach>
+	                     or
+	                  substr(a.product_no,7,4) in <foreach item="good" index="index" collection="goodcode" open="(" separator="," close=")">#{good}</foreach> 
+	                 )
+	                </if> 
+	                
+					<if test="accCrtl != null and accCrtl != ''">
+					   and  <foreach collection="accCrtl" item="col" separator="and">
+						        a.${col.pkName} in (${col.pkValue})
+					        </foreach>
+					</if>
+
+					 group by a.data_date,
+					          a.product_no,
+					          a.product_name,
+					          b.parent_org_no,
+					          b.parent_org_name,
+					          b.parent_org_level
+					 ))
+			where 1=1
+			<if test="numCrontls !=null and numCrontls !='' ">
+				${numCrontls}
+			</if>
+			order by parent_org_level
+	</select>
+    <select id="exportOrgKpiValue" parameterType="java.util.HashMap" resultType="java.util.LinkedHashMap">
+     select x.org_no as kpi_value0,y.deptname  as kpi_value1,${colnum01}  from 
+	(
+	  select org_no,${colnum02}
+	  
+	  from pi_org_kpi a 
+	  
+	  where  a.org_no in <foreach item="orgNo" index="index" collection="orgNo" open="(" separator="," close=")">#{orgNo}</foreach>
+	  
+	  and a.kpi_code in <foreach item="kpiCode" index="index" collection="kpiCode" open="(" separator="," close=")">#{kpiCode}</foreach>	
+	  
+	  and a.data_date=to_date(#{dataDate},'yyyy-mm-dd')   
+	  
+		<if test="accCrtl != null and accCrtl != ''">
+		   and  <foreach collection="accCrtl" item="col" separator="and">
+ 			        a.${col.pkName} in (${col.pkValue})
+ 		        </foreach>
+		</if>
+	  group by org_no order by org_no asc
+	
+	) x left join pcmc_dept y on x.org_no=y.deptcode 
+	where 1=1
+	<if test="numCrontls !=null and numCrontls !='' ">
+		${numCrontls}
+	</if>
+	 order  by  x.org_no asc
+     </select>
+	<!--机构指标得分查询-->
+    <select id="qryOrgKpiValuelistPage" parameterType="java.util.HashMap" resultType="java.util.LinkedHashMap">
+     select x.org_no as kpi_value0,y.deptname  as kpi_value1,${colnum01}  from 
+		(
+		  select org_no,${colnum02}
+		  
+		  from pi_org_kpi a 
+		  
+		  where  a.org_no in <foreach item="orgNo" index="index" collection="orgNo" open="(" separator="," close=")">#{orgNo}</foreach>
+		  
+		  and a.kpi_code in <foreach item="kpiCode" index="index" collection="kpiCode" open="(" separator="," close=")">#{kpiCode}</foreach>	
+		  
+		  and a.data_date=to_date(#{dataDate},'yyyy-mm-dd')   
+		  
+			<if test="accCrtl != null and accCrtl != ''">
+			   and  <foreach collection="accCrtl" item="col" separator="and">
+ 				        a.${col.pkName} in (${col.pkValue})
+ 			        </foreach>
+			</if>
+		  group by org_no order by org_no asc
+		
+		) x left join pcmc_dept y on x.org_no=y.deptcode 
+	     where 1=1
+		 <if test="numCrontls !=null and numCrontls !='' ">
+		     ${numCrontls}
+		 </if>		
+		 order  by  x.org_no asc
+     </select>
+	<!--人员指标得分查询-->
+    <select id="qryEmpKpiValuelistPage" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+     select x.manager_no as kpi_value0,y.username as kpi_value1,${colnum01}  from
+		 (
+		  select a.manager_no,${colnum02}
+		  
+		  from pi_org_kpi_person a 
+		  inner join pcmc_user_dept b
+          on a.manager_no=b.usercode
+          and a.data_date between b.start_date and b.end_date
+		  where a.data_date=to_date(#{dataDate},'yyyy-mm-dd')  
+		  
+		  <if test="orgNo != null and orgNo!='' ">
+		  and b.deptcode  in (select org_no from sys_pub_org_sub_v j where j.PARENT_ORG_NO in  <foreach item="org" index="index" collection="orgNo" open="(" separator="," close=")">#{org}</foreach>)
+		  </if>
+		  
+		  <if test="userCode != null and userCode!='' ">
+		  and a.manager_no in <foreach item="userCode" index="index" collection="userCode" open="(" separator="," close=")">#{userCode}</foreach>
+		  </if>
+		  
+		  and a.kpi_code in <foreach item="kpiCode" index="index" collection="kpiCode" open="(" separator="," close=")">#{kpiCode}</foreach>	
+		 <if test="accCrtl != null and accCrtl != ''">
+		   and  <foreach collection="accCrtl" item="col" separator="and">
+ 			        b.${col.pkName} in (${col.pkValue})
+ 		        </foreach>
+		 </if>
+		  group by manager_no order by manager_no asc
+		  
+		 ) x left join pcmc_user y on x.manager_no=y.usercode 
+		 where 1=1
+		 <if test="numCrontls !=null and numCrontls !='' ">
+		        ${numCrontls}
+		 </if>		 
+		  order  by  x.manager_no asc
+     </select>
+	<select id="exportEmpKpiValue" parameterType="java.util.HashMap" resultType="java.util.LinkedHashMap">
+		select x.manager_no as kpi_value0,y.username as kpi_value1,${colnum01}  from
+		(
+			select a.manager_no,${colnum02}
+			from pi_org_kpi_person a 
+			inner join pcmc_user_dept b
+            on a.manager_no=b.usercode
+            and a.data_date between b.start_date and b.end_date
+			where a.data_date=to_date(#{dataDate},'yyyy-mm-dd')  
+			<if test="orgNo != null and orgNo!='' ">
+				and b.deptcode  in (select org_no from sys_pub_org_sub_v j where j.PARENT_ORG_NO in  <foreach item="org" index="index" collection="orgNo" open="(" separator="," close=")">#{org}</foreach>)
+			</if>
+			<if test="userCode != null and userCode!='' ">
+				and a.manager_no in <foreach item="userCode" index="index" collection="userCode" open="(" separator="," close=")">#{userCode}</foreach>
+			</if>
+			and a.kpi_code in <foreach item="kpiCode" index="index" collection="kpiCode" open="(" separator="," close=")">#{kpiCode}</foreach>	
+			<if test="accCrtl != null and accCrtl != ''">
+				and	<foreach collection="accCrtl" item="col" separator="and">
+						b.${col.pkName} in (${col.pkValue})
+					</foreach>
+			</if>
+			group by manager_no order by manager_no asc
+		) x left join pcmc_user y on x.manager_no=y.usercode 
+		where 1=1
+		<if test="numCrontls !=null and numCrontls !='' ">
+			${numCrontls}
+		</if>	 
+		order  by  x.manager_no asc
+	</select>
+	
+	<select id="qryTotalRptlistPage" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+	  select * from rpt_data_detail a where a.rpt_id=#{rptId} 
+	  <if test="dataDate != null and dataDate != ''">
+	    and a.data_date=to_date(#{dataDate},'yyyy/mm/dd')
+	  </if>
+ 	  <if test="objCode != null and objCode!='' ">
+		and a.obj_code in ( 
+		select a.org_no from  sys_pub_org_sub_v a  
+		where a.parent_org_no=#{objCode}  and a.org_level in 
+		(select b.levelp  from pcmc_dept b where b.DEPTCODE=#{objCode} union select (b.levelp+1) as levelp  from pcmc_dept b where b.DEPTCODE=#{objCode}))
+		
+	  </if>
+      <if test="accCrtl != null and accCrtl != ''">
+	     and  <foreach collection="accCrtl" item="col" separator="and">
+ 		        a.${col.pkName} in (${col.pkValue})
+ 	        </foreach>
+	   </if>
+	   order by a.obj_code asc
+ 	</select>
+	<!-- 导出汇总报表 -->
+	<select id="exportTotalRpt" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		select * from rpt_data_detail a where a.rpt_id=#{rptId} 
+		<if test="dataDate != null and dataDate != ''">
+			and a.data_date=to_date(#{dataDate},'yyyy/mm/dd')
+		</if>
+		<if test="objCode != null and objCode!='' ">
+			and a.obj_code in ( 
+				select a.org_no from  sys_pub_org_sub_v a  
+				where a.parent_org_no=#{objCode}  and a.org_level in 
+				(select b.levelp  from pcmc_dept b where b.DEPTCODE=#{objCode} union select (b.levelp+1) as levelp  from pcmc_dept b where b.DEPTCODE=#{objCode}))
+		</if>
+		<if test="accCrtl != null and accCrtl != ''">
+			and	<foreach collection="accCrtl" item="col" separator="and">
+					a.${col.pkName} in (${col.pkValue})
+				</foreach>
+		</if>
+		<if test="numCrontls !=null and numCrontls !='' ">
+			${numCrontls}
+		</if>
+		order by a.obj_code asc
+	</select>
+	<!-- 行员产品明细查询 -->		
+	<select id="qryPersonPrdDetaillistPage" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+	select a.data_date,a.item_no,a.product_no,a.product_name,a.org_no,a.org_name,a.manager_no,a.manager_o_name,a.bal,a.bal_avg_y,a.simulate_profit_y
+		from RPT_DATA_BEIDETAIL a  where 1=1
+			<if test="dataDate!= null and dataDate!='' ">
+				and to_char(a.data_date,'yyyy-mm-dd') = #{dataDate}
+			</if>
+			<if test="goodcode != null and goodcode !='' ">
+				and (a.product_no in <foreach item="def" index="index" collection="goodcode" open="(" separator="," close=")">#{def}</foreach>
+				      or
+				     substr(a.product_no,7,4) in <foreach item="good" index="index" collection="goodcode" open="(" separator="," close=")">#{good}</foreach> 
+				    )
+			</if>
+			<if test="editorgcode!= null and editorgcode!='' ">
+			    and a.org_no in 
+			    <foreach item="editorgcode" index="index" collection="editorgcode" open="(" separator="," close=")">#{editorgcode}</foreach>
+			</if>
+			<if test="userCode != null and userCode!='' ">
+			    and a.manager_no in
+			    <foreach item="userCode" index="index" collection="userCode" open="(" separator="," close=")">#{userCode}</foreach>
+			</if>	
+			<if test="accCrtl != null and accCrtl != ''">
+			   and  <foreach collection="accCrtl" item="col" separator="and">
+ 				        a.${col.pkName} in (${col.pkValue})
+ 			        </foreach>
+			</if>
+			<if test="numCrontls !=null and numCrontls !='' ">
+				${numCrontls}
+			</if>
+	</select>
+	
+	<!-- 查询账户明细 -->
+	<select id="qrySumOfAccountDetaillistPage" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		select to_char(a.DATA_DATE,'yyyy-mm-dd')         "data_date",
+				a.ITEM_NO           "item_no",
+				a.ACCT_NO           "acct_no",
+				a.CUST_NO           "cust_no",
+				a.CUST_NAME         "cust_name",
+				a.ORG_NO            "org_no",
+				a.ORG_NAME          "org_name",
+				a.MANAGER_ORG       "manager_org",
+				a.MANAGER_ORG_NAME  "manager_org_name",
+				a.MANAGER_NO        "manager_no",
+				a.MANAGER_O_NAME    "manager_o_name",
+				a.LAST_ASN_RATE     "last_asn_rate",
+				a.PRODUCT_NO        "product_no",
+				a.PRODUCT_NAME      "product_name",
+				a.BAL               "bal",
+				a.BAL_AVG_Y         "bal_avg_y",
+				a.SIMULATE_PROFIT_Y "simulate_profit_y",
+				a.ZENG_SHUI         "zeng_shui",
+				a.SUO_SHUI          "suo_shui",
+				a.JIAN_SHUI         "jian_shui",
+				a.LIXI              "lixi"
+		from RPT_DATA_BEIDETAIL a
+		where 1=1
+		<if test="dataDate!= null and dataDate!='' ">
+			and to_char(a.data_date,'yyyy-mm-dd')=#{dataDate}
+		</if>		 
+		<if test="editorgcode != null and editorgcode !='' ">
+			and a.org_no = #{editorgcode}
+		</if>	
+		<if test="goodcode != null and goodcode !='' "> 
+			and a.product_no=#{goodcode}
+		</if>
+		<if test="userCode != null and userCode !='' "> 
+			and a.manager_no=#{userCode}
+		</if>
+		<if test="accCrtl != null and accCrtl != ''">
+			and	<foreach collection="accCrtl" item="col" separator="and">
+ 					a.${col.pkName} in (${col.pkValue})
+ 				</foreach>
+		 </if>
+		<if test="numCrontls !=null and numCrontls !='' ">
+			${numCrontls}
+		</if>
+	</select>
+	<!-- 通过ID查name -->
+	<select id="qryUsernameById" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		select a.username,usercode
+		from pcmc_user a 
+		where a.usercode = #{userCode} 
+	</select>
+	<select id="qryEditorgById" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		select a.deptname,deptcode
+		from pcmc_dept a 
+		where a.deptcode = #{editorgcode}  
+	</select>
+	<select id="qryProductcodeById" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		select a.product_name,product_no
+		from op_prd_info a 
+		where a.product_no = #{goodcode} 
+	</select>
+	<select id="qryOrgPerAllZhandetaillistPage" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+	 select to_char(a.DATA_DATE,'yyyy-mm-dd')         "data_date",
+       a.PROD_TYPE         "prod_type",
+       a.ITEM_NO           "item_no",
+       a.CUST_NO           "cust_no",
+       a.CUST_NAME         "cust_name",
+       a.ORG_NO            "org_no",
+       a.ORG_NAME          "org_name",
+       a.MANAGER_ORG       "manager_org",
+       a.MANAGER_ORG_NAME  "manager_org_name",
+       a.MANAGER_NO        "manager_no",
+       a.MANAGER_O_NAME    "manager_o_name",
+       a.LAST_ASN_RATE     "last_asn_rate",
+       a.PRODUCT_NO        "product_no",
+       a.PRODUCT_NAME      "product_name",
+       a.BAL               "bal",
+       a.BAL_AVG_Y         "bal_avg_y",
+       a.SIMULATE_PROFIT_Y "simulate_profit_y",
+       a.ZENG_SHUI         "zeng_shui",
+       a.SUO_SHUI          "suo_shui",
+       a.JIAN_SHUI         "jian_shui",
+       a.LIXI              "lixi",
+       a.DANJIA            "danjia",
+       a.DANWEI            "danwei",
+       a.DUI_BAL           "dui_bal"
+      from rpt_data_zhandetail a
+      where 1=1
+       <if test="dataDate!= null and dataDate!='' ">
+	     and a.data_date = to_date(#{dataDate},'yyyy/mm/dd')
+	   </if> 
+	   <if test="editorgcode != null and editorgcode!='' ">
+	     and a.org_no in <foreach item="varitem" index="index" collection="editorgcode" open="(" separator="," close=")">#{varitem}</foreach>
+	   </if>
+	   <if test="goodcode != null and goodcode!='' ">
+		 and (a.product_no in <foreach item="def" index="index" collection="goodcode" open="(" separator="," close=")">#{def}</foreach>
+		       or
+			  substr(a.product_no,7,4) in <foreach item="good" index="index" collection="goodcode" open="(" separator="," close=")">#{good}</foreach> 
+			 )
+	   </if> 
+	   <if test="userCode != null and userCode!='' ">
+		 and a.manager_no in <foreach item="userCode" index="index" collection="userCode" open="(" separator="," close=")">#{userCode}</foreach>
+	   </if> 
+	   <if test="prducd!= null and prducd!='' ">
+	     and a.prod_type =#{prducd}
+	   </if>  
+	   			<if test="accCrtl != null and accCrtl != ''">
+			   and  <foreach collection="accCrtl" item="col" separator="and">
+ 				        a.${col.pkName} in (${col.pkValue})
+ 			        </foreach>
+			</if>
+		<if test="numCrontls !=null and numCrontls !='' ">
+			${numCrontls}
+		</if>
+	</select>
+
+	<select id="qrySubuserInquireslistPage" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		select a.* from pi_org_deposit_unit a where 1=1 
+		<if test="dataDate!= null and dataDate!='' ">
+			and a.data_date=#{dataDate}
+		</if>
+		<if test="orgNo!= null and orgNo!='' ">
+			and a.org_no=#{orgNo}
+		</if>
+		<if test="mainAcctNo!= null and mainAcctNo!='' ">
+			and a.main_acct_no=#{mainAcctNo}
+		</if>
+		<if test="custNo!= null and custNo!='' ">
+			and a.cust_no=#{custNo}
+		</if>
+		<if test="accCrtl != null and accCrtl != ''">
+				and	<foreach collection="accCrtl" item="col" separator="and">
+					a.${col.pkName} in (${col.pkValue})
+					</foreach>
+		</if>
+		<if test="numCrontls !=null and numCrontls !='' ">
+			${numCrontls}
+		</if>
+	</select> 
+	<!--public导出数据 -->
+	<select id="qryReportData" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		select * from rpt_data_detail  a where a.rpt_id=#{rptId}  
+			<if test="objCode == null and objCode == ''">
+				and a.obj_code=#{objCode}
+			</if>
+			<if test="COL001 != null and COL001 != ''">
+				and a.COL001=#{COL001}
+			</if>
+			 <if test="dataDate != null and dataDate != ''">
+				and a.data_date=to_date(#{dataDate},'yyyy/mm/dd')
+			
+			</if>
+			<if test="dataDateSM != null and dataDateSM != ''">
+				and a.data_date>=to_date(#{dataDateSM},'yyyy/mm/dd')
+			</if>
+			<if test="dataDateS != null and dataDateS != ''">
+			<![CDATA[
+				and a.data_date<=to_date(#{dataDateS},'yyyy/mm/dd')
+			]]>
+			</if>
+			<if test="objName!=null and objName!=''">
+				and a.obj_name like #{objName}
+			</if>
+			
+			<if test="crcycd != null and crcycd!=''">
+				and a.curry=#{crcycd}
+			</if>
+			<if test="startDate != null and startDate!='' ">
+				and a.data_date  <![CDATA[ >= ]]> to_date(#{startDate},'yyyy-mm-dd')
+			</if>
+			<if test="endDate != null and endDate!='' ">
+				and a.data_date <![CDATA[ <= ]]> to_date(#{endDate},'yyyy-mm-dd')
+			</if>
+			<if test="rptId != null and rptId !='' and rptId=='strategicAccCondTotal' or rptId=='strategicAccCondDetail'">
+				<if test="period != null and period !=''">
+					and a.COL001=#{period}
+				</if>			
+			</if>
+			<if test="rptId != null and rptId !='' and rptId=='interBusSalDetail' ">
+				<if test="goodcode != null and goodcode!='' ">
+					and a.col001=#{goodcode}
+				</if>
+			</if>
+			<if test="rptId != null and rptId !='' and rptId=='nationalBusSettleDetail' ">
+				<if test="custName != null and custName!='' ">
+					and a.col001 like '%${custName}%'
+				</if>
+				<if test="goodcode != null and goodcode!='' ">
+					and a.col006=#{goodcode}
+				</if>
+				<if test="nationType!= null and nationType!='' ">
+					and a.col003=#{nationType}
+				</if>
+			</if>
+			<if test="rptId != null and rptId !='' and rptId=='nationalBusSettleTotal' ">
+				<if test="goodcode != null and goodcode!='' ">
+					and a.col010=#{goodcode}
+				</if>
+			</if>
+			<if test="rptId != null and rptId !='' and rptId=='ninterBusSalDetail' ">
+				<if test="custName != null and custName!='' ">
+					and a.col001 like '%${custName}%'
+				</if>
+				<if test="goodcode != null and goodcode!='' ">
+					and a.col002=#{goodcode}
+				</if>
+			</if>
+			<if test="rptId != null and rptId !='' and rptId=='impKPICountRpt' ">
+				<if test="impKpi != null and impKpi !=''">
+					and a.col001=#{impKpi}
+				</if>
+			</if>
+			<if test="rptId !=null and rptId !='' and rptId=='firstProSalAccNumCount' ">
+				<if test="contrantNo != null and contrantNo != ''">
+					and a.col001=#{contrantNo}
+				</if>
+				<if test="acctNo != null and acctNo != ''">
+					and a.col002=#{acctNo}
+				</if>
+				<if test="acctName != null and acctName != ''">
+					and a.col003 like #{acctName}
+				</if>
+				<if test="startAmt!=null and startAmt!='' ">
+					and a.col005<![CDATA[ >= ]]>${startAmt}
+				</if>
+				<if test="endAmt!=null and endAmt!= '' ">
+					and a.col005<![CDATA[ <= ]]>${endAmt}
+				</if>
+				<if test="startNum!=null and startNum!='' ">
+					and a.col006<![CDATA[ >= ]]>${startNum}
+				</if>
+				<if test="endNum!=null and endNum!='' ">
+					and a.col006<![CDATA[ <= ]]>${endNum}
+				</if>
+				<if test="startAvg!=null and startAvg!='' ">
+					and a.col007<![CDATA[ >= ]]>${startAvg}
+				</if>
+				<if test="endAvg!=null and endAvg!='' ">
+					and a.col007<![CDATA[ <= ]]>${endAvg}
+				</if>
+				
+			</if>
+			<if test="objCode != null and objCode !='' ">
+				and a.obj_code in<foreach item="objCode" index="index" collection="objCode" open="(" separator="," close=")">#{objCode}</foreach>
+			</if>
+			<if test="accCrtl != null and accCrtl != ''">
+				and	<foreach collection="accCrtl" item="col" separator="and">
+						a.${col.pkName} in (${col.pkValue})
+					</foreach>
+			</if>
+			<if test="numCrontls !=null and numCrontls !='' ">
+				${numCrontls}
+			</if>
+		order by a.data_date desc 
+	</select>
+	<!-- 银行卡余额数量统计 start -->
+	<select id="qryCardBalNumCountRptlistPage" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		select * from rpt_data_cardBal a where 1=1
+			<if test="dataDate != null and dataDate != ''">
+				and a.data_date=to_date(#{dataDate},'yyyy/mm/dd')
+			</if>
+			<if test="objCode != null and objCode !='' ">
+				and a.manager_org in <foreach item="objCode" index="index" collection="objCode" open="(" separator="," close=")">#{objCode}</foreach>
+			</if>
+			<if test="startAmt != null and startAmt != ''">
+				and a.bal_avg_y<![CDATA[ >= ]]> ${startAmt}
+			</if>
+			<if test="endAmt != null and endAmt != ''">
+				and a.bal_avg_y<![CDATA[ <= ]]> ${endAmt}
+			</if>
+			<if test="startDate != null and startDate != ''">
+				and a.open_date<![CDATA[ >= ]]>to_date(#{startDate},'yyyy/mm/dd')
+			</if>
+			<if test="endDate != null and endDate != ''">
+				and a.open_date<![CDATA[ <= ]]>to_date(#{endDate},'yyyy/mm/dd')
+			</if>
+			<if test="cardNo != null and cardNo != ''">
+				and a.card_no=#{cardNo}
+			</if>
+			<if test="custNo != null and custNo != ''">
+				and a.cust_no=#{custNo}
+			</if>
+			<if test="managerNo != null and managerNo != ''">
+				and a.manager_no=#{managerNo}
+			</if>
+			<if test="accCrtl != null and accCrtl != ''">
+				and	<foreach collection="accCrtl" item="col" separator="and">
+						a.${col.pkName} in (${col.pkValue})
+					</foreach>
+			</if>
+			<if test="numCrontls !=null and numCrontls !='' ">
+				${numCrontls}
+			</if>
+			order by a.data_date desc   
+	</select>
+
+	<select id="exportCardBalNumCountRpt" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		select * from rpt_data_cardBal a where 1=1
+			<if test="dataDate != null and dataDate != ''">
+				and a.data_date=to_date(#{dataDate},'yyyy/mm/dd')
+			</if>
+			<if test="objCode != null and objCode !='' ">
+				and a.manager_org in <foreach item="objCode" index="index" collection="objCode" open="(" separator="," close=")">#{objCode}</foreach>
+			</if>
+			<if test="startAmt != null and startAmt != ''">
+				and a.bal_avg_y<![CDATA[ >= ]]> ${startAmt}
+			</if>
+			<if test="endAmt != null and endAmt != ''">
+				and a.bal_avg_y<![CDATA[ <= ]]> ${endAmt}
+			</if>
+			<if test="startDate != null and startDate != ''">
+				and a.open_date<![CDATA[ >= ]]>to_date(#{startDate},'yyyy/mm/dd')
+			</if>
+			<if test="endDate != null and endDate != ''">
+				and a.open_date<![CDATA[ <= ]]>to_date(#{endDate},'yyyy/mm/dd')
+			</if>
+			<if test="cardNo != null and cardNo != ''">
+				and a.card_no=#{cardNo}
+			</if>
+			<if test="custNo != null and custNo != ''">
+				and a.cust_no=#{custNo}
+			</if>
+			<if test="managerNo != null and managerNo != ''">
+				and a.manager_no=#{managerNo}
+			</if>
+			<if test="accCrtl != null and accCrtl != ''">
+				and	<foreach collection="accCrtl" item="col" separator="and">
+					a.${col.pkName} in (${col.pkValue})
+				</foreach>
+			</if>
+			<if test="numCrontls !=null and numCrontls !='' ">
+				${numCrontls}
+			</if>
+			order by a.data_date desc   
+	</select>
+	<!-- 银行卡余额数量统计  end -->
+	<!-- 代发工资户数统计 start -->
+	<select id="qryProSalAccNumCountlistPage" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		select * from rpt_data_prosal a where 1=1
+			<if test="contrantNo != null and contrantNo != ''">
+				and a.contrant_no=#{contrantNo}
+			</if>
+			<if test="acctNo != null and acctNo != ''">
+			    and a.acct_no=#{acctNo}
+			</if>
+			<if test="objCode != null and objCode !=''">
+				and a.org_no in <foreach item="objCode" index="index" collection="objCode" open="(" separator="," close=")">#{objCode}</foreach>
+			</if>
+			
+			<if test="orgName != null and orgName != ''">
+				and a.acct_name=#{orgName}
+			</if>
+			<if test="startDate != null and startDate != ''">
+				and a.data_date<![CDATA[ >= ]]>to_date(#{startDate},'yyyy/mm/dd')
+			</if>
+			<if test="endDate != null and endDate != ''">
+				and a.data_date<![CDATA[ <= ]]>to_date(#{endDate},'yyyy/mm/dd')
+			</if>
+			<if test="startNum != null and startNum != ''">
+				and a.tran_num<![CDATA[ >= ]]>${startNum}
+			</if>
+			<if test="endNum != null and endNum != ''">
+				and a.tran_num<![CDATA[ <= ]]>${endNum}
+			</if>
+			<if test="startAvg != null and startAvg != ''">
+				and a.avg<![CDATA[ >= ]]>${startAvg}
+			</if>
+			<if test="endAvg != null and endAvg != ''">
+				and a.avg<![CDATA[ <= ]]>${endAvg}
+			</if>
+			<if test="startAmt!=null and startAmt!='' ">
+				and a.tran_amt<![CDATA[ >= ]]>${startAmt}
+			</if>
+			<if test="endAmt!=null and endAmt!='' ">
+				and a.tran_amt<![CDATA[ <= ]]>${endAmt}
+			</if>
+			<if test="accCrtl != null and accCrtl != ''">
+				and	<foreach collection="accCrtl" item="col" separator="and">
+						a.${col.pkName} in (${col.pkValue})
+					</foreach>
+			</if>
+			<if test="numCrontls !=null and numCrontls !='' ">
+				${numCrontls}
+			</if>
+			order by a.data_date desc
+    </select>
+   
+    <select id="exportProSalAccNumCount" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+           select * from rpt_data_prosal a where 1=1
+           	<if test="contrantNo != null and contrantNo != ''">
+			    and a.contrant_no=#{contrantNo}
+			</if>
+			<if test="acctNo != null and acctNo != ''">
+			    and a.acct_no=#{acctNo}
+			</if>
+		    <if test="objCode != null and objCode !='' ">
+			    and a.org_no in <foreach item="objCode" index="index" collection="objCode" open="(" separator="," close=")">#{objCode}</foreach>
+			</if>
+			<if test="orgName != null and orgName != ''">
+			    and a.acct_name=#{orgName}
+			</if>
+			<if test="startDate != null and startDate != ''">
+			    and a.data_date<![CDATA[ >= ]]>to_date(#{startDate},'yyyy/mm/dd')
+			</if>
+			<if test="endDate != null and endDate != ''">
+			    and a.data_date<![CDATA[ <= ]]>to_date(#{endDate},'yyyy/mm/dd')
+			</if>
+		    <if test="startNum != null and startNum != ''">
+			    and a.tran_num<![CDATA[ >= ]]>#{startNum}
+			</if>
+			<if test="endNum != null and endNum != ''">
+				 and a.tran_num<![CDATA[ <= ]]>#{endNum}
+			</if>
+			<if test="startAvg != null and startAvg != ''">
+				and a.avg<![CDATA[ >= ]]>#{startAvg}
+			</if>
+			<if test="endAvg != null and endAvg != ''">
+				and a.avg<![CDATA[ <= ]]>#{endAvg}
+			</if>
+			<if test="startAmt!=null and startAmt!='' ">
+				and a.tran_amt<![CDATA[ >= ]]>#{startAmt}
+			</if>
+			<if test="endAmt!=null and endAmt!='' ">
+				and a.tran_amt<![CDATA[ <= ]]>#{endAmt}
+			</if>
+			<if test="accCrtl != null and accCrtl != ''">
+				and	<foreach collection="accCrtl" item="col" separator="and">
+						a.${col.pkName} in (${col.pkValue})
+					</foreach>
+			</if>
+			<if test="numCrontls !=null and numCrontls !='' ">
+				${numCrontls}
+			</if>
+			 order by a.data_date desc	
+	</select>
+	<!-- 代发工资户数统计  end -->
+	<!-- 月度新开户明细start -->
+	<select id="qryAddAccDetailMonthRptlistPage" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		select * from rpt_data_addaccDetail a where 1=1
+			<if test="dataDate != null and dataDate != ''">
+				and a.data_date = to_date(#{dataDate},'yyyy/mm/dd')
+			</if>
+			<if test="openDate != null and openDate != ''">
+				and to_char(a.open_date,'yyyy-mm-dd') like #{openDate}||'%'
+			</if>
+			<if test="dataDateSM != null and dataDateSM != ''">
+				and a.data_date <![CDATA[ >= ]]> to_date(#{dataDateSM},'yyyy/mm/dd')
+			</if>
+			<if test="dataDateS != null and dataDateS != ''">
+				and a.data_date=to_date(#{dataDateS},'yyyy/mm/dd')
+			</if>
+			<if test="acct_type != null and acct_type != ''">
+				and a.acct_type=#{acct_type}
+			</if>
+			<if test="objCode != null and objCode !=''">
+				and a.org_no in <foreach item="objCode" index="index" collection="objCode" open="(" separator="," close=")">#{objCode}</foreach>
+			</if>
+			<if test="accCrtl != null and accCrtl != ''">
+				and	<foreach collection="accCrtl" item="col" separator="and">
+						a.${col.pkName} in (${col.pkValue})
+					</foreach>
+			</if>
+			order by a.open_date
+	</select>
+	<select id="exportAddAccDetailMonthRpt" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+			select 
+			x.data_date as data_date,
+			x.org_name as org_name,
+			x.acct_no as acct_no,
+			x.acct_name as acct_name,
+			x.open_date as open_date,
+			b.parana as acct_type,
+			x.bal as bal,
+			x.bal_avg_y as bal_avg_y,
+			x.ftp_bal as ftp_bal  from 
+			(
+			select 
+			a.data_date,
+			a.org_name,
+			a.acct_no,
+			a.acct_name,
+			a.open_date,
+			a.acct_type,
+			a.bal,
+			a.bal_avg_y,
+			a.ftp_bal
+			from rpt_data_addaccDetail a
+			where 1=1    
+			<if test="dataDate != null and dataDate != ''">
+				and a.data_date =  to_date(#{dataDate},'yyyy/mm/dd')
+			</if>
+			 <if test="dataDateSM != null and dataDateSM != ''">
+				and a.data_date <![CDATA[ >= ]]> to_date(#{dataDateSM},'yyyy/mm/dd')
+			</if>
+			<if test="dataDateS != null and dataDateS != ''">
+				and a.data_date=to_date(#{dataDateS},'yyyy/mm/dd')
+			</if>
+			<if test="openDate != null and openDate != ''">
+				and to_char(a.open_date,'yyyy-mm-dd') like  #{openDate}||'%'
+			</if>
+			 <if test="acct_type != null and acct_type != ''">
+				and a.acct_type=#{acct_type}
+			</if>
+			<if test="objCode != null and objCode != ''">
+				and a.org_no in <foreach item="objCode" index="index" collection="objCode" open="(" separator="," close=")">#{objCode}</foreach>
+			</if>
+			<if test="accCrtl != null and accCrtl != ''">
+				and	<foreach collection="accCrtl" item="col" separator="and">
+						a.${col.pkName} in (${col.pkValue})
+					</foreach>
+			</if>
+			<if test="numCrontls !=null and numCrontls !='' ">
+				${numCrontls}
+			</if>
+                 ) x  left join pcmc_knp_para b   on  x.acct_type=b.paracd and b.paratp='acct_type'
+	</select>
+	<!--月度新开户明细 end -->
+	<select id="selOrExprtRptDataDingQiEX" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		select to_char(a.DATA_DATE,'yyyy-mm-dd')         "data_date",
+				a.ORG_NO            "org_no",
+				a.OPEN_DATE         "open_date",
+				a.ORG_NAME          "org_name",
+				a.MAIN_ACCT_NO      "main_acct_no",
+				a.CUST_NO           "cust_no",
+				a.CUST_NAME         "cust_name",
+				a.ACCT_NO           "acct_no",
+				a.BAL               "bal",
+				a.BAL_AVG_Y         "bal_avg_y",
+				a.MANAGER_NO        "manager_no",
+				a.MANAGER_O_NAME    "manager_o_name",
+				a.MANAGER_ORG       "manager_org",
+				a.MANAGER_ORG_NAME  "manager_org_name",
+				a.SIMULATE_PROFIT_Y "simulate_profit_y"
+		from rpt_data_dingqi a where 1=1    
+			<if test="dataDate != null and dataDate != ''">
+				and a.data_date = to_date(#{dataDate},'yyyy/mm/dd')
+			</if>
+			<if test="startDate != null and startDate != ''">
+				and a.open_date <![CDATA[ >= ]]> to_date(#{startDate},'yyyy/mm/dd')
+			</if>
+			<if test="endDate != null and endDate != ''">
+				and a.open_date <![CDATA[ < ]]> to_date(#{endDate},'yyyy/mm/dd')
+			</if>
+			<if test="editorgcode != null and editorgcode !='' ">
+				and a.org_no in <foreach item="varitem" index="index" collection="editorgcode" open="(" separator="," close=")">#{varitem}</foreach>
+			</if>
+			<if test="mainAccNo != null and mainAccNo != ''">
+				and a.main_acct_no =#{mainAccNo}
+			</if>
+			<if test="custNo != null and custNo != ''">
+				and a.cust_no =#{custNo}
+			</if>
+			<if test="cardNo != null and cardNo != ''">
+				and a.card_no =#{cardNo}
+			</if>
+			<if test="accCrtl != null and accCrtl != ''">
+				and	<foreach collection="accCrtl" item="col" separator="and">
+						a.${col.pkName} in (${col.pkValue})
+					</foreach>
+			</if>
+			<if test="numCrontls !=null and numCrontls !='' ">
+				${numCrontls}
+			</if>
+	</select>
+	<!--存款产品机构区间日均 -->
+	<!--  <select id="selOrExprtRptDataDepositDeptlistPage" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+	select distinct to_char(begindate,'yyyy-mm-dd') "begindate",
+                    to_char(enddate,'yyyy-mm-dd') "enddate",
+                    product_no "product_no",
+                    product_name "product_name",
+                    manager_org "manager_org",
+                    manager_org_name "manager_org_name",
+                    sum(case
+                          when data_date = begindate then
+                           firblm
+                          else
+                           0
+                        end) over(partition by product_no, manager_org) "firblm",
+                    sum(case
+                          when data_date = enddate then
+                           firblm
+                          else
+                           0
+                        end) over(partition by product_no, manager_org) "lasblm",
+                    round(lasblm / (enddate - begindate + 1), '2') "avgblm"
+      from (select min(data_date) over(partition by product_no, manager_org) begindate,
+                   max(data_date) over(partition by product_no, manager_org) enddate,
+                   data_date,
+                   product_no,
+                   product_name,
+                   manager_org,
+                   manager_org_name,
+                   sum(balance) over(partition by data_date, product_no, manager_org) firblm,
+                   sum(balance) over(partition by product_no, manager_org) lasblm
+              from (select a.data_date,
+                           a.product_no,
+                           a.product_name,
+                           a.manager_org,
+                           a.manager_org_name,
+                           sum(a.bal) balance
+                      from rpt_data_deposit a
+                     where 1=1 
+                      <if test="begindate != null and begindate != ''">
+	                    and a.data_date <![CDATA[ >= ]]> to_date(#{begindate},'yyyy/mm/dd')
+	                  </if>
+                      <if test="enddate != null and enddate != ''">
+	                    and a.data_date <![CDATA[ <= ]]> to_date(#{enddate},'yyyy/mm/dd')
+	                  </if> 
+	                  <if test="editorgcode != null and editorgcode !='' ">
+	  	               and a.manager_org in <foreach item="varitem" index="index" collection="editorgcode" open="(" separator="," close=")">#{varitem}</foreach>
+	                  </if>
+	                  <if test="goodcode != null and goodcode  !='' ">
+	  	               and (a.product_no in <foreach item="def" index="index" collection="goodcode" open="(" separator="," close=")">#{def}</foreach>
+		                     or
+			                substr(a.product_no,7,4) in <foreach item="good" index="index" collection="goodcode" open="(" separator="," close=")">#{good}</foreach> 
+			               )
+	                  </if> 
+                     group by a.data_date,
+                              a.product_no,
+                              a.product_name,
+                              a.manager_org,
+                              a.manager_org_name)) 
+	</select>-->
+	<select id="userDetillistPage" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		select to_char(a.data_date, 'yyyy-mm-dd') "data_date",
+			a.item_no "item_no",
+			a.product_no "product_no",
+			a.product_name "product_name",
+			a.manager_no "manager_no",
+			a.manager_o_name "manager_o_name",
+			a.manager_org "manager_org",
+			a.manager_org_name "manager_org_name",
+			a.bal "bal",
+			a.bal_avg_y "bal_avg_y",
+			a.simulate_profit_y "simulate_profit_y"
+		from rpt_data_beidetail a
+		where 1=1
+		<if test="dataDate != null and dataDate != ''">
+			and to_char(a.data_date,'yyyy-mm-dd')=#{dataDate}
+		</if> 
+		<if test="goodcode != null and goodcode !='' ">
+			and (a.product_no in <foreach item="def" index="index" collection="goodcode" open="(" separator="," close=")">#{def}</foreach>
+			or
+			substr(a.product_no,7,4) in <foreach item="good" index="index" collection="goodcode" open="(" separator="," close=")">#{good}</foreach> 
+			)
+		</if>
+		<if test="userCode != null and userCode !='' ">
+			and a.manager_no in <foreach item="userCode" index="index" collection="userCode" open="(" separator="," close=")">#{userCode}</foreach>
+		</if>
+		<if test="editorgcode != null and editorgcode !='' ">
+			and a.manager_org in <foreach item="editorgcode" index="index" collection="editorgcode" open="(" separator="," close=")">		#{editorgcode}</foreach>
+		</if>
+		<if test="accCrtl != null and accCrtl != ''">
+			and	<foreach collection="accCrtl" item="col" separator="and">
+ 				a.${col.pkName} in (${col.pkValue})
+ 			 </foreach>
+		</if>
+		<if test="numCrontls !=null and numCrontls !='' ">
+			${numCrontls}
+		</if>
+	</select>
+
+	<select id="qryKpiNameByCode" parameterType="java.util.HashMap" resultType="java.util.LinkedHashMap">
+		select a.kpi_code,a.kpi_name from mo_kpi_info a where a.kpi_code in 
+		<foreach item="kpiCode" index="index" collection="kpiCode" open="(" separator="," close=")">#{kpiCode}</foreach>
+		order by instr(#{kpiCodeO},a.kpi_code)
+	</select>
+	<resultMap id="CustNumMap" type="java.util.HashMap">
+		<result column="DATA_DATE" property="DATA_DATE"/>
+		<result column="TitleName" property="TitleName"/>
+		<result column="ORG_NO" property="ORG_NO"/>
+		<result column="DEPTNAME" property="DEPTNAME"/>
+		<result column="CUST_NO" property="CUST_NO"/>
+		<result column="CUST_NAME" property="CUST_NAME"/>
+		<result column="BAL_AVG_Y" property="BAL_AVG_Y"/>
+		<result column="BAL" property="BAL"/>
+	</resultMap>
+	<select id="queryCustNumlistPage" parameterType="java.util.HashMap" resultMap="CustNumMap">
+		<![CDATA[
+            SELECT a.Data_Date AS Data_Date,
+                   CASE
+                       WHEN a.Bal_Avg_y < 10000 THEN
+                        '1'
+                       WHEN a.Bal_Avg_y < 20000
+                            AND a.Bal_Avg_y >= 10000 THEN
+                        '2'
+                       WHEN a.Bal_Avg_y < 50000
+                            AND a.Bal_Avg_y >= 20000 THEN
+                        '3'
+                       WHEN a.Bal_Avg_y < 1000000
+                            AND a.Bal_Avg_y >= 50000 THEN
+                        '4'
+                       WHEN a.Bal_Avg_y < 10000000
+                            AND a.Bal_Avg_y >= 1000000 THEN
+                        '5'
+                       WHEN a.Bal_Avg_y < 100000000
+                            AND a.Bal_Avg_y >= 10000000 THEN
+                        '6'
+                       ELSE
+                        '7'
+                   END AS Titlename,
+                   a.Org_No AS Org_No,
+                   c.Deptname AS Deptname,
+                   a.Cust_No AS Cust_No,
+                   a.Cust_Name AS Cust_Name,
+                   a.Bal_Avg_y AS Bal_Avg_y,
+                   a.Bal AS Bal
+              FROM (SELECT Ya.Data_Date,
+                           Ya.Cust_No,
+                           YA.MANAGER_ORG AS Org_No,
+                           Ya.Cust_Name,
+                           SUM(Ya.Bal_Avg_y * Yb.Mid_Rate / Yb.Exch_Unit) AS Bal_Avg_y,
+                           SUM(Ya.Bal * Yb.Mid_Rate / Yb.Exch_Unit) AS Bal
+                      FROM Pi_Org_Deposit_Unit Ya
+                      LEFT JOIN Pi_Biz_Exch Yb
+                        ON Ya.Currency = Yb.Currency
+                       AND Yb.Exch_Currency = 'CNY'
+                       AND Yb.Data_Date = To_Date(#{data_Date},
+                                                  'yyyy-MM-dd')
+                      LEFT JOIN Ci_Cus_Unit Yc
+                        ON Ya.Cust_No = Yc.Cust_No
+                     WHERE Ya.Product_No <> '1299'
+                      and substr(Ya.item_no,1,4) in ('2212','2021','2215')
+                     
+                     GROUP BY Ya.Data_Date,
+                              Ya.Cust_No,
+                              YA.MANAGER_ORG,
+                              Ya.Cust_Name
+                    HAVING AVG(Ya.Status) <> '07') a
+              LEFT JOIN Pcmc_Dept c
+                ON a.Org_No = c.Deptcode
+             WHERE 1 = 1
+		]]>
+		<if test="data_Date != null and data_Date!='' ">
+			and A.DATA_DATE =to_date(#{data_Date},'yyyy-MM-dd')
+		</if>
+		<if test="org_no != null and org_no!='' ">
+			and A.ORG_NO in <foreach item="org" index="index" collection="org_no" open="(" separator="," close=")">#{org}</foreach>
+		</if>
+		<if test="custNum2!= null and custNum2!='' ">
+			<![CDATA[
+				and A.BAL_AVG_Y <#{custNum2}
+			]]>
+		</if>
+		<if test="custNum1 != null and custNum1!='' ">
+			and A.BAL_AVG_Y >=#{custNum1}
+		</if> 
+		<if test="accCrtl != null and accCrtl != ''">
+			and	<foreach collection="accCrtl" item="col" separator="and">
+					a.${col.pkName} in (${col.pkValue})
+				</foreach>
+		</if>
+		<if test="numCrontls !=null and numCrontls !='' ">
+			${numCrontls}
+		</if>
+	</select>
+	<resultMap id="CustAccNumMap" type="java.util.HashMap">
+		<result column="DATA_DATE" property="DATA_DATE"/>
+		<result column="ACCT_NO" property="ACCT_NO"/>
+		<result column="titleName" property="TitleName"/>
+		<result column="ORG_NO" property="ORG_NO"/>
+		<result column="DEPTNAME" property="DEPTNAME"/>
+		<result column="CURRENCY" property="CURRENCY"/>
+		<result column="OPEN_DATE" property="OPEN_DATE"/>
+		<result column="CUST_NO" property="CUST_NO"/>
+		<result column="CUST_NAME" property="CUST_NAME"/>
+		<result column="BAL_AVG_Y" property="BAL_AVG_Y"/>
+		<result column="BAL" property="BAL"/>
+	</resultMap>
+	<select id="queryCustAccNumlistPage" parameterType="java.util.HashMap" resultMap="CustAccNumMap">
+		<![CDATA[
+			SELECT 	a.Data_Date AS Data_Date,
+					a.Acct_No AS Acct_No,
+					CASE
+						WHEN a.Bal_Avg_y < 10000 THEN
+						 '1'
+						WHEN a.Bal_Avg_y < 20000
+						     AND a.Bal_Avg_y >= 10000 THEN
+						 '2'
+						WHEN a.Bal_Avg_y < 50000
+						     AND a.Bal_Avg_y >= 20000 THEN
+						 '3'
+						WHEN a.Bal_Avg_y < 1000000
+						     AND a.Bal_Avg_y >= 50000 THEN
+						 '4'
+						WHEN a.Bal_Avg_y < 10000000
+						     AND a.Bal_Avg_y >= 1000000 THEN
+						 '5'
+						WHEN a.Bal_Avg_y < 100000000
+						     AND a.Bal_Avg_y >= 10000000 THEN
+						 '6'
+						ELSE
+						 '7'
+					END AS Titlename,
+					a.MANAGER_ORG AS Org_No,
+					c.Deptname AS Deptname,
+					a.Currency AS Currency,
+					To_Char(a.Open_Date, 'yyyy-MM-dd') AS Open_Date,
+					a.Cust_No AS Cust_No,
+					a.Cust_Name AS Cust_Name,
+					a.BAL * b.MID_RATE / b.EXCH_UNIT AS Bal,
+					a.Bal_Avg_y AS Bal_Avg_y
+				FROM Pi_Org_Deposit_Unit a
+				LEFT JOIN Pi_Biz_Exch b
+				ON a.Currency = b.Currency
+				AND b.Exch_Currency = 'CNY'
+				AND b.Data_Date = To_Date(#{data_Date}, 'yyyy-MM-dd')
+				LEFT JOIN Pcmc_Dept c
+				ON a.MANAGER_ORG = c.Deptcode
+			WHERE 1 = 1
+			and a.product_no<>'1299'
+			and substr(a.item_no,1,4) in ('2212','2021','2215')
+			and a.status <>'07'
+		]]>
+		<if test="data_Date != null and data_Date!='' ">
+			and A.DATA_DATE =to_date(#{data_Date},'yyyy-MM-dd')
+		</if>
+		<if test="org_no != null and org_no!='' ">
+			and A.MANAGER_ORG in <foreach item="org" index="index" collection="org_no" open="(" separator="," close=")">#{org}</foreach>
+		</if>
+		<if test="custNum2!= null and custNum2!='' ">
+			<![CDATA[
+				and A.BAL_AVG_Y <#{custNum2}
+			]]>
+		</if>
+		<if test="custNum1 != null and custNum1!='' ">
+		    <![CDATA[
+		     and A.BAL_AVG_Y >=#{custNum1}
+		     ]]>
+		</if> 
+		<if test="accCrtl != null and accCrtl != ''">
+			and  <foreach collection="accCrtl" item="col" separator="and">
+ 				a.${col.pkName} in (${col.pkValue})
+			</foreach>
+		</if>
+		<if test="numCrontls !=null and numCrontls !='' ">
+			${numCrontls}
+		</if>
+	</select>
+	<select id="queryCustAccNum" parameterType="java.util.HashMap" resultMap="CustAccNumMap">
+		<![CDATA[
+			SELECT 
+			A.DATA_DATE AS DATA_DATE,
+			case when A.BAL_AVG_Y<10000 then '1' 
+			when  A.BAL_AVG_Y<20000 and  A.BAL_AVG_Y>=10000 then '2'
+			when A.BAL_AVG_Y<50000 and  A.BAL_AVG_Y>=20000 then '3'
+			when A.BAL_AVG_Y<1000000 and  A.BAL_AVG_Y>=50000 then '4'
+			when A.BAL_AVG_Y<10000000 and  A.BAL_AVG_Y>=1000000 then '5'
+			when A.BAL_AVG_Y<100000000 and  A.BAL_AVG_Y>=10000000 then '6'
+			else '7' end as titleName,
+			A.ORG_NO as ORG_NO,
+			C.DEPTNAME as DEPTNAME,
+			A.CUST_NO as CUST_NO,
+			A.CUST_NAME as CUST_NAME,
+			A.BAL_AVG_Y as BAL_AVG_Y,
+			A.BAL as BAL
+		FROM (SELECT YA.DATA_DATE,
+               YA.CUST_NO,
+               YA.MANAGER_ORG AS ORG_NO,
+               YA.CUST_NAME,
+               SUM(YA.Bal_Avg_y * YB.MID_RATE / YB.EXCH_UNIT) AS BAL_AVG_Y,
+               SUM(YA.BAL * YB.MID_RATE / YB.EXCH_UNIT) AS BAL
+          FROM PI_ORG_DEPOSIT_UNIT YA
+          LEFT JOIN PI_BIZ_EXCH YB
+            ON YA.CURRENCY = YB.CURRENCY
+           AND YB.EXCH_CURRENCY = 'CNY'
+           AND YB.DATA_DATE = to_date(#{data_Date}, 'yyyy-MM-dd')
+           LEFT JOIN CI_CUS_UNIT YC 
+                ON YA.CUST_NO=YC.CUST_NO
+         where YA.product_no <> '1299'
+         and substr(YA.item_no,1,4) in ('2212','2021','2215')
+         
+         GROUP BY YA.DATA_DATE, YA.CUST_NO,YA.MANAGER_ORG, YA.CUST_NAME
+           having avg(YA.STATUS) <> '07') A
+				LEFT JOIN PCMC_DEPT C
+				ON A.ORG_NO = C.DEPTCODE
+			WHERE 1=1
+		]]>
+		<if test="data_Date != null and data_Date!='' ">
+			and A.DATA_DATE =to_date(#{data_Date},'yyyy-MM-dd')
+		</if>
+		<if test="org_no != null and org_no!='' ">
+			and A.ORG_NO in <foreach item="org" index="index" collection="org_no" open="(" separator="," close=")">#{org}</foreach>
+		</if>
+		<if test="custNum2!= null and custNum2!='' ">
+		<![CDATA[
+			and A.BAL_AVG_Y <#{custNum2}
+		]]>
+		</if>
+		<if test="custNum1 != null and custNum1!='' ">
+			and A.BAL_AVG_Y >=#{custNum1}
+		</if> 
+		<if test="accCrtl != null and accCrtl != ''">
+			and	<foreach collection="accCrtl" item="col" separator="and">
+				a.${col.pkName} in (${col.pkValue})
+				</foreach>
+		</if>
+		<if test="numCrontls !=null and numCrontls !='' ">
+			${numCrontls}
+		</if>
+	</select>
+
+	<select id="queryCustAccNumA" parameterType="java.util.HashMap" resultMap="CustAccNumMap">
+		<![CDATA[
+			SELECT	a.Data_Date AS Data_Date,
+					a.Acct_No AS Acct_No,
+					CASE
+						WHEN a.Bal_Avg_y < 10000 THEN
+							'1'
+						WHEN a.Bal_Avg_y < 20000 AND a.Bal_Avg_y >= 10000 THEN
+							'2'
+						WHEN a.Bal_Avg_y < 50000 AND a.Bal_Avg_y >= 20000 THEN
+							'3'
+						WHEN a.Bal_Avg_y < 1000000 AND a.Bal_Avg_y >= 50000 THEN
+							'4'
+						WHEN a.Bal_Avg_y < 10000000 AND a.Bal_Avg_y >= 1000000 THEN
+							'5'
+						WHEN a.Bal_Avg_y < 100000000 AND a.Bal_Avg_y >= 10000000 THEN
+							'6'
+						ELSE
+							'7'
+					END AS Titlename,
+					a.MANAGER_ORG AS Org_No,
+					c.Deptname AS Deptname,
+					a.Currency AS Currency,
+					To_Char(a.Open_Date,'yyyy-MM-dd') AS Open_Date,
+					a.Cust_No AS Cust_No,
+					a.Cust_Name AS Cust_Name,
+					a.BAL * b.MID_RATE / b.EXCH_UNIT AS Bal,
+					a.Bal_Avg_y AS Bal_Avg_y
+			FROM Pi_Org_Deposit_Unit a
+			LEFT JOIN Pi_Biz_Exch b
+				ON a.Currency = b.Currency
+				AND b.Exch_Currency = 'CNY'
+				AND b.Data_Date = To_Date(#{data_Date},'yyyy-MM-dd')
+			LEFT JOIN Pcmc_Dept c
+				ON a.MANAGER_ORG = c.Deptcode
+			WHERE 1 = 1
+			and a.product_no<>'1299'
+			and substr(a.item_no,1,4) in ('2212','2021','2215')
+			and a.status<>'07'
+		]]>
+		<if test="data_Date != null and data_Date!='' ">
+			and A.DATA_DATE =to_date(#{data_Date},'yyyy-MM-dd')
+		</if>
+		<if test="org_no != null and org_no!='' ">
+			and A.MANAGER_ORG  in <foreach item="org" index="index" collection="org_no" open="(" separator="," close=")">#{org}</foreach>
+		</if>
+		<if test="custNum2!= null and custNum2!='' ">
+			<![CDATA[
+				and A.BAL_AVG_Y <#{custNum2}
+			]]>
+		</if>
+		<if test="custNum1 != null and custNum1!='' ">
+		<![CDATA[
+			and A.BAL_AVG_Y >=#{custNum1}
+			]]>
+		</if>
+		<if test="accCrtl != null and accCrtl != ''">
+			and	<foreach collection="accCrtl" item="col" separator="and">
+					a.${col.pkName} in (${col.pkValue})
+				</foreach>
+		</if> 
+		<if test="numCrontls !=null and numCrontls !='' ">
+			${numCrontls}
+		</if>
+     </select>
+     
+     <select id="selOrExportPersionUnitlistPage" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		SELECT to_char(A.Data_Date,'yyyy-MM-dd') AS Data_Date,
+		       A.Org_No AS Org_No,
+		       A.Org_Name AS Org_Name,
+		       A.Acct_No AS Acct_No,
+		       A.Cust_No AS Cust_No,
+		       A.Cust_Name AS Cust_Name,
+		       A.Card_No AS Card_No,
+		       to_char(A.Open_Date,'yyyy-MM-dd') AS Open_Date,
+		       A.Status AS Status,
+		       A.Item_No AS Item_No,
+		       A.Prod_Cd AS Prod_Cd,
+		       A.Prod_Nm AS Prod_Nm,
+		       A.Manager_Org AS Manager_Org,
+		       A.Manager_Org_Name AS Manager_Org_Name,
+		       A.Manager_No AS Manager_No,
+		       A.Manager_o_Name AS Manager_Name,
+		       A.Cur_Asn_Rate AS Cur_Asn_Rate,
+		       A.Bal1 AS Bal1,
+		       A.Bal AS Bal,
+		       A.Bal_Avg_m AS Bal_Avg_m,
+		       A.Bal_Avg_y AS Bal_Avg_y,
+		       A.Simulate_Profit_y AS Simulate_Profit_y
+		  FROM Deposit_Person_v A
+		 INNER JOIN v_Auth_User V
+		    ON V.Managerno = A.Manager_No
+		    <if test="userid !=null and userid !='' ">
+		        AND V.Userid = #{userid}
+		   </if>
+		 WHERE   1=1
+		    <if test="acctNo !=null and acctNo !='' ">
+		        AND A.Acct_No like '%'||#{acctNo}||'%'
+		   </if>
+		    <if test="custNo !=null and custNo !='' ">
+		        AND A.Cust_No like '%'||#{custNo}||'%'
+		   </if>
+		   <if test="custNa !=null and custNa !='' ">
+		        AND A.Cust_Name like '%'||#{custNa}||'%'
+		   </if>
+		    <if test="openDate !=null and openDate !='' ">
+		        AND A.Open_Date = to_date(#{openDate},'yyyy-MM-dd')
+		   </if>
+		    <if test="dataDate !=null and dataDate !='' ">
+		        AND A.Data_Date = to_date(#{dataDate},'yyyy-MM-dd')
+		   </if>
+		   <if test="editorgcode != null and editorgcode !='' ">
+			    AND A.MANAGER_ORG  in <foreach item="org" index="index" collection="editorgcode" open="(" separator="," close=")">#{org}</foreach>
+		   </if>
+		   <if test="userCode != null and userCode !='' ">
+			    AND A.Manager_No  in <foreach item="usercd" index="index" collection="userCode" open="(" separator="," close=")">#{usercd}</foreach>
+		   </if>
+		   <if test="goodcode != null and goodcode !='' ">
+			    AND A.Prod_Cd  in <foreach item="goodcd" index="index" collection="goodcode" open="(" separator="," close=")">#{goodcd}</foreach>
+		   </if>
+		   	<if test="accCrtl != null and accCrtl != ''">
+			    AND	<foreach collection="accCrtl" item="col" separator="and">
+					a.${col.pkName} in (${col.pkValue})
+				    </foreach>
+	     	</if> 
+	       	<if test="numCrontls !=null and numCrontls !='' ">
+			    ${numCrontls}
+	    	</if>
+     </select>
+</mapper>

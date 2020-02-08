@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="gb2312"?>
+<Sunline>
+	<Session></Session>
+	<Operation id="flowActor" bean="com.sunline.bimis.pcmc.flow.FlowActor" desc="流程配置模块">
+		<Action name="queryFlow" desc="查询流程配置" />
+		<Action name="queryFlowDetl" desc="查询流程过程配置" />
+		<Action name="queryFlowGrantUser" desc="查询流程用户授权信息" />
+		<Action name="queryFlowGrantRole" desc="查询流程角色授权信息" />
+		<Action name="addFlow" desc="新增流程配置" />
+		<Action name="updateFlow" desc="修改流程配置" />
+		<Action name="deleteFlow" desc="删除流程配置" />
+		<Action name="refreshFlowGrant" desc="更新流程授权信息" />
+	</Operation>
+</Sunline>

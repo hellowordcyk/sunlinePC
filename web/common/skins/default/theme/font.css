@@ -1,0 +1,85 @@
+.leftfont {
+	FONT-SIZE: 12px; COLOR: #000000
+}
+.commonfont {
+	FONT-SIZE: 9pt; FONT-FAMILY: 宋体
+	color: #000000
+}
+.labelfont {
+	FONT-SIZE: 9pt; FONT-FAMILY: 宋体
+	color: #6600CC
+}
+.infofont {
+	FONT-SIZE: 9pt; FONT-FAMILY: 宋体
+	color: black
+}
+
+.trinfo {
+	FONT-WEIGHT: normal; FONT-SIZE: 9pt; COLOR: black; LINE-HEIGHT: 5mm; FONT-FAMILY: 宋体
+}
+.trinfo2 {
+	FONT-WEIGHT: normal; FONT-SIZE: 9pt; COLOR: white; LINE-HEIGHT: 5mm; FONT-FAMILY: 宋体
+}
+.formtextfield {
+	BORDER-RIGHT: 1px inset; BORDER-TOP: 1px inset; FONT-WEIGHT: normal; FONT-SIZE: 12px; BORDER-LEFT: 1px inset; COLOR: black; LINE-HEIGHT: 5mm; BORDER-BOTTOM: 1px inset; FONT-FAMILY: "Arial", "Helvetica", "sans-serif"; BACKGROUND-COLOR: #ffffff
+}
+.chaintr {
+	BORDER-RIGHT: 1px solid; BORDER-TOP: 1px solid; BORDER-LEFT: 1px solid; BORDER-BOTTOM: 1px solid; BACKGROUND-COLOR: #e9eaee
+}
+A {
+	FONT: 9pt/170% 宋体; COLOR: #000000; TEXT-DECORATION: none
+}
+A:hover {
+	FONT: 9pt/170% 宋体; COLOR: #444444; TEXT-DECORATION: underline
+}
+A.nav:link {
+	FONT: 9pt/170% 宋体; COLOR: #ffffff; TEXT-DECORATION: none
+}
+A.nav:visited {
+	FONT: 9pt/170% 宋体; COLOR: #ffffff; TEXT-DECORATION: none
+}
+A.nav:hover {
+	FONT: 9pt/170% 宋体; COLOR: #eeeeee; TEXT-DECORATION: underline
+}
+A.activenav:link {
+	FONT: 9pt/170% 宋体; COLOR: #ffae00; TEXT-DECORATION: none
+}
+A.activenav:visited {
+	FONT: 9pt/170% 宋体; COLOR: #ffae00; TEXT-DECORATION: none
+}
+A.activenav:hover {
+	FONT: 9pt/170% 宋体; COLOR: #ffae00; decoration: underline
+}
+.tdstyle {
+	BORDER-RIGHT: #8b8b8b 1px solid; BORDER-TOP: #ffffff 1px solid; BACKGROUND-IMAGE: url(/images/tdstyle.gif); BORDER-LEFT: #8b8b8b 1px solid; BORDER-BOTTOM: #8b8b8b 1px solid
+}
+.tdstyle2 {
+	BORDER-RIGHT: #dfe6e8 1px solid; BORDER-TOP: #ffffff 1px solid; BACKGROUND-IMAGE: url(/images/tdstyle.gif); BORDER-LEFT: #dfe6e8 1px solid; BORDER-BOTTOM: #dfe6e8 1px solid
+}
+.formbutton {
+	BORDER-TOP-WIDTH: 1px; BORDER-LEFT-WIDTH: 1px; BACKGROUND: #d7d7d7; BORDER-BOTTOM-WIDTH: 1px; FONT: 12px 宋体; COLOR: #4d4d4d; HEIGHT: 20px; BORDER-RIGHT-WIDTH: 1px
+}
+.clsPartHead {
+	padding-left: 5px;
+	FONT-SIZE: 12px;	
+	COLOR: #333;
+	FONT-FAMILY: "Arial", "Helvetica", "sans-serif";
+	background:url(../../../images/pic01/center_pic.gif);
+	font-weight: bold;
+}
+
+.clsPartBottom{
+	height: 4px;
+	background:url(../../../images/pic01/clsPartBottom.gif) repeat-x;
+}
+.BgGy {
+	border-right: 1px solid #c9c9c9;
+	border-left: 1px solid #c9c9c9;
+	background: #f6f6f6;
+}
+.FontBl {
+	FONT-SIZE: 12px; COLOR: #000000; LINE-HEIGHT: 20px; FONT-FAMILY: "Arial", "Helvetica", "sans-serif"
+}
+.FontBlu {
+	FONT-SIZE: 12px; COLOR: #0066cc; LINE-HEIGHT: 20px; FONT-FAMILY: "Arial", "Helvetica", "sans-serif"
+}

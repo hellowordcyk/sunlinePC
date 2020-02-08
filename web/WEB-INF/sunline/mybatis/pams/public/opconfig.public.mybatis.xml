@@ -1,0 +1,466 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="com.sunline.pams.mybatis.public.opconfig" >
+ 	<!-- resultMap -->
+ 	<resultMap id="opFlowTemplateInfoMap" type="java.util.HashMap">
+ 		<result column="TEMPLATE_CODE" property="templateCode"/>
+ 		<result column="TEMPLATE_NAME" property="templateName"/>
+ 		<result column="SUCCESS_STATUS" property="successStatus"/>
+ 		<result column="FAILURE_STATUS" property="failureStatus"/>
+ 	</resultMap>
+ 	<resultMap id="asnConfigInfoMap" type="java.util.HashMap">
+ 		<result column="CONFIG_ID" property="configID" javaType="java.math.BigDecimal" jdbcType="DECIMAL"/>
+ 		<result column="CONFIG_NAME" property="configName" />
+ 		<result column="CONFIG_TYPE" property="configType"/>
+ 		<result column="BIZ_TABLE" property="bizTable"/>
+ 		<result column="BIZ_PK" property="bizPK"/>
+ 		<result column="BIZ_SHOW" property="bizShow"/>
+ 		<result column="BIZ_GIVE" property="bizGive"/>
+ 		<result column="BIZ_SCOPE" property="bizScope"/>
+ 		<result column="BIZ_CONDITION" property="bizCondition"/>
+ 		<result column="ASN_TABLE" property="asnTable"/>
+ 		<result column="ASN_COLSTR_GET" property="asnColStrGet"/>
+ 		<result column="ASN_TYPE" property="asnType"/>
+ 		<result column="ASN_IN_OBJ_SCOPE" property="asnInObjScope"/>
+ 		<result column="RATE_TOP" property="rateTop" javaType="java.math.BigDecimal" jdbcType="DECIMAL"/>
+ 		<result column="FORCE_RATEALL_FLAG" property="forceRateAllFlag"/>
+ 		<result column="ASN_VIRTUAL_FLAG" property="asnVirtualFlag"/>
+ 		<result column="TEMPLATE_CODE" property="templateCode"/>
+ 		<result column="CLA_TABLE" property="claTable"/>
+ 		<result column="CLA_COLSTR_GET" property="claColStrGet"/>
+ 		<result column="BIZ_CHECK_TABLE" property="bizCheckTable"/>
+ 		<result column="BIZ_CHECK_PK" property="bizCheckPK"/>
+ 		<result column="BIZ_CHECK_SHOW" property="bizCheckShow"/>
+ 		<result column="BIZ_CHECK_SCOPE" property="bizCheckScope"/>
+ 		<result column="BIZ_CHECK_CONDITION" property="bizCheckCondition"/>
+ 		<result column="ASN_HEAD_SHOW" property="asnHeadShow"/>
+ 		<result column="ONLY_STARTDATE" property="onlyStartDate"/>
+ 		<result column="OBJ_TOP" property="objTop"/>
+ 		<result column="IS_CLA" property="isCla"/>
+ 		<result column="BACKDAYS" property="backDays"/>
+ 		<result column="RELATION_ALIAS" property="relationAlias"/>
+ 	</resultMap>
+ 	<resultMap id="claConfigInfoMap" type="java.util.HashMap">
+ 		<result column="CONFIG_ID" property="configID" javaType="java.math.BigDecimal" jdbcType="DECIMAL"/>
+ 		<result column="CONFIG_NAME" property="configName" />
+ 		<result column="CONFIG_TYPE" property="configType"/>
+ 		<result column="BIZ_TABLE" property="bizTable"/>
+ 		<result column="BIZ_PK" property="bizPK"/>
+ 		<result column="BIZ_SHOW" property="bizShow"/>
+ 		<result column="BIZ_GIVE" property="bizGive"/>
+ 		<result column="BIZ_SCOPE" property="bizScope"/>
+ 		<result column="BIZ_CONDITION" property="bizCondition"/>
+ 		<result column="ASN_TABLE" property="asnTable"/>
+ 		<result column="ASN_COLSTR_GET" property="asnColStrGet"/>
+ 		<result column="CLA_TYPE" property="claType"/>
+ 		<result column="CLA_IN_OBJ_SCOPE" property="claInObjScope"/>
+ 		<result column="RATE_TOP" property="rateTop" javaType="java.math.BigDecimal" jdbcType="DECIMAL"/>
+ 		<result column="FORCE_RATEALL_FLAG" property="forceRateAllFlag"/>
+ 		<result column="ASN_VIRTUAL_FLAG" property="asnVirtualFlag"/>
+ 		<result column="TEMPLATE_CODE" property="templateCode"/>
+ 		<result column="CLA_TABLE" property="claTable"/>
+ 		<result column="CLA_COLSTR_GET" property="claColStrGet"/>
+ 		<result column="BIZ_CHECK_TABLE" property="bizCheckTable"/>
+ 		<result column="BIZ_CHECK_PK" property="bizCheckPK"/>
+ 		<result column="BIZ_CHECK_SHOW" property="bizCheckShow"/>
+ 		<result column="BIZ_CHECK_SCOPE" property="bizCheckScope"/>
+ 		<result column="BIZ_CHECK_CONDITION" property="bizCheckCondition"/>
+ 		<result column="RECHECK" property="reCheck"/>
+ 		<result column="RECHECK_CONDITION" property="reCheckCondition"/>
+ 		<result column="RECHECK_SHOW" property="reCheckShow"/>
+ 		<result column="CLA_HEAD_SHOW" property="claHeadShow"/>
+ 		<result column="ONLY_STARTDATE" property="onlyStartDate"/>
+ 		<result column="OBJ_TOP" property="objTop"/>
+ 		<result column="RELATION_ALIAS" property="relationAlias"/>
+ 	</resultMap>
+ 	<resultMap id="roleMap" type="java.util.HashMap">
+ 		<result column="ROLEID" property="roleID"/>
+ 		<result column="ROLENAME" property="roleName"/>
+ 	</resultMap>
+	<resultMap id="TemplateInfo" type="java.util.HashMap">
+		<result column="SORTNO" property="sortNo"/>
+		<result column="STATUS" property="status"/>
+		<result column="STATUS_NAME" property="statusName"/>
+		<result column="ROLEID" property="roleID"/>
+		<result column="YES_NEXT_STATUS" property="yesNextStatus"/>
+		<result column="NO_NEXT_STATUS" property="noNextStatus"/>
+	</resultMap>
+	<resultMap id="bizTableMap" type="java.util.HashMap">
+		<result column="BIZ_TABLE" property="bizTable"/>
+	</resultMap>
+	<resultMap id="opDataColMap" type="java.util.HashMap">
+		<result column="BIZ_TABLE" property="bizTable"/>
+		<result column="TABLE_COLUMN" property="tableColumn"/>
+		<result column="TABLE_COLUMN_CN" property="tableColumnCn"/>
+		<result column="INPUT_BOX_TYPE" property="inputBoxType"/>
+		<result column="OPERATOR" property="operator"/>
+		<result column="USE_FLAG" property="useFlag"/>
+		<result column="DATA_TYPE" property="dataType"/>
+		<result column="REMARK" property="remark"/>
+	</resultMap>
+	
+	<select id="queryBizTable" parameterType="String" resultMap="bizTableMap">
+		SELECT DISTINCT BIZ_TABLE FROM OP_DATA_COL WHERE USE_FLAG = '1'
+		<if test="_parameter != null and _parameter != ''">
+			AND BIZ_TABLE LIKE #{_parameter}
+		</if>
+	</select>
+	<select id="queryOpDataCol" parameterType="String" resultMap="opDataColMap">
+		SELECT BIZ_TABLE,TABLE_COLUMN,TABLE_COLUMN_CN,INPUT_BOX_TYPE,OPERATOR,USE_FLAG,DATA_TYPE,REMARK FROM OP_DATA_COL
+		<where>
+ 			<if test="_parameter != null and _parameter != ''">
+				AND BIZ_TABLE = #{_parameter}
+			</if>
+ 		</where>	
+	</select>
+	<delete id="delDataColInfo" parameterType="String">
+ 		DELETE FROM OP_DATA_COL WHERE BIZ_TABLE = #{_parameter}
+ 	</delete>
+ 	<insert id="addOpDataCol" parameterType="java.util.HashMap">
+ 		INSERT INTO OP_DATA_COL(BIZ_TABLE,TABLE_COLUMN,TABLE_COLUMN_CN,INPUT_BOX_TYPE,OPERATOR,USE_FLAG,DATA_TYPE,REMARK)
+ 		VALUES(#{bizTable},#{tableColumn},#{tableColumnCn},#{inputBoxType},#{operator},#{useFlag},#{dataType},#{remark})
+ 	</insert>
+	
+ 	<!-- 查询流程模板信息 -->
+ 	<select id="queryOpFlowTemplateInfolistPage" parameterType="java.util.HashMap" resultMap="opFlowTemplateInfoMap">
+ 		SELECT TEMPLATE_CODE,TEMPLATE_NAME,SUCCESS_STATUS,FAILURE_STATUS FROM OP_FLOW_TEMPLATE
+ 		<where>
+ 			<if test="templateCode != null and templateCode != ''">
+				AND TEMPLATE_CODE = #{templateCode}
+			</if>
+			<if test="templateName != null and templateName != ''">
+				AND TEMPLATE_NAME LIKE #{templateName}
+			</if>
+ 		</where>
+ 	</select>
+ 	
+ 	<!-- 导出节点信息 -->
+ 	<select id="queryNodeInfoForExport" parameterType="java.util.HashMap" resultMap="TemplateInfo">
+ 		SELECT B.SORTNO, A.STATUS, A.STATUS_NAME, B.YES_NEXT_STATUS, B.NO_NEXT_STATUS, B.ROLEID
+		FROM OP_FLOW_NODE A
+		LEFT JOIN OP_CLA_FLOWINFO B ON A.TEMPLATE_CODE = B.TEMPLATE_CODE AND A.STATUS = B.STATUS
+		WHERE A.TEMPLATE_CODE = #{templateCode} ORDER BY B.SORTNO
+ 	</select>
+ 	
+ 	<!-- 查询流程节点 -->
+ 	<select id="getFlowNodeByCode" parameterType="java.util.HashMap" resultMap="TemplateInfo">
+ 		SELECT STATUS,STATUS_NAME FROM OP_FLOW_NODE
+ 		WHERE TEMPLATE_CODE = #{templateCode}
+ 	</select>
+ 	
+ 	<!-- 查询模板信息 -->
+ 	<select id="getFlowInfoByCode" parameterType="java.util.HashMap" resultMap="TemplateInfo">
+ 		SELECT SORTNO,STATUS,STATUS_NAME,ROLEID,YES_NEXT_STATUS,NO_NEXT_STATUS FROM OP_CLA_FLOWINFO
+ 		WHERE TEMPLATE_CODE = #{templateCode}
+ 	</select>
+ 	
+ 	
+ 	
+ 	<!-- 添加模板 -->
+ 	<insert id="addFlowTemplate" parameterType="java.util.HashMap">
+ 		INSERT INTO OP_FLOW_TEMPLATE(TEMPLATE_CODE,TEMPLATE_NAME,SUCCESS_STATUS,FAILURE_STATUS)
+ 		VALUES(#{templateCode},#{templateName},#{successStatus},#{failureStatus})
+ 	</insert>
+ 	
+ 	<!-- 添加流程节点 -->
+ 	<insert id="addFlowNode" parameterType="java.util.HashMap">
+ 		INSERT INTO OP_FLOW_NODE(TEMPLATE_CODE,STATUS,STATUS_NAME)
+ 		VALUES(#{templateCode},#{status},#{statusName})
+ 	</insert>
+ 	
+ 	<!-- 添加流程模板细信息 -->
+ 	<insert id="addFlowInfo" parameterType="java.util.HashMap">
+ 		INSERT INTO OP_CLA_FLOWINFO(TEMPLATE_CODE,SORTNO,STATUS,STATUS_NAME,ROLEID,YES_NEXT_STATUS,NO_NEXT_STATUS)
+ 		VALUES(#{templateCode},#{sortNo},#{status},#{statusName},#{roleID},#{yesNextStatus},#{noNextStatus})
+ 	</insert>
+ 	
+ 	<!-- 删除模板信息 -->
+ 	<delete id="delFlowTemplate" parameterType="java.util.HashMap">
+ 		DELETE FROM OP_FLOW_TEMPLATE WHERE TEMPLATE_CODE = #{templateCode}
+ 	</delete>
+ 	
+ 	<!-- 删除流程模板节点 -->
+ 	<delete id="delFlowNode" parameterType="java.util.HashMap">
+ 		DELETE FROM OP_FLOW_NODE WHERE TEMPLATE_CODE = #{templateCode}
+ 	</delete>
+ 	
+ 	<!-- 删除流程模板信息 -->
+ 	<delete id="delFlowInfo" parameterType="java.util.HashMap">
+ 		DELETE FROM OP_CLA_FLOWINFO WHERE TEMPLATE_CODE = #{templateCode}
+ 	</delete>
+ 	
+ 	<!-- 查询流程节点名称 -->
+ 	<select id="getStatusName" parameterType="java.util.HashMap" resultType="String">
+ 		SELECT STATUS_NAME FROM OP_FLOW_NODE WHERE TEMPLATE_CODE = #{templateCode} AND STATUS = #{status}
+ 	</select>
+ 	
+ 	<!-- 查询角色 -->
+ 	<select id="getRole" parameterType="java.util.HashMap" resultMap="roleMap">
+ 		SELECT ROLEID,ROLENAME FROM PCMC_ROLE
+ 	</select>
+ 	
+ 	<!-- 修改模板信息 -->
+ 	<update id="editFlowTemplate" parameterType="java.util.HashMap">
+ 		UPDATE OP_FLOW_TEMPLATE SET 
+ 			TEMPLATE_NAME = #{templateName},
+ 			SUCCESS_STATUS = #{successStatus},
+ 			FAILURE_STATUS = #{failureStatus}
+ 		WHERE TEMPLATE_CODE = #{templateCode}
+ 	</update>
+	
+	<!-- 查询业绩认领配置信息 -->
+	<select id="queryClaConfigInfo" parameterType="java.util.HashMap" resultMap="claConfigInfoMap">
+ 		SELECT 
+ 			CONFIG_ID, CONFIG_NAME, CONFIG_TYPE, BIZ_TABLE, BIZ_PK, 
+ 			BIZ_SHOW, BIZ_GIVE, BIZ_SCOPE, BIZ_CONDITION, CLA_TABLE, 
+ 			CLA_COLSTR_GET, CLA_TYPE, CLA_IN_OBJ_SCOPE, RATE_TOP, FORCE_RATEALL_FLAG, 
+ 			ASN_VIRTUAL_FLAG, TEMPLATE_CODE, ASN_TABLE, ASN_COLSTR_GET, BIZ_CHECK_TABLE, 
+ 			BIZ_CHECK_PK, BIZ_CHECK_SHOW, BIZ_CHECK_SCOPE, BIZ_CHECK_CONDITION, RECHECK, 
+ 			RECHECK_CONDITION, RECHECK_SHOW,CLA_HEAD_SHOW,ONLY_STARTDATE,OBJ_TOP,RELATION_ALIAS
+ 		FROM OP_CLA_CONFIG
+ 		<where>
+ 			<if test="configID != null and configID != ''">
+				AND CONFIG_ID = #{configID}
+			</if>
+ 			<if test = "configName != null and configName != ''">  
+			    AND CONFIG_NAME LIKE #{configName}
+			</if>
+			<if test = "configType != null and configType != ''">  
+			    AND CONFIG_TYPE = #{configType}
+			</if>
+ 		</where>
+ 	</select>
+	
+ 	<!-- 查询业绩分配配置信息 -->
+ 	<select id="queryAsnConfigInfo" parameterType="java.util.HashMap" resultMap="asnConfigInfoMap">
+ 		SELECT 
+ 			CONFIG_ID, CONFIG_NAME, CONFIG_TYPE, BIZ_TABLE, BIZ_PK, 
+ 			BIZ_SHOW, BIZ_GIVE, BIZ_SCOPE, BIZ_CONDITION, ASN_TABLE, 
+ 			ASN_COLSTR_GET, ASN_TYPE, ASN_IN_OBJ_SCOPE, RATE_TOP, FORCE_RATEALL_FLAG, 
+ 			ASN_VIRTUAL_FLAG, TEMPLATE_CODE, CLA_TABLE, CLA_COLSTR_GET, BIZ_CHECK_TABLE, 
+ 			BIZ_CHECK_PK, BIZ_CHECK_SHOW, BIZ_CHECK_SCOPE, BIZ_CHECK_CONDITION ,ASN_HEAD_SHOW,ONLY_STARTDATE,
+ 			OBJ_TOP,IS_CLA,BACKDAYS,RELATION_ALIAS
+		FROM OP_ASN_CONFIG
+		<where>
+			<if test="configID != null and configID != ''">
+				AND CONFIG_ID = #{configID}
+			</if>
+			<if test="configType != null and configType != ''">
+				AND CONFIG_TYPE = #{configType}
+			</if>
+			<if test="configName != null and configName != ''">
+				AND CONFIG_NAME LIKE #{configName}
+			</if>
+		</where>
+ 	</select>
+ 	
+ 	<!-- 删除业绩分配配置信息 -->
+ 	<delete id="delOpAsnConfigByID" parameterType="java.util.HashMap">
+ 		DELETE FROM OP_ASN_CONFIG 
+ 		WHERE CONFIG_ID IN<foreach collection="configIDList" item="configID" open="(" separator="," close=")">#{configID}</foreach>
+ 	</delete>
+ 	
+ 	<!-- 删除业绩认领配置信息 -->
+ 	<delete id="delOpClaConfig" parameterType="java.util.HashMap">
+ 		DELETE FROM OP_CLA_CONFIG WHERE CONFIG_ID = #{configID}
+ 	</delete>
+ 	
+ 	<!-- 添加业绩认领配置信息 -->
+	<insert id="addOpClaConfig" parameterType="java.util.HashMap">
+ 		INSERT INTO OP_CLA_CONFIG(
+			CONFIG_ID,
+            CONFIG_NAME,
+            CONFIG_TYPE,
+            BIZ_TABLE,
+            BIZ_PK,
+            BIZ_SHOW,
+            BIZ_GIVE,
+            BIZ_SCOPE,
+            BIZ_CONDITION,
+            CLA_TABLE,
+            CLA_COLSTR_GET,
+			CLA_TYPE,
+			CLA_IN_OBJ_SCOPE,
+			RATE_TOP,
+			FORCE_RATEALL_FLAG,
+			ASN_VIRTUAL_FLAG,
+			TEMPLATE_CODE,
+			ASN_TABLE,
+			ASN_COLSTR_GET,
+			BIZ_CHECK_TABLE,
+			BIZ_CHECK_PK,
+			BIZ_CHECK_SHOW,
+			BIZ_CHECK_SCOPE,
+			BIZ_CHECK_CONDITION,
+			ONLY_STARTDATE,
+			RECHECK,
+			RECHECK_CONDITION,
+			RECHECK_SHOW,
+			CLA_HEAD_SHOW,
+			OBJ_TOP,
+			RELATION_ALIAS) 
+		VALUES(
+			#{configID},
+			#{configName},
+			#{configType},
+			#{bizTable},
+			#{bizPK,jdbcType=VARCHAR},
+			#{bizShow,jdbcType=VARCHAR},
+			#{bizGive,jdbcType=VARCHAR},
+			#{bizScope,jdbcType=VARCHAR},
+			#{bizCondition,jdbcType=VARCHAR},
+			#{claTable,jdbcType=VARCHAR},
+			#{claColStrGet,jdbcType=VARCHAR},
+			#{claType,jdbcType=VARCHAR},
+			#{claInObjScope,jdbcType=VARCHAR},
+			#{rateTop,jdbcType=NUMERIC},
+			#{forceRateAllFlag,jdbcType=VARCHAR},
+			#{asnVirtualFlag,jdbcType=VARCHAR},
+			#{templateCode,jdbcType=VARCHAR},
+			#{asnTable,jdbcType=VARCHAR},
+			#{asnColStrGet,jdbcType=VARCHAR},
+			#{bizCheckTable,jdbcType=VARCHAR},
+			#{bizCheckPK,jdbcType=VARCHAR},
+			#{bizCheckShow,jdbcType=VARCHAR},
+			#{bizCheckScope,jdbcType=VARCHAR},
+			#{bizCheckCondition,jdbcType=VARCHAR},
+			#{onlyStartDate,jdbcType=VARCHAR},
+			#{reCheck,jdbcType=VARCHAR},
+			#{reCheckCondition,jdbcType=VARCHAR},
+			#{reCheckShow,jdbcType=VARCHAR},
+			#{claHeadShow,jdbcType=VARCHAR},
+			#{objTop,jdbcType=NUMERIC},
+			#{relationAlias,jdbcType=VARCHAR})
+ 	</insert>
+ 	
+ 	<!-- 添加业绩分配配置信息 -->
+	<insert id="addOpAsnConfig" parameterType="java.util.HashMap">
+		INSERT INTO OP_ASN_CONFIG(
+			TEMPLATE_CODE, 
+			BIZ_CHECK_TABLE, 
+			BIZ_CHECK_PK, 
+			BIZ_CHECK_SHOW, 
+			BIZ_CHECK_SCOPE, 
+			BIZ_CHECK_CONDITION,
+			CONFIG_ID, CONFIG_NAME, 
+			CONFIG_TYPE, BIZ_TABLE, 
+			BIZ_PK, BIZ_SHOW, BIZ_GIVE, 
+			BIZ_SCOPE, BIZ_CONDITION, 
+			ASN_TABLE, ASN_COLSTR_GET, 
+			ASN_TYPE, ASN_IN_OBJ_SCOPE, 
+			RATE_TOP, 
+			FORCE_RATEALL_FLAG, 
+			ASN_VIRTUAL_FLAG, 
+			CLA_TABLE, 
+			CLA_COLSTR_GET, 
+			ASN_HEAD_SHOW,
+			ONLY_STARTDATE,
+			OBJ_TOP,
+			IS_CLA,
+			BACKDAYS,
+			RELATION_ALIAS) 
+		VALUES(
+			#{templateCode,jdbcType=VARCHAR},
+			#{bizCheckTable,jdbcType=VARCHAR},
+			#{bizCheckPK,jdbcType=VARCHAR},
+			#{bizCheckShow,jdbcType=VARCHAR},
+			#{bizCheckScope,jdbcType=VARCHAR},
+			#{bizCheckCondition,jdbcType=VARCHAR},
+			#{configID},
+			#{configName},
+			#{configType},
+			#{bizTable},
+			#{bizPK},
+			#{bizShow},
+			#{bizGive},
+			#{bizScope},
+			#{bizCondition},
+			#{asnTable},
+			#{asnColStrGet},
+			#{asnType},
+			#{asnInObjScope},
+			#{rateTop},
+			#{forceRateAllFlag},
+			#{asnVirtualFlag},
+			#{claTable,jdbcType=VARCHAR},
+			#{claColStrGet,jdbcType=VARCHAR},
+			#{asnHeadShow},
+			#{onlyStartDate},
+			#{objTop},
+			#{isCla},
+			#{backDays,jdbcType=NUMERIC},
+			#{relationAlias,jdbcType=VARCHAR})
+	</insert>
+	
+	<!-- 修改业绩认领配置信息 -->
+ 	<update id="updateOpClaConfig" parameterType="java.util.HashMap">
+ 		UPDATE OP_CLA_CONFIG SET
+			RECHECK_CONDITION = #{reCheckCondition,jdbcType=VARCHAR},
+			RECHECK_SHOW = #{reCheckShow,jdbcType=VARCHAR},
+			TEMPLATE_CODE = #{templateCode,jdbcType=VARCHAR},
+			BIZ_CHECK_TABLE = #{bizCheckTable,jdbcType=VARCHAR},
+			BIZ_CHECK_PK = #{bizCheckPK,jdbcType=VARCHAR},
+			BIZ_CHECK_SHOW = #{bizCheckShow,jdbcType=VARCHAR},
+			BIZ_CHECK_SCOPE = #{bizCheckScope,jdbcType=VARCHAR},
+			BIZ_CHECK_CONDITION = #{bizCheckCondition,jdbcType=VARCHAR},
+			CONFIG_NAME = #{configName},
+			CONFIG_TYPE = #{configType},
+			BIZ_TABLE = #{bizTable},
+			BIZ_PK = #{bizPK},
+			BIZ_SHOW = #{bizShow},
+			BIZ_GIVE = #{bizGive},
+			BIZ_SCOPE = #{bizScope},
+			BIZ_CONDITION = #{bizCondition},
+			CLA_TABLE = #{claTable,jdbcType=VARCHAR},
+			CLA_COLSTR_GET = #{claColStrGet,jdbcType=VARCHAR},
+			CLA_TYPE = #{claType},
+			CLA_IN_OBJ_SCOPE = #{claInObjScope},
+			RATE_TOP = #{rateTop},
+			FORCE_RATEALL_FLAG = #{forceRateAllFlag},
+			ASN_VIRTUAL_FLAG = #{asnVirtualFlag},
+			ASN_TABLE = #{asnTable},
+			RELATION_ALIAS = #{relationAlias,jdbcType=VARCHAR},
+			ASN_COLSTR_GET = #{asnColStrGet},
+			RECHECK = #{reCheck},
+			CLA_HEAD_SHOW = #{claHeadShow},
+			OBJ_TOP = #{objTop},
+			ONLY_STARTDATE = #{onlyStartDate}
+		WHERE CONFIG_ID = #{configID}
+ 	</update>
+	
+	<!-- 修改业绩分配配置信息 -->
+	<update id="updateOpAsnConfig" parameterType="java.util.HashMap">
+		UPDATE OP_ASN_CONFIG SET 
+			TEMPLATE_CODE = #{templateCode,jdbcType=VARCHAR},
+			BIZ_CHECK_TABLE = #{bizCheckTable,jdbcType=VARCHAR},
+			BIZ_CHECK_PK = #{bizCheckPK,jdbcType=VARCHAR},
+			BIZ_CHECK_SHOW = #{bizCheckShow,jdbcType=VARCHAR},
+			BIZ_CHECK_SCOPE = #{bizCheckScope,jdbcType=VARCHAR},
+			BIZ_CHECK_CONDITION = #{bizCheckCondition,jdbcType=VARCHAR},
+			CONFIG_NAME = #{configName},
+			CONFIG_TYPE = #{configType},
+			BIZ_TABLE = #{bizTable},
+			BIZ_PK = #{bizPK},
+			BIZ_SHOW = #{bizShow},
+			BIZ_GIVE = #{bizGive},
+			BIZ_SCOPE = #{bizScope},
+			BIZ_CONDITION = #{bizCondition},
+			CLA_TABLE = #{claTable,jdbcType=VARCHAR},
+			CLA_COLSTR_GET = #{claColStrGet,jdbcType=VARCHAR},
+			ASN_TYPE = #{asnType},
+			ASN_IN_OBJ_SCOPE = #{asnInObjScope},
+			RATE_TOP = #{rateTop},
+			FORCE_RATEALL_FLAG = #{forceRateAllFlag},
+			ASN_VIRTUAL_FLAG = #{asnVirtualFlag},
+			ASN_TABLE = #{asnTable},
+			RELATION_ALIAS = #{relationAlias,jdbcType=VARCHAR},
+			ASN_COLSTR_GET = #{asnColStrGet},
+			ASN_HEAD_SHOW = #{asnHeadShow},
+			OBJ_TOP = #{objTop},
+			IS_CLA = #{isCla},
+			BACKDAYS = #{backDays,jdbcType=NUMERIC},
+			ONLY_STARTDATE = #{onlyStartDate}
+		WHERE CONFIG_ID = #{configID}
+	</update> 	
+</mapper> 	  
+ 	 

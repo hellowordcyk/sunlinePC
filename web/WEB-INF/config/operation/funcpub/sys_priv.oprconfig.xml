@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="gb2312"?>
+<!-- 功能页面  -->
+<Sunline>
+    <Session></Session>
+    <Operation id="privEntityActor"  bean="com.sunline.funcpub.actor.privilege.syspriventity.SysPrivEntityActor"  
+        desc="系统数据权限实体管理类" >
+        <Action name="addSysPrivEntity" desc="新增数据实体" acttype="add"/>
+        <Action name="updateSysPrivEntity" desc="修改数据实体" acttype="update"/>
+        <Action name="querySysPrivEntity" desc="查询数据实体" acttype="query"/>
+        <Action name="deleteSysPrivEntity" desc="删除数据实体" acttype="delete"/>
+        <Action name="checkTableOrColumnExist" desc="验证实体表或字段是否存在" acttype="real"/>
+        <Action name="querySysPrivEntityJson" desc="模糊查询" acttype="query"/>
+        <Action name="privEntity_import" desc="导入" acttype="import"/>
+       <Action name="downLoadPrivEntityTemplate" desc="模板" acttype="import"/>
+       <Action name="privEntity_export" desc="导出" acttype="export"/>
+    </Operation>
+    
+    <Operation id="privDataActor"  bean="com.sunline.funcpub.actor.privilege.sysprivdata.SysPrivDataActor"  
+        desc="系统数据权限授权管理类" >
+        <Action name="grant" desc="授权" acttype="update"/>
+        <Action name="queryPrivInfo" desc="查询权限信息" acttype="query"/>
+    </Operation>
+    
+    <Operation id="privShareActor"  bean="com.sunline.funcpub.actor.privilege.sysprivshare.SysPrivShareActor"  
+        desc="系统数据权限授权管理类" >
+        <Action name="share" desc="分享" acttype="share">
+        	<requestFlow>
+			  <handler type="DataprivHandler">
+			  	   <parameter name="type" value="share"></parameter>
+			  </handler>                  
+			</requestFlow>
+        </Action>
+        <Action name="toShare" desc="前往分享页面" acttype="share">
+        	<requestFlow>
+			  <handler type="DataprivHandler">
+			  	   <parameter name="type" value="share"></parameter>
+			  </handler>                  
+			</requestFlow>
+        </Action>
+        
+         <Action name="queryCurrentInfo" desc="查询实体信息" acttype="query">
+        </Action>
+        
+        <Action name="query" desc="查询已分享" acttype="query">
+        </Action>
+        
+        <Action name="deleteShare" desc="取消分享" acttype="share">
+        	<requestFlow>
+			  <handler type="DataprivHandler">
+			  	   <parameter name="type" value="share"></parameter>
+			  </handler>                  
+			</requestFlow>
+        </Action>
+    </Operation>
+    
+</Sunline>

@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="com.sunline.funcpub.mybatis.public.funcmethod" >
+	
+	<insert id="addFuncMethod" parameterType="java.util.HashMap">
+	   insert into sys_func_method(
+	       method_code,
+	       method_systemid,
+	       method_name,
+	       method_desc,
+	       method_page_code,
+	       method_type,
+	       method_menuid,
+	       corpcode
+	   )values(
+	       #{methodCode,jdbcType=VARCHAR},
+           #{methodSystemid,jdbcType=NUMERIC},
+           #{methodName,jdbcType=VARCHAR},
+           #{methodDesc,jdbcType=VARCHAR},
+           #{methodPageCode,jdbcType=VARCHAR},
+           #{methodType,jdbcType=VARCHAR},
+           #{methodMenuid,jdbcType=NUMERIC},
+           #{corpcode,jdbcType=VARCHAR}
+	   )
+	</insert>
+	<update id="updateFuncMethod" parameterType="java.util.HashMap">
+	   update sys_func_method set
+           method_name=#{methodName,jdbcType=VARCHAR},
+           method_desc=#{methodDesc,jdbcType=VARCHAR},
+           method_page_code=#{methodPageCode,jdbcType=VARCHAR},
+           method_type=#{methodType,jdbcType=VARCHAR},
+           method_menuid=#{methodMenuid,jdbcType=NUMERIC}
+       <where>
+          method_code = #{methodCode} and corpcode=#{corpcode,jdbcType=VARCHAR}
+       </where>
+	</update>
+	
+	<resultMap type="com.sunline.funcpub.portal.func.method.bean.SysFuncMethod" id="queryFuncMethodlistPage_rsm">
+	   <result column="method_code" property="methodCode"/>
+	   <result column="method_systemid" property="methodSystemid"/>
+	   <result column="method_name" property="methodName"/>
+	   <result column="method_desc" property="methodDesc"/>
+	   <result column="method_page_code" property="methodPageCode"/>
+	   <result column="method_type" property="methodType"/>
+	   <result column="method_menuid" property="methodMenuid"/>
+	</resultMap>
+	<select id="queryFuncMethodlistPage" parameterType="java.util.HashMap" resultMap="queryFuncMethodlistPage_rsm">
+	   select 
+	       method_code,
+           method_systemid,
+           method_name,
+           method_desc,
+           method_page_code,
+           method_type,
+           method_menuid
+	    from sys_func_method
+	   <where>
+	   		corpcode=#{corpcode}
+	       <if test="methodCode !=null and methodCode.trim()!=''">
+	           and method_code=#{methodCode}
+	       </if>
+	       <if test="methodPageCode !=null and methodPageCode.trim()!=''">
+	           and method_page_code=#{methodPageCode}
+	       </if>
+	       <if test="menuId !=null and menuId!=''">
+               and method_menuid=#{menuId}
+           </if>
+           <if test="pageCodes != null and pageCodes.size() > 0">
+                (
+                <foreach collection="pageCodes" index="index" item="dcs" open="" separator="" close="">
+                   <if test="index==0">
+                     method_page_code in  
+                     <foreach collection="dcs" index="index" item="dc" open="(" separator="," close=")">
+                         #{dc}
+                      </foreach>
+                   </if>
+                   <if test="index > 0">
+                     or method_page_code in  
+                     <foreach collection="dcs" index="index" item="dc" open="(" separator="," close=")">
+                         #{dc}
+                      </foreach>
+                   </if>
+                </foreach>
+                )
+            </if>
+	   </where>
+	</select>
+	
+	<resultMap type="java.util.HashMap" id="queryFuncMethodByParamWidthRoleId_rsm">
+       <result column="method_code" property="methodCode"/>
+       <result column="method_systemid" property="methodSystemid"/>
+       <result column="method_name" property="methodName"/>
+       <result column="method_desc" property="methodDesc"/>
+       <result column="method_page_code" property="methodPageCode"/>
+       <result column="method_type" property="methodType"/>
+       <result column="method_menuid" property="methodMenuid"/>
+       <result column="role_id" property="roleId"/>
+    </resultMap>
+    <select id="queryFuncMethodByParamWidthRoleId" parameterType="java.util.HashMap" resultMap="queryFuncMethodByParamWidthRoleId_rsm">
+       select 
+           t1.method_code,
+           t1.method_systemid,
+           t1.method_name,
+           t1.method_desc,
+           t1.method_page_code,
+           t1.method_type,
+           t1.method_menuid,
+           t2.role_id
+        from sys_func_method t1 left join sys_func_method_priv t2 on t1.method_code = t2.method_code
+        	<if test="roleId !=null and roleId !=''">
+               and t2.role_id=#{roleId}
+           </if>
+       <where>
+       		t1.corpcode=#{corpcode}
+           <if test="methodCode !=null and methodCode.trim()!=''">
+               and method_code=#{methodCode}
+           </if>
+           <if test="methodPageCode !=null and methodPageCode.trim()!=''">
+               and method_page_code=#{methodPageCode}
+           </if>
+           <if test="menuId !=null and menuId !=''">
+               and method_menuid=#{menuId}
+           </if>
+           <if test="pageCodes != null and pageCodes.size() > 0">
+                (
+                <foreach collection="pageCodes" index="index" item="dcs" open="" separator="" close="">
+                   <if test="index==0">
+                     method_page_code in  
+                     <foreach collection="dcs" index="index" item="dc" open="(" separator="," close=")">
+                         #{dc}
+                      </foreach>
+                   </if>
+                   <if test="index > 0">
+                     or method_page_code in  
+                     <foreach collection="dcs" index="index" item="dc" open="(" separator="," close=")">
+                         #{dc}
+                     </foreach>
+                   </if>
+                </foreach>
+                )
+            </if>
+       </where>
+    </select>
+	
+	<resultMap type="java.util.HashMap" id="getFuncMethod_rsm">
+       <result column="method_code" property="methodCode"/>
+       <result column="method_systemid" property="methodSystemid"/>
+       <result column="method_name" property="methodName"/>
+       <result column="method_desc" property="methodDesc"/>
+       <result column="method_page_code" property="methodPageCode"/>
+       <result column="method_type" property="methodType"/>
+       <result column="method_menuid" property="methodMenuid"/>
+       <result column="page_code" property="pPagecode"/>
+       <result column="page_name" property="pPagename"/>
+       <result column="menuid" property="pmenuid"/>
+       <result column="menuname" property="pmenuname"/>
+    </resultMap>
+	<select id="getFuncMethod" parameterType="java.util.HashMap" resultMap="getFuncMethod_rsm">
+	   select 
+           t1.method_code,
+           t1.method_systemid,
+           t1.method_name,
+           t1.method_desc,
+           t1.method_page_code,
+           t1.method_type,
+           t1.method_menuid,
+           t2.page_code,
+           t2.page_name,
+           t3.menuid,
+           t3.menuname
+        from sys_func_method t1 left join sys_func_page t2 on t1.method_page_code=t2.page_code left join pcmc_menu t3 on t1.method_menuid=t3.menuid and t1.corpcode=t3.corpcode
+       <where>
+       		t1.corpcode=#{corpcode}
+           <if test="methodCode !=null and methodCode.trim()!=''">
+               and method_code=#{methodCode}
+           </if>
+       </where>
+	</select>
+	
+	<select  id="existFuncMethod" parameterType="java.util.HashMap" resultType="java.lang.Integer">
+	   select count(*) from sys_func_method
+	   <where>
+	   		corpcode=#{corpcode}
+	       <if test="methodCode != null and methodCode.trim()!=''">
+	           and method_code=#{methodCode}
+	       </if>
+	   </where>
+	</select>
+	
+	<delete id="deleteFuncMethod" parameterType="java.lang.String">
+	   delete from sys_func_method 
+	   <where>
+	       method_code=#{methodCode} and corpcode=#{corpcode}
+	   </where>
+	</delete>
+	
+	<delete id="deleteFuncMethodUnderPages" parameterType="java.util.HashMap">
+	   delete from sys_func_method
+	   <where>
+	   		corpcode=#{corpcode}
+	       <if test="pageCodes != null and pageCodes.size() > 0">
+                and (
+                <foreach collection="pageCodes" index="index" item="dcs" open="" separator="" close="">
+                   <if test="index==0">
+                     method_page_code in 
+                      <foreach collection="dcs" index="index" item="dc" open="(" separator="," close=")">
+                      #{dc}
+                      </foreach>
+                   </if>
+                   <if test="index > 0">
+                     or method_page_code in 
+                       <foreach collection="dcs" index="index" item="dc" open="(" separator="," close=")">
+                          #{dc}
+                      </foreach>
+                   </if>
+                </foreach>
+                )
+            </if>
+	   </where>
+	</delete>
+	
+	<delete id="deleteFuncMethodUnderMenus" parameterType="java.util.HashMap">
+	   delete from sys_func_method
+       <where>
+       		corpcode=#{corpcode}
+           <if test="menuids != null and menuids.size() > 0">
+                and (
+                <foreach collection="menuids" index="index" item="dcs" open="" separator="" close="">
+                   <if test="index==0">
+                     method_menuid in  
+                       <foreach collection="dcs" index="index" item="dc" open="(" separator="," close=")">
+                      #{dc}
+                      </foreach>
+
+                   </if>
+                   <if test="index > 0">
+                     or method_menuid in  
+                      <foreach collection="dcs" index="index" item="dc" open="(" separator="," close=")">
+                         #{dc}
+                      </foreach>
+
+                   </if>
+                </foreach>
+                )
+            </if>
+       </where>
+	</delete>
+</mapper> 	  

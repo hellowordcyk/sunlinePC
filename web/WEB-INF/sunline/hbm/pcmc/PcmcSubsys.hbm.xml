@@ -1,0 +1,52 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 2006-1-9 20:10:32 by Hibernate Tools 3.1.0 beta1JBIDERC2 -->
+<hibernate-mapping>
+    <class name="com.sunline.bimis.pcmc.db.PcmcSubsys" table="pcmc_subsys">
+        <id name="subsysid" type="java.lang.Long">
+            <column name="subsysid" scale="0" />
+      		<generator class="com.sunline.jraf.id.HBNIDGenerator" >
+			    <param name="seqname">pcmc_subsys</param>
+			    <param name="column">subsysid</param>
+			</generator>
+        </id>
+        <property name="shortname" type="string">
+            <column name="shortname" length="10" not-null="true" />
+        </property>
+        <property name="enname" type="string">
+            <column name="enname" length="40" not-null="true" />
+        </property>
+        <property name="cnname" type="string">
+            <column name="cnname" length="40" not-null="true" />
+        </property>
+        <property name="imgurl" type="string">
+            <column name="imgurl" length="100" />
+        </property>
+        <property name="linkurl" type="string">
+            <column name="linkurl" length="200" not-null="true" />
+        </property>
+        <property name="pubinfourl" type="string">
+            <column name="pubinfourl" length="200" />
+        </property>
+        <property name="orderidx" type="java.lang.Long">
+            <column name="orderidx" precision="2" scale="0" />
+        </property>
+        <property name="issystem" type="string" >
+            <column name="issystem" length="1"/>
+        </property>
+         
+        <set name="pcmcRoles" inverse="true">
+            <key>
+                <column name="subsysid" scale="0" not-null="true" />
+            </key>
+            <one-to-many class="com.sunline.bimis.pcmc.db.PcmcRole" />
+        </set>
+        <set name="pcmcMenus" inverse="true">
+            <key>
+                <column name="subsysid" scale="0" not-null="true" />
+            </key>
+            <one-to-many class="com.sunline.bimis.pcmc.db.PcmcMenu" />
+        </set>
+    </class>
+</hibernate-mapping>

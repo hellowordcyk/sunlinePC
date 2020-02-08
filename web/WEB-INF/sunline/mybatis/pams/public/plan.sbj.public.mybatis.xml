@@ -1,0 +1,339 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sunline.pams.mybatis.public.plan.sbj">
+    <!-- 定性指标映射 -->
+    <resultMap type="com.sunline.pams.plan.bean.MoKpiSubjective" id="moKpiSubjective">
+        <result column="KPI_ID" property="kpiId" jdbcType="NUMERIC"/>
+        <result column="AREA_NO" property="areaNo" jdbcType="CHAR"/>
+        <result column="KPI_CODE" property="kpiCode" jdbcType="VARCHAR"/>
+        <result column="KPI_NAME" property="kpiName" jdbcType="VARCHAR"/>
+        <result column="KPI_TYPE" property="kpiType" jdbcType="CHAR"/>
+        <result column="APPLY_TYPE" property="applyType" jdbcType="CHAR"/>
+        <result column="ORG_NO" property="orgNo" jdbcType="VARCHAR"/>
+        <result column="CREATE_TIME" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="OPERATOR" property="operator" jdbcType="VARCHAR"/>
+        <result column="STATUS" property="status" jdbcType="VARCHAR"/>
+        <result column="DEL_FLAG" property="delFlag" jdbcType="VARCHAR"/>
+        <result column="REMARK" property="remark" jdbcType="NUMERIC"/>
+        <result column="SBJ_TYPE" property="sbjType" jdbcType="CHAR"/>
+        <result column="SBJ_FREQUENCY" property="sbjFrequency" jdbcType="VARCHAR"/>
+        <result column="RESERVE_DAY" property="reserveDay" jdbcType="VARCHAR"/>
+        <result column="AUTO_SBJ" property="autoSbj" jdbcType="CHAR"/>
+        <result column="BASE_SCORE" property="baseScore" jdbcType="CHAR"/>
+        <result column="H_SCORE" property="hScore" jdbcType="VARCHAR"/>
+        <result column="L_SCORE" property="lScore" jdbcType="TIMESTAMP"/>
+        <result column="SPC_SCORE" property="spcScore" jdbcType="VARCHAR"/>
+        <result column="L_BASE_LINE" property="lBaseLine" jdbcType="VARCHAR"/>
+        <result column="H_BASE_LINE" property="hBaseLine" jdbcType="VARCHAR"/>
+    </resultMap>
+    
+    <!-- 查询定性指标 -->
+    <select id="querySubjectiveKpi" parameterType="java.util.HashMap" resultMap="moKpiSubjective">
+        SELECT 
+            KPI_ID
+            ,AREA_NO
+            ,KPI_CODE
+            ,KPI_NAME
+            ,KPI_TYPE
+            ,APPLY_TYPE
+            ,ORG_NO
+            ,CREATE_TIME
+            ,OPERATOR
+            ,STATUS
+            ,DEL_FLAG
+            ,REMARK
+            ,SBJ_TYPE
+            ,SBJ_FREQUENCY
+            ,RESERVE_DAY
+            ,AUTO_SBJ
+            ,BASE_SCORE
+            ,H_SCORE
+            ,L_SCORE
+            ,SPC_SCORE
+            ,L_BASE_LINE
+            ,H_BASE_LINE
+        FROM MO_KPI_SUBJECTIVE
+        <where>
+            <if test=" kpiName != null and kpiName != '' ">
+                AND KPI_NAME = #{kpiName}
+            </if>
+        </where>
+    </select>
+    
+    <!-- 插入定性指标 -->
+    <insert id="insertSubjectiveKpi" parameterType="java.util.HashMap">
+        INSERT INTO MO_KPI_SUBJECTIVE (KPI_ID,AREA_NO,KPI_CODE,KPI_NAME,KPI_TYPE,APPLY_TYPE,ORG_NO,
+            CREATE_TIME,OPERATOR,STATUS,DEL_FLAG,REMARK,SBJ_TYPE,SBJ_FREQUENCY,RESERVE_DAY,AUTO_SBJ,
+            BASE_SCORE,H_SCORE,L_SCORE,SPC_SCORE,L_BASE_LINE,H_BASE_LINE) 
+        VALUES (#{kpiID,jdbcType=NUMERIC},#{areaNo,jdbcType=VARCHAR},#{kpiCode,jdbcType=VARCHAR},#{kpiName,jdbcType=VARCHAR},#{kpiType,jdbcType=VARCHAR},
+            #{applyType,jdbcType=VARCHAR},#{orgNo,jdbcType=VARCHAR},#{createTime,jdbcType=TIMESTAMP},#{operator,jdbcType=VARCHAR},
+            #{status,jdbcType=VARCHAR},#{delFlag,jdbcType=VARCHAR},#{remark,jdbcType=VARCHAR},#{sbjType,jdbcType=VARCHAR},
+            #{sbjFrequency,jdbcType=VARCHAR},#{reserveDay,jdbcType=NUMERIC},#{autoSbj,jdbcType=VARCHAR},#{baseScore,jdbcType=NUMERIC},#{hScore,jdbcType=NUMERIC},
+            #{lScore,jdbcType=NUMERIC},#{spcScore,jdbcType=NUMERIC},#{lBaseLine,jdbcType=NUMERIC},#{hBaseLine,jdbcType=NUMERIC}
+        )
+    </insert>
+    
+    <!-- 插入机构360方案考核对象 -->
+    <insert id="insertSbjOrgObj" parameterType="com.sunline.pams.plan.bean.sbj.MoSbjOrgObj">
+        INSERT INTO MO_SBJ_ORG_OBJ (WAY_CODE,SEQ_NUM,ORG_LEVEL,ORG_TYPE,WHITE_LIST,BLACK_LIST,
+        SPR_POST,SPR_WHITE_LIST,SPR_BLACK_LIST,SBDN_POST,SBDN_WHITE_LIST,SBDN_BLACK_LIST,
+        PEER_POST,PEER_WHITE_LIST,PEER_BLACK_LIST) VALUES 
+        ( 
+            #{wayCode,jdbcType=VARCHAR},#{seqNum,jdbcType=NUMERIC},#{orgLevel,jdbcType=VARCHAR},#{orgType,jdbcType=VARCHAR},
+            #{whiteList,jdbcType=VARCHAR},#{blackList,jdbcType=VARCHAR},#{sprPost,jdbcType=VARCHAR},#{sprWhiteList,jdbcType=VARCHAR},
+            #{sprBlackList,jdbcType=VARCHAR},#{sbdnPost,jdbcType=VARCHAR},#{sbdnWhiteList,jdbcType=VARCHAR},#{sbdnBlackList,jdbcType=VARCHAR},
+            #{peerPost,jdbcType=VARCHAR},#{peerWhiteList,jdbcType=VARCHAR},#{peerBlackList,jdbcType=VARCHAR}
+        )
+    </insert>
+    
+    <!-- 插入机构 评价方案指标表 -->
+    <insert id="insertSbjOrgKpi" parameterType="com.sunline.pams.plan.bean.sbj.MoSbjOrgKpi">
+         INSERT INTO MO_SBJ_ORG_KPI (WAY_CODE,SEQ_NUM,KPI_CODE,DIMENSION_NO,RATE,APPRAISE_METHOD,
+             BASE_SCORE,H_SCORE,L_SCORE,SPC_SCORE,L_BASE_LINE,H_BASE_LINE) VALUES
+         (	
+            #{wayCode,jdbcType=VARCHAR},#{seqNum,jdbcType=NUMERIC}, #{kpiCode,jdbcType=VARCHAR},#{dimensionNo,jdbcType=VARCHAR},
+            #{rate,jdbcType=NUMERIC},#{appraiseMethod,jdbcType=VARCHAR}, #{baseScore,jdbcType=NUMERIC},#{hScore,jdbcType=NUMERIC},
+            #{lScore,jdbcType=NUMERIC},#{spcScore,jdbcType=VARCHAR}, #{lBaseLine,jdbcType=NUMERIC},#{hBaseLine,jdbcType=NUMERIC}
+         )
+    </insert>
+    
+    <!-- 插入机构 评价方案考核维度-->
+    <insert id="insertSbjOrgDimension" parameterType="com.sunline.pams.plan.bean.sbj.MoSbjOrgDimension">
+         INSERT INTO MO_SBJ_ORG_DIMENSION (WAY_CODE,DIMENSION_NO,DIMENSION_NAME,DIMENSION_RATE,SEQ_NUM) VALUES
+         (
+            #{wayCode,jdbcType=VARCHAR},#{dimensionNo,jdbcType=NUMERIC},
+            #{dimensionName,jdbcType=VARCHAR},
+            #{dimensionRate,jdbcType=NUMERIC},#{seqNum,jdbcType=VARCHAR}
+         )
+    </insert>
+    
+    <!-- 插入机构评价方案表 -->
+    <insert id="insertMoSbjOrg"  parameterType="com.sunline.pams.plan.bean.sbj.MoSbjOrg">
+        INSERT INTO MO_SBJ_ORG (WAY_CODE,AREA_NO,WAY_NAME,WAY_RANGE,START_DAT,END_DAT,WAY_CYCLE,
+            RESERVE_DAY,DELAY_DAY,EDIT_ORG,EDIT_ROLE,WAY_DESC,STATUS,CREATE_TIME,OPERATOR,
+            REVIEW_MAN,REVIEW_TIME,REVIEW_STATUS,REVIEW_OPINION,IS_EXE) VALUES
+        (
+           #{wayCode,jdbcType=VARCHAR},#{areaNo,jdbcType=NUMERIC}, #{wayName,jdbcType=VARCHAR},#{wayRange,jdbcType=VARCHAR},
+           #{startDate,jdbcType=DATE},#{endDate,jdbcType=DATE}, #{wayCycle,jdbcType=VARCHAR},#{reserveDay,jdbcType=NUMERIC},
+           #{delayDay,jdbcType=NUMERIC},#{editOrg,jdbcType=VARCHAR}, #{editRole,jdbcType=VARCHAR},#{wayDesc,jdbcType=VARCHAR},
+           #{status,jdbcType=VARCHAR},#{createTime,jdbcType=TIMESTAMP}, #{operator,jdbcType=VARCHAR},#{reviewMan,jdbcType=VARCHAR},
+           #{reviewTime,jdbcType=TIMESTAMP},#{reviewStatus,jdbcType=VARCHAR}, #{reviewOpinion,jdbcType=VARCHAR},#{isExe,jdbcType=VARCHAR} 
+        )
+    </insert>
+    
+    <!-- 删除机构方案 -->
+    <update id="updateSbjOrgStatus" parameterType="java.util.HashMap">
+        UPDATE MO_SBJ_ORG SET STATUS = #{status,jdbcType=VARCHAR}
+        WHERE WAY_CODE = #{wayCode}
+    </update>
+    
+    <!-- 查询机构360方案指标 -->
+    <resultMap type="com.sunline.pams.plan.bean.sbj.MoSbjOrgKpi" id="moSbjOrgKpi">
+        <result column="WAY_CODE" property="wayCode" jdbcType="VARCHAR"/>
+        <result column="SEQ_NUM" property="seqNum" jdbcType="NUMERIC"/>
+        <result column="KPI_CODE" property="kpiCode" jdbcType="VARCHAR"/>
+        <result column="KPI_NAME" property="kpiName" jdbcType="VARCHAR"/>
+        <result column="DIMENSION_NO" property="dimensionNo" jdbcType="VARCHAR"/>
+        <result column="DIMENSION_NAME" property="dimensionName" jdbcType="VARCHAR"/>
+        <result column="DIMENSION_RATE" property="dimensionRate" jdbcType="VARCHAR"/>
+        <result column="RATE" property="rate" jdbcType="NUMERIC"/>
+        <result column="APPRAISE_METHOD" property="appraiseMethod" jdbcType="VARCHAR"/>
+        <result column="BASE_SCORE" property="baseScore" jdbcType="NUMERIC"/>
+        <result column="H_SCORE" property="hScore" jdbcType="NUMERIC"/>
+        <result column="L_SCORE" property="lScore" jdbcType="NUMERIC"/>
+        <result column="SPC_SCORE" property="spcScore" jdbcType="NUMERIC"/>
+        <result column="L_BASE_LINE" property="lBaseLine" jdbcType="NUMERIC"/>
+        <result column="H_BASE_LINE" property="hBaseLine" jdbcType="NUMERIC"/>
+    </resultMap>
+    <select id="querySbjOrgKpiList" parameterType="java.util.HashMap" resultMap="moSbjOrgKpi">
+        SELECT
+            a.WAY_CODE
+            ,a.SEQ_NUM
+            ,a.KPI_CODE
+            ,a.DIMENSION_NO
+            ,a.RATE
+            ,a.APPRAISE_METHOD
+            ,a.BASE_SCORE
+            ,a.H_SCORE
+            ,a.L_SCORE
+            ,a.SPC_SCORE
+            ,a.L_BASE_LINE
+            ,a.H_BASE_LINE
+            ,b.KPI_NAME
+            ,c.DIMENSION_NAME
+            ,c.DIMENSION_RATE          
+        FROM MO_SBJ_ORG_KPI a
+        LEFT JOIN MO_KPI_SUBJECTIVE b on a.KPI_CODE = b.KPI_CODE
+        LEFT JOIN MO_SBJ_ORG_DIMENSION c on a.DIMENSION_NO = c.DIMENSION_NO and a.WAY_CODE = c.WAY_CODE
+        <where>
+            <if test=" wayCode != null and wayCode !='' ">
+                a.WAY_CODE = #{wayCode}
+            </if>
+        </where>
+        ORDER BY a.SEQ_NUM asc
+    </select>
+    
+    <!-- 查询机构360方案考核对象 -->
+    <resultMap type="com.sunline.pams.plan.bean.sbj.MoSbjOrgObj" id="moSbjOrgObj">
+         <result column="WAY_CODE" property="wayCode" jdbcType="VARCHAR"/>
+         <result column="SEQ_NUM" property="seqNum" jdbcType="NUMERIC"/>
+         <result column="ORG_LEVEL" property="orgLevel" jdbcType="VARCHAR"/>
+         <result column="ORG_TYPE" property="orgType" jdbcType="VARCHAR"/>
+         <result column="WHITE_LIST" property="whiteList" jdbcType="VARCHAR"/>
+         <result column="BLACK_LIST" property="blackList" jdbcType="VARCHAR"/>
+         <result column="SPR_POST" property="sprPost" jdbcType="VARCHAR"/>
+         <result column="SPR_WHITE_LIST" property="sprWhiteList" jdbcType="VARCHAR"/>
+         <result column="SPR_BLACK_LIST" property="sprBlackList" jdbcType="VARCHAR"/>
+         <result column="SBDN_POST" property="sbdnPost" jdbcType="VARCHAR"/>
+         <result column="SBDN_WHITE_LIST" property="sbdnWhiteList" jdbcType="VARCHAR"/>
+         <result column="SBDN_BLACK_LIST" property="sbdnBlackList" jdbcType="VARCHAR"/>
+         <result column="PEER_POST" property="peerPost" jdbcType="VARCHAR"/>
+         <result column="PEER_WHITE_LIST" property="peerWhiteList" jdbcType="VARCHAR"/>
+         <result column="PEER_BLACK_LIST" property="peerBlackList" jdbcType="VARCHAR"/>
+    </resultMap>
+    <select id="querySbjOrgObjList" parameterType="java.util.HashMap" resultMap="moSbjOrgObj">
+        SELECT
+            WAY_CODE       
+            ,SEQ_NUM        
+            ,ORG_LEVEL      
+            ,ORG_TYPE       
+            ,WHITE_LIST     
+            ,BLACK_LIST     
+            ,SPR_POST       
+            ,SPR_WHITE_LIST 
+            ,SPR_BLACK_LIST 
+            ,SBDN_POST      
+            ,SBDN_WHITE_LIST
+            ,SBDN_BLACK_LIST
+            ,PEER_POST      
+            ,PEER_WHITE_LIST
+            ,PEER_BLACK_LIST
+        FROM MO_SBJ_ORG_OBJ 
+        <where>
+            <if test=" wayCode != null and wayCode !='' ">
+                WAY_CODE = #{wayCode}
+            </if>
+        </where>
+        order by SEQ_NUM asc
+    </select>
+    
+    <!-- 删除维度 -->
+    <delete id="deleteSbjOrgDimension" parameterType="java.util.HashMap">
+        DELETE FROM MO_SBJ_ORG_DIMENSION
+        <where>
+            <if test=" wayCode != null and wayCode != ''">
+                WAY_CODE = #{wayCode}
+            </if>
+        </where>
+    </delete>
+    
+    <!-- 删除指标 -->
+    <delete id="deleteSbjOrgKpi" parameterType="java.util.HashMap">
+        DELETE FROM MO_SBJ_ORG_KPI
+        <where>
+            <if test=" wayCode != null and wayCode != ''">
+                WAY_CODE = #{wayCode}
+            </if>
+        </where>
+    </delete>
+    
+    <!-- 删除考核对象 -->
+    <delete id="deleteSbjOrgObj" parameterType="java.util.HashMap">
+        DELETE FROM MO_SBJ_ORG_OBJ
+        <where>
+            <if test=" wayCode != null and wayCode != ''">
+                WAY_CODE = #{wayCode}
+            </if>
+        </where>
+    </delete>
+    
+     <!-- 更新机构评价方案表 -->
+    <insert id="updateMoSbjOrg"  parameterType="com.sunline.pams.plan.bean.sbj.MoSbjOrg">
+        update MO_SBJ_ORG set WAY_NAME= #{wayName,jdbcType=VARCHAR},WAY_RANGE = #{wayRange,jdbcType=VARCHAR},
+           START_DAT = #{startDate,jdbcType=DATE},END_DAT = #{endDate,jdbcType=DATE}, WAY_CYCLE = #{wayCycle,jdbcType=VARCHAR},
+           RESERVE_DAY = #{reserveDay,jdbcType=NUMERIC},DELAY_DAY = #{delayDay,jdbcType=NUMERIC},EDIT_ORG = #{editOrg,jdbcType=VARCHAR}, 
+           EDIT_ROLE = #{editRole,jdbcType=VARCHAR},WAY_DESC = #{wayDesc,jdbcType=VARCHAR}       
+        where way_code = #{wayCode}
+    </insert>
+    
+    <!-- 机构评价执行表映射 -->
+    <resultMap type="com.sunline.pams.plan.bean.sbj.MoSbjOrgExec" id="moSbjOrgExec">     
+        <result column="WAY_CODE" property="wayCode" jdbcType="VARCHAR" javaType="String"/>
+        <result column="PERIOD" property="period" jdbcType="VARCHAR" javaType="String"/>
+        <result column="KPI_CODE" property="kpiCode" jdbcType="VARCHAR" javaType="String"/>
+        <result column="ORG_NO" property="orgNo" jdbcType="VARCHAR" javaType="String"/>
+        <result column="APPRAISER" property="appraiser" jdbcType="VARCHAR" javaType="String"/>
+        <result column="AREA_NO" property="areaNo" jdbcType="CHAR" javaType="String"/>
+        <result column="START_DATE" property="startDate" jdbcType="DATE" javaType="DATE"/>
+        <result column="END_DATE" property="endDate" jdbcType="DATE" javaType="DATE"/>
+        <result column="APPRAISE_METHOD" property="appraiseMethod" jdbcType="VARCHAR" javaType="String"/>
+        <result column="BASE_SCORE" property="baseScore" jdbcType="NUMERIC" />
+        <result column="H_SCORE" property="hScore" jdbcType="NUMERIC" />
+        <result column="L_SCORE" property="lScore" jdbcType="NUMERIC" />
+        <result column="SPC_SCORE" property="spcScore" jdbcType="NUMERIC" />
+        <result column="L_BASE_LINE" property="lBaseLine" jdbcType="NUMERIC" />
+        <result column="SBJ_SCORE" property="sbjScore" jdbcType="NUMERIC" />
+        <result column="SBJ_CONTENT" property="sbjContent" jdbcType="VARCHAR"/>
+        <result column="OPERATOR" property="operator" jdbcType="VARCHAR" />
+        <result column="SBJ_TIME" property="sbjTime" jdbcType="TIMESTAMP" />
+        <result column="SBJ_FLAG" property="sbjFlag" jdbcType="CHAR" /> 
+        <result column="WAY_NAME" property="wayName" jdbcType="VARCHAR" javaType="String"/>     
+        <result column="KPI_NAME" property="kpiName" jdbcType="VARCHAR" javaType="String"/>
+        <result column="DEPTNAME" property="deptName" jdbcType="VARCHAR" javaType="String"/>
+    </resultMap>
+    <!-- 查询可以评价执行表，判断当前人是否有评价权限 -->
+    <select id="querySbjOrgExelistPage" parameterType="java.util.HashMap" resultMap="moSbjOrgExec">
+        SELECT 
+            a.WAY_CODE
+            ,a.PERIOD
+            ,a.KPI_CODE
+            ,a.ORG_NO
+            ,a.APPRAISER
+            ,a.AREA_NO
+            ,a.START_DATE
+            ,a.END_DATE
+            ,a.APPRAISE_METHOD
+            ,a.BASE_SCORE
+            ,a.H_SCORE
+            ,a.L_SCORE
+            ,a.SPC_SCORE
+            ,a.L_BASE_LINE
+            ,a.SBJ_SCORE
+            ,a.SBJ_CONTENT
+            ,a.OPERATOR
+            ,a.SBJ_TIME
+            ,a.SBJ_FLAG
+            ,b.WAY_NAME 
+            ,d.KPI_NAME
+            ,e.DEPTNAME
+        FROM MO_SBJ_ORG_EXEC a 
+        LEFT JOIN MO_SBJ_ORG b on a.WAY_CODE = b.WAY_CODE
+        LEFT JOIN MO_SBJ_ORG_KPI c on a.KPI_CODE = c.KPI_CODE and a.WAY_CODE = c.WAY_CODE
+        LEFT JOIN MO_KPI_SUBJECTIVE d on a.KPI_CODE = D.kpi_code
+        LEFT JOIN PCMC_DEPT e on a.ORG_NO = e.DEPTCODE
+        <where>
+            <if test=" wayNameLike != null and wayNameLike !='' ">
+                and b.WAY_NAME LIKE #{wayNameLike}
+            </if>
+            <if test=" startDate != null ">
+                and a.START_DATE &lt; #{startDate}
+            </if>
+            <if test=" endDate != null ">
+                and a.END_DATE &gt; #{endDate}
+            </if>
+            <if test=" dimensionNo != null and dimensionNo !='' ">
+                and c.DIMENSION_NO = #{dimensionNo}
+            </if>
+            <if test=" orgNo != null and orgNo !='' ">
+                and c.orgNo = #{orgNo}
+            </if>
+            <if test=" period != null and period !='' ">
+                and c.period = #{period}
+            </if>
+            <if test=" appraiser != null and appraiser !='' ">
+                and a.APPRAISER = #{appraiser}
+            </if>
+        </where>
+        order by a.WAY_CODE,c.SEQ_NUM asc
+    </select>
+</mapper> 	  

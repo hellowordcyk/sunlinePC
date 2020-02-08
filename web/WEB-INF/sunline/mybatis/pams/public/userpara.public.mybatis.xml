@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="com.sunline.pams.mybatis.pams.userpara" >
+ 	<resultMap type="java.util.HashMap" id="userPara">
+ 		<result column="PARA_CODE" property="paraCode"/>
+ 		<result column="AREA_NO" property="areaNo"/>
+ 		<result column="AREA_NAME" property="areaName"/>
+ 		<result column="PARA_NAME" property="paraName"/>
+ 		<result column="STATUS" property="status"/>
+ 		<result column="REMARK" property="remark"/>
+ 	</resultMap>
+	<resultMap type="java.util.HashMap" id="deptMap">
+ 		<result column="DEPTCODE" property="deptCode"/>
+ 		<result column="DEPTNAME" property="deptName"/>
+ 		<result column="PARA_VALUE" property="paraValue"/>
+ 	</resultMap>
+ 	<resultMap type="java.util.HashMap" id="deptInfo">
+ 		<result column="ORGSEQ" property="orgseq"/>
+ 		<result column="LEVELP" property="levelp"/>
+ 	</resultMap>
+ 	<resultMap type="java.util.HashMap" id="userValue">
+ 		<result column="PARA_VALUE" property="paraValue"/>
+ 	</resultMap>
+ 	<resultMap type="java.util.HashMap" id="userParaValue">
+ 		<result column="ENABLE_DATE" property="startDate"/>
+ 		<result column="DISENABLE_DATE" property="endDate"/>
+ 		<result column="ORG_NO" property="deptCode"/>
+ 		<result column="DEPTNAME" property="deptName"/>
+ 		<result column="PARA_VALUE" property="paraValue"/>
+ 	</resultMap>
+ 	<resultMap type="java.util.HashMap" id="orgType">
+ 		<result column="PARACD" property="paracd"/>
+ 		<result column="PARANA" property="parana"/>
+ 	</resultMap>
+ 	<resultMap type="java.util.HashMap" id="areaNo">
+ 		<result column="AREA_NO" property="areaNo"/>
+ 		<result column="AREA_NAME" property="areaName"/>
+ 	</resultMap>
+	<select id="queryUserParalistPage" parameterType="java.util.HashMap" resultMap="userPara">
+		SELECT DISTINCT 
+			A.PARA_CODE ,
+			A.AREA_NO ,
+			B.AREA_NAME ,
+			A.PARA_NAME ,
+			A.STATUS ,
+			A.REMARK
+		FROM MO_PAR_INFO_ORG A
+		LEFT JOIN SYS_PUB_AREA B ON A.AREA_NO = B.AREA_NO 
+		<where> 
+		<if test="areaList != null and !areaList.isEmpty()">
+			A.AREA_NO IN<foreach collection="areaList" item="area" open="(" separator="," close=")">#{area.areaNo}</foreach>
+		</if>
+		
+		<if test="paraCode != null and paraCode !=''">
+			AND A.PARA_CODE = #{paraCode}
+		</if>
+		<if test="paraName != null and paraName !=''">
+			AND A.PARA_NAME LIKE #{paraName}
+		</if>
+		<if test="areaNo != null and areaNo !=''">
+			AND A.AREA_NO = #{areaNo}
+		</if>
+		<if test="paraNa != null and paraNa !=''">
+			AND A.PARA_NAME = #{paraNa}
+		</if>
+		<if test="status != null and status !=''">
+			AND A.STATUS = #{status}
+		</if>
+		</where>
+	</select>
+
+	<select id="getRuleDept" parameterType="java.util.HashMap" resultMap="deptMap">
+		SELECT DEPTCODE,DEPTNAME FROM PCMC_DEPT
+		WHERE DEPTCODE IN (${sql}) AND AREANO = #{areaNo}      	
+	</select>
+	
+	<insert id="addUserPara" parameterType="java.util.HashMap">
+		INSERT INTO MO_PAR_INFO_ORG(PARA_CODE,AREA_NO,PARA_NAME,STATUS,REMARK)
+		VALUES(#{paraCode},#{areaNo},#{paraName},#{status},#{remark,javaType=String})
+	</insert>
+	<insert id="addUserParaValue" parameterType="java.util.HashMap">
+		INSERT INTO MO_PAR_DETAIL_ORG(PARA_CODE,ORG_NO,ENABLE_DATE,DISENABLE_DATE,AREA_NO,PARA_VALUE,OPERATOR,CREATE_TIME)
+		VALUES(#{paraCode},#{deptCode},#{startDate},#{endDate},#{areaNo},#{paraValue,jdbcType=NUMERIC},#{operator},#{createTime})
+	</insert>
+	
+	<delete id="deleteUserPara" parameterType="java.util.List">
+		DELETE FROM MO_PAR_INFO_ORG WHERE PARA_CODE IN <foreach collection="list" item="paraCode" open="(" separator="," close=")">#{paraCode}</foreach>
+	</delete>
+	<delete id="deleteUserParaValue" parameterType="java.util.List">
+		DELETE FROM MO_PAR_DETAIL_ORG WHERE PARA_CODE IN <foreach collection="list" item="paraCode" open="(" separator="," close=")">#{paraCode}</foreach>
+	</delete>
+	
+	<select id="queryUserParaValue" parameterType="java.util.HashMap" resultMap="userParaValue">
+		SELECT 
+			A.ENABLE_DATE,A.DISENABLE_DATE,B.DEPTCODE ORG_NO,B.DEPTNAME,A.PARA_VALUE 
+		FROM PCMC_DEPT B
+		LEFT JOIN MO_PAR_DETAIL_ORG A
+		ON A.ORG_NO = B.DEPTCODE AND A.AREA_NO = B.AREANO and A.PARA_CODE = #{paraCode}
+		WHERE b.corpcode=#{corpCode} and  B.DEPTCODE IN (${sql}) and AREANO = #{areaNo}
+		ORDER BY A.ENABLE_DATE
+	</select>
+	
+	<select id="queryDateArea" parameterType="java.util.HashMap" resultMap="userParaValue">
+		SELECT ENABLE_DATE,DISENABLE_DATE FROM MO_PAR_DETAIL_ORG
+		WHERE area_no = #{areaNo} and PARA_CODE = #{paraCode}
+		GROUP BY ENABLE_DATE,DISENABLE_DATE	
+	</select>
+	
+	<select id="queryUserParaDeptInfo" resultType="String">
+		SELECT DISTINCT PD.LEVELP FROM PCMC_DEPT PD ORDER BY LEVELP ASC
+	</select>
+	
+	<select id="queryUserParaDeptByEditlistPage" parameterType="java.util.HashMap" resultMap="deptMap">
+		SELECT B.DEPTCODE,B.DEPTNAME,A.PARA_VALUE FROM PCMC_DEPT B
+		LEFT JOIN MO_PAR_DETAIL_ORG A
+		ON A.ORG_NO = B.DEPTCODE 
+		<if test="paraCode != null and paraCode !=''">
+		 	AND A.PARA_CODE = #{paraCode}
+		</if>
+		WHERE DEPTCODE IN (${sql}) AND AREANO = #{areaNo}  
+		<if test="level != null and level !=''">
+			AND B.LEVELP = #{level}
+		</if> 	
+		<if test="deptInfo != null and deptInfo !=''">
+			AND B.ORGTYPE = #{deptInfo}
+		</if>
+		<if test="deptNumOrName != null and deptNumOrName !=''">
+			AND (B.DEPTCODE LIKE #{deptNumOrName} OR DEPTNAME LIKE #{deptNumOrName})
+		</if>
+		AND ((A.ENABLE_DATE = TO_DATE('${startDate}', 'YYYY-MM-DD') AND
+              A.DISENABLE_DATE = TO_DATE('${endDate}', 'YYYY-MM-DD')) 
+              or (A.ENABLE_DATE is null and A.DISENABLE_DATE is null))
+	</select>
+	
+	<select id="queryOrgSeqByDeptCode" parameterType="java.util.HashMap" resultMap="deptInfo">
+		SELECT LEVELP,ORGSEQ FROM PCMC_DEPT WHERE DEPTCODE = #{deptcode}
+	</select>
+	
+	<select id="queryUpOrgUserParaByDeptCode" parameterType="java.util.HashMap" resultMap="userValue">
+		SELECT to_char(PARA_VALUE,'FM990.00') PARA_VALUE FROM MO_PAR_DETAIL_ORG A where
+		<if test="deptcode != null and deptcode !=''">
+		 	A.ORG_NO = #{deptcode} AND
+		</if>
+		<if test="paraCode != null and paraCode !=''">
+		 	 A.PARA_CODE = #{paraCode} AND 
+		</if>
+			(A.ENABLE_DATE = TO_DATE('${startDate}', 'YYYY-MM-DD') AND
+              A.DISENABLE_DATE = TO_DATE('${endDate}', 'YYYY-MM-DD')) 
+	</select>
+	
+	<select id="queryUserParaDeptlistPage" parameterType="java.util.HashMap" resultMap="deptMap">
+		SELECT B.DEPTCODE,B.DEPTNAME FROM PCMC_DEPT B
+		WHERE DEPTCODE IN (${sql}) AND AREANO = #{areaNo}  
+		<if test="level != null and level !=''">
+			AND B.LEVELP = #{level}
+		</if> 	
+		<if test="deptInfo != null and deptInfo !=''">
+			AND B.ORGTYPE = #{deptInfo}
+		</if>
+		<if test="deptNumOrName != null and deptNumOrName !=''">
+			AND (B.DEPTCODE LIKE #{deptNumOrName} OR DEPTNAME LIKE #{deptNumOrName})
+		</if>
+	</select>
+	
+	<select id="queryUserParaOrgType" parameterType="java.util.HashMap" resultMap="orgType">
+		SELECT P.PARACD,P.PARANA FROM PCMC_KNP_PARA P WHERE P.PARATP = #{paratp} AND P.SUBSCD = #{subscd} AND P.PARACD != '%'
+	</select>
+	
+	<select id="queryUserParaAreaNo" resultMap="areaNo">
+		select s.area_no,s.area_name from SYS_PUB_AREA s
+	</select>
+	
+	<delete id="editDeleteUserParaValue" parameterType="java.util.HashMap">
+		DELETE FROM MO_PAR_DETAIL_ORG A WHERE A.PARA_CODE = #{paraCode} AND 
+		A.ORG_NO = #{deptCode} AND A.ENABLE_DATE = TO_DATE('${startDate}', 'YYYY-MM-DD')
+		 AND A.DISENABLE_DATE = TO_DATE('${endDate}', 'YYYY-MM-DD') 
+	</delete>
+	<delete id="editDeleteUserParaValueList" parameterType="java.util.HashMap">
+		DELETE FROM MO_PAR_INFO_ORG A WHERE A.PARA_CODE = #{paraCode}
+	</delete>
+</mapper> 	  
+ 	 

@@ -1,0 +1,72 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 2006-1-9 20:10:33 by Hibernate Tools 3.1.0 beta1JBIDERC2 -->
+<hibernate-mapping>
+    <class name="com.sunline.bimis.pcmc.db.PcmcDept" table="pcmc_dept">
+        <id name="deptid" type="java.lang.Long">
+            <column name="deptid" scale="0" />
+      		<generator class="com.sunline.jraf.id.HBNIDGenerator" >
+			    <param name="seqname">pcmc_dept</param>
+			    <param name="column">deptid</param>
+			</generator>
+        </id>
+        <property name="deptcode" type="string">
+            <column name="deptcode" length="20" not-null="true" unique="true" />
+        </property>
+        <property name="pdeptid" type="java.lang.Long">
+            <column name="pdeptid" scale="0" not-null="true" />
+        </property>
+        <property name="levelp" type="java.lang.Long">
+            <column name="levelp" precision="3" scale="0" />
+        </property>
+        <property name="deptname" type="string">
+            <column name="deptname" length="100" not-null="true" />
+        </property>
+        <property name="linkman" type="string">
+            <column name="linkman" length="40" />
+        </property>
+        <property name="phone" type="string">
+            <column name="phone" length="60" />
+        </property>
+        <property name="remark" type="string">
+            <column name="remark" length="200" />
+        </property>
+        <property name="brsmna" type="string">
+            <column name="brsmna" length="40" />
+        </property>
+        <property name="orgtype" type="string">
+            <column name="orgtype" length="10" />
+        </property>
+        <property name="orgseq" type="string">
+            <column name="orgseq" length="256" />
+        </property>
+        <property name="areano" type="string">
+            <column name="areano" length="40" />
+        </property>
+        <property name="orgbusssize" type="string">
+            <column name="orgbusssize" length="10" />
+        </property>
+        <property name="orgnaturetype" type="string">
+            <column name="orgnaturetype" length="10" />
+        </property>
+        <property name="orgbusstype" type="string">
+            <column name="orgbusstype" length="10" />
+        </property>
+        <property name="corpcode" type="string">
+            <column name="corpcode" length="16" />
+        </property>
+        <property name="disable" type="string">
+            <column name="disable" length="16" />
+        </property>
+        <property name="orgcode" type="string">
+            <column name="org_code" length="64" />
+        </property>
+        <set name="pcmcUsers" inverse="true">
+            <key>
+                <column name="deptid" scale="0" not-null="true" />
+            </key>
+            <one-to-many class="com.sunline.bimis.pcmc.db.PcmcUser" />
+        </set>
+    </class>
+</hibernate-mapping>

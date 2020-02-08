@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="com.sunline.pams.mybatis.public.custrank" >
+ 
+ 	<resultMap type="java.util.HashMap" id="queryCustMgrRanklistPage_map">
+ 	  		<result column="SUM_TYPE" property="sum_type"/>
+ 	  		<result column="SUM_SUBTYPE" property="sum_subtype"/>
+ 	  		<result column="KPI_CODE" property="kpi_code"/>
+ 	  		<result column="KPI_NAME" property="kpi_name"/>
+ 	  </resultMap> 
+ 	 <!--客户经理业绩配置表信息维护 -->
+ 	 <select id="queryCustMgrRanklistPage" parameterType="java.util.HashMap" resultMap="queryCustMgrRanklistPage_map">
+		select  
+		sum_type as SUM_TYPE,
+		sum_subtype as SUM_SUBTYPE,
+		kpi_code as KPI_CODE,
+		kpi_name as KPI_NAME
+		from md_rank_paset 
+		<where>
+		<if test= "kpi_name != null and kpi_name != ''"> 
+			and kpi_name like #{kpi_name} <!-- 模糊查询 -->
+		</if>
+		<if test= "kpi_code != null and kpi_code != ''"> 
+			and kpi_code like #{kpi_code} <!-- 模糊查询 -->
+		</if>	
+		<if test= "sum_type != null and sum_type != ''"> 
+			and sum_type like #{sum_type} <!-- 模糊查询 -->
+		</if>	
+		<if test= "sum_subtype != null and sum_subtype != ''"> 
+			and sum_subtype like #{sum_subtype} <!-- 模糊查询 -->
+		</if>
+		</where>		
+ 	 </select> 	
+ 	 
+ 	 <insert id="insertCustMgrRank" parameterType="java.util.HashMap" >
+	 	insert into md_rank_paset 
+	 	(sum_type,
+	 	sum_subtype,
+	 	kpi_code,
+	 	kpi_name) 
+	 	values
+	 	(#{sum_type},
+	 	#{sum_subtype},
+	 	#{kpi_code},
+	 	#{kpi_name})
+ 	 </insert>
+
+     <update id="updateCustMgrRank" parameterType="java.util.HashMap" >  
+        update md_rank_paset set 
+        sum_type=#{sum_type},
+        sum_subtype=#{sum_subtype},
+        kpi_code=#{kpi_code},
+        kpi_name=#{kpi_name} 
+        where
+        kpi_code=#{kpi_code}
+     </update>
+     
+     <delete id="deleteCustMgrRank" parameterType="java.util.HashMap" >
+    	delete from md_rank_paset 
+    	where kpi_code=#{kpi_code}
+     </delete>
+     
+     <resultMap type="java.util.HashMap" id="queryCustMgrRankById_map">
+ 	  		<result column="SUM_TYPE" property="sum_type"/>
+ 	  		<result column="SUM_SUBTYPE" property="sum_subtype"/>
+ 	  		<result column="KPI_CODE" property="kpi_code"/>
+ 	  		<result column="KPI_NAME" property="kpi_name"/>
+ 	  </resultMap>
+     <select id="queryCustMgrRankById" parameterType="java.util.HashMap" resultMap="queryCustMgrRankById_map">
+		select  
+		sum_type as SUM_TYPE,
+		sum_subtype as SUM_SUBTYPE,
+		kpi_code as KPI_CODE,
+		kpi_name as KPI_NAME
+		from md_rank_paset 
+		<where>
+        <if test= "kpi_code != null and kpi_code != ''"> 
+			kpi_code = #{kpi_code} 
+		</if>
+		</where>	
+ 	 </select> 
+ 	 	
+ </mapper>

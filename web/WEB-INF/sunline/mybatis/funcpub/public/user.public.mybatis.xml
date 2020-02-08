@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="com.sunline.funcpub.mybatis.public.pubdatasrc" >
+	 	 
+	<insert id="insertMenu" parameterType="java.util.HashMap" >
+		INSERT INTO PCMC_MENU (MENUID,SUBSYSID,MENUNAME,LEVELP,CORPCODE) VALUES(#{menuId,jdbcType=NUMERIC},#{subsysId,jdbcType=NUMERIC},#{menuName,jdbcType=VARCHAR},#{levelp,jdbcType=NUMERIC},#{corpcode,jdbcType=VARCHAR})
+ 	 </insert> 	
+ 	 <select id="getMenuInfolistPage" parameterType="java.util.HashMap"   resultType="java.util.HashMap">
+    	SELECT * FROM PCMC_MENU WHERE 1=1 
+    	<if test= "menuName != null and menuName != ''">
+			AND MENUNAME LIKE #{menuName}
+        </if>
+    </select>
+    <delete id="deleteMenu" parameterType="java.util.HashMap" >
+    	DELETE FROM PCMC_MENU WHERE MENUID=#{menuid} 
+    </delete>
+</mapper> 	  
+ 	 

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="GBK" ?>
+<jraf_data clazz="com.sunline.jraf.web.HTTPSessionData" desc="存储在Session中的对象">
+	<bimis clazz="java.util.HashMap" desc="全局对象"/>
+	<PCMC clazz="java.util.HashMap" desc="门户控制数据"/>
+</jraf_data>

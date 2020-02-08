@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="com.sunline.funcpub.mybatis.public.menumanager" >
+ 
+ 	<select id="getSubsys" parameterType="java.util.HashMap"   resultType="java.util.HashMap">
+ 		select subsysid "subsysid",cnname "cnname" from pcmc_subsys 
+ 		where subsysid in (select distinct subsysid from pcmc_menu where corpcode=#{corpcode})
+ 	</select>
+ 	
+ 	<resultMap type="java.util.HashMap" id="queryMenu_rsm">
+ 		<result column="menuid" property="menuid"/>
+ 		<result column="corpcode" property="corpcode"/>
+ 		<result column="subsysid" property="subsysid"/>
+ 		<result column="pmenuid" property="pmenuid"/>
+ 		<result column="levelp" property="levelp"/>
+ 		<result column="menuname" property="menuname"/>
+ 		<result column="linkurl" property="linkurl"/>
+ 		<result column="isinternet" property="isinternet"/>
+ 		<result column="remark" property="remark"/>
+ 		<result column="sortno" property="sortno"/>
+ 		<result column="is_leaf" property="is_leaf"/>
+ 		<result column="menuseq" property="menuseq"/>
+ 	</resultMap>
+ 	<select id="queryMenu" parameterType="java.util.HashMap" resultMap="queryMenu_rsm">
+ 		select 
+ 			menuid,
+ 			corpcode,
+ 			subsysid,
+ 			pmenuid,
+ 			levelp,
+ 			menuname,
+ 			imgurl,
+ 			linkurl,
+ 			isinternet,
+ 			remark,
+ 			sortno,
+ 			is_leaf,
+ 			menuseq
+ 		 from pcmc_menu
+ 		<where>
+ 			<if test="corpcode!=null and corpcode.trim()!=''">
+ 				and corpcode=#{corpcode}
+ 			</if>
+ 			<if test="pid != null and pid==-1">
+ 				and pmenuid is null
+ 			</if>
+ 			<if test="pid !=null and pid != -1">
+ 				and pmenuid = #{pid}
+ 			</if>
+ 			<if test="menuid!=null">
+ 				and menuid=#{menuid}
+ 			</if>
+ 			<if test="levelp!=null">
+ 				and levelp=#{levelp}
+ 			</if>
+ 			<if test="menuname!=null and menuname!='' and menuname.trim()!='%%'">
+ 				and menuname like  #{menuname} 
+ 			</if>
+ 		</where>
+ 	</select>
+ 	<select id="getOneLevelMenu" parameterType="java.util.HashMap"   resultType="java.util.HashMap">
+ 		select menuid "menuid",menuname "menuname",levelp "levelp" from pcmc_menu
+		where subsysid = #{subsysid}
+		and levelp = 1 and corpcode=#{corpcode}
+		order by sortno
+ 	</select>
+ 	
+ 	<select id="getChildMenu" parameterType="java.util.HashMap"   resultType="java.util.HashMap">
+ 		select menuid "menuid",menuname "menuname",levelp "levelp",is_leaf "isleaf",menuseq "menuseq" from pcmc_menu
+		where pmenuid = #{menuid} and menuid &lt;&gt; #{menuid} and corpcode=#{corpcode} order by sortno
+ 	</select>
+ 	
+ 	<select id="getMenuInfoById" parameterType="java.util.HashMap"   resultType="java.util.HashMap">
+    	select menuid "menuid",subsysid "subsysid",pmenuid "pmenuid",levelp "levelp",menuname "menuname",
+			imgurl "imgurl",linkurl "linkurl",isinternet "isinternet",remark "remark",sortno "sortno",is_leaf "isleaf",
+			menuseq "menuseq", displaytype "displaytype"
+		from pcmc_menu  
+		<where>
+			corpcode=#{corpcode}
+	    	<if test= "menuid != null and menuid != ''">
+				and menuid = #{menuid}
+	        </if>
+	        <if test= "subsysid != null and subsysid != ''">
+				and subsysid = #{subsysid}
+	        </if>
+        </where>
+    </select>
+    
+    <select id="getMenuseqByid" parameterType="java.util.HashMap"   resultType="java.util.HashMap">
+    	select menuseq "menuseq" from pcmc_menu where menuid = #{menuid} and corpcode=#{corpcode}
+    </select>
+    
+    <update id="updateMenuInfo" parameterType="java.util.HashMap">
+    	update pcmc_menu set 
+	    	  menuname = #{menuname,jdbcType=VARCHAR},
+	    	   linkurl = #{linkurl,jdbcType=VARCHAR},
+	    	isinternet = #{isinternet,jdbcType=VARCHAR},
+	    	    remark = #{remark,jdbcType=VARCHAR}, 
+	    	    imgurl = #{imgurl,jdbcType=VARCHAR},
+	    	   is_leaf = #{isleaf,jdbcType=CHAR},
+	    	   pmenuid = #{pmenuid,jdbcType=NUMERIC},
+	    	   displaytype = #{displaytype,jdbcType=NUMERIC}
+	    <if test= "levelp != null and levelp != '' ">
+			 ,levelp = #{levelp}
+        </if>
+        <if test= "subsysid != null and subsysid != '' ">
+			 ,subsysid = #{subsysid}
+        </if>
+	    <if test= "sortno != null and sortno != '' ">
+			 ,sortno = #{sortno}
+        </if>
+        <if test= "menuseq != null and menuseq != '' ">
+			 ,menuseq = #{menuseq}
+        </if>
+    	where menuid = #{menuid} and corpcode=#{corpcode}
+    </update>
+     <update id="updateMenuseq" parameterType="java.util.HashMap">
+    	update pcmc_menu set menuseq = #{menuseq}   
+    	<if test= "levelp != null and levelp != '' ">
+			 ,levelp = #{levelp}
+       </if>
+    	where menuid = #{menuid} and corpcode=#{corpcode}
+    </update>
+    
+    <update id="updateMenuIsLeaf" parameterType="java.util.HashMap">
+        update pcmc_menu set is_leaf = #{isLeaf}
+        where menuid = #{menuid} and corpcode=#{corpcode}
+    </update>
+    
+    <!-- 统计菜单是否 还有子节点数量，用于判断是否是 叶子节点 -->
+    <select id="parentIsLeaf" parameterType="java.util.HashMap" resultType="java.lang.Integer">
+        select sum(cc) from (
+			select count(*) as cc from pcmc_menu where pmenuid=#{pCode} and corpcode=#{corpcode}
+			union
+			select count(*) as cc from sys_func_page where page_menuid=#{pCode} and corpcode=#{corpcode}
+			union
+			select count(*) as cc from sys_func_method where method_menuid=#{pCode} and corpcode=#{corpcode}
+		) t
+    </select>
+    
+    <select id="queryMenusUnderMenu" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+        select 
+            menuid "menuid",
+            subsysid "subsysid",
+            pmenuid "pmenuid",
+            levelp "levelp",
+            menuname "menuname",
+            imgurl "imgurl",
+            linkurl "linkurl",
+            isinternet "isinternet",
+            remark "remark",
+            sortno "sortno",
+            is_leaf "isleaf",
+            menuseq "menuseq"
+         from pcmc_menu 
+        <where>
+        	corpcode=#{corpcode}
+	       <if test="menuSeq!=null and menuSeq.trim()!='' and menuSeq.trim()!='%%'">
+	            and menuseq like #{menuSeq}
+	       </if>
+        </where>
+    </select>
+    
+    <insert id="addMenu" parameterType="java.util.HashMap">
+    	insert into pcmc_menu(menuid,menuname,subsysid,isinternet,levelp,imgurl,linkurl,remark,is_leaf,menuseq,corpcode,displaytype
+    	<if test= "sortno != null and sortno != ''">
+			,sortno
+        </if>
+        <if test= "pmenuid != null and pmenuid != ''">
+			,pmenuid
+        </if>
+	    )values(#{menuid,jdbcType=NUMERIC},#{menuname,jdbcType=VARCHAR},#{subsysid,jdbcType=NUMERIC},#{isinternet,jdbcType=VARCHAR},#{levelp,jdbcType=NUMERIC},#{imgurl,jdbcType=VARCHAR},#{linkurl,jdbcType=VARCHAR},#{remark,jdbcType=VARCHAR},#{isleaf,jdbcType=CHAR},#{menuseq,jdbcType=VARCHAR},#{corpcode,jdbcType=VARCHAR},#{displaytype,jdbcType=VARCHAR}
+	    <if test= "sortno != null and sortno != ''">
+			,#{sortno}
+        </if>
+         <if test= "pmenuid != null and pmenuid != ''">
+			,#{pmenuid}
+        </if>
+	    )
+    </insert>
+    <delete id="deleteMenu" parameterType="java.util.HashMap">
+		delete from pcmc_menu where menuseq like #{menuid} and corpcode=#{corpcode}
+	</delete> 
+	
+	<select id="getSortnoForOneLevelMenu" parameterType="java.util.HashMap"   resultType="java.util.HashMap">
+		select case when max(sortno)+1 is null then 1 else max(sortno)+1 end "sortno" from pcmc_menu where levelp = 1 and subsysid = #{subsysid} and corpcode=#{corpcode}
+	</select>
+	<select id="getSortno" parameterType="java.util.HashMap"   resultType="java.util.HashMap">
+		select case when max(sortno)+1 is null then 1 else max(sortno)+1 end "sortno" from pcmc_menu where pmenuid = #{menuid} and corpcode=#{corpcode}
+	</select>
+	
+	<resultMap type="java.util.HashMap" id="hasChildMenu_rsm">
+	   <result property="c" column="c"/>
+	</resultMap>
+	<select id="hasChildMenu" parameterType="java.util.HashMap" resultMap="hasChildMenu_rsm">
+	   select count(*) as c from pcmc_menu where MENUSEQ like #{menuid} and corpcode=#{corpcode}
+	</select>
+	
+	<select id="hasMenuPriv" parameterType="java.util.HashMap" resultType="java.lang.Integer">
+		select count(1)
+		  from pcmc_user u
+		 inner join pcmc_user_role ur
+		    on u.userid = ur.userid
+		 inner join pcmc_role_menu rm
+		    on ur.roleid = rm.roleid
+		 <where>
+		 	 u.usercode=#{usercode,jdbcType=VARCHAR} 
+		 	 and u.corpcode=#{corpcode,jdbcType=VARCHAR} 
+		 	 and rm.menuid=#{menuid,jdbcType=NUMERIC}
+		 </where>
+	</select>
+</mapper> 	  
+ 	 

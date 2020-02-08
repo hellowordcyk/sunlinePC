@@ -1,0 +1,843 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sunline.funcpub.mybatis.public.deptusermanager" >
+	<!-- 机构人员树 -->
+	<select id="getParentDept" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		select deptid as "deptid",deptcode as "deptcode",pdeptid as "pdeptid",deptname as "deptname",org_code as "orgcode" from pcmc_dept 
+		where (deptid = pdeptid or pdeptid not in (select deptid  from pcmc_dept where corpcode=#{corpcode})) and disable = 0 and corpcode=#{corpcode} order by deptcode
+	</select>
+	<select id="getDeptByPdeptid" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		select deptid as "deptid",deptcode as "deptcode",pdeptid as "pdeptid",deptname as "deptname",org_code as "orgcode" from pcmc_dept 
+		<where>   
+			corpcode=#{corpcode}   
+			<if test="orgcode!=null and orgcode.trim()!=''">
+				and org_code=#{orgcode}
+			</if>
+			<if test="pdeptid!=null and pdeptid!=''">  
+			    and deptid != #{pdeptid} and pdeptid = #{pdeptid}
+			</if>
+		</where>
+		and disable = 0
+		order by deptcode
+	</select>
+	
+	<select id="getUserByDeptid" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		select userid as "userid",deptid as "deptid",usercode as "usercode",username as "username" from pcmc_user
+		<where>
+		    disable='0' and corpcode=#{corpcode}
+			<if test="pdeptid!=null and pdeptid!=''">  
+			    and deptid = #{pdeptid}
+			</if>
+		</where>
+		order by usercode
+	</select>
+	<select id="getDeptByid" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		select a.deptid "deptid",a.deptcode "deptcode",a.pdeptid "pdeptid",b.deptname "pdeptname",a.levelp "levelp",a.deptname "deptname",a.orgtype "orgtype",
+		a.linkman "linkman",c.username "username",a.phone "phone",a.brsmna "brsmna",a.areano "areano",a.remark "remark",a.orgseq "orgseq",a.orgnaturetype "orgnaturetype"
+		,a.org_code as "orgcode"
+		from pcmc_dept a 
+		left join pcmc_dept b on a.pdeptid = b.deptid  and a.corpcode=b.corpcode
+		left join pcmc_user c on a.linkman = c.usercode and a.corpcode=c.corpcode
+		<where> 
+			a.corpcode=#{corpcode} 
+			<if test="deptid!=null and deptid!=''">  
+			    and a.deptid = #{deptid}
+			</if>
+			<if test="deptcode!=null and deptcode!=''">  
+			    and a.deptcode = #{deptcode}
+			</if>
+		</where> 
+	</select>
+	
+	<!-- 机构  -->
+	<!-- 添加机构 -->
+	<insert id="addDept" parameterType="java.util.HashMap" >
+		<!--add brsmna 列 chendj 2018/1/18-->
+     insert into pcmc_dept(deptid,deptcode,pdeptid,deptname,orgtype,levelp,linkman,phone,remark,orgseq,areano,disable,orgnaturetype,corpcode,start_date,end_date,org_code,brsmna)
+    values(#{deptid,jdbcType=NUMERIC},#{deptcode,jdbcType=VARCHAR},#{pdeptid,jdbcType=NUMERIC},#{deptname,jdbcType=VARCHAR},#{orgtype,jdbcType=VARCHAR},#{levelp,jdbcType=NUMERIC},#{linkman,jdbcType=VARCHAR},#{phone,jdbcType=VARCHAR},#{remark,jdbcType=VARCHAR},#{orgseq,jdbcType=VARCHAR},#{areano,jdbcType=VARCHAR},0,#{orgnaturetype,jdbcType=VARCHAR},#{corpcode,jdbcType=VARCHAR},#{startDate,jdbcType=DATE},#{endDate,jdbcType=DATE},#{orgcode,jdbcType=VARCHAR},#{brsmna,jdbcType=VARCHAR})
+	</insert>
+	<!-- 删除机构 -->
+	<update id="delDept" parameterType="java.util.HashMap">
+		update  pcmc_dept set disable = 1 where corpcode=#{corpcode} and orgseq like  #{deptcd}
+	</update>
+	<update id="updateUserDept">
+		update pcmc_user set deptid = #{newdeptid,jdbcType=NUMERIC} 
+		where corpcode=#{corpcode} and deptid  in (select deptid from pcmc_dept where orgseq like  #{deptcd} )
+	</update>
+	<select id="getDeptidByDeptcd" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		select deptid "deptid" from pcmc_dept where corpcode=#{corpcode} and orgseq like  #{deptcd}
+	</select>
+	<!--取下级机构  -->
+	<select id="getChildDept" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		select deptid "deptid",orgseq "orgseq",deptcode "deptcode" from pcmc_dept where corpcode=#{corpcode} and pdeptid = #{deptid} and deptid != #{deptid}
+	</select>
+	<!--取下级机构  -->
+	<select id="getDeptCommon" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		select deptid "deptid",orgseq "orgseq",deptcode "deptcode" from pcmc_dept where corpcode=#{corpcode} and  deptid = #{deptid}
+		<if test="deptcodes != null and deptcodes.size() > 0">
+			  or  (
+                <foreach collection="deptcodes" index="index" item="dcs" open="" separator="" close="">
+                   <if test="index==0">
+                       deptcode in 
+                      <foreach collection="dcs" item="dc" separator="," open="(" close=")">
+                        #{dc}
+                    </foreach>
+                   </if>
+                   <if test="index > 0">
+                     or deptcode in
+                      <foreach collection="dcs" item="dc" separator="," open="(" close=")">
+                        #{dc}
+                  </foreach>
+                   </if>
+                </foreach>
+                )
+            </if>
+            ORDER BY deptId
+	</select>
+	<!-- 修改机构orgseq -->
+	<update id="updateOrgseq" parameterType="java.util.HashMap">
+		update pcmc_dept set orgseq=#{orgseq,jdbcType=VARCHAR}
+		 where deptid=#{deptid} and corpcode=#{corpcode}
+	</update>
+	<!-- 修改机构 -->
+	<update id="updateDept" parameterType="java.util.HashMap">
+		update pcmc_dept set linkman=#{linkman,jdbcType=VARCHAR}
+		<if test="deptname!=null and deptname!=''">  
+		    ,deptname=#{deptname,jdbcType=VARCHAR}
+		</if>
+		<!-- <if test="linkman!=null and linkman!=''">  
+		    ,linkman=#{linkman,jdbcType=VARCHAR}
+		</if> -->
+		<if test="orgtype!=null and orgtype!=''">  
+		    ,orgtype=#{orgtype,jdbcType=VARCHAR}
+		</if>
+		<if test="phone!=null">  
+		    ,phone=#{phone,jdbcType=VARCHAR}
+		</if>
+		<if test="levelp!=null and levelp!=''">  
+		    ,levelp=#{levelp,jdbcType=NUMERIC}
+		</if>
+		<if test="brsmna!=null">  
+		    ,brsmna=#{brsmna,jdbcType=VARCHAR}
+		</if>
+		<if test="remark!=null">  
+		   ,remark=#{remark,jdbcType=VARCHAR}
+		</if>
+		<if test="pdeptid!=null and pdeptid!=''">  
+		   ,pdeptid=#{pdeptid,jdbcType=NUMERIC}
+		</if>
+		
+		<!--恒为空-->
+		<if test="areano!=null and areano!=''">  
+		   ,areano=#{areano,jdbcType=VARCHAR}
+		</if>
+		
+		<if test="orgseq!=null and orgseq!=''">  
+		   ,orgseq=#{orgseq,jdbcType=VARCHAR}
+		</if>
+		<if test="orgnaturetype!=null and orgnaturetype!=''">  
+		   ,orgnaturetype=#{orgnaturetype,jdbcType=VARCHAR}
+		</if>
+		<if test="orgcode!=null and orgcode!=''">  
+		   ,org_code=#{orgcode,jdbcType=VARCHAR}
+		</if>
+		 where deptcode=#{deptcode} and corpcode=#{corpcode}
+	</update>
+	
+	<!-- 人员 -->
+	<!-- 添加人员 -->
+	<insert id="addUser" parameterType="java.util.HashMap">
+		insert into pcmc_user(userid,usercode,deptid,username,userpwd,menutype,skinname,pagesize,phone,email,disable,remark,postcode,corpcode,i18n_code,frozen)
+		values(#{userid,jdbcType=NUMERIC},#{usercode,jdbcType=VARCHAR},#{deptid,jdbcType=NUMERIC},#{username,jdbcType=VARCHAR},#{userpwd,jdbcType=VARCHAR},#{menutype,jdbcType=VARCHAR},#{skinname,jdbcType=VARCHAR},#{pagesize,jdbcType=NUMERIC},#{phone,jdbcType=VARCHAR},#{email,jdbcType=VARCHAR},#{disable,jdbcType=CHAR},#{remark,jdbcType=VARCHAR},#{postcode,jdbcType=VARCHAR},#{corpcode,jdbcType=VARCHAR},#{i18nCode,jdbcType=VARCHAR},#{frozen,jdbcType=VARCHAR})
+	</insert>
+	<!-- 删除人员 -->
+	<update id="delUser" parameterType="java.util.HashMap">
+		update  pcmc_user 
+			set disable = '1'
+		where userid = #{userid} and corpcode=#{corpcode}
+	</update>
+	<select id="getUser" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		select 
+			userid "userid", disable "disable" 
+		from pcmc_user 
+		where corpcode=#{corpcode} and usercode = #{usercode}
+	</select>
+	
+	<!--修改为 查询下级所有机构  edit by longjian 20160706 -->
+	<select id="getChildDeptlistPage" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		select deptid "deptid",deptcode "deptcode" ,deptname "deptname",phone "phone",orgseq "orgseq" from pcmc_dept
+		<where>
+		      disable = '0' and corpcode=#{corpcode}
+			<choose>
+			   <when test="all == '1' or all == 1">
+			       <if test="orgseq!=null and orgseq!='' and orgseq != '%%'">
+                        and orgseq like #{orgseq}
+                    </if>
+                    <if test="deptid!=null and deptid!=''">
+                        <![CDATA[ and deptid <> #{deptid}]]>
+                    </if>
+			   </when>
+			   <otherwise>
+			        <if test="pdeptid != null and pdeptid!=''">
+                       and pdeptid=#{pdeptid}
+                    </if>
+			   </otherwise>
+			</choose>
+			<if test="deptcodeOrName!=null and deptcodeOrName!='' and deptcodeOrName != '%%'">
+				and (deptname like #{deptcodeOrName} or deptcode like #{deptcodeOrName}) 
+			</if>
+		</where>
+		order by deptcode asc
+	</select>
+	<select id="getDeptOrgseq" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		select orgseq "orgseq" from pcmc_dept where deptid = #{deptid} and corpcode=#{corpcode}
+	</select>
+	<select id="getDept" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		select 
+			deptid "deptid", disable "disable" 
+		from pcmc_dept 
+		where corpcode=#{corpcode} and deptcode = #{deptcode}
+	</select>
+	
+	<!-- 查询下级机构用户 -->
+	<select id="getUserByDeptidlistPage"  parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		select userid "userid",usercode "usercode",username "username",phone "phone",email "email" from pcmc_user
+		<where>
+			corpcode=#{corpcode}
+			<if test="deptid!=null and deptid!=''">
+				and deptid = #{deptid}
+			</if>
+			<if test="usercode!=null  and usercode.trim()!='' and  usercode!='' and usercode!='%%'">
+				and usercode like #{usercode}
+			</if>
+			<if test="username!=null and username!=''">
+				and username like #{username}
+			</if>
+		</where>
+		order by usercode
+	</select>
+	<!-- 获取本部门及其下级部门 所有用户 longjian 20160707 -->
+    <select id="getAllUserByDeptIdlistPage" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+        select b.userid "userid",b.usercode "usercode",b.username "username",b.phone "phone",b.email "email",
+        a.deptname "deptname",a.orgseq "orgseq", b.frozen "frozen" 
+        from pcmc_dept a 
+        inner join pcmc_user b on a.deptid=b.deptid and a.corpcode=b.corpcode
+        <where> 
+            b.disable='0' and a.disable = '0' and a.corpcode=#{corpcode}
+            <if test="orgseq!=null and orgseq!='' and orgseq != '%%'">
+                and a.orgseq like #{orgseq}
+            </if>
+            <if test="deptid != null and deptid != ''">
+                and a.deptid=#{deptid}
+            </if>
+            <if test="usercodeOrName != null and usercodeOrName != '' and usercodeOrName != '%%'">
+                and (b.username like #{usercodeOrName} or b.usercode like #{usercodeOrName})
+            </if>
+        </where>
+        order by b.usercode asc
+    </select>
+	
+	<select id="checkUsercodeExist" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		select userid from pcmc_user where usercode = #{usercode} and corpcode=#{corpcode}
+	</select>
+	
+	
+	<select id="getUserById" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		select a.userid "userid",a.usercode "usercode",a.username "username",a.deptid "deptid", 
+			b.deptcode "deptcode",b.deptname "deptname",a.menutype "menutype", 
+			a.skinname "skinname",a.pagesize "pagesize",a.phone "phone",a.email "email", 
+			a.disable "disable",a.remark "remark",a.postcode "postcode",a.USERPWD "userpwd" , 
+			a.last_up_ps_date "lastdate",i18n_code "i18nCode", a.frozen "frozen" 
+		from pcmc_user a
+		left join  pcmc_dept b on a.deptid = b.deptid and a.corpcode=b.corpcode
+		where a.corpcode=#{corpcode} 
+		<if test="userid!=null and userid!=''">  
+			and a.userid = #{userid}
+		</if>
+		<if test="usercode!=null and usercode!=''">  
+		    and a.usercode = #{usercode}
+		</if>
+	</select>
+	<update id="updateUser">
+		update pcmc_user set
+		    username=#{username,jdbcType=VARCHAR}
+		    ,deptid=#{deptid,jdbcType=NUMERIC}
+		    ,menutype=#{menutype,jdbcType=VARCHAR}
+		    ,skinname=#{skinname,jdbcType=VARCHAR}
+			,pagesize=#{pagesize,jdbcType=NUMERIC}
+		    ,phone=#{phone,jdbcType=VARCHAR}
+		    ,email=#{email,jdbcType=VARCHAR}
+		    ,disable=#{disable,jdbcType=VARCHAR}
+		    ,remark=#{remark,jdbcType=VARCHAR}
+		    ,postcode=#{postcode,jdbcType=VARCHAR}
+		    ,i18n_code=#{i18nCode,jdbcType=VARCHAR}
+		    ,frozen=#{frozen,jdbcType=VARCHAR}
+		where userid = #{userid} and corpcode=#{corpcode}
+	</update>
+	
+	<update id="updatePersonInfo">
+		update pcmc_user set
+			pagesize=#{pagesize,jdbcType=NUMERIC}
+		    ,phone=#{phone,jdbcType=VARCHAR}
+		    ,email=#{email,jdbcType=VARCHAR}
+		    ,i18n_code=#{i18nCode,jdbcType=VARCHAR}
+		where userid = #{userid} and corpcode=#{corpcode}
+	</update>
+	
+	
+	<!-- 查询机构信息   加上 disable=‘0’ 判断，只加载 未删除的部门列表  longjian-->
+	<select id="queryPcmcDept_listPage" parameterType="java.util.HashMap" resultType="com.sunline.funcpub.entity.PcmcDept">
+		select a.deptid,a.deptcode,a.pdeptid,a.levelp,a.deptname,a.orgtype,
+		    a.orgseq,a.linkman,a.phone,a.brsmna,a.areano,a.orgbusssize,
+		    a.orgnaturetype,a.orgbusstype,a.remark,a.disable,a.org_code as orgcode
+		from pcmc_dept a
+		<where>
+		    a.disable='0' and a.corpcode=#{corpcode}
+			<if test="deptid!=null and deptid!=''">
+				 and a.deptid = #{deptid}
+			</if>
+			<if test="pdeptid !=null and pdeptid !=''">
+				 and a.pdeptid = #{pdeptid}
+			</if>
+			<if test="deptcode!=null and deptcode!=''">
+				 and a.deptcode = #{deptcode}
+			</if>
+			<if test="orgcode!=null and orgcode.trim()!=''">
+				and org_code=#{orgcode}
+			</if>
+			<if test="deptcodename !=null and deptcodename !=''">
+				 and (a.deptcode like #{deptcodename} or a.deptname like #{deptcodename})
+			</if>
+			<if test="deptcodes != null and deptcodes.size() > 0">
+			  and  (
+                <foreach collection="deptcodes" index="index" item="dcs" open="" separator="" close="">
+                   <if test="index==0">
+                     a.deptcode in 
+                      <foreach collection="dcs" item="dc" separator="," open="(" close=")">
+                        #{dc}
+                    </foreach>
+                   </if>
+                   <if test="index > 0">
+                     or a.deptcode in
+                      <foreach collection="dcs" item="dc" separator="," open="(" close=")">
+                        #{dc}
+                  </foreach>
+                   </if>
+                </foreach>
+                )
+            </if>
+            
+		</where>
+		order by a.deptcode
+	</select>
+	
+	
+		<!-- 查询用户信息 -->
+	<resultMap type="HashMap" id="pcmcUserMap">
+		<result property="userid" column="userid"/>
+		<result property="usercode" column="usercode"/>
+		<result property="username" column="username"/>
+		<result property="deptid" column="deptid"/>
+		<result property="deptcode" column="deptcode"/>
+		<result property="deptname" column="deptname"/>
+	</resultMap>
+	<select id="queryPcmcUserLike_listPage" parameterType="java.util.HashMap" resultMap="pcmcUserMap">
+		select a.userid,a.usercode ,a.username,b.deptid,b.deptcode,b.deptname
+		from pcmc_user a inner join pcmc_dept b on a.deptid=b.deptid and a.corpcode=b.corpcode
+		<where>
+			a.corpcode=#{corpcode} and a.disable='0' and b.disable='0' 
+			<if test="userid!=null and userid!=''">
+				 and a.userid = #{userid}
+			</if>
+			<if test="usercode!=null and usercode!=''">
+				 and a.usercode = #{usercode}
+			</if>
+			<if test="usercodename !=null and usercodename !=''">
+				 and (a.usercode like #{usercodename} or a.username like #{usercodename})
+			</if>
+			<if test="deptcodes != null and deptcodes.size() > 0">
+              and  (
+                <foreach collection="deptcodes" index="index" item="dcs" open="" separator="" close="">
+                   <if test="index==0">
+                     b.deptcode in 
+                     <foreach collection="dcs" item="dc" separator="," open="(" close=")">
+                        #{dc}
+                  </foreach>
+                   </if>
+                   <if test="index > 0">
+                     or b.deptcode in
+                     <foreach collection="dcs" item="dc" separator="," open="(" close=")">
+                        #{dc}
+                  </foreach>
+                   </if>
+                </foreach>
+                )
+            </if>
+		</where>
+		order by a.username,a.userid
+	</select>
+	
+	<!-- 查询用户机构信息 -->
+	<resultMap type="HashMap" id="pcmcUserDeptMap">
+		<result property="userid" column="userid"/>
+		<result property="usercode" column="usercode"/>
+		<result property="username" column="username"/>
+		<result property="deptid" column="deptid"/>
+		<result property="deptcode" column="deptcode"/>
+		<result property="deptname" column="deptname"/>
+		<result property="orgseq" column="orgseq"/>
+		<result property="orgcode" column="org_code"/>
+	</resultMap>
+	<select id="queryPcmcUserDeptLike_listPage" parameterType="java.util.HashMap" resultMap="pcmcUserDeptMap">
+		select a.userid,a.usercode ,a.username ,b.deptid,b.deptcode,b.deptname,b.orgseq,b.org_code
+		from pcmc_user a left join pcmc_dept b
+		on a.deptid = b.deptid and a.corpcode=b.corpcode
+		<where>
+		      a.disable='0' and a.corpcode=#{corpcode}
+			<if test="userid!=null and userid!=''">
+				 and a.userid = #{userid}
+			</if>
+			<if test="usercode!=null and usercode!=''">
+				 and a.usercode = #{usercode}
+			</if>
+			<if test="usercodename !=null and usercodename !='' and usercodename !='%%'">
+				 and (a.usercode like #{usercodename} or a.username like #{usercodename})
+			</if>
+			<if test="deptid !=null and deptid !='%..%'">
+				 and a.deptid = #{deptid}
+			</if>
+			<if test="deptcode !=null and deptcode !=''">
+				 and b.deptcode = #{deptcode}
+			</if>
+			<if test="deptidlike !=null and deptidlike!='%%' and deptidlike !=''">
+				 and b.orgseq like #{deptidlike}
+			</if>
+			<if test="orgcode!=null and orgcode.trim()!=''">
+				and b.org_code=#{orgcode}
+			</if>
+			<if test="deptname !=null and deptname !='' and deptname!='%%'">
+                 and (b.deptname like #{deptname} or b.deptcode like #{deptname})
+            </if>
+			<if test="deptcodes != null and deptcodes.size() > 0">
+              and  (
+                <foreach collection="deptcodes" index="index" item="dcs" open="" separator="" close="">
+                   <if test="index==0">
+                     b.deptcode in
+                      <foreach collection="dcs" item="dc" separator="," open="(" close=")">
+                        #{dc}
+                  </foreach>
+                   </if>
+                   <if test="index > 0">
+                     or b.deptcode in
+                     <foreach collection="dcs" item="dc" separator="," open="(" close=")">
+                        #{dc}
+                  </foreach>
+                   </if>
+                </foreach>
+                )
+            </if>
+            <if test="usercodes != null and usercodes.size() > 0">
+              and  (
+                <foreach collection="usercodes" index="index1" item="ucs" open="" separator="" close="">
+                   <if test="index1==0">
+                     a.usercode in 
+                     <foreach collection="ucs" item="uc" separator="," open="(" close=")">
+                        #{uc}
+                  </foreach>
+                   </if>
+                   <if test="index1 > 0">
+                     or a.usercode in 
+                       <foreach collection="ucs" item="uc" separator="," open="(" close=")">
+                        #{uc}
+                     </foreach>
+                   </if>
+                </foreach>
+                )
+            </if>
+		</where>
+		order by a.username,a.userid
+	</select>
+	
+	<!-- 查询角色信息 -->
+	<resultMap type="HashMap" id="PcmcRoleList">
+		<result property="roleid" column="roleid"/>
+		<result property="rolename" column="rolename"/>
+	</resultMap>
+	<select id="queryPcmcRoleLike_listPage" parameterType="java.util.HashMap" resultMap="PcmcRoleList">
+		select roleid,rolename from pcmc_role pr
+		<where>
+			<if test="roleName != null">
+				rolename like #{roleName}
+			</if>
+		</where>
+	</select>
+	
+	<!-- 更新机构层级关系  -->
+	<update id="update_dept_orgseq" parameterType="java.util.HashMap">
+		update pcmc_dept set orgseq = #{orgseq}
+		where deptcode = #{deptcode} and corpcode=#{corpcode}
+	</update>
+	
+	
+	<!-- 查询机构信息 -->
+	<select id="queryPcmcDept_for_fresh_orgseq" parameterType="com.sunline.funcpub.entity.PcmcDept" 
+		resultType="com.sunline.funcpub.entity.PcmcDept">
+		select deptid,deptcode,pdeptid,levelp,deptname,orgtype,
+		    orgseq,linkman,phone,brsmna,areano,orgbusssize,
+		    orgnaturetype,orgbusstype,remark,disable 
+		from pcmc_dept 
+		<where>
+				pdeptid = #{deptid} and corpcode=#{corpcode}
+		</where>
+		order by deptcode
+	</select>
+	<!-- OrgService 根据部门ID或部门编码获取机构信息 edit by longjian 20160706 -->
+    <select id="getDeptByIdOrCode" parameterType="java.util.HashMap" 
+        resultType="com.sunline.funcpub.entity.PcmcDept">
+        select deptid,deptcode,pdeptid,levelp,deptname,orgtype,
+            orgseq,linkman,phone,brsmna,orgbusssize,
+            orgnaturetype,orgbusstype,remark,org_code as orgcode,corpcode
+        from pcmc_dept 
+        <where>
+            disable = '0' and corpcode=#{corpcode}
+               <if test="deptid!=null and deptid!=''">
+                  and deptid = #{deptid}
+               </if>
+               <if test="deptcode !=null and deptcode !=''">
+                  and deptcode = #{deptcode}
+               </if>
+               <if test="orgcode!=null and orgcode.trim()!=''">
+               	 and org_code=#{orgcode}
+               </if>
+        </where>
+        order by deptcode
+    </select>
+    <!-- OrgService 根据用户ID或用户编码获取机构信息 edit by longjian 20160706 -->
+    <select id="getDeptByUserIdOrCode" parameterType="java.util.HashMap" 
+        resultType="com.sunline.funcpub.entity.PcmcDept">
+        select b.deptid,b.deptcode,b.pdeptid,b.levelp,b.deptname,b.orgtype,
+            b.orgseq,b.linkman,b.phone,b.brsmna,b.orgbusssize,
+            b.orgnaturetype,b.orgbusstype,b.remark 
+        from pcmc_user a left join pcmc_dept b on a.deptid=b.deptid and a.corpcode=b.corpcode
+        <where>
+                b.disable = '0' and a.corpcode=#{corpcode}
+               <if test="userId !=null and userId !=''">
+                  and a.userid = #{userId}
+               </if>
+               <if test="userCode !=null and userCode !=''">
+                  and a.usercode = #{userCode}
+               </if>
+        </where>
+        order by deptcode
+    </select>
+    
+    <!-- 根据部门编码，获取部门ID -->
+    <select id="getDeptIdsByCodes" parameterType="java.util.HashMap" resultType="java.lang.String">
+        select deptid from pcmc_dept a
+        <where>
+        	a.corpcode=#{corpcode}
+            <if test="deptcodes!=null and deptcodes.size()>0">
+               and a.deptcode in
+                <foreach collection="deptcodes" item="dc" separator="," open="" close="">
+                    #{dc}
+                </foreach>
+            </if>
+        </where>
+    </select>
+    
+    <!-- 删除用户角色信息 -->
+	<update id="delUserRole" parameterType="java.util.HashMap">
+		delete from pcmc_user_role 
+		<where>
+			<if test="userid !=null and userid !=''">
+				 userid = #{userid}
+			</if>
+		</where>
+	</update>
+	
+	<resultMap type="java.util.HashMap" id="getDeptTree_rsm">
+	   <result column="deptid" property="deptid"/>
+	   <result column="deptcode" property="deptcode"/>
+	   <result column="deptname" property="deptname"/>
+	   <result column="pdeptid" property="pdeptid"/>
+	   <result column="levelp" property="levelp"/>
+	</resultMap>
+	<select id="getDeptTree" parameterType="java.util.HashMap" resultMap="getDeptTree_rsm">
+	   select deptid,deptcode,deptname,pdeptid,levelp from pcmc_dept a
+	   <where>
+	       a.disable='0' and a.corpcode=#{corpcode}
+	        <if test="id !=null and id.trim()!=''">
+	             and pdeptid=#{id}
+	       </if>
+	       <if test="deptcodes != null and deptcodes.size() > 0">
+              and (
+                <foreach collection="deptcodes" index="index" item="dcs" open="" separator="" close="">
+                   <if test="index==0">
+                     a.deptcode in    
+                     <foreach collection="dcs" item="dc" separator="," open="(" close=")">
+                        #{dc}
+                  </foreach>
+                   </if>
+                   <if test="index > 0">
+                     or a.deptcode in  
+                     <foreach collection="dcs" item="dc" separator="," open="(" close=")">
+                        #{dc}
+                  </foreach>
+                   </if>
+                </foreach>
+                )
+            </if>
+	   </where>
+	   order by levelp asc
+	</select>
+	
+	<resultMap type="java.util.HashMap" id="queryUserByDeptCode_rsm">
+	   <result column="userid" property="userid"/>
+	   <result column="usercode" property="usercode"/>
+	   <result column="username" property="username"/>
+	   <result column="deptid" property="deptid"/>
+	   <result column="deptname" property="deptname"/>
+	   <result column="deptcode" property="deptcode"/>
+	</resultMap>
+	<select id="queryUserByDeptCode" parameterType="java.util.HashMap" resultMap="queryUserByDeptCode_rsm">
+	   select u.userid,u.usercode,u.username,d.deptid,d.deptname,d.deptcode from pcmc_dept d inner join pcmc_user u on d.deptid=u.deptid and d.corpcode=u.corpcode
+	   <where>
+	       d.disable='0' and u.disable='0' and d.corpcode=#{corpcode}
+           <if test="deptcodes != null and deptcodes.size() > 0">
+              and (
+                <foreach collection="deptcodes" index="index" item="dcs" open="" separator="" close="">
+                   <if test="index==0">
+                     d.deptcode in 
+                     <foreach collection="dcs" item="dc" separator="," open="(" close=")">
+                        #{dc}
+                  </foreach>
+                   </if>
+                   <if test="index > 0">
+                     or d.deptcode in 
+                     <foreach collection="dcs" item="dc" separator="," open="(" close=")">
+                        #{dc}
+                  </foreach>
+                   </if>
+                </foreach>
+                )
+            </if>
+           <!--  <if test="seq !=null and seq !='' and seq !='%%'">
+                and d.orgseq like #{seq}
+            </if> -->
+            <if test="seq !=null and seq !='' and seq !='%%'">
+                and d.orgseq=#{seq}
+            </if>
+            <if test="deptcode!=null and deptcode.trim()!=''">
+            	and d.deptcode=#{deptcode}
+            </if>
+            <if test="usercdOrNa!=null and usercdOrNa.trim()!=''">
+            	and (u.usercode like #{usercdOrNa} or u.username like #{usercdOrNa})
+            </if>
+            <if test="deptcdOrNa!=null and deptcdOrNa.trim()!=''">
+            	and (d.deptcode like #{deptcdOrNa} or d.deptname like #{deptcdOrNa})
+            </if>
+	   </where>
+	   order by u.userid asc
+	</select>
+	<update id="repairDeptData" parameterType="java.util.HashMap">
+		update pcmc_dept set pdeptid=#{pdeptid} where corpcode=#{corpcode} and pdeptid is null
+	</update>
+	
+	<update id="repairUserData" parameterType="java.util.HashMap">
+		update pcmc_user set default_role=#{defaultRole} where corpcode=#{corpcode} 
+	</update>
+	
+	<select id="queryDisabledDeptlistPage" parameterType="java.util.HashMap" resultType="com.sunline.funcpub.entity.PcmcDept">
+		select deptid,deptname,deptcode
+		from pcmc_dept
+		<where>
+			disable='1' and corpcode=#{corpcode}
+			<if test="qName!=null and qName.trim()!='' and qName.trim()!='%%'">
+				and (deptname like #{qName} or deptcode like #{qName})
+			</if>
+		</where>
+	</select>
+	
+	<update id="enableDept" parameterType="java.util.HashMap">
+		update pcmc_dept set disable='0'
+		<where>
+			<if test="deptids!=null">
+				and deptid in
+				<foreach collection="deptids" item="did" open="(" close=")" separator=",">
+					#{did}
+				</foreach>
+			</if>
+		</where>
+	</update>
+	
+	<select id="getPcmcUserIgnoreDisable" parameterType="java.util.HashMap" resultType="com.sunline.funcpub.entity.PcmcUser">
+		select 
+		userid,usercode,username,userpwd,phone,pagesize,
+		    menutype,disable,deptid,skinname,email,postcode,cred_type,
+		    cred_code,lastrole,remark,ussatg,chpwtm,default_role "defaultRole"
+		from pcmc_user
+		<where>
+			<if test="userid!=null">
+				and userid=#{userid,jdbcType=NUMERIC}
+			</if>
+			<if test="usercode!=null and usercode.trim()!=''">
+				and usercode=#{usercode}
+			</if>
+			<if test="corpcode!=null and corpcode.trim()!=''">
+				and corpcode=#{corpcode}
+			</if>
+			<if test="deptid!=null">
+				and deptid=#{deptid,jdbcType=NUMERIC}
+			</if>
+			<if test="disable!=null and disable.trim()!=''">
+				and disable=#{disable}
+			</if>
+		</where>
+		order by username asc
+	</select>
+	
+	<select id="getPcmcDeptIgnoreDisable" parameterType="java.util.HashMap" resultType="com.sunline.funcpub.entity.PcmcDept">
+		select deptid,deptcode,pdeptid,levelp,deptname,orgtype,
+		    orgseq,linkman,phone,brsmna,areano,orgbusssize,
+		    orgnaturetype,orgbusstype,remark,disable,org_code "orgcode"
+		from pcmc_dept 
+		<where>
+		 	<if test="corpcode!=null and corpcode.trim()!=''">
+		 		and corpcode=#{corpcode} 
+		 	</if>
+			<if test="deptid!=null and deptid!=''">
+				 and deptid = #{deptid}
+			</if>
+			<if test="deptcode!=null and deptcode!=''">
+				 and deptcode = #{deptcode}
+			</if>
+			<if test="orgseq!=null and orgseq!=''">
+				 and orgseq like #{orgseq}
+			</if>
+			<if test="disble!=null and disable.trim()!=''">
+				and disable='0'
+			</if>
+		</where>
+		order by deptname asc
+	</select>
+	<!-- 添加机构历史表 -->
+	<insert id="addDeptH" parameterType="java.util.HashMap" >
+	    insert into pcmc_dept_h(deptid,deptcode,pdeptid,deptname,orgtype,levelp,linkman,phone,remark,orgseq,areano,disable,orgbusssize,orgnaturetype,orgbusstype,corpcode,org_code,brsmna,start_date,end_date)
+		select deptid,deptcode,pdeptid,deptname,orgtype,levelp,linkman,phone,remark,orgseq,areano,disable,orgbusssize,orgnaturetype,orgbusstype,corpcode,org_code,brsmna ,
+		 #{startDate,jdbcType=DATE} AS START_DATE,
+		 #{endDate,jdbcType=DATE} AS END_DATE 
+		from pcmc_dept
+		where corpcode=#{corpcode} and deptcode = #{deptcode}
+ 	</insert>
+ 	<!-- 查询机构历史表 -->
+ 	<select id="getDeptHByDeptCode" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		select a.deptid "deptid",a.deptcode "deptcode",a.pdeptid "pdeptid",a.levelp "levelp",a.deptname "deptname",a.orgtype "orgtype",
+		a.linkman "linkman",a.phone "phone",a.brsmna "brsmna",a.areano "areano",a.remark "remark",a.orgseq "orgseq",a.orgnaturetype "orgnaturetype"
+		,a.org_code as "orgcode"
+		from pcmc_dept_h a
+		<where> 
+			a.corpcode=#{corpcode} 
+			<if test="deptid!=null and deptid!=''">  
+			    and a.deptid = #{deptid}
+			</if>
+			<if test="deptcode!=null and deptcode!=''">  
+			    and a.deptcode = #{deptcode}
+			</if>
+		</where> 
+		order by a.start_date desc
+	</select>
+	<!-- 查询有效日期 -->
+	<select id="getDeptHStartDateByid" parameterType="java.util.HashMap" resultType="java.util.Date">
+			select start_date as startDate from pcmc_dept_h
+		<where> 
+			corpcode=#{corpcode} 
+			<if test="deptid!=null and deptid!=''">  
+			    and deptid = #{deptid}
+			</if>
+			<if test="deptcode!=null and deptcode!=''">  
+			    and deptcode = #{deptcode}
+			</if>
+		</where> 
+		order by start_date desc
+	</select>
+	<!-- 更新停用日期 -->
+	<update id="updatePrevEndDate" parameterType="java.util.HashMap">
+		update pcmc_dept_h set 
+			end_date = #{prevEndDate,jdbcType=DATE}
+		where corpcode = #{corpcode} and deptcode = #{deptcode} and end_date = #{endDate,jdbcType=DATE}
+	</update>
+	<!-- 更新机构历史表 -->
+	<update id="deleteDeptH" parameterType="java.util.HashMap">
+		delete from pcmc_dept_h where corpcode = #{corpcode} and deptcode = #{deptcode} and start_date = #{startDate}
+	</update>
+	
+	<insert id="addUserH" parameterType="java.util.HashMap">	
+		INSERT INTO PCMC_USER_H(USERID,CORPCODE,USERCODE,USERNAME,USERPWD,PHONE,PAGESIZE,MENUTYPE,DISABLE,DEPTID,SKINNAME,EMAIL,POSTCODE,CRED_TYPE,CRED_CODE,
+			LASTROLE,REMARK,USSATG,CHPWTM,DEFAULT_ROLE,LAST_UP_PS_DATE,I18N_CODE,FROZEN,START_DATE, END_DATE)
+		SELECT USERID,CORPCODE,USERCODE,USERNAME,USERPWD,PHONE,PAGESIZE,MENUTYPE,DISABLE,DEPTID,SKINNAME,EMAIL,POSTCODE,CRED_TYPE,CRED_CODE,
+			LASTROLE,REMARK,USSATG,CHPWTM,DEFAULT_ROLE,LAST_UP_PS_DATE,I18N_CODE,FROZEN,
+		     #{startDate,jdbcType=DATE} AS START_DATE,
+		     #{endDate,jdbcType=DATE} AS END_DATE 
+		FROM PCMC_USER 
+		WHERE CORPCODE = #{corpcode} AND USERCODE = #{usercode} AND DISABLE = 0
+	</insert>
+	<!-- 更新停用日期 -->
+	<update id="updateUserhPrevEndDate" parameterType="java.util.HashMap">
+		update pcmc_user_h set 
+			end_date = #{prevEndDate}
+		where corpcode = #{corpcode} and usercode = #{usercode} and end_date = #{endDate,jdbcType=DATE}
+	</update>
+	<!-- 查询用户历史信息 -->
+	<select id="getUserHByid" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		   select a.userid "userid",a.usercode "usercode",a.username "username",a.deptid "deptid", 
+		   a.menutype "menutype", a.skinname "skinname",a.pagesize "pagesize",a.phone "phone",
+		   a.email "email", a.disable "disable",a.remark "remark",a.postcode "postcode",a.USERPWD "userpwd" , 
+		   a.last_up_ps_date "lastdate",i18n_code "i18nCode", a.frozen "frozen",a.attr_01 "attr_01",
+		   a.attr_02 "attr_02",a.attr_03 "attr_03",a.attr_04 "attr_04",a.attr_05 "attr_05",a.attr_06 "attr_06",
+		   a.attr_07 "attr_07",a.attr_08 "attr_08",a.attr_09 "attr_09",a.attr_10 "attr_10"
+		   from pcmc_user_h a
+		<where> 
+			a.corpcode=#{corpcode} 
+			<if test="userid!=null and userid!=''">  
+			    and a.userid = #{userid}
+			</if>
+			<if test="usercode!=null and usercode!=''">  
+			    and a.usercode = #{usercode}
+			</if>
+		</where> 
+		order by a.start_date desc
+	</select>
+	<!-- 查询有效日期 -->
+	<select id="getUserHStartDateByid" parameterType="java.util.HashMap" resultType="java.util.Date">
+			select start_date as startDate from pcmc_user_h
+		<where> 
+			corpcode=#{corpcode} 
+			<if test="userid!=null and userid!=''">  
+			    and userid = #{userid}
+			</if>
+			<if test="usercode!=null and usercode!=''">  
+			    and usercode = #{usercode}
+			</if>
+		</where> 
+		order by start_date desc
+	</select>
+	<update id="deleteUserH" parameterType="java.util.HashMap">
+		delete from pcmc_user_h where corpcode=#{corpcode}  and usercode = #{usercode}  and start_date = #{startDate}
+	</update>
+	<update id="updateExtToPcmcUserH" parameterType="com.sunline.funcpub.pojo.userext.PcmcUserExt">
+		update pcmc_user_h
+			set 
+			attr_01=#{attr01,jdbcType=VARCHAR},
+			attr_02=#{attr02,jdbcType=VARCHAR},
+			attr_03=#{attr03,jdbcType=VARCHAR},
+			attr_04=#{attr04,jdbcType=VARCHAR},
+			attr_05=#{attr05,jdbcType=VARCHAR},
+			attr_06=#{attr06,jdbcType=VARCHAR},
+			attr_07=#{attr07,jdbcType=VARCHAR},
+			attr_08=#{attr08,jdbcType=VARCHAR},
+			attr_09=#{attr09,jdbcType=VARCHAR},
+			attr_10=#{attr10,jdbcType=VARCHAR}
+			WHERE USERID = #{userId} AND START_DATE=#{startDate}
+	</update>
+	
+</mapper> 	  

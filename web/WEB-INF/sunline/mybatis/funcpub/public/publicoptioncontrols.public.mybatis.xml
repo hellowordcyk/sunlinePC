@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sunline.funcpub.mybatis.public.publicoptioncontrols">
+	<resultMap type="java.util.HashMap" id="DeptTreeOptionDataMap">
+		<result column="DEPTID" property="deptID" javaType="String" />
+		<result column="DEPTCODE" property="deptCode" javaType="String" />
+		<result column="DEPTNAME" property="deptName" javaType="String" />
+		<result column="PDEPTID" property="pdeptID" javaType="String" />
+	</resultMap>
+	<select id="getDeptTreeOptionData" parameterType="java.util.HashMap"
+		resultMap="DeptTreeOptionDataMap">
+		SELECT DEPTID,DEPTCODE,DEPTNAME,PDEPTID FROM PCMC_DEPT WHERE DISABLE =
+		'0' and corpcode=#{corpcode}
+		<if test="type != null and type != ''">
+			AND ORGTYPE = #{type}
+		</if>
+		<if test="areaNo != null and areaNo != ''">
+			AND AREANO = #{areaNo}
+		</if>
+		<if test="deptCode != null and deptCode.size() > 0">
+			AND (
+			<foreach collection="deptCode" index="index" item="dcs" open="" separator="" close="">
+			   <if test="index==0">
+			   	 DEPTCODE IN 
+			   	  <foreach collection="dcs" index="index" item="dc" open="(" separator="," close=")">
+			   	    #{dc}
+			   	  </foreach>
+			   </if>
+			   <if test="index > 0">
+			   	 OR DEPTCODE IN  
+			   	 <foreach collection="dcs" index="index" item="dc" open="(" separator="," close=")">
+			   	     #{dc}
+			   	  </foreach>
+			   </if>
+			</foreach>
+			)
+		</if>
+		 <if test="moresql != null and moresql != ''">
+			${moresql}
+		</if> 
+		<if test="selectedColumn != null and selectedColumn != '' and selectedForSql !=null " >
+			AND ${selectedColumn} IN 
+			<foreach collection="selectedForSql" index="index" item="dc" open="(" separator="," close=")">
+			   	     #{dc}
+			  </foreach>
+		</if>
+		ORDER BY DEPTCODE ASC
+	</select>
+
+	<resultMap type="java.util.HashMap" id="UserTreeOptionDataMap">
+		<result column="USERID" property="userID" javaType="String" />
+		<result column="USERCODE" property="userCode" javaType="String" />
+		<result column="USERNAME" property="userName" javaType="String" />
+		<result column="DEPTID" property="deptID" javaType="String" />
+		<result column="DEPTCODE" property="deptCode" javaType="String" />
+		<result column="DEPTNAME" property="deptName" javaType="String" />
+	</resultMap>
+	<select id="getUserOptionDatalistPage" parameterType="java.util.HashMap"
+		resultMap="UserTreeOptionDataMap">
+		SELECT A.USERID,A.USERCODE,A.USERNAME,B.DEPTID,B.DEPTCODE,B.DEPTNAME
+		FROM PCMC_USER A
+		LEFT JOIN PCMC_DEPT B ON A.DEPTID = B.DEPTID and
+		A.corpcode=B.corpcode
+		<where>
+			A.DISABLE='0' and A.corpcode=#{corpcode}
+			<if test="userCode != null and userCode != ''">
+				AND A.USERCODE = #{userCode}
+			</if>
+			<if test="userName != null  and userName!='' and userName != '%%'">
+				AND A.userName LIKE #{userName}
+			</if>
+			<if test="type != null and type != ''">
+				AND B.ORGTYPE = #{type}
+			</if>
+			<if test="areaNo != null and areaNo != ''">
+				AND B.AREANO = #{areaNo}
+			</if>
+			<if test="deptCode != null and deptCode.size() > 0">
+			AND (
+			<foreach collection="deptCode" index="index" item="dcs" open="" separator="" close="">
+			   <if test="index==0">
+			   	 B.DEPTCODE IN 
+			   	  <foreach collection="dcs" index="index" item="dc" open="(" separator="," close=")">
+			   	    #{dc}
+			   	  </foreach>
+			   </if>
+			   <if test="index > 0">
+			   	 OR  B.DEPTCODE IN  
+			   	 <foreach collection="dcs" index="index" item="dc" open="(" separator="," close=")">
+			   	     #{dc}
+			   	  </foreach>
+			   </if>
+			</foreach>
+			)
+		</if>
+			<!-- <if test="deptCode != null and deptCode.size()>0">
+				AND B.DEPTCODE IN	
+				<foreach collection="deptCode" index="index" item="dc" open="(" separator="," close=")">
+			   	     #{dc}
+			  </foreach>
+			</if> -->
+    		 <if test="moresql != null and moresql != ''">
+				${moresql}
+			</if> 
+		<if test="selectedColumn != null and selectedColumn != '' and selectedForSql !=null" >
+			AND  A.${selectedColumn} IN 
+			<foreach collection="selectedForSql" index="index" item="dc" open="(" separator="," close=")">
+			   	     #{dc}
+			 </foreach>
+		</if>
+		</where>
+		ORDER BY USERCODE ASC
+	</select>
+
+	<resultMap type="java.util.HashMap" id="KpiOptionDataMap">
+		<result column="KPI_CODE" property="kpiCode" javaType="String" />
+		<result column="KPI_NAME" property="kpiName" javaType="String" />
+		<result column="KPI_TYPE" property="kpiType" javaType="String" />
+	</resultMap>
+
+
+	<select id="getKpiOptionDatalistPage" parameterType="java.util.HashMap"
+		resultMap="KpiOptionDataMap">
+		SELECT KPI_CODE,KPI_NAME,KPI_TYPE FROM MO_KPI_INFO
+		WHERE STATUS = 1 AND
+		DEL_FLAG = 0
+			<if test="areaNo != null and areaNo != ''">
+			AND AREA_NO IN 
+				<foreach collection="areaNo" index="index" item="dc" open="(" separator="," close=")">
+                      #{dc}
+                </foreach>
+		</if>
+		<if test="kpiType != null and kpiType != ''">
+			AND KPI_TYPE IN 
+			<foreach collection="kpiType" index="index" item="dc" open="(" separator="," close=")">
+                      #{dc}
+                </foreach>
+		</if>
+		<if test="applyType != null and applyType != ''">
+			AND APPLY_TYPE IN 
+			<foreach collection="applyType" index="index" item="dc" open="(" separator="," close=")">
+                      #{dc}
+            </foreach>
+		</if>
+		<if test="kpiCode != null and kpiCode != ''">
+			AND KPI_CODE = #{kpiCode}
+		</if>
+		<if test="kpiName != null and kpiName != '%%'">
+			AND KPI_NAME LIKE  #{kpiName}
+		</if>
+    	<if test="selectedColumn != null and selectedColumn != '' and  selectedForSql != null and selectedForSql.length > 0 " >
+				AND ${selectedColumn} IN
+				<foreach collection="selectedForSql" index="index" item="dc" open="(" separator="," close=")">
+                      #{dc}
+                </foreach>
+		</if>
+		AND ((INPUT_ROLE IS NULL) OR (
+			<foreach collection="userRoles" item="item" index="index">
+				<if test="item != null and item != '%..%' and index == 0">
+				INPUT_ROLE like  '%.${item}.%'
+				</if>
+				<if test="item != null and item != '%..%' and index > 0">
+			  	or INPUT_ROLE like '%.${item}.%'
+				</if>
+			</foreach>
+		))
+
+		ORDER BY KPI_CODE ASC
+	</select>
+</mapper> 	  
+ 	 

@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="com.sunline.sunrpt.mybatis.public.report" >
+	 	  
+ 	<!-- 插入报表数据来源表-->
+ 	<insert id="report_insert_sysrptdts" parameterType="java.util.HashMap">
+ 	    insert into SYS_RPT_DTS(TABLNA,DTSCHN,TABSQL,DTSCTP) values
+ 	    (#{tablna},#{dtschn},#{tabsql},#{dtsctp})
+ 	</insert>
+ 	
+ 	<!-- 插入通用报表定义表-->
+ 	<insert id="report_insert_sysrptdefine" parameterType="java.util.HashMap">
+ 	    insert into SYS_RPT_DEFINE(RPTUID,RPTSNA,TABLNA,POSHOW,ORGCODE,ORGSEQ,OWNFLG,FLDNAS,CREDUS,CRECDT,ISPAGE,ISINQR,DATAVW,JSPRNA,LNKURL,LKKYST,REPTYPE) 
+ 	    values(#{prtuid},#{prtsna},#{tablna},#{poshow},#{orgcode},#{orgseq},#{ownflg},#{fldnas}, #{credus},#{crecdt},#{ispage},#{isinqr},#{datavw},#{jsprna},#{lnkurl},#{lkkyst},#{reptype})
+ 	</insert>
+ 	
+ 	<!-- 插入通用报表表头设置-->
+ 	<insert id="report_insert_sysplnthset" parameterType="java.util.HashMap">
+ 	    insert into SYS_PLN_THSET(TH_ID,RPTUID,TH_LEVEL,TH_SEQ,TH_NAME,TH_PARENTID,TH_COLSPAN,TH_ROWSPAN,TH_SORTID,CORPCODE) values
+ 	    (#{thId},#{prtuId},#{thLevel},#{thSeq},#{thName},#{thParentId},#{thColspan},#{thRowspan},#{thSortId},#{corpcode})
+ 	</insert>
+ 	
+ 	<!-- 插入数据源属性表-->
+ 	<insert id="report_insert_sysrptconfig" parameterType="java.util.HashMap">
+ 	    insert into SYS_RPT_CONFIG(TABLNA,FLDSNA,FLDCHN,FLDKND,DICTCD,LUPURL) values
+ 	                             (#{tablna},#{fldsna},#{fldchn},#{fldknd},#{dictcd},#{lupurl})
+ 	</insert>
+ 	
+ 	<!-- 插入通用报表配置表-->
+ 	<insert id="report_insert_sysrptfield" parameterType="java.util.HashMap">
+ 	    INSERT INTO sys_rpt_field
+		  (rptuid, dspsort, tablna, fldsna, flysna, fldchn, flddpn, pro_desc,
+		   colcond, colcond_cn, colfomat, colfomat_cn, isosum, isosum_cn,
+		   qual_rule, aherf_info, aherf_info_cn, order_info, order_info_cn,
+		   group_info,money_type)
+		VALUES
+		  (#{rptuid}, #{dspsort}, #{tablna}, #{fldsna}, #{flysna}, #{fldchn},
+		   #{flddpn}, #{pro_desc}, #{col_cond}, #{col_cond_cn}, #{col_fomat},
+		   #{col_fomat_cn}, #{isosum}, #{isosum_cn}, #{qual_rule}, #{aherf_info},
+		   #{aherf_info_cn}, #{order_info}, #{order_info_cn}, #{group_info},#{money_type})
+ 	    
+ 	</insert>
+ 	
+ 	
+ 	<!-- 根据报表名称获取报表id -->
+ 	<resultMap type="java.util.HashMap" id="rptRptuidMap">
+ 		<result property="RPTUID" column="RPTUID"/>
+ 	</resultMap>
+ 	<select id="report_query_rptuid" parameterType="java.util.HashMap"  resultMap="rptRptuidMap">
+ 	    select RPTUID from SYS_RPT_DEFINE WHERE  RPTSNA = #{title}
+ 	</select>
+ 	
+ 	<!-- 根据 父项名称 获取 父项id -->
+ 	<resultMap type="java.util.HashMap" id="thparentidMap">
+ 		<result property="TH_ID" column="TH_ID"/>
+ 	</resultMap>
+ 	<select id="report_query_thparentid" parameterType="java.util.HashMap" resultMap="thparentidMap" >
+ 	    select TH_ID from SYS_PLN_THSET WHERE  TH_NAME = #{thParentName} and CORPCODE=#{corpcode}
+ 	</select>
+ 	
+ 	<!-- 根据   报表id  获取  表名 报表类型  校验规则    数据来源表    sys_rpt_define,sys_rpt_dts 表中 -->
+ 	<resultMap type="java.util.HashMap" id="baseInfoMap">
+ 		<result property="tablna" column="tablna" />
+ 		<result property="rptsna" column="rptsna" />
+ 		<result property="reptype" column="reptype" />
+ 		<result property="typena" column="typena" />
+ 		
+ 		<result property="tabsql" column="tabsql" />
+ 		<result property="dtschn" column="dtschn" />
+ 		<result property="fldnas" column="fldnas" />
+ 		<result property="ispage" column="ispage" />
+ 		
+ 		<result property="isinqr" column="isinqr" />
+ 		<result property="poshow" column="poshow" />
+ 		<result property="ownflg" column="ownflg" />
+ 		<result property="datavw" column="datavw" />
+ 	</resultMap>
+ 	<select id="report_query_baseinfo" parameterType="HashMap"  resultMap="baseInfoMap">
+ 	    SELECT dts.tablna tablna, define.rptsna rptsna, define.reptype reptype,para.parana  typena,
+		       dts.tabsql tabsql, dts.dtschn dtschn, define.fldnas fldnas,
+		       define.ispage ispage, define.isinqr isinqr, define.poshow poshow,
+		       define.ownflg ownflg,define.datavw datavw
+		  FROM sys_rpt_define define 
+	          INNER JOIN sys_rpt_dts dts
+			  ON define.tablna = dts.tablna
+	          LEFT JOIN pcmc_knp_para para
+	          ON para.PARACD = define.REPTYPE 
+	          AND para.PARATP='repttype' 
+	          AND para.SUBSCD='pams' 
+	          AND para.CORPCODE = #{corpCode}
+          WHERE define.rptuid = #{rptuid}
+ 	</select>
+ 	
+ 	<!-- 根据报表id 获取  属性对象  list  -->
+ 	
+ 	<select id="queryPropertyList" parameterType="java.util.HashMap" resultType="com.sunline.sunrpt.entity.Property">
+		SELECT
+			rptuid ,dspsort,tablna,fldsna,flysna,fldchn,flddpn,colfomat,colfomat_cn,
+			pro_desc,colcond,colcond_cn,isosum as sum,isosum_cn as sum_cn,qual_rule,aherf_info,
+			aherf_info_cn,order_info,order_info_cn,group_info,money_type
+		FROM
+			sys_rpt_field 
+		WHERE
+			rptuid =#{rptuid} 
+		ORDER BY
+			dspsort ASC
+ 	 </select> 	
+ 	 
+ 	 <!-- 根据报表id 获取  表头对象  list  -->
+ 	<select id="queryHeaderList" parameterType="java.util.HashMap" resultType="com.sunline.sunrpt.entity.Head">
+		select TH_ID as thId,RPTUID as prtuId,TH_LEVEL as thLevel,TH_SEQ as thSeq,TH_NAME as thName,TH_PARENTID as thParentId,TH_COLSPAN as thColspan,TH_ROWSPAN as thRowspan,TH_SORTID as thSortId
+   	    from sys_pln_thset
+		where RPTUID =#{rptuid} and CORPCODE=#{corpcode}
+        order by TH_ID asc
+ 	 </select> 	
+ 	 
+ 	<!-- 获取报表-->
+ 	<resultMap type="java.util.HashMap" id="reportidListPagMap">
+ 		<result property="rptuid" column="rptuid" />
+ 		<result property="rptsna" column="rptsna" />
+ 		<result property="reptype" column="reptype" />
+ 		<result property="tabsql" column="tabsql" />
+ 		<result property="lnkurl" column="lnkurl" />
+ 		<result property="credus" column="credus" />
+ 		<result property="crecdt" column="crecdt" />
+ 		<result property="isinqr" column="isinqr" />
+ 	</resultMap>
+ 	<select id="report_select_reportid_listPage" parameterType="java.util.HashMap" resultMap="reportidListPagMap" >
+ 	   SELECT
+			def.rptuid,def.rptsna,def.reptype,dts.tabsql,def.credus,def.crecdt,def.isinqr, def.lnkurl 
+		FROM sys_rpt_define def
+		left join sys_rpt_dts dts on def.tablna = dts.tablna
+		<where>
+			<if test= "rptsna != null and rptsna != ''">
+				 AND  def.RPTSNA like #{rptsna}
+	        </if>
+	        <if test= "credus != null and credus != ''">
+				AND def.CREDUS like #{credus}
+	        </if>
+	        <if test= "repttype != null and repttype != ''">
+				AND def.REPTYPE = #{repttype}
+	        </if>
+		</where>
+ 	    ORDER BY def.RPTUID asc
+ 	</select>
+ 	
+ 	<!-- 获取报表Id,Na-->
+ 	<resultMap type="java.util.HashMap" id="sunrptRptinfoMap">
+ 		<result property="rptsna" column="rptsna"/>
+ 		<result property="rptuid" column="rptuid"/>
+ 	</resultMap>
+ 	<select id="report_query_rptinfo" parameterType="java.lang.String"  resultMap="sunrptRptinfoMap" >
+ 	    SELECT  define.rptsna, define.rptuid
+		  FROM sys_rpt_define define  
+ 	</select>
+ 	
+ 	<select id="report_queryNameByCode" parameterType="java.util.HashMap"  resultType="java.lang.Object">
+ 	    SELECT  ${fieldName} 
+		  FROM ${tablename}  
+		WHERE ${colnum} = #{codeValue}  
+ 	</select>
+
+	<!-- 上传excel，处理失败，删除记录 -->
+	<delete id="sunrpt_del_upfile_record" parameterType="java.util.HashMap" >
+		DELETE FROM OAMS_FILEINFO WHERE FILEID=#{fileid}
+ 	</delete>
+	
+	<!-- 查询报表名称 -->
+	<resultMap type="java.util.HashMap" id="rpttabnaMap">
+		<result property="tablna" column="tablna"/>
+	</resultMap>
+	<select id="report_query_rpttabna" parameterType="java.lang.String" resultMap="rpttabnaMap">
+		select tablna from sys_rpt_define where rptuid=#{rptuid}
+	</select>
+	
+	<!-- 删除表头 -->
+	<delete id="deleteSysPlnThsetByRptuid" parameterType="java.util.HashMap">
+		delete from sys_pln_thset where rptuid = #{rptuid} and corpcode=#{corpcode}
+	</delete>
+	
+	<!-- 删除报表配置信息 -->
+	<delete id="deleteSysRptConfigByTablna" parameterType="java.lang.String">
+		delete from sys_rpt_config where tablna = #{tablna}
+	</delete>
+	
+	<!-- 删除定义信息-->
+	<delete id="deleteSysRptDefineByRptuid" parameterType="java.lang.String">
+		delete from sys_rpt_define where rptuid = #{rptuid}
+	</delete>
+	
+	<!-- 删除报表字段信息 -->
+	<delete id="deleteSysRptFieldByRptuid" parameterType="java.lang.String">
+		delete from sys_rpt_field where rptuid = #{rptuid}
+	</delete>
+	
+	<!-- 删除报表定义信息 -->
+	<delete id="deleteSysRptDtsByTablna" parameterType="java.lang.String">
+		delete from sys_rpt_dts where tablna = #{tablna}
+	</delete>
+	
+	<select id="querySysPubDataDate" resultType="java.lang.String">
+		select para_value from sys_pub_para where para_code ='sysDataDate' 
+	</select>
+	
+	<select id="queryKpiCodeByKpiName" resultType="java.lang.String" parameterType="java.util.HashMap" >
+		select kpi_code from mo_kpi_info where area_no = #{areano} and kpi_name = #{kpiname}
+	</select>
+	<insert id="insertRpt" parameterType="java.util.HashMap">
+		insert into sys_rpt_define(rptuid,rptsna,tablna,orgcode,orgseq,ownflg,credus,crecdt,ispage,lnkurl,reptype)
+		values(#{rptuid},#{rptName},#{tablna},#{orgcode},#{orgseq},#{ownflg},#{credus},#{crecdt},#{ispage},#{linkUrl},#{reptype})
+	</insert>
+	<select id="query_script_listPage" parameterType="java.util.HashMap" resultType="HashMap">
+	   ${script}
+	</select>
+	<select id="query_script_count" parameterType="java.util.HashMap" resultType="Integer">
+	   select count(1) from ( ${script} ) sunrptCount
+	</select>
+	
+	<resultMap type="java.util.HashMap" id="KnpDictMap">
+		<result column="SUBSCD" property="subscd"/>
+		<result column="PARATP" property="paratp"/>
+		<result column="PARACD" property="paracd"/>
+		<result column="PARANA" property="parana"/>
+	</resultMap>
+	<select id="getKnpDict" parameterType="java.lang.String" resultMap="KnpDictMap">
+		SELECT SUBSCD,PARATP,PARACD,PARANA FROM PCMC_KNP_PARA 
+		WHERE CORPCODE = #{_parameter}
+	</select>
+
+	<!--动态查询报表数据-->
+	<select id="queryReportDatalistPage" parameterType="java.lang.String" resultType="java.util.HashMap">
+		${_parameter}
+	</select>
+</mapper> 	  
+ 	 

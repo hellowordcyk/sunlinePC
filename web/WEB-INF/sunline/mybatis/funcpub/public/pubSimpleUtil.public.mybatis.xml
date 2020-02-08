@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="com.sunline.funcpub.mybatis.public.pubSimpleUtil" >
+    <!--  公共-写日志 -->
+    <insert id="logInsertWay" parameterType="java.util.HashMap">
+          insert into ca_ctl_log(data_date,program_name,log_level,log_code,log_detail)
+          values(#{dataDate,jdbcType=DATE},#{programName,jdbcType=VARCHAR},
+          #{logLevel,jdbcType=CHAR},#{logCode,jdbcType=VARCHAR},#{logDetail,jdbcType=VARCHAR})
+    </insert>
+</mapper> 	  

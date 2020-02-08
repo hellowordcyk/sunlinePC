@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="gb2312"?>
+<!-- 功能页面  -->
+<Sunline>
+    <Session></Session>
+    
+    <Operation id="func-method"  bean="com.sunline.funcpub.portal.func.method.actor.FuncMethodActor"  
+        desc="系统功能页面操作类" >
+        <Action name="addFuncMethod" desc="新增系统功能页面" acttype="add"/>
+        <Action name="updateFuncMethod" desc="修改系统功能页面" acttype="update"/>
+        <Action name="queryFuncMethod" desc="查询系统功能页面" acttype="query"/>
+        <Action name="deleteFuncMethod" desc="删除系统功能页面" acttype="delete"/>
+        <Action name="getFuncMethod" desc="删除系统功能页面" acttype="get"/>
+    </Operation>
+    
+</Sunline>

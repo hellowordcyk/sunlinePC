@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="com.sunline.funcpub.mybatis.pub.public.postmain" >
+	 
+ 	 <insert id="insertSysParam" parameterType="java.util.HashMap" >
+		INSERT INTO PCMC_KNP_PARA (SUBSCD,PARATP,PARACD,PARANA,CORPCODE
+		<if test= "paraam != null and paraam != ''">
+		,PARAAM
+		</if>
+        <if test= "paradt != null and paradt != ''">
+		,PARADT
+		</if>
+		,PARACH,PARBCH,PARCCH,PARDCH,PARECH
+		<if test= "sortno != null and sortno != ''">
+		,SORTNO
+		</if>
+		) 
+		VALUES(#{subscd,jdbcType=VARCHAR},#{paratp,jdbcType=VARCHAR},#{paracd,jdbcType=VARCHAR},#{parana,jdbcType=VARCHAR},#{corpcode,jdbcType=VARCHAR}
+		<if test= "paraam != null and paraam != ''">
+		,#{paraam,jdbcType=NUMERIC}
+		</if>
+        <if test= "paradt != null and paradt != ''">
+		,#{paradt}
+		</if>
+		,#{parach,jdbcType=VARCHAR},#{parbch,jdbcType=VARCHAR},#{parcch,jdbcType=VARCHAR},#{pardch,jdbcType=VARCHAR},#{parech,jdbcType=VARCHAR}
+		<if test= "sortno != null and sortno != ''">
+		,#{sortno,jdbcType=NUMERIC}
+		</if>
+		)
+ 	 </insert> 
+ 	 
+ 	 
+ 	 <delete id="delSysParam" parameterType="java.util.HashMap" >
+    	DELETE FROM PCMC_KNP_PARA WHERE 1=1
+    	<if test= "corpcode != null and corpcode != ''">
+			AND CORPCODE=#{corpcode}
+        </if>
+    	<if test= "paramp != null and paramp != ''">
+			AND SUBSCD=#{subscd}
+        </if>
+        <if test= "paratp != null and paratp != ''">
+			AND PARATP=#{paratp}
+        </if>
+        <if test= "paracd != null and paracd != ''">
+			AND PARACD=#{paracd}
+        </if>
+     </delete>	
+     
+     <update id="updateSysParam" parameterType="java.util.HashMap" >  
+        UPDATE PCMC_KNP_PARA 
+        <set>
+        	 <if test="parana != null and parana !='' ">
+	        	PARANA=#{parana},
+	        </if>
+        	 <if test="parach != null and parach !='' ">
+	        	PARACH=#{parach},
+	        </if>
+        	 <if test="parbch != null and parbch !='' ">
+	        	PARBCH=#{parbch},
+	        </if>
+        	 <if test="parcch != null and parcch !='' ">
+	        	PARCCH=#{parcch},
+	        </if>
+        	 <if test="pardch != null and pardch !='' ">
+	        	PARDCH=#{pardch},
+	        </if>
+        	 <if test="parech != null and parech !='' ">
+	        	PARECH=#{parech},
+	        </if>
+        	 <if test="paraam != null and paraam !='' ">
+	        	PARAAM=#{paraam}
+	        </if>
+	      	<if test="sortno != null or sortno !=''">
+	        	SORTNO= #{sortno}
+	        </if> 
+        </set>
+       
+        WHERE SUBSCD=#{subscd} and PARATP=#{paratp} and PARACD =#{paracd} and CORPCODE=#{corpcode}
+     </update>
+     
+     <!-- 检察岗位编码 是否已存在！ -->
+     <select id="checkExistPost" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+     	select count(*) as CC FROM PCMC_KNP_PARA where PARACD !='%'
+		<if test= "subscd != null and subscd != ''">
+			AND SUBSCD=#{subscd}
+        </if>
+        <if test= "paratp != null and paratp != ''">
+			AND PARATP=#{paratp}
+        </if>
+        <if test= "paracd != null and paracd != ''">
+			AND PARACD=#{paracd}
+        </if>
+        <if test= "corpcode != null and corpcode != ''">
+			AND CORPCODE=#{corpcode}
+        </if>
+     </select>
+     
+     <select id="querySysParamlistPage" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		 select SUBSCD	"subscd",
+				PARATP	"paratp",
+				PARACD	"paracd",
+				PARANA	"parana",
+				PARAAM	"paraam",
+				PARADT	"paradt",
+				PARACH	"parach",
+				PARBCH	"parbch",
+				PARCCH	"parcch",
+				PARDCH	"pardch",
+				PARECH 	"parech",
+				SORTNO	"sortno"
+		  FROM PCMC_KNP_PARA where PARACD !='%'
+		<if test= "subscd != null and subscd != ''">
+			AND SUBSCD=#{subscd}
+        </if>
+        <if test= "paratp != null and paratp != ''">
+			AND PARATP=#{paratp}
+        </if>
+        <if test= "paracd != null and paracd != ''">
+			AND PARACD=#{paracd}
+        </if>
+         <if test= "parana != null and parana != '' and parana != '%%'">
+			AND PARANA like #{parana}
+        </if>
+        <if test= "corpcode != null and corpcode != ''">
+			AND CORPCODE=#{corpcode}
+        </if>
+        order by SORTNO
+     </select> 	
+ 	
+ 	
+</mapper> 	  
+ 	 

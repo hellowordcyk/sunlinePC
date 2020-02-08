@@ -1,0 +1,321 @@
+/* GENERAL STYLES */
+
+/*********Message Box************/
+div.mesgBox {
+	position: absolute;
+	left:100px;
+	top: 100px;
+	width:350px;
+	min-width: 300px;
+	height: 200px;
+	min-height: 150px;
+	background: url(../images/mesgBox/titlebody.gif) repeat-x 0 0;
+}
+
+div.mesgBox  div.title{
+	white-space:nowrap;
+}
+
+div.mesgBox.desktop {
+	background-color: #fff;
+	/*border: 1px solid #999;*/
+	border: 1px solid #b4a0a0;
+	border-top: 0;
+	padding: 0;
+}
+
+div.mesgBox.desktop div.boxtitle{
+	height: 28px;
+	/*border: 1px solid #FFF;*/
+	line-height: 20px;
+	padding: 0 0 0 10px;
+	background: url(../images/mesgBox/tiptitle-center.gif) repeat-x;
+}
+div.mesgBox.desktop span.titleText{
+	display:block;
+	float: left;
+	color: #fff;
+	font-weight: bold;
+	padding-top:5px;
+}
+/*窗口右上角关闭按钮*/
+div.mesgBox.desktop .btnClose{
+	padding: 0 0 0 0;
+	display: block;
+    width: 15px;
+    height: 15px;
+    cursor: pointer;
+    background: url(../images/mesgBox/title_close_btn.gif) no-repeat;
+    float: right;
+	margin-top: 6px;
+	margin-right: 10px;
+}
+div.mesgBox.desktop div.boxbody{
+	padding: 20px 20px 10px;
+	overflow: auto;
+	position: relative;
+}
+div.mesgBox.desktop div.btndiv{
+	background:url(../images/mesgBox/title-bottom.gif) repeat-x 0 top;
+	text-align:center;
+	padding: 0 10px 2px;
+	line-height: 35px;
+	border-bottom: 1px solid #b4a0a0;
+}
+
+/*确定按钮*//*取消按钮*//*“是”按钮*//*“否”按钮*/
+.btnOk, .btnCancel, .btnYes, .btnNo{
+	border: none;
+	font-size: 12px;
+	height: 28px;
+	width: 83px;
+	line-height: 24px;
+	padding: 0 10px 0;
+	margin: 0 0 0 6px;
+	color: #000;
+	background:url(../images/tabs/button.gif) repeat-x;
+	/*解决ie6/7按钮随文字增多而左右pading增大*/
+    *overflow:visible;/*IE7兼容*/
+    _overflow:visible;/*IE6兼容*/
+}
+
+/*警告图标*/
+div.mesgBox.desktop .warn{
+	min-height: 30px;
+	/*line-height: 30px;*/
+	padding-top: 6px;
+	line-height: 22px;
+	padding-left: 40px;
+	background-image: url(../images/mesgBox/Icon_1.gif);
+	background-repeat: no-repeat;
+	display: inline-block;
+}
+
+div.mesgBox.desktop .choose{
+	min-height: 30px;
+	/*line-height: 30px;*/
+    padding-top: 6px;
+    line-height: 22px;
+	padding-left: 40px;
+	background-image: url(../images/mesgBox/Icon_2.gif);
+	background-repeat: no-repeat;
+	display: inline-block;
+}
+/*错误图标*/
+div.mesgBox.desktop .error{
+	min-height: 30px;
+	/*line-height: 30px;*/
+    padding-top: 6px;
+    line-height: 22px;
+	padding-left: 40px;
+	background-image: url(../images/mesgBox/Icon_4.gif);
+	background-repeat: no-repeat;
+	display: inline-block;
+}
+/*成功图标*/
+div.mesgBox.desktop .success{
+	min-height: 30px;
+	/*line-height: 30px;*/
+    padding-top: 6px;
+    line-height: 22px;
+	padding-left: 40px;
+	background-image: url(../images/mesgBox/Icon_8.gif);
+	background-repeat: no-repeat;
+	display: inline-block;
+}
+div.mesgBox.desktop .info{
+	min-height: 30px;
+	/*line-height: 30px;*/
+    padding-top: 6px;
+    line-height: 22px;
+	padding-left: 40px;
+	background-image: url(../images/mesgBox/Icon_16.gif);
+	background-repeat: no-repeat;
+	display: inline-block;
+}
+/********** Context Menu***********/
+div.ctxmenu {
+	position: absolute;
+	top: 0;
+	left: 0;
+	font-family: verdana;
+}
+div.ctxmenu a {
+	display: block;
+	text-decoration: none;
+	cursor: default;
+	outline: none;
+	font-size: 12px;
+}
+.ctxmenu .separator {
+	height: 1px;
+	padding: 0;
+	overflow: hidden;
+	display: block;
+	font-size: 1px;
+}
+.ctxmenu ul, .ctxmenu li {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+.ctxmenu li {
+	list-style-position: outside;
+	white-space: nowrap;
+}
+
+
+/* FIREFOX STYLES */
+
+.ctxmenu.firefox {
+	background: #F4F5EB;
+	border-top: 1px solid #ddd;
+	border-left: 1px solid #ddd;
+	border-right: 1px solid #666;
+	border-bottom: 1px solid #666;
+	padding: 2px 0;
+}
+.ctxmenu.firefox a {
+	color: #555;
+	padding: 4px 15px;
+	margin: 0 2px;
+}
+.ctxmenu.firefox a:hover {
+	background: #006;
+	color: #fff;
+}
+.ctxmenu.firefox a.disabled {
+	color: #bbb;
+}
+.ctxmenu.firefox a.disabled:hover {
+	background: #F4F5EB;
+	color: #bbb;
+}
+.ctxmenu.firefox .separator {
+	border-bottom: 1px solid #fff;
+	background: #999;
+	margin: 2px 4px;
+}
+
+
+/* GOOGLE STYLES */
+
+.ctxmenu.google {
+	background: #fff;
+	border-top: 1px solid #ccc;
+	border-left: 1px solid #ccc;
+	border-bottom: 1px solid #676767;
+	border-right: 1px solid #676767;
+}
+.ctxmenu.google a {
+	color: #00c;
+	text-decoration: none;
+	padding: 2px 5px;
+	cursor: pointer;
+	font-size: 12px;
+}
+.ctxmenu.google a:hover {
+	background: #D3E3FE;
+}
+.ctxmenu.google a.disabled {
+	color: #bbb;
+}
+.ctxmenu.google a.disabled:hover {
+	background: #fff;
+	color: #bbb;
+}
+.ctxmenu.google .separator {
+	background: #ccc;
+}
+
+/* DESKTOP STYLES */
+
+.ctxmenu.desktop {
+	background: #f9f8f7;
+	border: 1px solid #999;
+	padding: 0;
+}
+.ctxmenu.desktop ul, .ctxmenu.desktop li {
+	margin: 0;
+	padding: 0;
+}
+.ctxmenu.desktop li.separator {
+	height: 1px;
+}
+.ctxmenu.desktop a {
+	color: #555;
+	padding: 3px 0 3px 25px;
+	margin: 0;
+	border: 1px solid #f9f8f7;
+}
+.ctxmenu.desktop a.disabled {
+	opacity: 0.25;
+	filter: alpha(opacity=25);
+	zoom: 1;
+}
+.ctxmenu.desktop li.separator {
+	border-bottom: 1px solid #fff;
+	background: #aaa;
+	margin: 1px 1px 0 1px;
+	line-height: 1px !important;
+}
+.ctxmenu.desktop a.subMenu {
+  background: #f9f8f7 url(/common/images/menucontext/info.gif) no-repeat 95% 50%  ;
+}
+.ctxmenu.desktop a.new {
+  background: #f9f8f7 url(/common/images/menucontext/page.png) 2px 50% no-repeat;
+}
+.ctxmenu.desktop a.edit {
+  background: #f9f8f7 url(/common/images/menucontext/info.gif) 2px 50% no-repeat;
+}
+.ctxmenu.desktop a.copy {
+  background: #f9f8f7 url(/common/images/menucontext/page_copy.png) 2px 50% no-repeat;
+}
+.ctxmenu.desktop a.delete {
+  background: #f9f8f7 url(/common/images/menucontext/page_delete.png) 2px 50% no-repeat;
+}
+.ctxmenu.desktop a.save {
+  background: #f9f8f7 url(/common/images/menucontext/page_save.png) 2px 50% no-repeat;
+}
+.ctxmenu.desktop a.query {
+  background: #f9f8f7 url(/common/images/menuico/help.gif) 2px 50% no-repeat;
+}
+.ctxmenu.desktop a.xsl {
+  background: #f9f8f7 url(/common/images/page_excel.png) 2px 50% no-repeat;
+}
+.ctxmenu.desktop a.doc {
+  background: #f9f8f7 url(/common/images/page_word.png) 2px 50% no-repeat;
+}
+.ctxmenu.desktop a.pdf {
+  background: #f9f8f7 url(/common/images/page_acrobat.png) 2px 50% no-repeat;
+}
+.ctxmenu.desktop a.send {
+  background: #f9f8f7 url(/common/images/email.png) 2px 50% no-repeat;
+}
+/* we need explicit enabled class to overcome css deficiences (without creating unnecessary markup) */
+.ctxmenu.desktop a.enabled:hover {
+	background-color: #0A246A;
+	color: #fff;
+}
+
+
+/*******ToolTip*******/
+.toolTip {
+	position: absolute;
+}
+
+.toolTip .tipBody{
+	border:1px solid #e57939;
+	padding:5px 10px;
+	color:#762100;
+	background:#ffefd7;
+	white-space: nowrap;
+}
+.toolTip .tipBottom{
+	width: 16px;
+	height: 12px;
+	margin-left: 10px;
+	display: block;
+	margin-top:-1px;
+	background:url(../images/tabs/tipbottom.gif) no-repeat;
+}

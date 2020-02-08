@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sunline.funcpub.mybatis.data_priv">
+    <resultMap type="java.util.HashMap" id="privShareMap_rsm">
+    	<result column="share_id" property="shareId"/>
+    	<result column="owner_code" property="ownerCode"/>
+    	<result column="sharer_code" property="sharerCode"/>
+    	<result column="corpcode" property="corpcode"/>
+    	<result column="entity_code" property="entityCode"/>
+    	<result column="db_column_pk" property="dbColumnPK"/>
+    	<result column="db_column_pk_a" property="dbColumnPKA"/>
+    	<result column="db_column_pk_b" property="dbColumnPKB"/>
+    	<result column="db_column_pk_c" property="dbColumnPKC"/>
+    	<result column="db_column_pk_d" property="dbColumnPKD"/>
+    	<result column="is_insert" property="isInsert"/>
+    	<result column="is_read" property="isRead"/>
+    	<result column="is_update" property="isUpdate"/>
+    	<result column="is_delete" property="isDelete"/>
+    	<result column="is_transfer" property="isTransfer"/>
+    	<result column="is_share" property="isShare"/>
+    	<result column="create_user" property="createUser"/>
+    	<result column="create_time" property="createTime" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+    	<result column="last_update_user" property="lastUpdateUser"/>
+    	<result column="last_update_time" property="lastUpdateTime" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+    	<result column="entity_name" property="entityName"/>
+    	<result column="subsysCnName" property="subsysCnName"/>
+    	<result column="subsysEnName" property="subsysEnName"/>
+    	<result column="ownerName" property="ownerName"/>
+    	<result column="sharerName" property="sharerName"/>
+    	<result column="title" property="title"/>
+    </resultMap>
+    <select id="querySysPrivShareMaplistPage" parameterType="java.util.HashMap" resultMap="privShareMap_rsm">
+    	select 
+    	s.share_id,
+    	s.owner_code,
+    	s.sharer_code,
+    	s.corpcode,
+    	s.entity_code,
+    	s.db_column_pk,
+    	s.db_column_pk_a,
+    	s.db_column_pk_b,
+    	s.db_column_pk_c,
+    	s.db_column_pk_d,
+    	s.is_insert,
+    	s.is_read,
+    	s.is_update,
+    	s.is_delete,
+    	s.is_transfer,
+    	s.is_share,
+    	s.create_user,
+    	s.create_time,
+    	s.last_update_user,
+    	s.last_update_time,
+    	e.entity_name,
+    	sub.cnname as subsysCnName,
+    	sub.enname as subsysEnName,
+    	u.username as ownerName,
+    	u1.username as sharerName
+    	<if test="dbTable!=null and dbTable.trim()!='' and dbColumnPK!=null and dbColumnPK.trim()!='' and dbColumnTitle!=null and dbColumnTitle.trim()!=''">
+    	  	,db_t.${dbColumnTitle} as title
+    	</if>
+    	from sys_priv_share  s 
+    	  <if test="dbTable!=null and dbTable.trim()!='' and dbColumnPK!=null and dbColumnPK.trim()!=''">
+    	  	inner join ${dbTable} db_t on 
+    	  	<choose>
+    	  		<when test="dbPKType=='Date'">
+    	  			 SUBSTRING(s.db_column_pk,0,10) = CONVERT(varchar(10),db_t.${dbColumnPK}, 120) 
+    	  		</when>
+    	  		<when test="dbPKType=='BigDecimal'">
+    	  			s.db_column_pk = cast(db_t.${dbColumnPK} as varchar)  
+    	  		</when>
+    	  		<otherwise>
+    	  			s.db_column_pk=db_t.${dbColumnPK}
+    	  		</otherwise>
+    	  	</choose>
+    	  	<if test="dbColumnTitle!=null and dbColumnTitle.trim()!='' and qName!=null and qName.trim()!='%%'">
+    	  		and db_t.${dbColumnTitle} like #{qName}   
+    	  	</if>
+    	  </if>
+    	  <if test="dbColumnPKA!=null and dbColumnPKA.trim()!=''">
+    	  	<choose>
+    	  		<when test="dbPKTypeA=='Date'">
+    	  			and SUBSTRING(s.db_column_pk_a,0,10) = CONVERT(varchar(10),db_t.${dbColumnPKA}, 120)
+    	  		</when>
+    	  		<when test="dbPKTypeA=='BigDecimal'">
+    	  			and s.db_column_pk_a = cast(db_t.${dbColumnPKA} as varchar)
+    	  		</when>
+    	  		<otherwise>
+    	  			and s.db_column_pk_a=db_t.${dbColumnPKA}
+    	  		</otherwise>
+    	  	</choose>
+    	  </if>
+    	  <if test="dbColumnPKB!=null and dbColumnPKB.trim()!=''">
+    	  	<choose>
+    	  		<when test="dbPKTypeB=='Date'">
+    	  			and SUBSTRING(s.db_column_pk_b,0,10) = CONVERT(varchar(10),db_t.${dbColumnPKB}, 120)
+    	  		</when>
+    	  		<when test="dbPKTypeB=='BigDecimal'">
+    	  			and s.db_column_pk_b = cast(db_t.${dbColumnPKB} as varchar)
+    	  		</when>
+    	  		<otherwise>
+    	  			and s.db_column_pk_b=db_t.${dbColumnPKB}
+    	  		</otherwise>
+    	  	</choose>
+    	  </if>
+    	  <if test="dbColumnPKC!=null and dbColumnPKC.trim()!=''">
+    	  	<choose>
+    	  		<when test="dbPKTypeC=='Date'">
+    	  			and SUBSTRING(s.db_column_pk_c,0,10) = CONVERT(varchar(10),db_t.${dbColumnPKC}, 120)
+    	  		</when>
+    	  		<when test="dbPKTypeC=='BigDecimal'">
+    	  			and s.db_column_pk_c = cast(db_t.${dbColumnPKC} as varchar)
+    	  		</when>
+    	  		<otherwise>
+    	  			and s.db_column_pk_c=db_t.${dbColumnPKC}
+    	  		</otherwise>
+    	  	</choose>
+    	  </if>
+    	  <if test="dbColumnPKD!=null and dbColumnPKD.trim()!=''">
+    	  	<choose>
+    	  		<when test="dbPKTypeD=='Date'">
+    	  			and SUBSTRING(s.db_column_pk_d,0,10) = CONVERT(varchar(10),db_t.${dbColumnPKD}, 120)
+    	  		</when>
+    	  		<when test="dbPKTypeD=='BigDecimal'">
+    	  			and s.db_column_pk_d = cast(db_t.${dbColumnPKAD} as varchar)
+    	  		</when>
+    	  		<otherwise>
+    	  			and s.db_column_pk_d=db_t.${dbColumnPKD}
+    	  		</otherwise>
+    	  	</choose>
+    	  </if>
+    	  inner join sys_priv_entity e 
+    	  on s.entity_code=e.entity_code and s.corpcode=e.corpcode
+    	  inner join pcmc_subsys sub on e.system_code=sub.shortname
+    	  inner join pcmc_user u on s.owner_code=u.usercode and s.corpcode=u.corpcode
+    	  inner join pcmc_user u1 on s.sharer_code=u1.usercode and s.corpcode=u1.corpcode
+    	<where>
+    		<if test="shareId!=null ">
+	    		and s.share_id=#{shareId}
+	    	</if>
+	    	<if test="entityCode!=null and entityCode.trim()!=''">
+	    		and s.entity_code=#{entityCode}
+	    	</if>
+	    	<if test="corpcode!=null and corpcode.trim()!=''">
+	    		and s.corpcode=#{corpcode}
+	    	</if>
+	    	<if test="ownerCode!=null and ownerCode.trim()!=''">
+	    		and s.owner_code=#{ownerCode}
+	    	</if>
+	    	<if test="sharerCode!=null and sharerCode.trim()!=''">
+	    		and s.sharer_code=#{sharerCode}
+	    	</if>
+    	</where>
+    	order by s.last_update_time desc
+    </select>
+    
+    
+    <resultMap type="java.util.HashMap" id="ownerAndDept_rsm">
+    	<result column="usercode" property="usercode"/>
+    	<result column="deptcode" property="deptcode"/>
+    	<result column="orgseq" property="orgseq"/>
+    	<result column="org_code" property="orgcode"/>
+    </resultMap>
+    <select id="getDataOwnerAndDept" parameterType="java.util.HashMap" resultMap="ownerAndDept_rsm">
+    	select t1.${dbColumnOwner} as usercode,t1.${dbColumnDept} as deptcode,t2.orgseq,t2.org_code from ${dbTable} t1 left join pcmc_dept t2 on t1.${dbColumnDept}=t2.deptcode and t2.corpcode=#{corpcode} 
+    	<where>
+    		  <if test="dbColumnPK!=null and dbColumnPK.trim()!=''">
+	    	  	<choose>
+	    	  		<when test="dbPKType=='Date'">
+	    	  			and CONVERT(varchar(10),t1.${dbColumnPK}, 120) = #{dbColumnPKVal}
+	    	  		</when>
+	    	  		<otherwise>
+	    	  			and t1.${dbColumnPK} = #{dbColumnPKVal}
+	    	  		</otherwise>
+	    	  	</choose>
+    	  	  </if>
+	    	  <if test="dbColumnPKA!=null and dbColumnPKA.trim()!=''">
+	    	  	<choose>
+	    	  		<when test="dbPKTypeA=='Date'">
+	    	  			and CONVERT(varchar(10),t1.${dbColumnPKA}, 120) = #{dbColumnPKAVal}
+	    	  		</when>
+	    	  		<otherwise>
+	    	  			and t1.${dbColumnPKA} = #{dbColumnPKAVal}
+	    	  		</otherwise>
+	    	  	</choose>
+	    	  </if>
+	    	  <if test="dbColumnPKB!=null and dbColumnPKB.trim()!=''">
+	    	  	<choose>
+	    	  		<when test="dbPKTypeB=='Date'">
+	    	  			and CONVERT(varchar(10),t1.${dbColumnPKB}, 120) = #{dbColumnPKBVal}
+	    	  		</when>
+	    	  		<otherwise>
+	    	  			and t1.${dbColumnPKB} = #{dbColumnPKBVal}
+	    	  		</otherwise>
+	    	  	</choose>
+	    	  </if>
+	    	  <if test="dbColumnPKC!=null and dbColumnPKC.trim()!=''">
+	    	  	<choose>
+	    	  		<when test="dbPKTypeC=='Date'">
+	    	  			and CONVERT(varchar(10),t1.${dbColumnPKC}, 120) = #{dbColumnPKCVal}
+	    	  		</when>
+	    	  		<otherwise>
+	    	  			and t1.${dbColumnPKC} = #{dbColumnPKCVal}
+	    	  		</otherwise>
+	    	  	</choose>
+	    	  </if>
+	    	  <if test="dbColumnPKD!=null and dbColumnPKD.trim()!=''">
+	    	  	<choose>
+	    	  		<when test="dbPKTypeD=='Date'">
+	    	  			and CONVERT(varchar(10),t1.${dbColumnPKD}, 120) = #{dbColumnPKDVal}
+	    	  		</when>
+	    	  		<otherwise>
+	    	  			and t1.${dbColumnPKD} = #{dbColumnPKDVal}
+	    	  		</otherwise>
+	    	  	</choose>
+	    	</if>
+    	</where>
+    </select>
+</mapper>

@@ -1,0 +1,17 @@
+/* IE6样式特殊处理 */
+
+/*IE6的:focus伪类bug替代方法处理*/
+.inputtext, .inputselect, .inputarea{
+    _Jraf_focus: expression((!('_Jraf_focus' in this)?
+            ((function (thisObj){
+                $(thisObj).writeAttribute("_Jraf_focus", '1');
+                thisObj.observe('focus', function(){
+                   thisObj.style.backgroundColor='#e4f5ff';
+                   thisObj.style.border='1px solid #04adff';
+                });
+                thisObj.observe('blur', function(){
+                   thisObj.style.backgroundColor='#fff';
+                   thisObj.style.border='1px solid #9ab6cb';
+                });
+            })(this)): '1'));
+}

@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="com.sunline.pams.mybatis.public.udepttree" >
+     
+      <resultMap type="java.util.HashMap" id="getDeptTree_rsm">
+	   <result column="deptid" property="deptid"/>
+	   <result column="deptcode" property="deptcode"/>
+	   <result column="deptname" property="deptname"/>
+	   <result column="pdeptid" property="pdeptid"/>
+	   <result column="levelp" property="levelp"/>
+	  </resultMap>
+ 	  <select id="getUserDeptTree" parameterType="java.util.HashMap" resultMap="getDeptTree_rsm">
+	   select deptid,deptcode,deptname,pdeptid,levelp from pcmc_dept a
+	   <where>
+	       a.disable='0' and a.corpcode=#{corpcode}
+	        <if test="id !=null and id.trim()!=''">
+	             and pdeptid=#{id}
+	       </if> 
+	       <if test="deptcodes != null and deptcodes.size() > 0">
+              and  a.deptcode in      
+                  <foreach collection="deptcodes" item="dc" separator="," open="(" close=")">
+                        #{dc}
+                  </foreach>
+            </if>
+            <if test="deptCodeSql != null and deptCodeSql != ''">
+ 			     and deptcode in (${deptCodeSql})
+ 		    </if>
+	   </where>
+	   order by levelp,deptcode asc
+	</select>
+    <select id="getDeptCommon" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		select deptid "deptid",orgseq "orgseq",deptcode "deptcode" from pcmc_dept where corpcode=#{corpcode} and  deptid = #{deptid}
+		<if test="deptcodes != null and deptcodes.size() > 0">
+			  or deptcode in 
+               <foreach collection="deptcodes" item="dc" separator="," open="(" close=")">
+                    #{dc}
+               </foreach>
+         </if>
+         <if test="deptCodeSql != null and deptCodeSql != ''">
+ 			  and deptcode in (${deptCodeSql})
+ 		 </if>
+         ORDER BY deptId
+	</select>
+	
+	<!-- 查询机构信息   加上 disable=‘0’ 判断，只加载 未删除的部门列表  longjian-->
+	<select id="queryPcmcDept_listPage" parameterType="java.util.HashMap" resultType="com.sunline.funcpub.entity.PcmcDept">
+		select a.deptid,a.deptcode,a.pdeptid,a.levelp,a.deptname,a.orgtype,
+		    a.orgseq,a.linkman,a.phone,a.brsmna,a.areano,a.orgbusssize,
+		    a.orgnaturetype,a.orgbusstype,a.remark,a.disable,a.org_code as orgcode
+		from pcmc_dept a
+		<where>
+		    a.disable='0' and a.corpcode=#{corpcode}
+			<if test="deptid!=null and deptid!=''">
+				 and a.deptid = #{deptid}
+			</if>
+			<if test="pdeptid !=null and pdeptid !=''">
+				 and a.pdeptid = #{pdeptid}
+			</if>
+			<if test="deptcode!=null and deptcode!=''">
+				 and a.deptcode = #{deptcode}
+			</if>
+			<if test="orgcode!=null and orgcode.trim()!=''">
+				and org_code=#{orgcode}
+			</if>
+			<if test="deptcodename !=null and deptcodename !=''">
+				 and (a.deptcode like #{deptcodename} or a.deptname like #{deptcodename})
+			</if>
+		    <if test="deptCodeSql != null and deptCodeSql != ''">
+ 			    and d.deptcode in (${deptCodeSql})
+ 		    </if>
+ 		    
+			<if test="deptcodes != null and deptcodes.size() > 0">
+			  and  (a.deptcode in 
+                    <foreach collection="deptcodes" item="dc" separator="," open="(" close=")">
+                        #{dc}
+                    </foreach>
+                   )
+            </if>
+		</where>
+		order by a.deptcode
+	</select>
+	
+	<resultMap type="java.util.HashMap" id="queryUserByDeptCode_rsm">
+	   <result column="userid" property="userid"/>
+	   <result column="usercode" property="usercode"/>
+	   <result column="username" property="username"/>
+	   <result column="deptid" property="deptid"/>
+	   <result column="deptname" property="deptname"/>
+	   <result column="deptcode" property="deptcode"/>
+	</resultMap>
+	
+	<select id="queryUserByDeptCode" parameterType="java.util.HashMap" resultMap="queryUserByDeptCode_rsm">
+	   select u.userid,u.usercode,u.username,d.deptid,d.deptname,d.deptcode from pcmc_dept d inner join pcmc_user u on d.deptid=u.deptid and d.corpcode=u.corpcode
+	   <where>
+	       d.disable='0' and u.disable='0' and d.corpcode=#{corpcode}
+           <if test="deptcodes != null and deptcodes.size() > 0">
+              and (d.deptcode in 
+                     <foreach collection="deptcodes" item="dc" separator="," open="(" close=")">
+                        #{dc}
+                    </foreach>
+                   )
+            </if>
+            <if test="deptCodeSql != null and deptCodeSql != ''">
+ 			    and d.deptcode in (${deptCodeSql})
+ 		    </if>
+ 		    <if test="userCodeSql != null and userCodeSql != ''">
+ 			    and u.usercode in (${userCodeSql})
+ 		    </if>
+ 		    <if test="moresql != null and moresql != ''">
+ 			    ${moresql}
+ 		    </if>
+            <if test="seq !=null and seq !='' and seq !='%%'">
+                and d.orgseq=#{seq}
+            </if>
+            <if test="deptcode!=null and deptcode.trim()!=''">
+            	and d.deptcode=#{deptcode}
+            </if>
+            <if test="usercdOrNa!=null and usercdOrNa.trim()!=''">
+            	and (u.usercode like #{usercdOrNa} or u.username like #{usercdOrNa})
+            </if>
+            <if test="deptcdOrNa!=null and deptcdOrNa.trim()!=''">
+            	and (d.deptcode like #{deptcdOrNa} or d.deptname like #{deptcdOrNa})
+            </if>
+	   </where>
+	   order by u.usercode,u.userid asc
+	</select>
+	
+	<resultMap type="java.util.HashMap" id="UserTreeOptionDataMap">
+		<result column="USERID" property="userID" javaType="String" />
+		<result column="USERCODE" property="userCode" javaType="String" />
+		<result column="USERNAME" property="userName" javaType="String" />
+		<result column="ORG_ID" property="deptID" javaType="String" />
+		<result column="ORG_NO" property="deptCode" javaType="String" />
+		<result column="ORG_NAME" property="deptName" javaType="String" />
+	</resultMap>
+	
+	<select id="getUserOptionDatalistPage" parameterType="java.util.HashMap"
+		resultMap="UserTreeOptionDataMap">
+         select distinct A.USERID, A.USERCODE, A.USERNAME, B.ORG_ID, B.ORG_NO, B.ORG_NAME
+           from PCMC_USER A
+           left join sys_pub_org_sub_v B
+             on A.DEPTID = B.ORG_ID
+           and A.corpcode = B.AREA_NO
+		<where>
+			A.DISABLE='0' and A.corpcode=#{corpcode}
+			<if test="userCode != null and userCode != ''">
+				AND A.USERCODE LIKE '%'||#{userCode}||'%'
+			</if>
+			<if test="userName != null  and userName != ''">
+				AND A.userName LIKE '%'||#{userName}||'%'
+			</if>
+			<if test="deptCode != null and deptCode != ''">
+				AND B.PARENT_ORG_NO LIKE '%'||#{deptCode}||'%'
+			</if>
+			<if test="deptName != null  and deptName != ''">
+				AND B.PARENT_ORG_NAME LIKE '%'||#{deptName}||'%'
+			</if>
+			<if test="deptCodeList != null and deptCodeList.size() > 0">
+			AND (
+			<foreach collection="deptCodeList" index="index" item="dcs" open="" separator="" close="">
+			   <if test="index==0">
+			   	 B.ORG_NO IN 
+			   	  <foreach collection="dcs" index="index" item="dc" open="(" separator="," close=")">
+			   	    #{dc}
+			   	  </foreach>
+			   </if>
+			   <if test="index > 0">
+			   	 OR  B.ORG_NO IN  
+			   	 <foreach collection="dcs" index="index" item="dc" open="(" separator="," close=")">
+			   	     #{dc}
+			   	  </foreach>
+			   </if>
+			</foreach>
+			)
+		</if>
+        <if test="moresql != null and moresql != ''">
+				${moresql}
+			</if> 
+		<if test="selectedColumn != null and selectedColumn != '' and selectedForSql !=null" >
+			AND  A.${selectedColumn} IN 
+			<foreach collection="selectedForSql" index="index" item="dc" open="(" separator="," close=")">
+			   	     #{dc}
+			 </foreach>
+		</if>
+		</where>
+		ORDER BY A.USERCODE,B.ORG_NO ASC
+	</select>
+	
+</mapper> 	  
+ 	 

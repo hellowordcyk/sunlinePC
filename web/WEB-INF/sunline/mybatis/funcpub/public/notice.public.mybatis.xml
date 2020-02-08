@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sunline.funcpub.mybatis.public.notice">
+    
+    <select id="queryUnReadMessageTotalNum" parameterType="java.util.HashMap" resultType="Integer">
+        select count(*) from (SELECT a.infoid as infoid, a.title as title, a.subsys
+          FROM sys_info a
+         WHERE NOT EXISTS (SELECT 1
+                  FROM sys_infodesc b
+                 WHERE a.infoid = b.infoid
+                   AND b.usercd = #{userCode} and b.corpcode=#{corpcode})
+                   and a.corpcode=#{corpcode}
+           <if test="subsys != null and subsys !=''">
+          		AND a.subsys = #{subsys}
+           </if>
+           AND a.ispriv = '0'
+        UNION ALL
+        SELECT a.infoid as infoid, a.title as title, a.subsys
+          FROM sys_info a
+         INNER JOIN (SELECT a.infoid
+                      FROM sys_info_priv a
+                     WHERE a.privcd = #{userCode}
+                       AND a.privtp = '1'
+                       AND NOT EXISTS
+                     (SELECT '1'
+                              FROM sys_infodesc b
+                             WHERE a.infoid = b.infoid
+                               AND b.usercd = #{userCode} and b.corpcode=#{corpcode})
+                    UNION
+                    SELECT a.infoid
+                      FROM sys_info_priv a
+                     WHERE a.privtp = '2'
+                       AND EXISTS (SELECT 1
+                              FROM pcmc_user b
+                              left join pcmc_dept d and b.corpcode=d.corpcode
+                                on b.deptid = d.deptid
+                             WHERE d.deptcode = a.privcd
+                               AND b.usercode = #{userCode} and b.corpcode=#{corpcode})
+                       AND NOT EXISTS
+                     (SELECT '1'
+                              FROM sys_infodesc b
+                             WHERE a.infoid = b.infoid
+                               AND b.usercd = #{userCode}  and b.corpcode=#{corpcode})) bb
+            ON bb.infoid = a.infoid
+         WHERE NOT EXISTS (SELECT 1
+                  FROM sys_infodesc b
+                 WHERE a.infoid = b.infoid and a.corpcode=#{corpcode}
+                   AND b.usercd = #{userCode})
+           <if test="subsys != null and subsys !='' and subsys != 'all'">
+          		AND a.subsys = #{subsys}
+           </if>
+           AND a.ispriv = '1') tm1
+    </select>
+    
+    
+    <select id="queryUserSysInfoslistPage" parameterType="java.util.HashMap" resultType="com.sunline.funcpub.notice.bean.SysInfoBean">
+        select tt.*,g.cnname,pu.username from (
+		  <!-- 查询出发送给所有人的 -->
+		  select si.*, sid.isread from sys_info si 
+		         left join sys_infodesc sid on sid.infoid = si.infoid and si.corpcode=sid.corpcode
+		         where si.ispriv = 0 and si.corpcode=#{corpcode}
+		  union all 
+		        <!-- 指定人或部门 -->
+		        (select si.*, sid.isread from sys_info si 
+		          inner join sys_info_priv sip on si.infoid = sip.infoid
+		          left join sys_infodesc sid on sid.infoid = si.infoid and si.corpcode=sid.corpcode
+		          where si.ispriv = 1 and si.corpcode=#{corpcode}
+		           and (sip.privtp = '1' and sip.privcd = #{_parameter}) <!-- 指定人cd -->
+		            or (sip.privtp = '2' and sip.privcd = (select pd.deptcode from pcmc_user pu left join pcmc_dept pd on pu.deptid = pd.deptid where pu.usercode = #{_parameter}))   <!-- 指定部门 -->
+		         )
+		) tt 
+		left join pcmc_subsys g on tt.subsys = g.shortname
+    	left join pcmc_user pu on tt.CREATEUSER = pu.userid and pu.corpcode=#{corpcode} order by createtime desc
+    </select>
+    
+    
+    <!-- 获得该orgSeq下的所有子机构 -->
+ 	 <select id="getUnderOrgSeqOrgs" parameterType="java.util.HashMap" resultType="com.sunline.funcpub.entity.PcmcDept">
+		select a.remark, a.phone, a.pdeptid, a.orgtype, a.orgseq, a.orgnaturetype,a.orgbusstype, a.orgbusssize, a.linkman, a.levelp, a.disable, a.deptname, a.deptid, a.deptcode, a.brsmna, a.areano
+		from pcmc_dept a
+		<if test="_parameter != null and _parameter!='' and _parameter !='%..%'">
+		 where a.orgseq like  #{_parameter}  and
+		</if>
+		 a.DISABLE = '0' and corpcode=#{corpcode}
+ 	 </select>
+    
+    <select id="queryPubInfoslistPage" parameterType="java.util.HashMap"  resultType="com.sunline.funcpub.notice.bean.SysInfoBean">
+    	select e.infoid as "infoid", g.cnname as "cnname", e.title as "title", f.username as "username", e.createtime as "createtime", e.startdt as "startdt", e.enddt as "enddt"
+		  from sys_info e, pcmc_user f, pcmc_subsys g
+			where f.userid = e.createuser and f.corpcode=#{corpcode} and e.subsys = g.shortname
+			<if test="subsys != null and subsys !=''">
+				and e.subsys = #{subsys}
+			</if>
+			<if test="title != null and title!=''  and title !='%%'">
+				and e.title like #{title}
+			</if>
+			<if test="username != null and username!='' and username !='%%'">
+				and f.username like  #{username}
+			</if>
+			<if test="createtime != null and createtime !=''">
+				<![CDATA[and e.createtime >= #{createtime}]]>
+			</if>
+			<if test="startdt != null and startdt !=''">
+				<![CDATA[and e.startdt >= #{startdt}]]>
+			</if>
+			<if test="enddt != null and enddt !=''">
+				<![CDATA[and e.enddt <= #{enddt}]]>
+			</if>
+		 order by e.infoid desc
+    </select>
+    
+    <!-- 查询PcmcUser -->
+	<select id="queryPcmcUser" parameterType="java.util.HashMap" resultType="com.sunline.bimis.pcmc.db.PcmcUser">
+		SELECT a.* FROM pcmc_user a
+		<where>
+			a.corpcode=#{corpcode}
+	    	<if test= "userId != null and userId != ''">
+				and a.userId = #{userId}
+	        </if>
+	    	<if test= "userCD != null and userCD != ''">
+				AND a.userCD = #{userCD}
+	        </if>
+        </where>
+	</select>
+	
+	<select id="querySysInfo" parameterType="java.util.HashMap" resultType="com.sunline.funcpub.notice.bean.SysInfoBean">
+		SELECT a.title,a.subsys,a.startdt,a.sndmod,a.ispriv,a.infoid,a.fileid,a.enddt,a.createuser,a.createtime,a.content
+		 FROM sys_info a
+		<where>
+			a.corpcode=#{corpcode}
+	    	<if test= "_parameter != null and _parameter != ''">
+				and a.infoid = #{_parameter}
+	        </if>
+        </where>
+	</select>
+	
+	<select id="queryOamsFileinfo" parameterType="java.util.HashMap" resultType="com.sunline.funcpub.notice.bean.OamsFileinfoBean">
+		SELECT b.fileid,b. frealname,b. fdiskname,b. filesize,b. fileext,b. uploaddt,b. userid,b.remark,b. filedata,b. usedtm
+		 FROM oams_fileinfo b 
+		<where>
+			 b.corpcode=#{corpcode}
+	    	<if test= "_parameter != null and _parameter != ''">
+				and b.fileid = #{_parameter}
+	        </if>
+        </where>
+	</select>
+	
+	<insert id="insertSysInfo" parameterType="java.util.HashMap" >
+	 INSERT INTO sys_info(title,subsys,startdt,sndmod,ispriv,infoid,fileid,enddt,createuser,createtime,content,corpcode) 
+		VALUES(#{title,jdbcType=VARCHAR},
+			#{subsys,jdbcType=VARCHAR},
+			#{startdt,jdbcType=TIMESTAMP},
+			#{sndmod,jdbcType=VARCHAR},
+			#{ispriv,jdbcType=VARCHAR},
+			#{infoid,jdbcType=NUMERIC},
+			#{fileid,jdbcType=VARCHAR},
+			#{enddt,jdbcType=TIMESTAMP},
+			#{createuser,jdbcType=VARCHAR},
+			#{createtime,jdbcType=TIMESTAMP},
+			#{content,jdbcType=VARCHAR},
+			#{corpcode,jdbcType=VARCHAR}
+		)
+	</insert>
+	
+	<!-- <insert id="saveBatchSysInfoPriv" parameterType="java.util.List" >
+		 insert into sys_info_priv (privtp,privcd,infoid)   
+	    	values  
+	    <foreach collection="list" item="item" index="index" separator="," >  
+	        (#{item.privtp},#{item.privcd},#{item.infoid})  
+	    </foreach> 
+	</insert> -->
+	
+	<update id="updateSysInfo" parameterType="java.util.HashMap">
+	 		UPDATE sys_info 
+			SET content = #{content,jdbcType=VARCHAR},
+			    enddt = #{enddt,jdbcType=TIMESTAMP},
+                startdt = #{startdt,jdbcType=TIMESTAMP},
+                title = #{title,jdbcType=VARCHAR},
+			    subsys = #{subsys,jdbcType=VARCHAR}
+			WHERE infoid = #{infoid} and corpcode=#{corpcode}
+	</update>
+	
+	<delete id="deleteSysInfo" parameterType="long">
+	 	<![CDATA[
+	 		delete from sys_info where infoid = #{_parameter}
+        ]]>
+	</delete>
+	
+	<delete id="deleteSysInfodesc" parameterType="long">
+	 	<![CDATA[
+	 		delete from sys_infodesc where infoid = #{_parameter}
+        ]]>
+	</delete>
+	
+	<delete id="deleteOamsFileinfo" parameterType="java.util.HashMap">
+	 	<![CDATA[
+	 		delete from oams_fileinfo where fileid = #{_parameter} and  corpcode=#{corpcode}
+        ]]>
+	</delete>
+	
+	<delete id="deleteSysInfoPriv" parameterType="long">
+	 	<![CDATA[
+	 		delete from sys_info_priv where infoid = #{_parameter}
+        ]]>
+	</delete>
+    
+    <insert id="addReadRecord" parameterType="java.util.HashMap">
+    	insert into sys_infodesc (infoid,usercd,isread,readdatetime,corpcode)   
+	    	values  
+        (#{infoid},#{usercd},#{isread},#{readdatetime},#{corpcode})  
+    </insert>
+    
+    <select id="querySysInfodesc" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+    	select infoid as "infoid", usercd as "usercd", isread as "isread", readdatetime as "readdatetime" from sys_infodesc si where si.infoid = #{infoid} and si.usercd = #{usercd}
+    </select>
+    
+</mapper>

@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="gb2312"?>
+<Sunline>
+	<Session></Session>
+	<Operation id="pub" bean="com.sunline.bimis.pcmc.pub.PubBean"
+		desc="公共方法">
+		<Action name="getAuthedUserMsg" desc="查询当前操作员所做出的授权信息,参数值为空时,返回整个授权表内容.">
+			<Request multi="false">
+				<Field name="authusercode" title="操作员code" type="String" notnull="true">
+				</Field>
+			</Request>
+			<Response multi="false" result="-1">
+				<Field name="Hint"></Field>
+				<Field name="Error"></Field>
+			</Response>
+		</Action>
+		<Action name="qryBrach" desc="查询门户部门">
+			<Request multi="false"></Request>
+			<Response multi="false" result="-1">
+				<Field name="Hint"></Field>
+				<Field name="Error"></Field>
+			</Response>
+		</Action>
+		<Action name="getDeptTree" desc="得到部门树型菜单">
+			<Request multi="false">
+				<Field name="deptid" title="部门id" type="long"
+					maxlen="19" notnull="false">
+				</Field>
+			</Request>
+			<Response multi="false" result="-1">
+				<Field name="Hint"></Field>
+				<Field name="Error"></Field>
+			</Response>
+		</Action>
+		<Action name="getDeptidByDeptcode" desc="得到部门树型菜单">
+			<Request multi="false">
+				<Field name="deptcode" title="部门编号" type="String"
+					maxlen="20" notnull="true">
+				</Field>
+			</Request>
+			<Response multi="false" result="-1">
+				<Field name="Hint"></Field>
+				<Field name="Error"></Field>
+			</Response>
+		</Action>
+		<Action name="getDeptNameByDeptid" desc="得到部门名称">
+			<Request multi="false">
+				<Field name="deptid" title="部门id" type="long"
+					maxlen="19" notnull="true">
+				</Field>
+			</Request>
+			<Response multi="false" result="-1">
+				<Field name="Hint"></Field>
+				<Field name="Error"></Field>
+			</Response>
+		</Action>
+		<Action name="getPersonByDept" desc="根据部门id得到用户">
+			<Request multi="false">
+				<Field name="deptid" title="部门id" type="long"
+					maxlen="19" notnull="false">
+				</Field>
+			</Request>
+			<Response multi="false" result="-1">
+				<Field name="Hint"></Field>
+				<Field name="Error"></Field>
+			</Response>
+		</Action>
+		<Action name="getUserNameByUserid" desc="根据用户id得到用户姓名和用户代码">
+			<Request multi="false">
+				<Field name="userid" title="用户id" type="long"
+					maxlen="19" notnull="false">
+				</Field>
+			</Request>
+			<Response multi="false" result="-1">
+				<Field name="Hint"></Field>
+				<Field name="Error"></Field>
+			</Response>
+		</Action>
+		<Action name="getUsercodeByUserid" desc="根据用户id得到用户代码">
+			<Request multi="false">
+				<Field name="userid" title="用户id" type="long"
+					maxlen="19" notnull="false">
+				</Field>
+			</Request>
+			<Response multi="false" result="-1">
+				<Field name="Hint"></Field>
+				<Field name="Error"></Field>
+			</Response>
+		</Action>		
+		<Action name="getHrPersonByDept" desc="根据部门id得到人事人员">
+			<Request multi="false">
+				<Field name="deptid" title="部门id" type="long"
+					maxlen="19" notnull="false">
+				</Field>
+			</Request>
+			<Response multi="false" result="-1">
+				<Field name="Hint"></Field>
+				<Field name="Error"></Field>
+			</Response>
+		</Action>
+		<Action name="getDeptAndSelfTree" desc="得到部门和个人通讯录树型菜单">
+			<Request multi="false">
+				<Field name="deptid" title="部门id" type="long"
+					maxlen="19" notnull="false">
+				</Field>
+			</Request>
+			<Response multi="false" result="-1">
+				<Field name="Hint"></Field>
+				<Field name="Error"></Field>
+			</Response>
+		</Action>
+		<Action name="getMailPersonByDept" desc="根据部门id得到用户Mail">
+			<Request multi="false">
+				<Field name="deptid" title="部门id" type="long"
+					maxlen="19" notnull="false">
+				</Field>
+			</Request>
+			<Response multi="false" result="-1">
+				<Field name="Hint"></Field>
+				<Field name="Error"></Field>
+			</Response>
+		</Action>
+		<Action name="getDeptByDeptid" desc="根据部门id得到部门信息,包括文件处理人信息">
+			<Request multi="false">
+				<Field name="deptid" title="部门id" type="long"
+					maxlen="19" notnull="false">
+				</Field>
+			</Request>
+		</Action>
+
+		<Action name="flow_lookall" accredit="true" desc="查看流程所有文档权限" />
+		<Action name="flow_cancel" accredit="true" desc="作废流程文档权限" />
+		<!-- 配置新建流程的权限 -->
+		<Action name="flow_start_fawen" accredit="true"
+			desc="新建发文管理流程权限" />
+		<Action name="flow_start_shouwen" accredit="true"
+			desc="新建收文管理流程权限" />
+		<Action name="flow_start_dubanMgr" accredit="true"
+			desc="新建督办管理流程权限" />
+		<Action name="flow_start_leave" accredit="true"
+			desc="新建请假申请流程权限" />
+		<Action name="flow_start_contractMgr" accredit="true"
+			desc="新建合同管理流程权限" />
+		<Action name="flow_start_yzsy" accredit="true"
+			desc="新建印章使用流程权限" />
+		<Action name="flow_start_fixedAssetsApply" accredit="true"
+			desc="新建资产申请流程权限" />
+		<Action name="flow_start_gdzcwx" accredit="true"
+			desc="新建资产维修流程权限" />
+		<Action name="flow_start_ZiChanBaoFei" accredit="true"
+			desc="新建资产报废流程权限" />
+		<Action name="flow_start_gdzcdb" accredit="true"
+			desc="新建资产调拨流程权限" />
+		<Action name="flow_start_fixedAssetsHandBack" accredit="true"
+			desc="新建资产退还流程权限" />
+		<Action name="flow_start_hyjy" accredit="true"
+			desc="新建会议纪要流程权限" />
+		<Action name="flow_start_yongche" accredit="true"
+			desc="新建用车申请流程权限" />
+		<Action name="flow_start_yhpsl" accredit="true"
+			desc="新建易耗品申领流程权限" />
+		<Action name="flow_start_shouwen_dept" accredit="true"
+			desc="新建部门收文流程权限" />
+		<Action name="flow_start_daikuanshenpi" accredit="true"
+			desc="启动贷款审批流程权限" />
+		<Action name="flow_start_daecaiwuzhichu" accredit="true"
+			desc="启动大额财务支出流程权限" />
+		<Action name="flow_start_dizhaizichanchuzhi" accredit="true"
+			desc="启动抵债资产处置权限" />
+		<Action name="flow_start_wbzjsy_tongyechaijie" accredit="true"
+			desc="启动外部资金使用－同业拆借流程权限" />
+		<Action name="flow_start_wbzjsy_guihuankuanxiang"
+			accredit="true" desc="启动外部资金使用－归还款项流程权限" />
+
+	</Operation>
+
+	
+</Sunline>

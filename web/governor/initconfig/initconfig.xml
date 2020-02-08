@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="gbk"?>
+<configuration>
+    <datamodule>
+        <!--tasktype,1:执行建表语句;2:编译存储过程; moduletype,1:接口模型层;2:历史模型层-->
+        <!-- Pro_Autocompile_Entry 必须配置在第一位 建表和初始化表的objectname可以随便写,包和存储过程的objectname指的是包名和存储过程的名字(程序会把objectname转会为大写,所以配置objectname大小写都可以)-->
+        <!-- 配置mybatis   只能在platform或sys 节点下 tasktype="register_mybatis"  exectype="back" 
+               配置hibernate 只能在platform或sys 节点下 tasktype="register_hbm"      exectype="back"
+        -->
+        <!--tasktype,
+        create_table:执行建表语句;
+        init_data:执行数据初始化;
+        compile_proc: 编译存储过程;
+        register_hbm:注册
+        moduleservice服务;
+        register_mybatis:注册mybatis服务; 
+		moduletype,infc:接口模型层;hist:历史模型层
+		exectype,back:后台执行(不用),默认手动执行-->
+        <task taskno="1" tasktype="compile_proc" moduletype="infc" taskname="Pro_Autocompile_Entry(自动化编译存储过程脚本).sql"  objectname="Pro_Autocompile_Entry" taskdesc="自动化编译存储过程脚本" filepath="/governor/initconfig/initscripts/ORACLE/Pro_Autocompile_Entry(自动化编译存储过程脚本).sql" />
+        <task taskno="2" tasktype="create_table" moduletype="infc" taskname="接口层相关脚本\接口表.sql" objectname="接口表" taskdesc="接口表" filepath="/governor/initconfig/initscripts/ORACLE/接口层相关脚本/接口表.sql" />
+        <task taskno="3" tasktype="create_table" moduletype="hist" taskname="历史层相关脚本\公用表.sql" objectname="公用表" taskdesc="公用表" filepath="" />
+        <task taskno="4" tasktype="create_table" moduletype="hist" taskname="历史层相关脚本\历史表.sql" objectname="历史表" taskdesc="历史表" filepath="" />
+        <task taskno="11" tasktype="compile_proc" moduletype="hist" taskname="历史层相关脚本\Pkg_Bdss_Constant(公用常量包).sql"  		objectname="Pkg_Bdss_Constant" taskdesc="公用常量包" filepath="" />
+        <task taskno="23" tasktype="compile_proc" moduletype="hist" taskname="历史层相关脚本\Pkg_Bdss_Util(公共包).sql"  objectname="Pkg_Bdss_Util" taskdesc="初始化数据" filepath="" />
+        <task taskno="5" tasktype="compile_proc" moduletype="hist" taskname="历史层相关脚本\pkg_bdss_acct(接口层账户相关信息包).sql"     objectname="pkg_bdss_acct" taskdesc="接口层票据相关信息包" filepath="" />
+        <task taskno="6" tasktype="compile_proc" moduletype="hist" taskname="历史层相关脚本\pkg_bdss_bill(接口层票据相关信息包).sql"     objectname="pkg_bdss_bill" taskdesc="接口层票据相关信息包" filepath="" />
+		<task taskno="7" tasktype="compile_proc" moduletype="hist" taskname="历史层相关脚本\pkg_bdss_card(接口层银行卡相关信息包).sql"    objectname="pkg_bdss_card" taskdesc="接口层票据相关信息包" filepath="" />
+		<task taskno="8" tasktype="compile_proc" moduletype="hist" taskname="历史层相关脚本\pkg_bdss_cdfn(接口层理财相关信息包).sql"     objectname="pkg_bdss_cdfn" taskdesc="接口层票据相关信息包" filepath="" />
+		<task taskno="9" tasktype="compile_proc" moduletype="hist" taskname="历史层相关脚本\pkg_bdss_cntr(接口层合同相关信息包).sql"     objectname="pkg_bdss_cntr" taskdesc="接口层票据相关信息包" filepath="" />
+		<task taskno="10" tasktype="compile_proc" moduletype="hist" taskname="历史层相关脚本\pkg_bdss_coll(接口层抵押担保相关信息包).sql"  objectname="pkg_bdss_coll" taskdesc="接口层票据相关信息包" filepath="" />
+		<task taskno="12" tasktype="compile_proc" moduletype="hist" taskname="历史层相关脚本\pkg_bdss_cust(接口层客户相关信息包).sql"  objectname="pkg_bdss_cust" taskdesc="接口层客户相关信息包" filepath="" />
+		<task taskno="13" tasktype="compile_proc" moduletype="hist" taskname="历史层相关脚本\pkg_bdss_fina(接口层财务相关信息包).sql"  objectname="pkg_bdss_fina" taskdesc="接口层财务相关信息包" filepath="" />
+		<task taskno="14" tasktype="compile_proc" moduletype="hist" taskname="历史层相关脚本\pkg_bdss_fond(接口层资金相关信息包).sql"  objectname="pkg_bdss_fond" taskdesc="接口层资金相关信息包" filepath="" />
+		<task taskno="15" tasktype="compile_proc" moduletype="hist" taskname="历史层相关脚本\pkg_bdss_itbs(接口层国结相关信息包).sql"  objectname="pkg_bdss_itbs" taskdesc="接口层国结相关信息包" filepath="" />
+		<task taskno="16" tasktype="compile_proc" moduletype="hist" taskname="历史层相关脚本\pkg_bdss_loan(接口层贷款相关信息包).sql"  objectname="pkg_bdss_loan" taskdesc="接口层贷款相关信息包" filepath="" />
+		<task taskno="17" tasktype="compile_proc" moduletype="hist" taskname="历史层相关脚本\Pkg_Bdss_Main(接口层主过程信息包).sql"  objectname="Pkg_Bdss_Main" taskdesc="接口层主过程信息包" filepath="" />
+		<task taskno="18" tasktype="compile_proc" moduletype="hist" taskname="历史层相关脚本\Pkg_Bdss_Main_Loop(接口层主过程时间段信息包).sql"  objectname="Pkg_Bdss_Main_Loop" taskdesc="接口层主过程时间段信息包 " filepath="" />
+		<task taskno="19" tasktype="compile_proc" moduletype="hist" taskname="历史层相关脚本\pkg_bdss_orgn(接口层团体相关信息包).sql"  objectname="pkg_bdss_orgn" taskdesc="初始化数据" filepath="" />
+		<task taskno="20" tasktype="compile_proc" moduletype="hist" taskname="历史层相关脚本\pkg_bdss_para(接口层参数相关信息包).sql"  objectname="pkg_bdss_para" taskdesc="初始化数据" filepath="" />
+		<task taskno="21" tasktype="compile_proc" moduletype="hist" taskname="历史层相关脚本\pkg_bdss_risk(接口层风险相关信息包).sql"  objectname="pkg_bdss_risk" taskdesc="初始化数据" filepath="" />
+		<task taskno="22" tasktype="compile_proc" moduletype="hist" taskname="历史层相关脚本\pkg_bdss_tran(接口层交易相关信息包).sql"  objectname="pkg_bdss_tran" taskdesc="初始化数据" filepath="" />
+		<task taskno="24" tasktype="compile_proc" moduletype="hist" taskname="历史层相关脚本\pkg_east_main(历史层到界面数据转换主包).sql"  objectname="pkg_east_main" taskdesc="初始化数据" filepath="" />
+    </datamodule>
+    <platform>
+		<task taskno="1" tasktype="create_table" taskname="2.create_table_pcmc.sql" objectname="platform_create" taskdesc="知识库创建" filepath="/governor/initconfig/initscripts/ORACLE/2.create_table_pcmc.sql" />
+		<task taskno="2" tasktype="init_data" taskname="3.init_pcmc_data.sql" objectname="platform_init" taskdesc="注册服务" filepath="" />
+		<task taskno="3" tasktype="init_data" taskname="4.应用表create_tables.sql" objectname="platform_init" taskdesc="知识库数据初始化" filepath="" />
+		<task taskno="4" tasktype="init_data" taskname="5.数据字典.sql" objectname="platform_init" taskdesc="知识库数据初始化" filepath="" />
+	</platform>
+	<subsys>
+		<sys name="bdss" cnname="银监标准化系统" >
+			<task taskno="1" tasktype="create_table" taskname="6.create_east_table.sql" objectname="cbrc_create" taskdesc="非现场监管系统知识库创建" filepath="/governor/initconfig/initscripts/ORACLE/6.create_east_table.sql" />
+			<task taskno="2" tasktype="init_data" taskname="7.init_data_east.sql" objectname="cbrc_init" taskdesc="数据初始化" filepath="" />
+			<task taskno="3" tasktype="compile_proc" taskname="5.create_javasource(ORACLE调用系统命令-JAVA实现).sql" objectname="FILEUTIL" taskdesc="ORACLE调用系统命令-JAVA实现)" filepath="" />
+			<task taskno="4" tasktype="compile_proc" taskname="6.delete_file(ORACLE调用系统命令-JAVA实现).sql" objectname="FILEUTIL" taskdesc="ORACLE调用系统命令-JAVA实现" filepath="" />
+			<task taskno="5" tasktype="compile_proc" taskname="应用层相关脚本\pkg_east_message(银监标准化系统报文生成基本包).sql" objectname="pkg_east_message" taskdesc="银监标准化系统报文生成基本包" filepath="" />
+		</sys>
+		<sys name="east" cnname="金融报送系统" >
+			<task taskno="1" tasktype="create_table" taskname="6.create_east_table.sql" objectname="cbrc_create" taskdesc="非现场监管系统知识库创建" filepath="" />
+			<task taskno="2" tasktype="init_data" taskname="7.init_data_east.sql" objectname="cbrc_init" taskdesc="数据初始化" filepath="" />
+			<task taskno="3" tasktype="compile_proc" taskname="5.create_javasource(ORACLE调用系统命令-JAVA实现).sql" objectname="FILEUTIL" taskdesc="ORACLE调用系统命令-JAVA实现)" filepath="" />
+			<task taskno="4" tasktype="compile_proc" taskname="6.delete_file(ORACLE调用系统命令-JAVA实现).sql" objectname="FILEUTIL" taskdesc="ORACLE调用系统命令-JAVA实现" filepath="" />
+			<task taskno="5" tasktype="compile_proc" taskname="pkg_bdss_acct(接口层账户相关信息包).sql" objectname="pkg_bdss_acct" taskdesc="银监标准化系统报文生成基本包" filepath="/governor/initconfig/initscripts/ORACLE/pkg_bdss_acct(接口层账户相关信息包).sql" />
+		</sys>
+		<sys name="ctrk" cnname="客户风险系统">
+            <task taskno="1" tasktype="create_table" taskname="6.create_east_table.sql" objectname="cbrc_create" taskdesc="非现场监管系统知识库创建" filepath="" />
+			<task taskno="2" tasktype="init_data" taskname="7.init_data_east.sql" objectname="cbrc_init" taskdesc="数据初始化" />
+			<task taskno="3" tasktype="compile_proc" taskname="5.create_javasource(ORACLE调用系统命令-JAVA实现).sql" objectname="FILEUTIL" taskdesc="ORACLE调用系统命令-JAVA实现)" filepath="" />
+			<task taskno="4" tasktype="compile_proc" taskname="6.delete_file(ORACLE调用系统命令-JAVA实现).sql" objectname="FILEUTIL" taskdesc="ORACLE调用系统命令-JAVA实现" filepath="" />
+			<task taskno="5" tasktype="compile_proc" taskname="pkg_bdss_acct(接口层账户相关信息包).sql" objectname="pkg_bdss_acct" taskdesc="银监标准化系统报文生成基本包" filepath="" />
+		</sys>
+		<sys name="pisa" cnname="pisa">
+            <!-- 
+			<task taskno="1" tasktype="register_mybatis" taskname="com.sunline.pisa.module.PisaModuleService" objectname="platform_create" taskdesc="注册服务" exectype="back"/>
+			<task taskno="2" tasktype="register_hbm" taskname="com.sunline.pisa.module.PisaModuleService" objectname="register_hbm" taskdesc="注册服务" exectype="back"/>
+            -->
+		</sys>
+	</subsys>
+    
+</configuration>

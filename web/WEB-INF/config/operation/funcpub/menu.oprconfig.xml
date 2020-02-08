@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="gb2312"?>
+<!-- 描述各个功能模块，以及各个具体的功能点  -->
+<Sunline>
+	<Session></Session>
+	<Operation id="funcpub-menumanager"  bean="com.sunline.funcpub.portal.menu.MenuManager"  desc="菜单管理"
+	filterpath="/funcpub/portal/menu/">
+		<Action name="getMenuTree" desc="获取菜单树"/>
+		<Action name="getMenuInfoById" desc="根据id获取菜单信息"/>
+		<Action name="updateMenuInfo" desc="修改菜单信息" />
+		<Action name="getPmenuInfo" desc="获取父级菜单信息"/>
+		<Action name="addMenuInfo" desc="添加菜单信息"/>
+		<Action name="deleteMenu" desc="删除菜单信息"/>
+		<Action name="hasMenuPriv" desc="是否有指定菜单的权限"/>
+		<Action name="getMenuExport" desc="获取父级菜单信息" bean="com.sunline.funcpub.portal.menu.MenuExcelExport"/>
+		<Action name="getMenuImport" desc="获取父级菜单信息" bean="com.sunline.funcpub.portal.menu.MenuExcelImport"/>
+		<Action name="getMenuTemplate" desc="获取父级菜单信息" bean="com.sunline.funcpub.portal.menu.MenuExcelImport"/>
+	</Operation>
+	
+	<Operation id="funcpub-menupublish"  bean="com.sunline.funcpub.portal.menu.MenuPublish"  desc="菜单发布">
+		<Action name="getMenuTree" desc="获取菜单树"/>
+		<Action name="addMenu" desc="添加目录 文件夹菜"/>
+		<Action name="publishMenuAction" desc="添加具体功能点叶子节点"/>
+	</Operation>
+  
+    <Operation id="initMenu"  bean="com.sunline.funcpub.portal.menu.Menu"  desc="菜单信息">
+        <Action name="initTopNavMenu" desc="横向导航栏菜单"/>
+        <Action name="initLeftNavMenu" desc="左侧导航栏菜单"/>
+        <Action name="getMenuStyle" desc="获取菜单样式"/>
+        <Action name="getMenu" desc="获取菜单"/>
+        <Action name="loadAllMenu" desc="加载所有菜单"/>
+    </Operation>
+</Sunline>

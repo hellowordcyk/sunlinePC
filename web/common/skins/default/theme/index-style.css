@@ -1,0 +1,222 @@
+@charset "utf-8";
+/* CSS Document */
+
+body{
+	background-color: #eef5ff;
+	font-size: 12px;
+	font-family:Arial, Helvetica, sans-serif;
+	overflow:hidden;
+	padding: 0;
+	margin: 0;
+}
+#index-header{
+	height: 65px;
+	width: 100%;
+	background:url(../images/index/index-headerbg.gif) repeat-x;
+}
+#index-logo{
+	width: 454px;
+	height: 65px;
+	float:left;
+	background: url(../images/index/index-logo.gif) no-repeat;
+}
+#header-toolbar{
+	display: block;
+	padding: 8px 10px 0;
+	text-align: right;
+	float: right;
+	line-height:24px!important;
+}
+#header-toolbar span{
+	color:#a8dbf9;
+	font-family:'arial',sans-serif,'宋体',;
+	padding-right: 10px;
+}
+#header-toolbar a:link {
+	color:#000;
+	text-decoration: none;
+}
+#header-toolbar a:visited{
+	color:#a8dbf9;
+	text-decoration: none;
+}
+#header-toolbar a:hover{
+	color:#f00;
+	text-decoration: none;
+}
+
+.password, .logout{
+	height: 24px!important;
+	height: 24px;
+	padding: 2px 0 3px;
+}
+.password{
+	background-position: 0 -2px!important;
+	background: url(../images/index/editpasw.png) no-repeat 0 1px;
+	padding-left: 25px;
+}
+.logout{
+	background-position: 0 -2px!important;
+	background: url(../images/index/exit.png) no-repeat 0 0;
+	padding-left: 25px;
+}
+.date{
+	color: #fff000;
+}
+.user{
+	display: block;
+	color: #667b8e;
+	padding: 8px 0 0 20px;
+}
+#header-nav{
+	width: 100%;
+	clear: both;
+	height: 34px; 
+	background: url(../images/index/header-nav.gif) repeat-x;
+}
+#index-container{
+	overflow: hidden;
+	padding: 0 15px;
+	margin: 0;
+}
+.index-tab{
+	width: 100%;
+	height: 29px;
+	padding: 10px 0 0 0;
+	border-bottom: 1px solid #128dbb;
+}
+.index-tab ul{
+	height: 100%;
+	list-style: none;
+	padding: 0 0 0 10px;	
+	margin: 0;
+}
+.index-tab li{
+	cursor:pointer;
+	list-style: none;
+	float: left;
+	padding: 3px 0 0;
+	margin: 0 5px 0 0;
+	color: #00335b;
+}
+.index-tab li a{
+	text-decoration: none;
+	color: #5888a6;
+	font-weight: 700;
+	height: 29px;
+	line-height: 29px;
+	padding-left: 15px;
+	background: url(../images/index/tab-normal-left.gif) no-repeat left 0;	
+}	
+.index-tab li a span{
+	line-height: 29px;
+	font-weight: 700;
+	text-decoration: none;
+	padding: 8px 20px 8px 5px;
+	background: url(../images/index/tab-normal-right.gif) no-repeat right 0;
+}
+.index-tab li a:hover{
+	background: url(../images/index/tab-hover-left.gif) no-repeat left 0;
+}
+.index-tab li a:hover span{
+	text-decoration: none;
+	color: #5888a6;
+	background: url(../images/index/tab-hover-right.gif) no-repeat right 0;
+}
+.index-tab .current a {
+	background: url(../images/index/tab-active-left.gif) no-repeat left 0;	
+}
+.index-tab .current a span{
+	text-decoration: none;
+	color: #fff;
+	font-weight:700;
+	background: url(../images/index/tab-active-right.gif) no-repeat right 0;
+}
+
+.index-content{
+	background-color: #fff;
+	border: 1px solid #b3ccdb;
+	border-top-width:0;
+	padding: 10px;
+	height: 350px;
+	min-height: 350px;
+	margin-bottom: 10px;
+}
+.index-panel-content{
+	background:#fff url(../images/index/content-body.gif) repeat-x 0 top;
+	border: 1px solid #b1d6e8;
+	width: 47%;
+	float: left;
+	margin: 0 20px 20px 0;
+	padding-bottom: 10px;
+}
+.index-panel{
+	float:left;
+	width:25%;
+	position:relative;
+	margin:0 10px 10px 0;
+	height:150px;
+}
+.index-panel-container{
+	width: 100%;
+	overflow: hidden;
+}
+.index-panel-title{
+	height: 31px;
+	line-height: 31px;
+	background:url(../images/index/index-title.gif) repeat-x;
+	font-size:12px;
+	font-weight:700;
+	padding-left: 15px;
+}
+.index-panel-container ul{
+	list-style: none;
+	margin: 0;
+	padding:10px 20px 10px 25px;
+	list-style-type : disc;
+}
+.index-panel-container li{
+	font-size: 12px;
+	color: #19537c;
+	font-family:Arial, Helvetica, sans-serif;
+	line-height: 30px;
+	border-bottom: 1px dashed #ccc;
+}
+.new{
+	background:url(../images/index/new.gif) no-repeat;
+	display: inline-block;
+	width: 9px;
+	height:9px;
+}
+.images1 a, .images2 a, .images2 a{		
+	width:128px;
+	height:128px;
+	position:relative;
+	margin:10px auto 7px;
+	display:block;
+	text-align:center;
+	color:#333;
+	text-decoration:none;
+}
+	
+.images1 a:hover, .images2 a:hover, .images2 a:hover{
+	color:#000;
+	text-decoration:none;
+}
+
+#index-footer{
+	width: 100%;
+	clear: both;
+	position:absolute;
+	bottom: 0;
+	left: 0;
+	background:url(../images/index/index-footer.gif);
+	height: 52px;
+	text-align: center;
+}
+
+#copyright{
+	display: inline-block;
+	font:Arial, Helvetica, sans-serif;
+	color: #002536;
+	padding: 20px 0 0 0;}

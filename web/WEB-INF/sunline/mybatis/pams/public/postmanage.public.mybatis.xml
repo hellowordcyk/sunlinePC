@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="com.sunline.pams.mybatis.public.postmanage" >
+ 	<resultMap type="java.util.HashMap" id="PostInfoMap">
+ 		<result column="DATAYEAR" property="dataYear"/>
+ 		<result column="POSTNO" property="postNo"/>
+ 		<result column="POSTNAME" property="postName"/>
+ 		<result column="STANDARDVALUE" property="standardValue"/>
+ 	</resultMap>
+ 	<!-- 查询岗位工资标准值 -->
+ 	<select id="queryPostInfosForNowArea" parameterType="java.util.HashMap"  resultMap="PostInfoMap" >
+ 	    SELECT A.PARACD AS POSTNO,A.PARANA AS POSTNAME
+		FROM PCMC_KNP_PARA A
+		WHERE A.SUBSCD = 'pams' AND A.PARATP = 'post' AND A.AREA_NO_STR = #{areaNo}
+ 	</select>
+ 
+ 
+ 	<!-- 查询岗位工资标准值 -->
+ 	<select id="queryPostSalaryStandardValuelistPage" parameterType="java.util.HashMap" resultMap="PostInfoMap" >
+ 	    SELECT 
+ 	    	A.DATA_YEAR AS DATAYEAR,
+ 	    	A.POST_NO AS POSTNO,
+ 	    	B.PARANA AS POSTNAME,
+ 	    	A.STANDARD_VALUE AS STANDARDVALUE
+		FROM POST_SALARY_STANDARD_VALUE A
+		LEFT JOIN PCMC_KNP_PARA B ON A.POST_NO = B.PARACD AND B.SUBSCD = 'pams' AND B.PARATP = 'post'
+ 	    WHERE A.AREA_NO = #{areaNo}
+ 	    <if test="dataYear != null and dataYear !='' ">
+		   AND A.DATA_YEAR = #{dataYear}
+		</if>
+		<if test="postNo != null and postNo !='' ">
+		   AND A.POST_NO = #{postNo}
+		</if>
+ 	    <if test="postName != null and postName !='' ">
+	       AND B.PARANA LIKE #{postName}
+	    </if>
+	    
+ 	</select>
+ 	
+ 	<!-- 查询某个岗位工资标准值 -->
+ 	<select id="queryPostSalaryStandardValue" parameterType="java.util.HashMap"  resultMap="PostInfoMap" >
+ 	    SELECT 
+ 	    	A.DATA_YEAR AS DATAYEAR,
+ 	    	A.POST_NO AS POSTNO,
+ 	    	B.PARANA ASS POSTNAME,
+ 	    	A.STANDARD_VALUE AS STANDARDVALUE
+		FROM POST_SALARY_STANDARD_VALUE A
+		LEFT JOIN PCMC_KNP_PARA B ON A.POST_NO = B.PARACD AND B.SUBSCD = 'pams' AND B.PARATP = 'post' 
+ 	    WHERE A.AREA_NO = #{areaNo}
+ 	    <if test="dataYear != null and dataYear !='' ">
+		   AND A.DATA_YEAR = #{dataYear}
+		</if>
+		<if test="postNo != null and postNo !='' ">
+		   AND A.POST_NO = #{postNo}
+		</if>
+ 	    <if test="postName != null and postName !='' ">
+	       AND B.PARANA LIKX #{postName}
+	    </if>
+ 	</select>
+ 	
+ 	<!-- 更新修改某个岗位工资标准值 -->
+ 	<update id="updatePostSalaryStandardValue" parameterType="java.util.HashMap">
+ 		update POST_SALARY_STANDARD_VALUE a
+		set a.STANDARD_VALUE = #{standardValue}
+        where a.DATA_YEAR = #{dataYear} and a.POST_NO = #{postNo} and a.AREA_NO = #{areaNo}
+ 	</update>
+ 	
+ 	<!-- 新增修改某个岗位工资标准值 -->
+ 	<insert id="addPostSalaryStandardValue" parameterType="java.util.HashMap">
+ 		insert into POST_SALARY_STANDARD_VALUE
+ 		VALUES(#{dataYear},#{areaNo},#{postNo},#{standardValue})
+ 	</insert>
+ 	
+ 	<!-- 删除某个岗位工资标准值 -->
+ 	<insert id="deletePostSalaryStandardValue" parameterType="java.util.HashMap">
+ 		delete from POST_SALARY_STANDARD_VALUE
+ 		where DATA_YEAR = #{dataYear} and POST_NO = #{postNo} and AREA_NO = #{areaNo}
+ 	</insert>
+ 	
+ 	<!-- 查询导入的岗位是否存在 -->
+ 	<select id="queryPostNameIsExisted" parameterType="java.util.HashMap" resultMap="PostInfoMap" >
+ 	    SELECT A.PARACD AS POSTNO,A.PARANA AS POSTNAME FROM PCMC_KNP_PARA A 
+ 	    WHERE A.PARATP = 'post' 
+ 	    AND A.SUBSCD = 'pams' 
+ 	    AND A.PARANA = #{postName}
+ 	    AND A.AREA_NO_STR = #{areaNo}
+ 	</select>
+ 	
+ 	
+ 	<!-- 查询导入的数据原系统是否存在 -->
+ 	<select id="queryImortDataIsExisted" parameterType="java.util.HashMap"  resultType="java.util.HashMap" >
+ 	    SELECT A.DATA_YEAR AS DATAYEAR,A.POST_NO AS POSTNO,B.PARANA AS POSTNAME,A.STANDARD_VALUE AS STANDARDVALUE 
+		FROM POST_SALARY_STANDARD_VALUE A
+		INNER JOIN PCMC_KNP_PARA B ON A.AREA_NO = B.AREA_NO_STR AND A.POST_NO = B.PARACD AND B.SUBSCD = 'pams' AND B.PARATP = 'post'
+		WHERE A.DATA_YEAR = #{dataYear} AND B.PARANA = #{postName} AND A.AREA_NO = #{areaNo}
+ 	</select>
+ 	
+ 	<!-- 将导入数据插入岗位工资标准值表 -->
+ 	<insert id="insertPostSalaryStandardValueImportData" parameterType="java.util.HashMap">
+ 		insert into post_salary_standard_value
+ 		(
+ 			DATA_YEAR,AREA_NO,POST_NO,STANDARD_VALUE
+ 		)
+ 		values
+ 		(#{dataYear},#{areaNo},#{postNo},#{standardValue})
+ 	</insert>
+ 	
+ 	<!-- 查询绩效工资标准值 -->
+ 	<select id="queryJixiaoSalaryStandardValuelistPage" parameterType="java.util.HashMap"  resultType="java.util.HashMap" >
+ 	    SELECT A.DATA_YEAR AS DATAYEAR,A.POST_NO AS POSTNO,B.PARANA AS POSTNAME,A.STANDARD_VALUE AS STANDARDVALUE
+		FROM POST_PERFORMANCE_SALARY_STANDARD_VALUE A
+		LEFT JOIN PCMC_KNP_PARA B ON A.POST_NO = B.PARACD AND B.SUBSCD = 'pams' AND B.PARATP = 'post' 
+ 	    WHERE A.AREA_NO = #{areaNo}
+ 	    <if test="dataYear != null and dataYear !='' ">
+		   AND A.DATA_YEAR = #{dataYear}
+		</if>
+		<if test="postNo != null and postNo !='' ">
+		   AND A.POST_NO = #{postNo}
+		</if>
+ 	    <if test="postName != null and postName !='' ">
+	       AND B.PARANA LIKE #{postName}
+	    </if>
+	    
+ 	</select>
+ 	
+ 	<!-- 查询某个绩效工资标准值 -->
+ 	<select id="queryJixiaoSalaryStandardValue" parameterType="java.util.HashMap"  resultType="java.util.HashMap" >
+ 	    SELECT A.DATA_YEAR AS DATAYEAR,A.POST_NO AS POSTNO,B.PARANA AS POSTNAME,A.STANDARD_VALUE AS STANDARDVALUE
+		FROM POST_PERFORMANCE_SALARY_STANDARD_VALUE A
+		LEFT JOIN PCMC_KNP_PARA B ON A.POST_NO = B.PARACD AND B.SUBSCD = 'pams' AND B.PARATP = 'post'
+ 	    WHERE A.AREA_NO = #{areaNo}
+ 	    <if test="dataYear != null and dataYear !='' ">
+		   AND A.DATA_YEAR = #{dataYear}
+		</if>
+		<if test="postNo != null and postNo !='' ">
+		   AND A.POST_NO = #{postNo}
+		</if>
+ 	    <if test="postName != null and postName !='' ">
+	       AND B.PARANA LIKE #{postName}
+	    </if>
+ 	</select>
+ 	
+ 	<!-- 更新修改某个绩效工资标准值 -->
+ 	<update id="updateJixiaoSalaryStandardValue" parameterType="java.util.HashMap">
+ 		update POST_PERFORMANCE_SALARY_STANDARD_VALUE a
+		set a.STANDARD_VALUE = #{standardValue}
+        where a.DATA_YEAR = #{dataYear} and a.POST_NO = #{postNo} and a.AREA_NO = #{areaNo}
+ 	</update>
+ 	
+ 	<!-- 新增修改某个绩效工资标准值 -->
+ 	<insert id="addJixiaoSalaryStandardValue" parameterType="java.util.HashMap">
+ 		insert into POST_PERFORMANCE_SALARY_STANDARD_VALUE
+ 		VALUES(#{dataYear},#{areaNo},#{postNo},#{standardValue})
+ 	</insert>
+ 	
+ 	<!-- 删除某个绩效工资标准值 -->
+ 	<insert id="deleteJixiaoSalaryStandardValue" parameterType="java.util.HashMap">
+ 		delete from POST_PERFORMANCE_SALARY_STANDARD_VALUE
+ 		where DATA_YEAR = #{dataYear} and POST_NO = #{postNo} and AREA_NO = #{areaNo}
+ 	</insert>
+ 	
+ 	<!-- 将导入数据插入绩效工资标准值表 -->
+ 	<insert id="insertJixiaoSalaryStandardValueImportData" parameterType="java.util.HashMap">
+ 		insert into POST_PERFORMANCE_SALARY_STANDARD_VALUE
+ 		(
+ 			DATA_YEAR,AREA_NO,POST_NO,STANDARD_VALUE
+ 		)
+ 		values
+ 		(#{dataYear},#{areaNo},#{postNo},#{standardValue})
+ 	</insert>
+ 	
+ </mapper>

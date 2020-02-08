@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="gb2312"?>
+<!-- 功能页面  -->
+<Sunline>
+    <Session></Session>
+    <Operation id="i18nActor"  bean="com.sunline.funcpub.actor.lang.SysPubI18nActor"  
+        desc="语言资源管理类" >
+        <Action name="query" desc="查询" acttype="query"/>
+        <Action name="add" desc="新增" acttype="add"/>
+        <Action name="update" desc="更新" acttype="update"/>
+        <Action name="delete" desc="删除" acttype="delete"/>
+        <Action name="refresh" desc="刷新语言缓存" acttype="query" />
+    </Operation>
+</Sunline>

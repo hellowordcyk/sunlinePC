@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="com.sunline.pams.mybatis.public.apibim" >
+ 	 
+      <select id="queryUserList"  parameterType="java.util.HashMap"  resultType="java.util.HashMap">
+       SELECT Userid, 
+              Usercode, 
+              Username, 
+              Disable 
+         FROM Pcmc_User
+        where 1=1
+        <if test= "disable != null and disable != ''"> 
+			and disable = #{disable} 
+		</if>
+ 	 </select> 	
+ 	 
+     <insert id="addUser" parameterType="java.util.HashMap">
+		insert into pcmc_user(userid,usercode,deptid,username,userpwd,menutype,skinname,pagesize,phone,email,disable,remark,postcode,corpcode,i18n_code,frozen,last_up_ps_date)
+		values(#{userid,jdbcType=NUMERIC},#{usercode,jdbcType=VARCHAR},#{deptid,jdbcType=NUMERIC},#{username,jdbcType=VARCHAR},#{userpwd,jdbcType=VARCHAR},#{menutype,jdbcType=VARCHAR},#{skinname,jdbcType=VARCHAR},#{pagesize,jdbcType=NUMERIC},#{phone,jdbcType=VARCHAR},#{email,jdbcType=VARCHAR},#{disable,jdbcType=CHAR},#{remark,jdbcType=VARCHAR},#{postcode,jdbcType=VARCHAR},#{corpcode,jdbcType=VARCHAR},#{i18nCode,jdbcType=VARCHAR},#{frozen,jdbcType=VARCHAR},#{last_up_ps_date,jdbcType=DATE})
+	 </insert>
+	 	
+	 <update id="updateUser" parameterType="java.util.HashMap" >
+		update pcmc_user set
+		     username=#{username,jdbcType=VARCHAR}
+		    ,userpwd=#{userpwd,jdbcType=VARCHAR}
+		    ,disable=#{disable,jdbcType=VARCHAR}
+		    ,last_up_ps_date=#{last_up_ps_date,jdbcType=DATE}
+		where usercode = #{usercode} and corpcode='9999'
+	</update>
+	
+	<update id="delUser" parameterType="java.util.HashMap">
+		update  pcmc_user 
+			set disable = '1'
+		where usercode = #{usercode} and corpcode='9999'
+	</update>
+	
+	
+	<update id="setUserLock" parameterType="java.util.HashMap">
+		update  pcmc_user 
+			set prozen = '1'
+		where usercode = #{usercode} and corpcode='9999'
+	</update>
+	
+	<update id="setUserUnlock" parameterType="java.util.HashMap">
+		update  pcmc_user 
+			set prozen = '0'
+		where usercode = #{usercode} and corpcode='9999'
+	</update>
+	
+	 <select id="checkUserExist"  parameterType="java.util.HashMap"  resultType="String">
+       SELECT Userid
+         FROM Pcmc_User
+        where rownum = 1
+        <if test= "usercode != null and usercode != ''"> 
+			and usercode = #{usercode} 
+		</if>
+ 	</select> 
+ 	
+ 	 <insert id="addUserRole" parameterType="java.util.HashMap">
+		insert into pcmc_user_role(userroleid,userid,roleid)
+		values(#{userroleid,jdbcType=NUMERIC},#{userid,jdbcType=NUMERIC},#{roleid,jdbcType=NUMERIC})
+     </insert>
+     
+     
+    <select id="getRoleId"  parameterType="java.util.HashMap"  resultType="String">
+         select roleid from pcmc_role where rolename like '%普通行员%' and rownum=1
+ 	</select> 
+ 	
+ 	<select id="getDeptId"  parameterType="java.util.HashMap"  resultType="String">
+         select deptid from pcmc_Dept where deptcode like '%99999999%' and rownum=1
+ 	</select> 
+</mapper> 	  
+ 	 

@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="com.sunline.bimis.pcmc.priv.db.MdsPrvFunc" table="MDS_PRV_FUNC">
+		<composite-id name="id" class="com.sunline.bimis.pcmc.priv.db.MdsPrvFuncId">
+			<key-property name="bscode" type="string">
+				<column length="32" name="BSCODE"/>
+			</key-property>
+			<key-property name="funccd" type="string">
+				<column length="32" name="FUNCCD"/>
+			</key-property>
+		</composite-id>
+		
+		<property name="funcna">
+			<column length="64" name="FUNCNA"/>
+		</property>
+		
+		<many-to-one name="mdsPrvBase" class="com.sunline.bimis.pcmc.priv.db.MdsPrvBase" update="false" insert="false" fetch="select">
+            <column length="32" name="BSCODE"/>
+        </many-to-one>
+	</class>
+</hibernate-mapping>

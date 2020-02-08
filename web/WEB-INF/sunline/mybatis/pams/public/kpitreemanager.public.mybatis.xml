@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sunline.pams.mybatis.public.kpitreemanager" >
+
+	<!-- 根据分组父节点来查询分组节点
+	 	查询分组下的所有一级子分组
+	 	邓策超 20171115
+	 -->
+	<select id="getNodeByNodeCodeP" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		SELECT NODE_CODE AS "nodeCode",NODE_NAME AS "nodeName",NODE_CODE_P AS "nodeCodeP"
+		FROM MO_KPI_TREE
+		<where>
+			AREA_NO = #{corpcode}
+			<if test="nodeCodeP!=null and nodeCodeP!=''">
+				and NODE_CODE != #{nodeCodeP} and NODE_CODE_P = #{nodeCodeP}
+			</if>
+		</where>
+		ORDER BY NODE_CODE
+	</select>
+
+	<!-- 查询分组下的所有指标
+	 	邓策超 20171115
+
+	 	根据韶平20171120需求:系统中所有指标默认上树,树相当于是分类,单独维护成本太高
+	 	所以替换下面这部分,相当于不考虑关系表,所有指标在树上
+	 	B.KPI_ID AS "kpiId",B.NODE_CODE AS "nodeCode",C.KPI_CODE AS "kpiCode",C.KPI_NAME AS "kpiName"
+	 	FROM MO_KPI_TREE A
+		INNER JOIN MO_KPI_TREE_RELATION B ON A.NODE_CODE = B.NODE_CODE
+		LEFT JOIN MO_KPI_INFO C ON B.KPI_ID = C.KPI_ID AND C.DEL_FLAG = '0'
+		<where>
+			A.AREA_NO = #{corpcode}
+			<if test="nodeCodeP!=null and nodeCodeP!=''">
+				AND A.NODE_CODE = #{nodeCodeP}
+			</if>
+		</where>
+		ORDER BY A.KPI_ID
+	 -->
+	<select id="getKpiByNodeCodeP" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+	SELECT
+	A.KPI_ID AS "kpiId",B.NODE_CODE AS "nodeCode",A.KPI_CODE AS "kpiCode",A.KPI_NAME AS "kpiName",A.KPI_TYPE "kpiType"
+	FROM MO_KPI_INFO A
+	INNER JOIN MO_KPI_TREE B ON A.KPI_CATEGORY_ID = B.NODE_CODE
+	<where>
+		A.AREA_NO = #{corpcode}
+		AND a.DEL_FLAG = '0'
+		<if test="nodeCodeP!=null and nodeCodeP!=''">
+			AND B.NODE_CODE = #{nodeCodeP}
+		</if>
+	</where>
+		ORDER BY A.KPI_ID
+	</select>
+
+	<!--查询派生指标的规则字符串-->
+	<select id="getBaseKpiStrByDrivenKpiCode" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		SELECT A.RULE_CONDITION "ruleCondition"
+		FROM MO_KPI_DERIVE A
+		<where>
+			<if test="nodeCodeP!=null and nodeCodeP!=''">
+				AND A.KPI_ID = #{nodeCodeP}
+			</if>
+		</where>
+		ORDER BY A.KPI_ID
+	</select>
+
+	<!--查询组成派生指标的基础指标-->
+	<select id="getBaseKpiByKpiCodesInStr" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		SELECT A.KPI_ID "kpiId",A.KPI_CATEGORY_ID "nodeCode",A.KPI_CODE "kpiCode",A.KPI_NAME "kpiName",A.KPI_TYPE "kpiName"
+		FROM MO_KPI_INFO A
+		<where>
+			<if test="kpiCodesInStr!=null and kpiCodesInStr!=''">
+				AND A.KPI_CODE IN (${kpiCodesInStr})
+			</if>
+		</where>
+		ORDER BY A.KPI_ID
+	</select>
+
+	<!-- 根据指标分类code来查询指标分类 -->
+	<select id="getNodeByCode" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		SELECT
+		A.NODE_CODE "nodeCode",A.NODE_CODE_P "nodeCodeP",
+		D.NODE_NAME "nodeNameP",
+		A.NODE_LEVEL "nodeLevel",A.NODE_NAME "nodeName",
+		C.KPI_NAME "kpiName",
+		A.AREA_NO "areaNo",A.REMARK "remark",A.NODE_SEQ "nodeSeq"
+		FROM MO_KPI_TREE A
+		LEFT JOIN MO_KPI_TREE_RELATION B ON A.NODE_CODE = B.NODE_CODE
+		LEFT JOIN MO_KPI_INFO C ON B.KPI_ID = C.KPI_ID AND C.DEL_FLAG = '0'
+		LEFT JOIN MO_KPI_TREE D ON A.NODE_CODE_P = D.NODE_CODE
+		<where>
+			A.AREA_NO = #{corpcode}
+			<if test="nodeCodeP!=null and nodeCodeP!=''">
+				AND A.NODE_CODE != #{nodeCodeP} AND A.NODE_CODE = #{nodeCodeP}
+			</if>
+		</where>
+	</select>
+
+
+	<!--插入指标分类节点关系-->
+	<insert id="insertNodeKpiRelation" parameterType="java.util.HashMap" >
+		INSERT INTO MO_KPI_TREE_RELATION
+		(NODE_CODE,KPI_ID)
+		SELECT '${nodeCode}' "NODE_CODE",KPI_ID FROM MO_KPI_INFO
+		WHERE KPI_CODE IN (${kpiCodesInStr})
+	</insert>
+
+
+	<!--查询不在树上的指标,用来挂靠现有指标-->
+	<select id="getKpiInfoNotUnderTree" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		SELECT A.KPI_ID "kpiId",A.KPI_CODE "kpiCode",A.KPI_NAME "kpiName",
+		A.KPI_CATEGORY_ID "kpiCategoryId",C.NODE_NAME "nodeName",A.AREA_NO "areaNo"
+		FROM MO_KPI_INFO A
+		LEFT JOIN MO_KPI_TREE C ON A.KPI_CATEGORY_ID = C.NODE_CODE
+		WHERE A.KPI_ID NOT IN(SELECT B.KPI_ID FROM MO_KPI_TREE_RELATION B)
+		<if test="kpiCode!=null and kpiCode!=''">
+			AND (A.KPI_CODE = #{kpiCode} OR A.KPI_NAME LIKE #{kpiNameLike})
+		</if>
+
+	</select>
+
+	
+	<!-- 分页查询指标挂靠信息 -->
+	<select id="queryKpiInfoLike_listPage" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		SELECT A.KPI_ID "kpiId",A.KPI_CODE "kpiCode",A.KPI_NAME "kpiName",
+		B.NODE_CODE "nodeCode",C.NODE_NAME "nodeName",C.NODE_SEQ "nodeSeq",
+		CASE WHEN B.NODE_CODE IS NULL THEN '否'
+		ELSE '是'
+		END "isGk"
+		FROM MO_KPI_INFO A
+		LEFT JOIN MO_KPI_TREE_RELATION B ON A.KPI_ID = B.KPI_ID
+		LEFT JOIN MO_KPI_TREE C ON B.NODE_CODE = C.NODE_CODE
+		<where>
+			A.DEL_FLAG = '0'
+			AND A.AREA_NO = #{corpcode}
+			<if test="kpiCode!=null and kpiCode!=''">
+				AND A.KPI_CODE = #{kpiCode}
+			</if>
+			<if test="kpiNameLike!=null and kpiNameLike!=''">
+				AND A.KPI_NAME LIKE #{kpiNameLike}
+			</if>
+		</where>
+		order by A.KPI_ID
+	</select>
+
+	<!--查询所有指标位置信息-->
+	<select id="queryKpiLocationInfoLike_listPage" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		SELECT A.KPI_ID "kpiId",A.KPI_CODE "kpiCode",A.KPI_NAME "kpiName",A.KPI_CATEGORY_ID "nodeCode",B.NODE_NAME "nodeName",B.NODE_SEQ "nodeSeq"
+		FROM MO_KPI_INFO A
+		LEFT JOIN MO_KPI_TREE B ON A.KPI_CATEGORY_ID = B.NODE_CODE
+		<where>
+			A.DEL_FLAG = '0'
+			AND A.AREA_NO = #{corpcode}
+			<if test="kpiCode!=null and kpiCode!=''">
+				AND A.KPI_CODE = #{kpiCode}
+			</if>
+			<if test="kpiNameLike!=null and kpiNameLike!=''">
+				AND A.KPI_NAME LIKE #{kpiNameLike}
+			</if>
+		</where>
+		order by A.KPI_ID
+	</select>
+
+</mapper>

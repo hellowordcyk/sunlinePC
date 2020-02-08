@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sunline.pams.mybatis.public.orgprivilegeutil" >
+
+	<select id="queryOrgUserPrivilege" parameterType="String" resultType="String">
+		${_parameter}
+	</select>
+	
+	
+	<resultMap type="java.util.HashMap" id="areaMap">
+		<result column="AREA_NO" property="areaNo"/>
+		<result column="AREA_NAME" property="areaName"/>
+	</resultMap>
+	<select id="queryRuleArea" parameterType="String" resultMap="areaMap">
+		SELECT AREA_NO,AREA_NAME FROM SYS_PUB_AREA WHERE AREA_NO IN (${_parameter})
+	</select>
+	
+	
+	<select id="getTopDept" parameterType="String" resultType="String">
+		SELECT DEPTCODE FROM PCMC_DEPT WHERE PDEPTID NOT IN (SELECT DEPTID FROM PCMC_DEPT) OR PDEPTID = DEPTID
+	</select>
+	<select id="getTopArea" parameterType="String" resultType="String">
+		SELECT AREANO FROM PCMC_DEPT WHERE PDEPTID NOT IN (SELECT DEPTID FROM PCMC_DEPT) OR PDEPTID = DEPTID
+	</select>
+</mapper> 	  
+ 	 

@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="com.sunline.funcpub.mybatis.public.publookup" >
+ 	 <!-- 得到权限资源 人员与资源的关系 -->
+ 	 <select id="getUserResc" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		select resccd "resccd",rescna "rescna",userid "userid",resctp "resctp",subsys "subsys" from v_auth_resc
+		where  userid = #{userid} and subsys = #{subsys} 
+		<if test="resctp!=null and resctp!=''">  
+		    and resctp = #{resctp} 
+		</if>
+ 	 </select> 
+ 	 
+ 	 <resultMap type="java.util.HashMap" id="getUserByCode_rsm">
+ 	     <result column="userid" property="userid"/>
+ 	     <result column="usercode" property="usercode"/>
+ 	     <result column="username" property="username"/>
+ 	     <result column="userpwd" property="userpwd"/>
+ 	     <result column="phone" property="phone"/>
+ 	     <result column="pagesize" property="pagesize"/>
+ 	     <result column="menutype" property="menutype"/>
+ 	     <result column="disable" property="disable"/>
+ 	     <result column="deptid" property="deptid"/>
+ 	     <result column="skinname" property="skinname"/>
+ 	     <result column="email" property="email"/>
+ 	     <result column="postcode" property="postcode"/>
+ 	     <result column="cred_type" property="cred_type"/>
+ 	     <result column="cred_code" property="cred_code"/>
+ 	     <result column="lastrole" property="lastrole"/>
+ 	     <result column="remark" property="remark"/>
+ 	     <result column="ussatg" property="ussatg"/>
+ 	     <result column="chpwtm" property="chpwtm"/>
+ 	     <result column="default_role" property="default_role"/>
+ 	     <result column="last_up_ps_date" property="last_up_ps_date"/>
+ 	 </resultMap>
+ 	 
+ 	 <select id="getUserByCode" parameterType="java.util.HashMap" resultMap="getUserByCode_rsm">
+ 	    select 
+ 	      userid,
+		  usercode,
+		  username,
+		  userpwd,
+		  phone,
+		  pagesize,
+		  menutype,
+		  disable,
+		  deptid,
+		  skinname,
+		  email,
+		  postcode,
+		  cred_type,
+		  cred_code,
+		  lastrole,
+		  remark,
+		  ussatg,
+		  chpwtm,
+		  default_role,
+		  last_up_ps_date
+ 	     from pcmc_user 
+ 	    <where>
+ 	    	corpcode=#{corpcode}
+ 	      <if test="userCode!=null and userCode!=''">
+ 	          and usercode=#{userCode}
+ 	      </if>
+ 	      <if test="userId!=null and userId!=''">
+              and userid=#{userId}
+          </if>
+ 	    </where>
+ 	 </select>
+ 	 
+ 	 <!-- 管辖机构 -->
+ 	 <select id="getUserRescOrg" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		select resccd "resccd",rescna "rescna",userid "userid",resctp "resctp",subsys "subsys" from v_auth_org
+		where  userid = #{userid} 
+ 	 </select> 
+ 	 <!-- 管辖区域号 -->
+ 	 <select id="getRuleOrgInfo" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+ 	 	select distinct areano "areano" from pcmc_dept
+ 	 	<if test="_parameter !=null and  _parameter.size()>0">
+ 	 	 where deptcode in 
+ 	 	<foreach collection="_parameter" index="index" item="dc" open="(" separator="," close=")">
+            #{dc}
+        </foreach>
+           and
+        </if>
+ 	 	 DISABLE = '0' and corpcode=#{corpcode}
+ 	 </select>
+ 	 <!-- 管辖区域信息-->
+ 	 <select id="getRuleAreaInfo" parameterType="String" resultType="java.util.HashMap">
+ 	 	select area_no "areano",area_name "areaname" from sys_pub_area
+ 	 	<if test="_parameter !=null and   _parameter.size()>0">
+ 	 	 where deptcode in 
+ 	 	<foreach collection="_parameter" index="index" item="dc" open="(" separator="," close=")">
+            #{dc}
+        </foreach>
+        </if>
+ 	 </select>
+ 	 
+ 	 
+ 	 <!-- 获得userId在权限视图里面获取的所有管理机构 -->
+ 	 <select id="getUserRescOrgs" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		select a.deptcode "orgCode",b.DEPTID "orgId" 
+		from v_auth_org a
+		inner join pcmc_dept b on a.deptcode = b.DEPTCODE and b.DISABLE != '1' and a.corpcode=b.corpcode
+		where a.userid = #{userId} and a.corpcode=#{corpcode}
+ 	 </select>
+ 	 
+ 	 <!-- 获得userId在权限视图里面获取的所有管理机构以及所属机构 -->
+ 	 <select id="getUserRescOrgsAndBelongOrgs" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		select a.resccd "orgCode",b.DEPTID "orgId" 
+		from v_auth_resc a
+		inner join pcmc_dept b on a.resccd = b.DEPTCODE and b.DISABLE = '0' and a.corpcode=b.corpcode
+		where a.resctp = '18' and a.corpcode=#{corpcode}
+		and a.userid = #{userId}
+		
+		union 
+		
+		select b.DEPTCODE "orgCode",b.DEPTID "orgId"
+		from pcmc_user a
+		inner join pcmc_dept b on a.DEPTID = b.DEPTID and b.DISABLE = '0' and a.corpcode=b.corpcode
+		where a.USERID = #{userId} and a.DISABLE != '1' and a.corpcode=#{corpcode}
+ 	 </select>
+ 	 
+ 	 <!-- 获得该orgSeq下的所有子机构 -->
+ 	 <select id="getUnderOrgSeqOrgs" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		select a.DEPTCODE "orgCode",a.DEPTID "orgId"
+		from pcmc_dept a
+		where 
+		<if test="orgId!=null and orgId!='' and orgId!='%..%'">
+		  a.ORGSEQ   like  #{orgId}   and
+		</if>
+		 a.corpcode=#{corpcode}
+		and a.DISABLE = '0'
+ 	 </select>
+ 	 
+ 	 <!-- 获取userId在权限视图里面的所有管理机构 -->
+ 	 <select id="getUserRuleOrgs" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		select resccd "resccd",rescna "rescna",userid "userid",resctp "resctp",subsys "subsys" from v_auth_org
+		where  userid = #{userid} and corpcode=#{corpcode}
+ 	 </select> 
+ 	 
+ 	 
+ 	 <!-- 新增日志 -->
+ 	 <insert id="insertPubLog" parameterType="com.sunline.funcpub.log.bean.PubLog">
+		insert into PUB_LOG(
+			flowid,
+			sys_cd,
+			sys_operid,
+			sys_action,
+			mod_name,
+			oper_type,
+			before_values,
+			end_values,
+			ip_addr,
+			createdt,
+			usercode,
+			corpcode
+			)
+		VALUES(
+			#{flowid,jdbcType=NUMERIC},
+			#{syscd,jdbcType=VARCHAR},
+			#{sysoperid,jdbcType=VARCHAR},
+			#{sysaction,jdbcType=VARCHAR},
+			#{modname,jdbcType=VARCHAR},
+			#{opertype,jdbcType=VARCHAR},
+			#{beforevalues,jdbcType=VARCHAR},
+			#{endvalues,jdbcType=VARCHAR},
+			#{ipaddr,jdbcType=VARCHAR},
+			#{createdt,jdbcType=TIMESTAMP},
+			#{usercode, jdbcType=VARCHAR},
+			#{corpcode, jdbcType=VARCHAR}
+			)
+ 	 </insert>
+ 	 
+ 	 <resultMap type="com.sunline.funcpub.log.bean.PubLog" id="pubLog">
+ 	 	<id property="flowid" column="flowid" jdbcType="BIGINT"/>
+ 	 	<result property="syscd" column="sys_cd" jdbcType="VARCHAR"/>
+ 		<result property="sysoperid" column="sys_operid" jdbcType="VARCHAR"/>
+ 		<result property="sysaction" column="sys_action" jdbcType="VARCHAR"/>
+ 		<result property="opertype" column="oper_type" jdbcType="VARCHAR"/>
+ 		<result property="beforevalues" column="before_values" jdbcType="VARCHAR"/>
+ 		<result property="endvalues" column="end_values" jdbcType="VARCHAR"/>
+ 		<result property="ipaddr" column="ip_addr" jdbcType="VARCHAR"/>
+ 		<result property="createdt" column="createdt" jdbcType="TIMESTAMP"/>
+ 		<result property="usercode" column="usercode" jdbcType="VARCHAR"/>
+ 		<result property="modname" column="mod_name" jdbcType="VARCHAR"/>
+ 	 </resultMap>
+ 	 
+ 	 <select id="queryPubLoglistPage" parameterType="com.sunline.funcpub.log.bean.PubLog" resultMap="pubLog">
+		select flowid "flowid", sys_cd "sys_cd", sys_operid "sys_operid", sys_action "sys_action", mod_name "mod_name", oper_type "oper_type",
+			before_values "before_values", end_values "end_values", ip_addr "ip_addr", createdt "createdt", usercode "usercode"
+		 from PUB_LOG
+		<where>
+			corpcode=#{corpcode} 
+			<if test="syscd !=null and syscd != ''">
+				and sys_cd = #{syscd}
+			</if>
+			<if test="sysoperid!=null and sysoperid !=''">
+				and sys_operid like #{sysoperid}
+			</if>
+			<if test="sysaction!=null and sysaction !=''">
+				and sys_action like #{sysaction}
+			</if>
+			<if test="modname!=null and modname !=''">
+				and mod_name like #{modname}
+			</if>
+		</where>
+          order by createdt desc		
+ 	 </select> 
+ 	 
+ 	 <resultMap type="com.sunline.funcpub.log.bean.PubLogConfig" id="pubLogConfig">
+ 	 	<result property="syscd" column="sys_cd" jdbcType="VARCHAR"/>
+ 		<result property="sysoperid" column="sys_operid" jdbcType="VARCHAR"/>
+ 		<result property="sysaction" column="sys_action" jdbcType="VARCHAR"/>
+ 		<result property="islog" column="islog" jdbcType="VARCHAR"/>
+ 		<result property="createdt" column="createdt" jdbcType="DATE"/>
+ 		<result property="userid" column="userid" jdbcType="BIGINT"/>
+ 	 </resultMap>
+ 	 
+ 	 <select id="selectPubLogConfig" parameterType="com.sunline.funcpub.log.bean.PubLogConfig" resultMap="pubLogConfig">
+		select sys_cd "sys_cd", sys_operid "sys_operid", sys_action "sys_action", islog "islog", createdt "createdt", userid "userid" 
+		  from PUB_LOG_CONFIG
+		 where sys_cd = #{syscd}
+		   and sys_operid = #{sysoperid}
+		   and sys_action = #{sysaction}
+		   and corpcode=#{corpcode}
+ 	 </select>
+ 	 
+ 	 <insert id="insertPubLogConfig" parameterType="com.sunline.funcpub.log.bean.PubLogConfig">
+ 	 	insert into PUB_LOG_CONFIG(
+			sys_cd,
+			sys_operid,
+			sys_action,
+			islog,
+			createdt,
+			userid,
+			corpcode
+			)
+		VALUES(
+			#{syscd,jdbcType=VARCHAR},
+			#{sysoperid,jdbcType=VARCHAR},
+			#{sysaction,jdbcType=VARCHAR},
+			#{islog,jdbcType=VARCHAR},
+			#{createdt,jdbcType=DATE},
+			#{userid, jdbcType=BIGINT},
+			#{corpcode,jdbcType=VARCHAR}
+			)
+ 	 </insert>
+ 	 
+ 	 <update id="updatePubLogConfig" parameterType="com.sunline.funcpub.log.bean.PubLogConfig">
+		update PUB_LOG_CONFIG
+		set	islog = #{islog},
+			createdt = #{createdt},
+			userid = #{userid}
+		where sys_cd = #{syscd}
+		  and sys_operid = #{sysoperid}
+		  and sys_action = #{sysaction}
+		  and corpcode=#{corpcode}
+ 	 </update>
+ 	 
+ 	 <select id="queryPcmcSubsys" parameterType="com.sunline.funcpub.entity.PcmcSubsys" resultType="com.sunline.funcpub.entity.PcmcSubsys">
+		select subsysid "subsysid", shortname "shortname", enname "enname", cnname "cnname", imgurl "imgurl", linkurl "linkurl", pubinfourl "pubinfourl", orderidx "orderidx", issystem "issystem"
+		  from PCMC_SUBSYS
+		<where>
+			<if test="subsysid!=null">
+				subsysid = #{subsysid}
+			</if>
+			<if test="shortname!=null and shortname!=''">
+				shortname = #{shortname}
+			</if>
+			<if test="cnname!=null and cnname!=''">
+				cnname like #{cnname}
+			</if>
+		</where>
+ 	 </select>
+</mapper> 	  

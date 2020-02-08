@@ -1,0 +1,1041 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sunline.funcpub.mybatis.public.resource">
+
+	<!-- 01查询系统资源sql 带分页 -->
+	<select id="querySysResourselistPage" parameterType="java.util.HashMap" resultType="com.sunline.funcpub.portal.resource.bean.SysResourseBaen">
+		select a.rescid, a.resctp, a.subsys, a.resccd, a.rescna, a.menuid, a.begndt, a.matudt,b.cnname,c.menuname,c.linkurl
+		from SYS_BASE_RESC a
+		left join pcmc_subsys b
+		on a.subsys = b.subsysid
+		left join pcmc_menu c
+		on a.menuid = c.menuid and a.corpcode=c.corpcode
+		<if test="hasStart != null and hasStart != 'false'">
+			inner join sys_base_rspr d 
+			on a.rescid = d.scgpid
+		</if>
+		where 1=1 and a.corpcode=#{corpcode} 
+		<if test="hasStart != null and hasStart != 'false'">
+			and d.privtp = 1
+			<if test="deptstr != null and deptstr != ''">
+			and exists(select 1 from pcmc_user c where c.corpcode=#{corpcode} 
+			  <if test="deptstr != null and deptstr.size()>0">
+	         AND
+			 <foreach collection="deptstr" index="index" item="dcs" open="" separator="" close="">
+			    <if test="index==0">
+			       c.deptid in
+                     <foreach collection="dcs" index="n" item="dc" open="(" close=")" separator=",">
+                       #{dc}
+                     </foreach>
+                   </if>
+                   <if test="index > 0">
+                    or  c.deptid in
+                       <foreach collection="dcs" index="n" item="dc" open="(" close=")" separator=",">
+                          #{dc}
+                       </foreach>
+                   </if>
+               </foreach>
+            </if>
+			)
+			</if>
+		</if>
+		<if test="begndt != null and begndt != ''">
+			and a.begndt >= #{begndt}
+		</if>
+		<if test="matudt != null and matudt != ''">
+			and a.matudt &lt;= #{matudt}
+		</if>
+		<if test="subsys != null and subsys != ''">
+			and a.subsys = #{subsys}
+		</if>
+		<if test="rescna != null and rescna != ''">
+			and a.rescna like #{rescna}
+		</if>
+		<if test="resccd != null and resccd != ''">
+			and a.resccd like #{resccd}
+		</if>
+		<if test="resctp != null and resctp != ''">
+			and a.resctp = #{resctp}
+		</if>
+		<if test="rescid != null and rescid != ''">
+			and a.rescid = #{rescid}
+		</if>
+		union
+		select a.rescid, a.resctp, a.subsys, a.resccd, a.rescna, a.menuid, a.begndt, a.matudt,b.cnname,c.menuname,c.linkurl
+		from SYS_BASE_RESC a
+		left join pcmc_subsys b
+		on a.subsys = b.subsysid
+		left join pcmc_menu c 
+		on a.menuid = c.menuid and a.corpcode=c.corpcode
+		<if test="hasStart != null and hasStart != 'false'">
+			inner join sys_base_rspr d 
+			on a.rescid = d.scgpid
+		</if>
+		where 1=1 and a.corpcode=#{corpcode} 
+		<if test="hasStart != null and hasStart != 'false'">
+			and d.privtp = 2
+			<if test="deptstr != null and deptstr.size()>0">
+			and exists(select 1 from pcmc_role c where c.corpcode=#{corpcode} 
+			   <if test="deptstr != null and deptstr.size()>0">
+	           AND
+			 <foreach collection="deptstr" index="index" item="dcs" open="" separator="" close="">
+			    <if test="index==0">
+			       c.deptid in
+                     <foreach collection="dcs" index="n" item="dc" open="(" close=")" separator=",">
+                       #{dc}
+                     </foreach>
+                   </if>
+                   <if test="index > 0">
+                    or  c.deptid in
+                       <foreach collection="dcs" index="n" item="dc" open="(" close=")" separator=",">
+                          #{dc}
+                       </foreach>
+                   </if>
+               </foreach>
+            </if>
+			)
+		</if>
+	</if>	
+		<if test="begndt != null and begndt != ''">
+			and a.begndt >= #{begndt}
+		</if>
+		<if test="matudt != null and matudt != ''">
+			and a.matudt &lt;= #{matudt}
+		</if>
+		<if test="subsys != null and subsys != ''">
+			and a.subsys = #{subsys}
+		</if>
+		<if test="rescna != null and rescna != ''">
+			and a.rescna like  #{rescna} 
+		</if>
+		<if test="resccd != null and resccd != ''">
+			and a.resccd like #{resccd}
+		</if>
+		<if test="resctp != null and resctp != ''">
+			and a.resctp = #{resctp}
+		</if>
+		<if test="rescid != null and rescid != ''">
+			and a.rescid = #{rescid}
+		</if>
+	</select>
+	
+	<select id="queryResourse" parameterType="java.util.HashMap" resultMap="ResourseMap">
+		select rescid from sys_base_resc where resctp = #{resctp} and subsys = #{subsys} and resccd = #{resccd} and corpcode=#{corpcode}
+	</select>
+	
+	<!-- 02插入资源数据 -->
+	<insert id="insertResource" parameterType="java.util.HashMap" >
+	 INSERT INTO sys_base_resc(rescid,resctp,subsys,resccd,rescna,menuid,begndt,matudt,corpcode) 
+	  VALUES(#{rescid,jdbcType=NUMERIC},
+	  	#{resctp,jdbcType=VARCHAR},
+	  	#{subsys,jdbcType=NUMERIC},
+	  	#{resccd,jdbcType=VARCHAR},
+	  	#{rescna,jdbcType=VARCHAR},
+	  	#{menuid,jdbcType=VARCHAR},
+	  	#{begindt,jdbcType=DATE},
+	  	#{matudt,jdbcType=DATE},
+	  	#{corpcode,jdbcType=VARCHAR}
+	  )
+	</insert>
+	 
+	<insert id="insertSysResourseBean" parameterType="com.sunline.funcpub.portal.resource.bean.SysResourseBaen" >
+	 INSERT INTO sys_base_resc(RESCID,RESCTP,SUBSYS,RESCCD,RESCNA,MENUID,BEGNDT,MATUDT,CORPCODE) 
+		VALUES(#{rescid,jdbcType=NUMERIC},
+			#{resctp,jdbcType=VARCHAR},
+			#{subsys,jdbcType=NUMERIC},
+			#{resccd,jdbcType=VARCHAR},
+			#{rescna,jdbcType=VARCHAR},
+			#{menuid,jdbcType=NUMERIC},
+			#{begndt,jdbcType=DATE},
+			#{matudt,jdbcType=DATE},
+			#{corpcode,jdbcType=VARCHAR}
+		)
+	</insert>
+ 	 
+ 	 <!-- 03根据id获取资源信息 -->
+ 	  <select id="querySysResourseById" parameterType="java.util.HashMap" resultType="com.sunline.funcpub.portal.resource.bean.SysResourseBaen">
+		SELECT rescid, resctp, subsys, resccd, rescna, menuid, begndt, matudt
+		 from sys_base_resc  
+		 WHERE rescid = #{rescid}  and corpcode=#{corpcode}
+ 	 </select> 	
+ 	 
+ 	  <!-- 04修改资源信息 -->
+ 	 <update id="updateResource" parameterType="java.util.HashMap">
+	 		UPDATE SYS_BASE_RESC
+			SET RESCTP = #{resctp,jdbcType=VARCHAR},
+			    SUBSYS = #{subsys,jdbcType=NUMERIC},
+                RESCCD = #{resccd,jdbcType=VARCHAR},
+                RESCNA = #{rescna,jdbcType=VARCHAR},
+			    MENUID = #{menuid,jdbcType=NUMERIC},
+			    BEGNDT = #{begindt,jdbcType=DATE},
+			    MATUDT = #{enddt,jdbcType=DATE}
+			WHERE RESCID = #{rescid} 
+	</update>
+	
+	<!-- 05删除资源信息 -->
+	<delete id="deleteResource" parameterType="java.util.HashMap">
+	 	<![CDATA[
+	 		DELETE FROM SYS_BASE_RESC WHERE RESCID = #{rescid}
+        ]]>
+	</delete>
+	
+    <!-- 1系统资源已授权用户sql -->
+	<select id="queryRescGrantUserlistfuncpub" parameterType="java.util.HashMap" resultMap="ResourseMap">
+		select b.rescna rescname,c.userid,c.username,c.usercode,1 userflag,1 grantflag 
+		from 
+		sys_base_rspr a ,
+		sys_base_resc b,
+		pcmc_user c
+		where 
+		a.scgpid = b.rescid
+		and a.rlusid = c.userid
+		and a.scgptp='1'
+		and a.privtp='1'
+		<if test="rescid != null and rescid != ''">
+			and b.rescid = #{rescid}
+		</if>
+		<if test="hasStart != null and hasStart != 'false'">
+			<if test="deptstr != null and deptstr.size()>0">
+	      AND
+			 <foreach collection="deptstr" index="index" item="dcs" open="" separator="" close="">
+			    <if test="index==0">
+			       c.deptid in
+                     <foreach collection="dcs" index="n" item="dc" open="(" close=")" separator=",">
+                       #{dc}
+                     </foreach>
+                   </if>
+                   <if test="index > 0">
+                    or  c.deptid in
+                       <foreach collection="dcs" index="n" item="dc" open="(" close=")" separator=",">
+                          #{dc}
+                       </foreach>
+                   </if>
+               </foreach>
+            </if>
+		</if>
+		order by c.usercode
+	</select>
+	
+	<!-- 2系统资源未授权用户sql -->
+	<select id="queryRescUNGrantUserlistfuncpub" parameterType="java.util.HashMap" resultMap="ResourseMap">
+		select b.userid,b.username,c.rescna rescname,b.usercode,1 as userflag,2 as grantflag 
+		from 
+		sys_base_resc c,
+		pcmc_user b
+		where 
+		c.corpcode=b.corpcode and c.corpcode=#{corpcode} and
+		not exists (
+			select  1 from sys_base_rspr a where b.userid=a.rlusid and a.privtp='1'and a.scgptp='1' 
+				<if test="rescid != null and rescid != ''">
+					and a.scgpid = #{rescid}
+				</if>
+			)
+		<if test="hasStart != null and hasStart != 'false'">
+			  <if test="deptstr != null and deptstr.size()>0">
+	      AND
+			 <foreach collection="deptstr" index="index" item="dcs" open="" separator="" close="">
+			    <if test="index==0">
+			       b.deptid in
+                     <foreach collection="dcs" index="n" item="dc" open="(" close=")" separator=",">
+                       #{dc}
+                     </foreach>
+                   </if>
+                   <if test="index > 0">
+                    or  b.deptid in
+                       <foreach collection="dcs" index="n" item="dc" open="(" close=")" separator=",">
+                          #{dc}
+                       </foreach>
+                   </if>
+               </foreach>
+            </if>
+		</if>
+		<if test="userna != null and userna != ''">
+            and (b.username like #{userna} or b.usercode like #{userna})
+        </if>
+		<if test="rescid != null and rescid != ''">
+			and c.rescid = #{rescid}
+		</if>
+		order by b.usercode
+	</select>
+	
+	<!-- 3系统资源已授权角色sql -->
+	<select id="queryRescGrantRolelistfuncpub" parameterType="java.util.HashMap" resultMap="ResourseMap">
+		select b.rescna rescname,c.roleid userid,c.roleid as usercode,c.rolename username,2 userflag ,1 grantflag
+		from 
+		sys_base_rspr a ,
+		sys_base_resc b,
+		pcmc_role c
+		where 
+		a.scgpid = b.rescid
+		and a.rlusid = c.roleid
+		and c.corpcode=#{corpcode}
+		and a.scgptp='1'
+		and a.privtp='2'
+		<if test="rescid != null and rescid != ''">
+			and b.rescid = #{rescid}
+		</if>
+		<if test="hasStart != null and hasStart != 'false'">
+		  <if test="deptstr != null and deptstr.size()>0">
+	      AND
+			 <foreach collection="deptstr" index="index" item="dcs" open="" separator="" close="">
+			    <if test="index==0">
+			       c.deptid in
+                     <foreach collection="dcs" index="n" item="dc" open="(" close=")" separator=",">
+                       #{dc}
+                     </foreach>
+                   </if>
+                   <if test="index > 0">
+                    or  c.deptid in
+                       <foreach collection="dcs" index="n" item="dc" open="(" close=")" separator=",">
+                          #{dc}
+                       </foreach>
+                   </if>
+               </foreach>
+            </if>
+		</if>
+		order by username
+	</select>
+	
+	<!-- 4系统资源未授权角色sql -->
+	<select id="queryRescUNGrantRolelistfuncpub" parameterType="java.util.HashMap" resultMap="ResourseMap">
+		select b.roleid userid,b.rolename username,b.roleid as usercode,c.rescna rescname,2 userflag,2 grantflag 
+		from 
+		sys_base_resc c,
+		pcmc_role b
+		where 
+		c.corpcode=b.corpcode and c.corpcode=#{corpcode} and 
+		not exists (
+			select  1 from sys_base_rspr a where b.roleid=a.rlusid and a.privtp='2'and a.scgptp='1' 
+				<if test="rescid != null and rescid != ''">
+					and a.scgpid = #{rescid}
+				</if>
+			)
+		<if test="hasStart != null and hasStart != 'false'">
+			<if test="deptstr != null and deptstr.size()>0">
+	      AND
+			 <foreach collection="deptstr" index="index" item="dcs" open="" separator="" close="">
+			    <if test="index==0">
+			       c.deptid in
+                     <foreach collection="dcs" index="n" item="dc" open="(" close=")" separator=",">
+                       #{dc}
+                     </foreach>
+                   </if>
+                   <if test="index > 0">
+                    or  c.deptid in
+                       <foreach collection="dcs" index="n" item="dc" open="(" close=")" separator=",">
+                          #{dc}
+                       </foreach>
+                   </if>
+               </foreach>
+            </if>
+		</if>	
+		<if test="rescid != null and rescid != ''">
+			and c.rescid = #{rescid}
+		</if>
+		order by username
+	</select>
+	
+	<!-- 1系统资源组已授权用户sql -->
+	<select id="queryRsgpGrantUserlistfuncpub" parameterType="java.util.HashMap" resultMap="ResourseMap">
+		select b.rsgpna rescname,c.userid,c.username,c.usercode,1 userflag,1 grantflag 
+		from 
+		sys_base_rspr a ,
+		sys_base_rsgp b,
+		pcmc_user c
+		where 
+		a.scgpid = b.rsgpid
+		and a.rlusid = c.userid
+		and a.scgptp='2'
+		and a.privtp='1'
+		<if test="rescid != null and rescid != ''">
+			and b.rsgpid = #{rescid}
+		</if>
+		<if test="hasStart != null and hasStart != 'false'">
+			<if test="deptstr != null and deptstr.size()>0">
+	      AND
+			 <foreach collection="deptstr" index="index" item="dcs" open="" separator="" close="">
+			    <if test="index==0">
+			       c.deptid in
+                     <foreach collection="dcs" index="n" item="dc" open="(" close=")" separator=",">
+                       #{dc}
+                     </foreach>
+                   </if>
+                   <if test="index > 0">
+                    or  c.deptid in
+                       <foreach collection="dcs" index="n" item="dc" open="(" close=")" separator=",">
+                          #{dc}
+                       </foreach>
+                   </if>
+               </foreach>
+            </if>
+		</if>
+		order by username
+	</select>
+	
+	<!-- 2系统资源组未授权用户sql -->
+	<select id="queryRsgpUNGrantUserlistfuncpub" parameterType="java.util.HashMap" resultMap="ResourseMap">
+		select b.userid ,b.username,c.rsgpna rescname,b.usercode,1 userflag,2 grantflag 
+		from 
+		sys_base_rsgp c,
+		pcmc_user b
+		where 
+		c.corpcode=b.corpcode and c.corpcode=#{corpcode}
+		not exists (
+			select  1 from sys_base_rspr a where b.userid=a.rlusid and a.privtp='1'and a.scgptp='2' 
+				<if test="rescid != null and rescid != ''">
+					and a.scgpid = #{rescid}
+				</if>
+			)
+		<if test="hasStart != null and hasStart != 'false'">
+			<if test="deptstr != null and deptstr.size()>0">
+	      AND
+			 <foreach collection="deptstr" index="index" item="dcs" open="" separator="" close="">
+			    <if test="index==0">
+			       c.deptid in
+                     <foreach collection="dcs" index="n" item="dc" open="(" close=")" separator=",">
+                       #{dc}
+                     </foreach>
+                   </if>
+                   <if test="index > 0">
+                    or  c.deptid in
+                       <foreach collection="dcs" index="n" item="dc" open="(" close=")" separator=",">
+                          #{dc}
+                       </foreach>
+                   </if>
+               </foreach>
+            </if>
+		</if>	
+		<if test="userna != null and userna != ''">
+            and (b.username like #{userna} or b.usercode like #{userna})
+        </if>
+		<if test="rescid != null and rescid != ''">
+			and c.rsgpid = #{rescid}
+		</if>
+		order by usercode
+	</select>
+	
+	<!-- 3系统资源组已授权角色sql -->
+	<select id="queryRsgpGrantRolelistfuncpub" parameterType="java.util.HashMap" resultMap="ResourseMap">
+		select b.rsgpna rescname,c.roleid userid,c.roleid as usercode,c.rolename username,2 userflag ,1 grantflag
+		from 
+		sys_base_rspr a ,
+		sys_base_rsgp b,
+		pcmc_role c
+		where 
+		a.scgpid = b.rsgpid
+		and a.rlusid = c.roleid
+		and c.corpcode=#{corpcode}
+		and a.scgptp='2'
+		and a.privtp='2'
+		<if test="rescid != null and rescid != ''">
+			and b.rsgpid = #{rescid}
+		</if>
+		<if test="hasStart != null and hasStart != 'false'">
+			<if test="deptstr != null and deptstr != ''">
+			<if test="deptstr != null and deptstr.size()>0">
+	      AND
+			 <foreach collection="deptstr" index="index" item="dcs" open="" separator="" close="">
+			    <if test="index==0">
+			       c.deptid in
+                     <foreach collection="dcs" index="n" item="dc" open="(" close=")" separator=",">
+                       #{dc}
+                     </foreach>
+                   </if>
+                   <if test="index > 0">
+                    or  c.deptid in
+                       <foreach collection="dcs" index="n" item="dc" open="(" close=")" separator=",">
+                          #{dc}
+                       </foreach>
+                   </if>
+               </foreach>
+            </if>
+			</if>
+		</if>
+		order by username
+	</select>
+	
+	<!-- 4系统资源组未授权角色sql -->
+	<select id="queryRsgpUNGrantRolelistfuncpub" parameterType="java.util.HashMap" resultMap="ResourseMap">
+		select b.roleid userid,b.rolename username,b.roleid as usercode,c.rsgpna rescname,2 userflag,2 grantflag 
+		from 
+		sys_base_rsgp c,
+		pcmc_role b
+		where 
+		c.corpcode=b.corpcode and c.corpcode=#{corpcode}
+		not exists (
+			select  1 from sys_base_rspr a where b.roleid=a.rlusid and a.privtp='2'and a.scgptp='2' 
+				<if test="rescid != null and rescid != ''">
+					and a.scgpid = #{rescid}
+				</if>
+			)
+		<if test="hasStart != null and hasStart != 'false'">
+			<if test="deptstr != null and deptstr.size()>0">
+	      AND
+			 <foreach collection="deptstr" index="index" item="dcs" open="" separator="" close="">
+			    <if test="index==0">
+			       b.deptid in
+                     <foreach collection="dcs" index="n" item="dc" open="(" close=")" separator=",">
+                       #{dc}
+                     </foreach>
+                   </if>
+                   <if test="index > 0">
+                    or  b.deptid in
+                       <foreach collection="dcs" index="n" item="dc" open="(" close=")" separator=",">
+                           #{dc}
+                       </foreach>
+                   </if>
+               </foreach>
+            </if>
+		</if>	
+		<if test="rescid != null and rescid != ''">
+			and c.rsgpid = #{rescid}
+		</if>
+		order by username
+	</select>
+	
+	 <insert id="insertSysResourseRspr" parameterType="java.util.HashMap" >
+	  INSERT INTO sys_base_rspr(RSPRID,PRIVTP,RLUSID,SCGPID,SCGPTP) VALUES(#{rsprid,jdbcType=NUMERIC},#{privtp,jdbcType=CHAR},#{rlusid,jdbcType=NUMERIC},#{scgpid,jdbcType=NUMERIC},#{scgptp,jdbcType=CHAR})
+ 	 </insert>
+	
+	 <select id="querySysBaseRsgpById" parameterType="java.util.HashMap" resultMap="ResourseMap">		
+		select RSGPID "rsgpid",RSGPNA "rsgpna",RESCTP "resctp",SUBSYS "subsys"  
+		from sys_base_rsgp WHERE 1=1 
+		AND RSGPID =  #{rsgpid} and corpcode=#{corpcode}
+ 	 </select> 	
+ 	 
+ 	 <update id="updateSysBaseRsgp" parameterType="java.util.HashMap">
+	 		UPDATE sys_base_rsgp
+			SET RSGPID = #{rsgpid},
+			    RSGPNA = #{rsgpna},
+                RESCTP = #{resctp},
+                SUBSYS = #{subsys}
+		  WHERE RSGPID = #{rsgpid}
+	</update>
+	                                             <!--查询资源组 -->
+	<select id="querySysResourseGplistPage" parameterType="java.util.HashMap" resultType="com.sunline.funcpub.portal.resource.bean.SysResourseGroupBean">
+		select a.rsgpid,a.rsgpna,a.resctp,a.subsys
+		from  sys_base_rsgp a	
+		<if test="hasStart != null and hasStart != 'false'">
+			inner join sys_base_rspr d 
+			on a.rsgpid = d.scgpid
+		</if>
+		<where>
+			a.corpcode=#{corpcode}
+			<!--  资源组id-->
+			<if test="rsgpid != null and rsgpid != ''">
+				and a.rsgpid = #{rsgpid}
+			</if>
+			<!--  新增资源类型-->
+			<if test="resctp != null and resctp != ''">
+				and a.resctp = #{resctp}
+			</if>
+			<!--  新增子系统类型-->
+			<if test="subsys != null and subsys != ''">
+				and a.subsys = #{subsys}
+			</if>
+			<!--  新增资源名称-->
+			<if test="rsgpna != null and rsgpna != ''">
+				and a.rsgpna like #{rsgpna}
+			</if>
+			<if test="hasStart != null and hasStart != 'false'">
+				and d.privtp = 1
+				and exists(select 1 from pcmc_user c where 
+			<if test="deptstr != null and deptstr.size()>0">
+			 <foreach collection="deptstr" index="index" item="dcs" open="" separator="" close="">
+			    <if test="index==0">
+			       c.deptid in
+                     <foreach collection="dcs" index="n" item="dc" open="(" close=")" separator=",">
+                       #{dc}
+                     </foreach>
+                   </if>
+                   <if test="index > 0">
+                    or  c.deptid in
+                       <foreach collection="dcs" index="n" item="dc" open="(" close=")" separator=",">
+                           #{dc}
+                       </foreach>
+                   </if>
+               </foreach>
+            </if>
+				)
+			</if>
+		</where>
+		order by rsgpid
+	</select>
+	
+	 <insert id="insertSysResourseGroup" parameterType="java.util.HashMap" >  <!--新增资源组 -->
+	    INSERT INTO sys_base_rsgp(RSGPID,RSGPNA,RESCTP,SUBSYS,CORPCODE) VALUES(#{rsgpid,jdbcType=NUMERIC},#{rsgpna,jdbcType=VARCHAR},#{resctp,jdbcType=VARCHAR},#{subsys,jdbcType=NUMERIC},#{corpcode,jdbcType=VARCHAR})
+ 	 </insert>
+
+ 	 <delete id="deleteSysResourseGroup" parameterType="java.util.HashMap"> <!--删除资源组 -->
+	 	<![CDATA[
+	 		DELETE FROM sys_base_rsgp WHERE RSGPID = #{rsgpid}  
+        ]]>
+	</delete>
+ 	 
+ 	 <delete id=" deleteRescFromGroup" parameterType="java.util.HashMap"> <!--删除资源组 -->
+	 	<![CDATA[
+	 		DELETE FROM sys_base_rsgp WHERE RSGPID = #{rsgpid}  and RESCID = #{rescid}
+        ]]>
+	</delete>
+	
+	 <select id="queryUserLike" parameterType="java.util.HashMap" resultMap="ResourseMap">	<!--查询用户资源 -->	
+		 select a.userid,a.usercode,a.username 
+		 from pcmc_user a
+		 <where>
+		 	a.corpcode=#{corpcode}
+        <if test="usercode != null and usercode != ''">
+		     and (a.usercode like #{usercode} or a.username like #{usercode}) 
+		</if>
+		</where>
+        order by a.usercode
+ 	 </select> 	
+ 	 
+ 	 <select id="queryUserRescGrantUserlistPage" parameterType="java.util.HashMap" resultMap="ResourseMap">	<!--01资源授权给用户情况下列表 -->	
+		 select a.rsprid,b.resccd,b.rescna,b.resctp,b.subsys,'--' as rsgpna,'--' as rolena,'1' as granttp 
+		 from sys_base_resc b 
+		 inner join sys_base_rspr a  on a.scgpid = b.rescid
+		 where  a.scgptp = '1' and  a.privtp = '1' and b.corpcode=#{corpcode}
+        <if test="userId != null and userId != ''">
+		     and a.rlusid= #{userId}
+		</if>
+		 <if test="resctp != null and resctp != ''">
+		     and b.resctp =#{resctp}
+		</if>
+		 <if test="subsysId != null and subsysId != ''">
+		     and b.subsys = #{subsysId} 
+		</if>
+		 <if test="resccd != null and resccd != ''">
+		    and ( b.resccd like  #{resccd}  or b.rescna like #{resccd})
+		</if>
+		order by resccd
+ 	 </select> 	
+ 	 
+ 	 <select id="queryUserRescGrantRolelistPage" parameterType="java.util.HashMap" resultMap="ResourseMap">	<!--02资源授权给角色情况下列表 -->	
+		   select a.rsprid,b.resccd,b.rescna,b.resctp,b.subsys,'--' as rsgpna,d.rolename,d.rolename as rolena,'2' as granttp 
+		   from sys_base_rspr a
+           inner join sys_base_resc b on a.scgpid = b.rescid
+           inner join pcmc_user_role c on a.rlusid = c.roleid
+           inner join pcmc_role d on a.rlusid = d.roleid
+           where  a.scgptp = '1' and  a.privtp = '2' and b.corpcode=#{corpcode} and d.corpcode=#{corpcode}
+            <if test="userId != null and userId != ''">
+		      and c.userid =#{userId}
+			</if>
+			 <if test="resccd != null and resccd != ''">
+		    	and ( b.resccd like  #{resccd}  or b.rescna like #{resccd})
+			</if>
+          	<if test="resctp != null and resctp != ''">
+		     	and b.resctp =#{resctp}
+			</if>
+		 	<if test="subsysId != null and subsysId != ''">
+		     	and b.subsys = #{subsysId} 
+			</if>   
+			order by resccd
+ 	 </select> 	
+ 	 
+ 	 <select id="queryUserRsgpGrantUserlistPage" parameterType="java.util.HashMap" resultMap="ResourseMap">	<!--03资源组授权给用户  情况下列表 -->	
+		 select a.rsprid,d.resccd,d.rescna,d.resctp,d.subsys,b.rsgpna as rsgpna,'--' as rolena ,'3' as granttp 
+		 from sys_base_rspr a
+		 inner join sys_base_rsgp b on a.scgpid = b.rsgpid
+		 inner join sys_base_rsgr c on b.rsgpid = c.rsgpid
+		 inner join sys_base_resc d on c.rescid = d.rescid
+		 where  a.scgptp = '2' and  a.privtp = '1' and b.corpcode=#{corpcode} and d.corpcode=#{corpcode}
+		 	<if test="userId != null and userId != ''">
+		       and a.rlusid =#{userId}
+			</if>
+			 <if test="resccd != null and resccd != ''">
+		    	and ( d.resccd like  #{resccd}  or d.rescna like #{resccd})
+			</if>
+          	<if test="resctp != null and resctp != ''">
+		     	and d.resctp =#{resctp}
+			</if>
+		 	<if test="subsysId != null and subsysId != ''">
+		     	and d.subsys = #{subsysId} 
+			</if>   	 
+ 	 </select> 	
+ 	 
+ 	 <select id="queryUserRsgpGrantRolelistPage" parameterType="java.util.HashMap" resultMap="ResourseMap">	<!--04资源组授权给角色 情况下列表 -->	
+		  select a.rsprid,d.resccd,d.rescna,d.resctp,d.subsys,b.rsgpna as rsgpna,f.rolename,f.rolename as rolena,'4' as granttp 
+		  from sys_base_rspr a
+		  inner join sys_base_rsgp b on a.scgpid = b.rsgpid
+		  inner join sys_base_rsgr c on b.rsgpid = c.rsgpid
+		  inner join sys_base_resc d on c.rescid = d.rescid
+		  inner join pcmc_user_role e on e.roleid = a.rlusid
+		  inner join pcmc_role f on f.roleid = a.rlusid 
+		  where  a.scgptp = '2' and  a.privtp = '2' and b.corpcode=#{corpcode} and d.corpcode=#{corpcode} and f.corpcode=#{corpcode}
+		  	<if test="userId != null and userId != ''">
+		       and e.userid =#{userId}
+			</if>
+			 <if test="resccd != null and resccd != ''">
+		    	and (d.resccd like  #{resccd}  or d.rescna like #{resccd})
+			</if>
+          	<if test="resctp != null and resctp != ''">
+		     	and d.resctp =#{resctp}
+			</if>
+		 	<if test="subsysId != null and subsysId != ''">
+		     	and d.subsys = #{subsysId} 
+			</if>   	
+ 	 </select> 	
+ 	 
+    <select id="queryUserGrantResclistPage" parameterType="java.util.HashMap" resultMap="ResourseMap"> <!-- 05查询用户所有的资源-->
+        <!-- 资源 用户 -->
+        select a.rsprid,b.resccd as resccd,b.rescna as rescna,b.resctp as resctp,b.subsys as subsys,'--' as rsgpna,'--' as rolena,'1' as granttp 
+        from sys_base_rspr a 
+        inner join sys_base_resc b on a.scgpid = b.rescid
+        where a.scgptp = '1' and  a.privtp = '1' and b.corpcode=#{corpcode}
+        <if test="userId != null and userId != ''">
+         	and a.rlusid= #{userId} 
+        </if>
+        <if test="resccd != null and resccd != ''">
+         	and ( b.resccd like #{resccd} or b.rescna like #{resccd} )
+        </if>
+        <if test="resctp != null and resctp != ''">
+         	and b.resctp=#{resctp} 
+        </if>
+        <if test="subsysId != null and subsysId != ''">
+         	and b.subsys=#{subsysId} 
+        </if>
+        UNION All
+        <!-- 资源 角色 -->
+        select a.rsprid,b.resccd as resccd,b.rescna as rescna,b.resctp as resctp,b.subsys as subsys,'--' as rsgpna,d.rolename as rolena,'2' as granttp  
+        from sys_base_rspr a 
+        inner join sys_base_resc b on a.scgpid = b.rescid
+        inner join pcmc_user_role c on a.rlusid = c.roleid
+        inner join pcmc_role d on a.rlusid = d.roleid 
+        where  a.scgptp = '1' and  a.privtp = '2' and b.corpcode=#{corpcode} and d.corpcode=#{corpcode}
+        <if test="userId != null and userId != ''">
+         	 and c.userid = #{userId} 
+        </if>
+        <if test="resccd != null and resccd != ''">
+         	and (b.resccd like #{resccd} or b.rescna like #{resccd})
+        </if>
+         <if test="resctp != null and resctp != ''">
+         	and b.resctp=#{resctp} 
+        </if>
+        <if test="subsysId != null and subsysId != ''">
+         	and b.subsys=#{subsysId} 
+        </if>
+        UNION All
+        <!--资源 组  用户  -->
+        select a.rsprid,d.resccd as resccd,d.rescna as rescna,d.resctp as resctp,d.subsys as subsys,b.rsgpna as rsgpna,'--' as rolena ,'3' as granttp 
+        from sys_base_rspr a
+        inner join sys_base_rsgp b on a.scgpid = b.rsgpid
+        inner join sys_base_rsgr c on b.rsgpid = c.rsgpid
+        inner join sys_base_resc d on c.rescid = d.rescid
+        where  a.scgptp = '2' and  a.privtp = '1' and b.corpcode=#{corpcode} and d.corpcode=#{corpcode}
+        <if test="userId != null and userId != ''">
+         	 and a.rlusid = #{userId} 
+        </if>
+        <if test="resccd != null and resccd != ''">
+         	and (d.resccd like #{resccd} or d.rescna like #{resccd})
+        </if>
+         <if test="resctp != null and resctp != ''">
+         	and d.resctp=#{resctp} 
+        </if>
+        <if test="subsysId != null and subsysId != ''">
+         	and d.subsys=#{subsysId} 
+        </if>
+        UNION All
+        <!-- 资源 组  角色 -->
+        select a.rsprid,d.resccd as resccd,d.rescna as rescna,d.resctp as resctp,d.subsys as subsys,b.rsgpna as rsgpna,f.rolename as rolena,'4' as granttp 
+        from sys_base_rspr a
+        inner join sys_base_rsgp b on a.scgpid = b.rsgpid 
+        inner join sys_base_rsgr c on b.rsgpid = c.rsgpid
+        inner join sys_base_resc d on c.rescid = d.rescid
+        inner join pcmc_user_role e on a.rlusid = e.roleid
+        inner join pcmc_role f on f.roleid = a.rlusid
+        where  a.scgptp = '2' and  a.privtp = '2' and b.corpcode=#{corpcode} and d.corpcode=#{corpcode} and f.corpcode=#{corpcode}
+        <if test="userId != null and userId != ''">
+         	 and e.userid = #{userId} 
+        </if>
+        <if test="resccd != null and resccd != ''">
+         	and (d.resccd like #{resccd} or d.rescna like #{resccd})
+        </if>
+         <if test="resctp != null and resctp != ''">
+         	and d.resctp=#{resctp} 
+        </if>
+        <if test="subsysId != null and subsysId != ''">
+         	and d.subsys=#{subsysId} 
+        </if>
+    </select>
+    
+    <delete id="deleteUserGrantResource" parameterType="java.util.HashMap">
+	 	<![CDATA[
+	 		delete from sys_base_rspr  where rsprid = #{rsprid}
+        ]]>
+	</delete>
+	
+	<select id="queryUserUnGrantResclistPage" parameterType="java.util.HashMap" resultMap="ResourseMap">	<!--查询用户未授权资源 -->	
+	    select a.rescid,a.resccd,a.rescna,a.resctp,a.subsys 
+	    from sys_base_resc a
+	    where a.corpcode=#{corpcode} and not exists(
+	    select 1 from v_auth_resc b where
+	    a.resccd = b.resccd and a.corpcode=b.corpcode and b.corpcode=#{corpcode}
+	    <if test="userid != null and userid != ''">
+         	and b.userid = #{userid}
+        </if>
+	     )
+	     <if test="subsys != null and subsys != ''">
+         	 and a.subsys = #{subsys}
+        </if>
+	    <if test="resccd != null and resccd != ''">
+         	and (a.resccd like #{resccd} or a.rescna like  #{resccd} )
+        </if>
+	     <if test="resctp != null and resctp != ''">
+         	 and a.resctp = #{resctp}
+        </if>   
+        order by resccd
+ 	 </select> 	
+ 	 
+ 	 <select id="queryUserUnGrantGrouplistPage" parameterType="java.util.HashMap" resultMap="ResourseMap">	<!--查询用户未授权资源组 -->	
+         select a.rsgpid as rescid,'--' as resccd,a.rsgpna as rescna,a.resctp,a.subsys 
+         from sys_base_rsgp a
+         where a.corpcode=#{corpcode} and not exists(
+         select 1 from sys_base_rspr b 
+         where b.scgptp='2' and b.privtp='1'
+         and a.rsgpid= b.scgpid  
+         <if test="userid != null and userid != ''">
+            and b.rlusid = #{userid}
+         </if>
+         )
+         <if test="subsys != null and subsys != ''">
+             and a.subsys = #{subsys}
+        </if>
+         <if test="resccd != null and resccd != ''">
+             and a.rsgpna like #{resccd}
+          </if>
+          <if test="resctp != null and resctp != ''">
+             and a.resctp = #{resctp}
+          </if>  
+          order by resccd
+ 	 </select> 	
+    
+    <insert id="addUserGrantResource" parameterType="java.util.HashMap" >  <!--添加用户资源授权信息 -->	
+	  INSERT INTO sys_base_rspr(RSPRID,SCGPTP,SCGPID,PRIVTP,RLUSID) VALUES(#{rsprid,jdbcType=NUMERIC},#{scgptp,jdbcType=CHAR},#{scgpid,jdbcType=NUMERIC},#{privtp,jdbcType=CHAR},#{rlusid,jdbcType=NUMERIC})
+ 	 </insert>
+    
+     <select id="queryRoleRescGrantRolelistPage" parameterType="java.util.HashMap" resultMap="ResourseMap">	<!--01资源授权给角色 -->	
+         select a.rsprid, b.resccd,b.rescna,b.resctp,b.subsys,'--' as rsgpba,c.rolename,c.rolename as rolena,'1' as granttp 
+         from sys_base_rspr a 
+         inner join sys_base_resc b on a.scgpid = b.rescid
+         inner join pcmc_role c on a.rlusid = c.roleid
+         where  a.scgptp = '1' and  a.privtp = '2' and b.corpcode=#{corpcode} and c.corpcode=#{corpcode}
+         <if test="roleId != null and roleId != ''">
+            	and a.rlusid = #{roleId}
+          </if>  
+          <if test="resccd != null and resccd != ''">
+         		and (b.resccd like #{resccd}  or b.rescna like #{resccd} )
+          </if>  
+          <if test="resctp != null and resctp != ''">
+         		and b.resctp = #{resctp}
+          </if>  
+          <if test="subsysId != null and subsysId != ''">
+        		and b.subsys =#{subsysId}
+          </if>  
+          order by b.resccd
+ 	 </select> 
+ 	 
+ 	 <select id="queryRoleRsgpGrantRolelistPage" parameterType="java.util.HashMap" resultMap="ResourseMap">	<!--02资源组授权给角色 -->
+ 	     select a.rsprid,d.resccd,d.rescna ,d.resctp,d.subsys,b.rsgpna,e.rolename,e.rolename as rolena,'2' as granttp 
+ 	     from sys_base_rspr a	
+ 	     inner join sys_base_rsgp b on a.scgpid = b.rsgpid
+ 	     inner join sys_base_rsgr c on b.rsgpid = c.rsgpid
+ 	     inner join sys_base_resc d on c.rescid = d.rescid
+ 	     inner join pcmc_role e on a.rlusid = e.roleid 
+ 	     where  a.scgptp = '2' and  a.privtp = '2' and b.corpcode=#{corpcode} and d.corpcode=#{corpcode} and e.corpcode=#{corpcode}
+ 	      <if test="roleId != null and roleId != ''">
+ 	     	  and a.rlusid = #{roleId}
+ 	     </if>
+ 	      <if test="resccd != null and resccd != ''">
+ 	     	 and (d.resccd like #{resccd} or d.rescna like #{resccd} )
+ 	     </if>
+ 	      <if test="resctp != null and resctp != ''">
+ 	         and d.resctp = #{resctp}
+ 	     </if>
+ 	      <if test="subsysId != null and subsysId != ''">
+ 	         and d.subsys = #{subsysId}
+         </if>
+         order by d.resccd
+ 	 </select> 
+ 	 
+ 	 <select id="queryRoleAllResclistPage" parameterType="java.util.HashMap" resultMap="ResourseMap">	<!--03查询角色所有资源 -->	
+ 	     select a.rsprid,b.resccd,b.rescna,b.resctp,b.subsys,'--' as rsgpna,c.rolename,c.rolename as rolena,'1' as granttp 
+ 	     from sys_base_rspr a
+ 	     inner join sys_base_resc b on a.scgpid = b.rescid
+ 	     inner join pcmc_role c on a.rlusid = c.roleid
+ 	     where  a.scgptp = '1' and  a.privtp = '2' and b.corpcode=#{corpcode} and c.corpcode=#{corpcode}
+ 	      <if test="roleId != null and roleId != ''">
+ 	     		and a.rlusid = #{roleId}
+ 	     </if>
+ 	      <if test="resccd != null and resccd != ''">
+ 	     		and (b.resccd like #{resccd} or b.rescna like #{resccd} )
+ 	     </if>
+ 	      <if test="resctp != null and resctp != ''">
+ 	     		and b.resctp = #{resctp}
+ 	     </if>
+ 	      <if test="subsysId != null and subsysId != ''">
+ 	     		and b.subsys = #{subsysId}
+ 	     </if>
+ 	     UNION All
+ 	     select a.rsprid,d.resccd,d.rescna,d.resctp,d.subsys,b.rsgpna,e.rolename,e.rolename as rolena,'2' as granttp 
+ 	     from sys_base_rspr a
+ 	     inner join sys_base_rsgp b on a.scgpid = b.rsgpid
+ 	     inner join sys_base_rsgr c on b.rsgpid = c.rsgpid
+ 	     inner join sys_base_resc d on c.rescid = d.rescid
+ 	     inner join pcmc_role e on a.rlusid = e.roleid
+ 	     where  a.scgptp = '2' and  a.privtp = '2' and b.corpcode=#{corpcode} and d.corpcode=#{corpcode} and e.corpcode=#{corpcode}
+ 	      <if test="roleId != null and roleId != ''">
+ 	     		and a.rlusid = #{roleId}
+ 	     </if>
+ 	      <if test="resccd != null and resccd != ''">
+ 	     		and (d.resccd like #{resccd} or d.rescna like #{resccd} )
+ 	     </if>
+ 	      <if test="resctp != null and resctp != ''">
+ 	     		and d.resctp = #{resctp}
+ 	     </if>
+ 	      <if test="subsysId != null and subsysId != ''">
+ 	     		and d.subsys = #{subsysId}
+ 	     </if>
+ 	 </select> 
+ 	 
+ 	 <select id="queryRoleUnGrantResclistPage" parameterType="java.util.HashMap" resultMap="ResourseMap">	<!--01查询角色未授权资源-->
+ 	     select a.rescid,a.resccd,a.rescna,a.resctp,a.subsys 
+ 	     from sys_base_resc
+ 	     a where a.corpcode=#{corpcode} and not exists(
+	 	     select 1 from sys_base_rspr b 
+	 	     where b.scgptp='1' and b.privtp='2'
+	 	     and a.rescid = b.scgpid 
+	 	     <if test="roleId != null and roleId != ''">
+	 	     	 and b.rlusid = #{roleId} 
+	 	     </if>
+ 	     )
+ 	     and not exists (
+	 	     select 1 from sys_base_rspr b 
+	 	     inner join sys_base_rsgp c on b.scgpid = c.rsgpid
+	 	     inner join sys_base_rsgr d on c.rsgpid = d.rsgpid 
+	 	     where b.scgptp='2' and b.privtp='2' and c.corpcode=#{corpcode}
+	 	     and a.rescid = d.rescid 
+	 	     <if test="roleId != null and roleId != ''">
+	 	     	 and b.rlusid = #{roleId}
+	 	     </if>
+	 	     )
+	 	     <if test="subsys != null and subsys != ''">
+	 	     	and a.subsys = #{subsys}
+	 	     </if>
+	 	     <if test="resccd != null and resccd != ''">
+	 	     	 and (a.resccd like #{resccd} or a.rescna like #{resccd} )
+	 	     </if>
+	 	     <if test="resctp != null and resctp != ''">
+	 	     	 and a.resctp = #{resctp}
+	 	     </if>
+	 	 order by a.resccd
+ 	 </select> 
+ 	 
+ 	 <select id="queryRoleUnGrantGroup" parameterType="java.util.HashMap" resultMap="ResourseMap">	<!--02查询角色未授权资源组 -->
+ 	     select a.rsgpid,'--' as resccd,a.rsgpna,a.resctp,a.subsys 
+ 	     from sys_base_rsgp a
+ 	     where a.corpcode=#{corpcode} and not exists(
+	 	     select 1 from sys_base_rspr b 
+	 	     where b.scgptp='2' and b.privtp='2'
+	 	     and a.rsgpid = b.scgpid 
+	 	      <if test="roleId != null and roleId != ''">
+	 	     	 and b.rlusid = #{roleId} 
+	 	     </if>
+	 	    )
+	 	     <if test="subsys != null and subsys != ''">
+ 	     		  and a.subsys = #{subsys}
+ 	        </if>
+	 	      <if test="resccd != null and resccd != ''">
+	 	     	  and (a.resccd like #{resccd} or a.rescna like #{resccd} )
+	 	     </if>
+	 	      <if test="resctp != null and resctp != ''">
+	 	     	 and a.resctp = #{resctp}
+	 	     </if>
+ 	 </select> 
+ 	 
+ 	 <select id="queryDept" parameterType="java.util.HashMap" resultMap="ResourseMap">
+ 	 	select deptcode,deptname from pcmc_dept where corpcode=#{corpcode} order by levelp, deptcode
+ 	 </select>
+ 	 <delete id="deleteSysRescByResctpAndSubsys" parameterType="java.util.HashMap">
+ 	 	delete from sys_base_resc where resctp = #{resctp} and subsys = #{subsys} and corpcode=#{corpcode}
+ 	 </delete>
+ 	 
+ 	 
+ 	 <!-- 用户在系统资源中授权的资源sql -->
+	<select id="queryPrivResourselist" parameterType="java.util.HashMap"
+		resultType="com.sunline.funcpub.portal.resource.bean.SysResourseBaen">
+		select a.rescid,a.resccd,a.rescna from sys_base_resc a,
+		sys_base_rspr b,sys_base_rsgr c,sys_base_rsgp d
+		where b.scgpid = d.rsgpid and c.rsgpid = d.rsgpid  and c.rescid = a.rescid 
+		and a.corpcode=#{corpcode} and d.corpcode=#{corpcode} 
+		and b.scgptp = 2 and b.privtp =1 and b.rlusid =#{userid} and a.resctp=#{resctp} 
+		<if test="subsys != null and subsys != ''">
+			and a.subsys = #{subsys} 
+		</if>
+		<if test="resccd != null and resccd != ''">
+            and a.resccd like #{resccd} 
+        </if>
+		union
+		select a.rescid,a.resccd,a.rescna from sys_base_resc a,
+		sys_base_rspr b,sys_base_rsgr c,sys_base_rsgp d
+		where b.scgpid = d.rsgpid and c.rsgpid = d.rsgpid  and c.rescid = a.rescid 
+		and a.corpcode=#{corpcode} and d.corpcode=#{corpcode}
+		and b.scgptp = 2 and b.privtp =2 and b.rlusid =#{roleid}  and a.resctp=#{resctp} 
+		<if test="subsys != null and subsys != ''">
+			and a.subsys = #{subsys} 
+		</if>
+		<if test="resccd != null and resccd != ''">
+            and a.resccd like #{resccd} 
+        </if>
+		union
+		select  b.rescid,b.resccd,b.rescna from sys_base_rspr a,sys_base_resc b
+		where a.scgpid = b.rescid and a.scgptp =1 and b.corpcode=#{corpcode}
+		and a.privtp =1 and a.rlusid =#{userid}  and b.resctp=#{resctp} 
+		<if test="subsys != null and subsys != ''">
+			and b.subsys = #{subsys} 
+		</if>
+		<if test="resccd != null and resccd != ''">
+            and b.resccd like #{resccd} 
+        </if>
+		union
+		select  b.rescid,b.resccd,b.rescna from sys_base_rspr a,sys_base_resc b
+		where a.scgpid = b.rescid  and a.scgptp =1 and b.corpcode=#{corpcode}
+		and a.privtp =2 and a.rlusid =#{roleid}  and b.resctp=#{resctp} 
+		<if test="subsys != null and subsys != ''">
+			and b.subsys = #{subsys} 
+		</if>
+		<if test="resccd != null and resccd != ''">
+            and b.resccd like #{resccd} 
+        </if>
+	</select>
+	
+	<resultMap type="java.util.HashMap" id="ResourseMap">
+    	<result column="rescid" property="rescid"/>
+    	<result column="resccd" property="resccd"/>
+    	<result column="rescna" property="rescna"/>
+    	<result column="resctp" property="resctp"/>
+    	<result column="subsys" property="subsys"/>
+    	<result column="rsgpid" property="rsgpid"/>
+    	<result column="begndt" property="begndt"/>
+    	<result column="menuid" property="menuid"/>
+    	<result column="matudt" property="matudt"/>
+    	<result column="cnname" property="cnname"/>
+    	<result column="menuname" property="menuname"/>
+    	<result column="linkurl" property="linkurl"/>
+    	<result column="userid" property="userid"/>
+    	<result column="username" property="username"/>
+    	<result column="usercode" property="usercode"/>
+    	<result column="userflag" property="userflag"/>
+    	<result column="grantflag" property="grantflag"/>
+    	<result column="roleid" property="roleid"/>
+    	<result column="rsgpna" property="rsgpna"/>
+    	<result column="rsprid" property="rsprid"/>
+    	<result column="scgpid" property="scgpid"/>
+    	<result column="privtp" property="privtp"/>
+    	<result column="rlusid" property="rlusid"/>
+    	<result column="deptcode" property="deptcode"/>
+    	<result column="deptname" property="deptname"/>
+    	<result column="rolena" property="rolena"/>
+    	<result column="rolena" property="granttp"/>
+    </resultMap>
+	
+</mapper>

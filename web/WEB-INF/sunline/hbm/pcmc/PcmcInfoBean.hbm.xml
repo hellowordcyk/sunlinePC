@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 2006-2-16 11:58:48 by Hibernate Tools 3.1.0.beta4 -->
+<hibernate-mapping>
+    <class name="com.sunline.bimis.pcmc.pm.PcmcInfoBean" table="pcmc_info" >
+      <id name="infoid" type="long">
+            <column name="infoid" scale="0" />
+            <generator class="com.sunline.jraf.id.HBNIDGenerator" >
+			    <param name="seqname">pcmc_info</param>
+			    <param name="column">infoid</param>
+			</generator>
+       </id>
+        <property name="subsys" type="long">
+            <column name="subsys" length="4" />
+        </property>
+        <property name="title" type="string">
+            <column name="title" length="1024" />
+        </property>
+        <property name="content" type="string">
+            <column name="content" length="1024" />
+        </property>
+        <many-to-one name="createuser" class="com.sunline.bimis.pcmc.db.PcmcUser" fetch="select">
+            <column name="createuser" scale="0" not-null="true" />
+        </many-to-one> 
+        <property name="createtime" type="timestamp">
+            <column name="createtime" />
+        </property>
+        <property name="startdt" type="timestamp">
+            <column name="startdt" />
+        </property>
+        <property name="enddt" type="timestamp">
+            <column name="enddt" />
+        </property>
+        <property name="fileid" type="string">
+            <column name="fileid" length="255" />
+        </property>
+        <property name="sndmod" type="string">
+            <column name="sndmod" length="128" />
+        </property>
+        <property name="ispriv" type="string">
+            <column name="ispriv" length="8" />
+        </property>
+        <property name="corpcode" type="string">
+            <column name="corpcode" length="16" />
+        </property>
+    </class>
+</hibernate-mapping>

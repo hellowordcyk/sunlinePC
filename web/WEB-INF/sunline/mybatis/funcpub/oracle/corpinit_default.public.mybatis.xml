@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sunline.funcpub.mybatis.corpinit_default">
+	<insert id="insertTempRef" parameterType="java.util.HashMap">
+		insert into sys_temp_sequence(
+		  id_old,
+		  id_new,
+		  table_name
+		) select 
+		 ${idField},
+		 (ROWNUM+(select max(${idField}) from ${tableName})) AS id_new,'${tableName}'
+		FROM ${tableName} 
+		<where>
+			<choose>
+				<when test="corporationField!=null and corporationField.trim()!=''">
+					 corpcode=#{corpcode}
+				</when>
+				<otherwise>
+					<foreach collection="refTables" item="refTable" index="i">
+						<foreach collection="refColumns" item="refColumn" index="j">
+							<if test="i==j">
+								<if test="i==0">
+									${refColumn} in (select id_old from sys_temp_sequence where table_name=#{refTable})  and ${refColumn} is not null and ${refColumn} &lt;&gt; -1 
+								</if>
+								<if test="i > 0">
+									and ${refColumn} in (select id_old from sys_temp_sequence where table_name=#{refTable})  and ${refColumn} is not null and ${refColumn} &lt;&gt; -1  
+								</if>
+							</if>
+						</foreach>
+					</foreach>
+				</otherwise>
+			</choose>
+		</where>
+	</insert>
+</mapper>

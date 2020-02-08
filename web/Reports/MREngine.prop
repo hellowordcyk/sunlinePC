@@ -1,0 +1,54 @@
+# MREngine config file
+
+# 设置浏览器插件的版本号. 当webserver上的浏览器插件CAB文件被更新时, 调整这个版本号为适当值
+# 会使客户端自动下载注册新的插件.
+# Specify the viewer version, change this bigger may cause client download
+# the viewer in CAB file from server.
+MRViewerVersion=2,5,2,0
+
+# 设置浏览器插件CAB文件的路径, 可以是完整的URL, 也可以是URI.
+# 例如http://www.myserver.com/MyApp/Viewer/或者/MyApp/Viewer/]
+# 如果没有设置这个选项,将使用报表根目录/Viewer.
+# Specify URL of URI of the viewer CAB fileversion, eg:
+# http://www.myserver.com/MyApp/Viewer/ or /MyApp/Viewer/
+# Default is [report root path]/Viewer
+#ViewerPath=/Reports/Viewer/
+
+# 使用试用版时, 设置可以访问引擎的远端客户IP.
+# For trial version, specify the remote host IP address.
+RemoteHost=127.0.0.1
+
+# 如果使用的JDK版本低于1.2, 或者当前使用的Servlet版本低于2.2, 请设置该选项为1.
+# If the current JDK version is earlier than JDK 1.2, or the current servlet engine version is 
+# earlier than servlet 2.2, set this option to 1.
+## JSDK1=0
+
+# 调试选项, -1:禁止输出任何消息; 0:输出错误消息; 1:输出运行日志; 2:输出数据包内容
+# 当出现问题时, 可将此选项设置为1或者2, 并将输出结果发送给明宇以便分析错误原因
+# Use to debug. -1:disable log; 0:log error message; 1:log run status; 2:log content in data packet
+# When error occured, set this option to 1 or 2, send log output to MingCybertech. 
+## Debug=0
+
+# 调试选项, 指定日志文件名称. 没有指定该选项的值时, 输出到控制台.
+# Use to debug, set log file name. When this option is not specified, message will be log to console.
+## LogFile=c:/MREngine.log
+
+# 当使用DHTML浏览器, 且报表引擎运行在非Windows平台上时, 设置该选项的值为1, 将使用远程报表服务器来生成报表.
+# 这时需要在执行的远程主机上启动报表服务器程序.
+# When use DHTML viewer, and MREngie running on non-windows platform, set this option to 1 
+# to use rmeote report server to generate report. This need remote report server program 
+# running on specified remote host.
+## UseReportServer=0
+
+# 设置远程报表服务器的Windows主机IP地址. 仅当UseReportServer=1时需要设置该选项.
+# Specifies IP address of the remoter report server. This option be used just when 
+# UseReportServer set to 1.
+## ReportServer=127.0.0.1
+
+# 设置远程报表服务器的端口. 设置为其他端口时, 用这个端口作为命令行参数启动远程报表服务器程序.
+# 仅当UseReportServer=1时需要设置该选项.
+# Specifies port of the report server. When use port number other than 5309, must start the 
+# remote server thorough command line, with this port as the first argument.
+# This option be used just when UseReportServer set to 1.
+## ReportServerPort=5309
+

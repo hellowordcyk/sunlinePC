@@ -1,0 +1,563 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="com.sunline.pams.mybatis.public.oputil" >
+ 	<!-- resultMap -->
+ 	<resultMap id="claConfigMap" type="java.util.HashMap" >
+		<result column="CONFIG_ID" property="configID" javaType="java.math.BigDecimal" jdbcType="DECIMAL"/>
+		<result column="CONFIG_NAME" property="configName"/>
+		<result column="CONFIG_TYPE" property="configType"/>
+		<result column="BIZ_TABLE" property="bizTable"/>
+		<result column="BIZ_PK" property="bizPK"/>
+		<result column="BIZ_SHOW" property="bizShow"/>
+		<result column="BIZ_GIVE" property="bizGive"/>
+		<result column="BIZ_SCOPE" property="bizScope"/>
+		<result column="BIZ_CONDITION" property="bizCondition"/>
+		<result column="CLA_TABLE" property="claTable"/>
+		<result column="CLA_COLSTR_GET" property="claColStrGet"/>
+		<result column="CLA_TYPE" property="claType"/>
+		<result column="CLA_IN_OBJ_SCOPE" property="claInObjScope"/>
+		<result column="RATE_TOP" property="rateTop" javaType="java.math.BigDecimal" jdbcType="DECIMAL"/>
+		<result column="FORCE_RATEALL_FLAG" property="forceRateAllFlag"/>
+		<result column="ASN_VIRTUAL_FLAG" property="asnVirtualFlag"/>
+		<result column="TEMPLATE_CODE" property="templateCode"/>
+		<result column="ASN_TABLE" property="asnTable"/>
+		<result column="ASN_COLSTR_GET" property="asnColStrGet"/>
+		<result column="BIZ_CHECK_TABLE" property="bizCheckTable"/>
+		<result column="BIZ_CHECK_PK" property="bizCheckPK"/>
+		<result column="BIZ_CHECK_SHOW" property="bizCheckShow"/>
+		<result column="BIZ_CHECK_SCOPE" property="bizCheckScope"/>
+ 		<result column="BIZ_CHECK_CONDITION" property="bizCheckCondition"/><result column="FAILURE_STATUS" property="failureStatus"/>
+ 		<result column="RECHECK" property="reCheck"/>
+ 		<result column="RECHECK_CONDITION" property="reCheckCondition"/>
+ 		<result column="RECHECK_SHOW" property="reCheckShow"/>
+ 		<result column="CLA_HEAD_SHOW" property="claHeadShow"/>
+ 		<result column="ONLY_STARTDATE" property="onlyStartDate"/>
+ 		<result column="OBJ_TOP" property="objTop"/>
+ 		<result column="RELATION_ALIAS" property="relationAlias"/>
+	</resultMap>
+	
+	<resultMap id="asnConfigMap" type="java.util.HashMap">
+ 		<result column="CONFIG_ID" property="configID" javaType="java.math.BigDecimal" jdbcType="DECIMAL"/>
+ 		<result column="CONFIG_NAME" property="configName" />
+ 		<result column="CONFIG_TYPE" property="configType"/>
+ 		<result column="BIZ_TABLE" property="bizTable"/>
+ 		<result column="BIZ_PK" property="bizPK"/>
+ 		<result column="BIZ_SHOW" property="bizShow"/>
+ 		<result column="BIZ_GIVE" property="bizGive"/>
+ 		<result column="BIZ_SCOPE" property="bizScope"/>
+ 		<result column="BIZ_CONDITION" property="bizCondition"/>
+ 		<result column="ASN_TABLE" property="asnTable"/>
+ 		<result column="ASN_COLSTR_GET" property="asnColStrGet"/>
+ 		<result column="ASN_TYPE" property="asnType"/>
+ 		<result column="ASN_IN_OBJ_SCOPE" property="asnInObjScope"/>
+ 		<result column="RATE_TOP" property="rateTop" javaType="java.math.BigDecimal" jdbcType="DECIMAL"/>
+ 		<result column="FORCE_RATEALL_FLAG" property="forceRateAllFlag"/>
+ 		<result column="ASN_VIRTUAL_FLAG" property="asnVirtualFlag"/>
+ 		<result column="TEMPLATE_CODE" property="templateCode"/>
+ 		<result column="CLA_TABLE" property="claTable"/>
+ 		<result column="CLA_COLSTR_GET" property="claColStrGet"/>
+ 		<result column="BIZ_CHECK_TABLE" property="bizCheckTable"/>
+ 		<result column="BIZ_CHECK_PK" property="bizCheckPK"/>
+ 		<result column="BIZ_CHECK_SHOW" property="bizCheckShow"/>
+ 		<result column="BIZ_CHECK_SCOPE" property="bizCheckScope"/>
+ 		<result column="BIZ_CHECK_CONDITION" property="bizCheckCondition"/>
+ 		<result column="ASN_HEAD_SHOW" property="asnHeadShow"/>
+ 		<result column="ONLY_STARTDATE" property="onlyStartDate"/>
+ 		<result column="OBJ_TOP" property="objTop"/>
+ 		<result column="IS_CLA" property="isCla"/>
+ 		<result column="BACKDAYS" property="backDays"/>
+ 		<result column="RELATION_ALIAS" property="relationAlias"/>
+ 	</resultMap>
+ 	
+ 	<resultMap id="dataColMap" type="java.util.HashMap">
+ 		<result column="TABLE_COLUMN" property="tableColumn"/>
+ 		<result column="TABLE_COLUMN_CN" property="tableColumnCn"/>
+ 		<result column="INPUT_BOX_TYPE" property="inputBoxType"/>
+ 		<result column="OPERATOR" property="operator"/>
+ 		<result column="DATA_TYPE" property="dataType"/>
+ 	</resultMap>
+ 	
+ 	<resultMap id="claInfoMap" type="java.util.HashMap">
+		<result column="START_DATE" property="startDate"/>
+		<result column="END_DATE" property="endDate"/>
+		<result column="CLA_TYPE" property="claType"/>
+		<result column="START_AMT" property="startAmt"/>
+		<result column="END_AMT" property="endAmt"/>
+		<result column="CLA_IN_OBJ" property="claInObj"/>
+		<result column="CUR_CLA_RATE" property="rate"/>
+		<result column="USERCODE" property="userCode"/>
+		<result column="USERNAME" property="userName"/>
+	</resultMap>
+	
+ 	<resultMap id="roleCheckStatusMap" type="java.util.HashMap">
+ 		<result column="TEMPLATE_CODE" property="templateCode"/>
+ 		<result column="SORTNO" property="sortNo"/>
+ 		<result column="STATUS" property="status"/>
+ 		<result column="STATUS_NAME" property="statusName"/>
+ 		<result column="ROLEID" property="roleID"/>
+ 		<result column="YES_NEXT_STATUS" property="yesNextStatus"/>
+ 		<result column="NO_NEXT_STATUS" property="noNextStatus"/>
+ 	</resultMap>
+ 	
+ 	<resultMap id="templateInfoMap" type="java.util.HashMap">
+ 		<result column="SUCCESS_STATUS" property="successStatus"/>
+ 		<result column="FAILURE_STATUS" property="failureStatus"/>
+ 	</resultMap>
+	
+	<!-- 查询认领配置 -->
+	<select id="queryOpClaConfig" parameterType="java.math.BigDecimal" resultMap="claConfigMap">
+ 		SELECT 
+ 			CONFIG_ID,CONFIG_NAME,CONFIG_TYPE,BIZ_TABLE,BIZ_PK,BIZ_SHOW,BIZ_GIVE,BIZ_SCOPE,BIZ_CONDITION,CLA_TABLE,
+ 			CLA_COLSTR_GET,CLA_TYPE,CLA_IN_OBJ_SCOPE,RATE_TOP,FORCE_RATEALL_FLAG,ASN_VIRTUAL_FLAG,TEMPLATE_CODE,ASN_TABLE,ASN_COLSTR_GET, 
+ 			BIZ_CHECK_TABLE,BIZ_CHECK_PK,BIZ_CHECK_SHOW,BIZ_CHECK_SCOPE,BIZ_CHECK_CONDITION,RECHECK,RECHECK_CONDITION,RECHECK_SHOW,CLA_HEAD_SHOW,
+ 			ONLY_STARTDATE,OBJ_TOP,RELATION_ALIAS
+ 		FROM OP_CLA_CONFIG
+ 		WHERE CONFIG_ID = #{_parameter}
+ 	</select>
+ 	
+ 	<!-- 查询分配配置 -->
+ 	<select id="queryOpAsnConfig" parameterType="java.math.BigDecimal" resultMap="asnConfigMap">
+ 		SELECT 
+ 			CONFIG_ID, CONFIG_NAME, CONFIG_TYPE, BIZ_TABLE, BIZ_PK, 
+ 			BIZ_SHOW, BIZ_GIVE, BIZ_SCOPE, BIZ_CONDITION, ASN_TABLE, 
+ 			ASN_COLSTR_GET, ASN_TYPE, ASN_IN_OBJ_SCOPE, RATE_TOP, FORCE_RATEALL_FLAG, 
+ 			ASN_VIRTUAL_FLAG, TEMPLATE_CODE, CLA_TABLE, CLA_COLSTR_GET, BIZ_CHECK_TABLE, 
+ 			BIZ_CHECK_PK, BIZ_CHECK_SHOW, BIZ_CHECK_SCOPE, BIZ_CHECK_CONDITION ,ASN_HEAD_SHOW,
+ 			ONLY_STARTDATE,OBJ_TOP,IS_CLA,BACKDAYS,RELATION_ALIAS
+		FROM OP_ASN_CONFIG
+		WHERE CONFIG_ID = #{_parameter}
+ 	</select>
+ 	
+ 	<!-- 查询字段信息 -->
+ 	<select id="queryDataCol" parameterType="java.util.HashMap" resultMap="dataColMap" flushCache="true" useCache="false">
+ 		SELECT 
+ 			TABLE_COLUMN,TABLE_COLUMN_CN,INPUT_BOX_TYPE,OPERATOR,DATA_TYPE 
+ 		FROM OP_DATA_COL
+ 		WHERE (BIZ_TABLE = #{tableName} OR BIZ_TABLE = #{pubBizTable}) AND TABLE_COLUMN IN ${column}
+ 	</select>
+ 	<!-- 查询分配业务表数据 -->
+ 	<select id="queryDataFenListlistPage" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+ 		SELECT T.*,H.PROCESS_INFO FROM(
+	 		SELECT 
+	 			<foreach collection="selectColumnList" item="column" separator=",">
+	 				${column}
+				</foreach>
+					,(CASE WHEN (SELECT COUNT(1) FROM ${asnTable} D WHERE <foreach collection="bizPKArray" item="bizPk" separator=" AND ">A.${bizPk} = D.${bizPk}</foreach> 
+									AND D.START_DATE <![CDATA[<=]]>  #{dataDate,jdbcType=DATE}  AND NVL(D.END_DATE,date'2099-12-31') >= #{dataDate,jdbcType=DATE})  > 0 THEN '2' 
+				
+				
+                <choose>
+                <when test="queryStatus">
+				ELSE 
+                CASE (SELECT  max(DECODE(C.STATUS, CC.YES_NEXT_STATUS, '2',CC.NO_NEXT_STATUS,'0', '1')) FROM ${claTable} B 
+                LEFT JOIN OP_CLA_FLOW C ON B.FLOW_ID=C.FLOW_ID
+                LEFT JOIN OP_CLA_FLOWINFO CC ON C.TEMPLATE_CODE=CC.TEMPLATE_CODE
+                WHERE B.START_DATE <![CDATA[<=]]>  #{dataDate,jdbcType=DATE} 
+                AND (B.END_DATE >= #{dataDate,jdbcType=DATE} OR (B.END_DATE IS NULL OR NOT EXISTS(SELECT 1 FROM ${claTable} BB WHERE <foreach collection="bizPKArray" item="bizPk" separator=" AND ">BB.${bizPk} = B.${bizPk}</foreach>
+                	AND BB.START_DATE <![CDATA[<=]]>  #{dataDate,jdbcType=DATE} AND BB.START_DATE > B.START_DATE)))  
+                	AND <foreach collection="bizPKArray" item="bizPk" separator=" AND ">A.${bizPk} = B.${bizPk}</foreach> ) WHEN '2' THEN '2' WHEN '1' THEN '1'  ELSE '0' END
+                </when>
+                <otherwise>
+                  ELSE '0'
+                 </otherwise>
+                </choose> END)
+                AS CLASTATUS
+				,(CASE WHEN 
+				
+				(SELECT COUNT(1) FROM ${asnTable} D WHERE <foreach collection="bizPKArray" item="bizPk" separator=" AND ">A.${bizPk} = D.${bizPk} </foreach>)  > 0 
+				OR (SELECT COUNT(1) FROM ${claTa} E LEFT JOIN OP_CLA_FLOW F
+                                   ON E.FLOW_ID = F.FLOW_ID WHERE <foreach collection="bizPKArray" item="bizPk" separator=" AND ">A.${bizPk} = E.${bizPk} </foreach> AND F.STATUS NOT IN ('90', '80'))  > 0  THEN '2' 
+				<if test="queryStatus">
+				WHEN (SELECT COUNT(1) FROM ${claTable} B 
+                LEFT JOIN OP_CLA_FLOW C ON B.FLOW_ID=C.FLOW_ID
+                WHERE <foreach collection="bizPKArray" item="bizPk" separator=" AND ">A.${bizPk} = B.${bizPk}</foreach> AND C.STATUS NOT IN ('90','80')) > 0 THEN '2'
+                </if>
+                 ELSE '0' END)
+                AS ISASN
+			FROM ${bizTable} A 
+			<foreach collection="leftJoinList" item="leftJoin" separator=" ">
+				${leftJoin}
+			</foreach>
+			
+			<where>
+				<foreach collection="privSql" item="privcon" separator=" ">
+				${privcon}
+				</foreach>
+				<foreach collection="queryConditionList" item="queryCondition" separator=" ">
+					<if test="queryCondition.andOr == null or queryCondition.andOr == '' ">AND</if>  
+					<if test="queryCondition.andOr != null and queryCondition.andOr != '' ">${queryCondition.andOr}</if>  
+					A.${queryCondition.colName} <![CDATA[${queryCondition.operator}]]> 
+					<if test="queryCondition.operator == 'IN' ">${queryCondition.colValue}</if> 
+					<if test="queryCondition.operator != 'IN' ">#{queryCondition.colValue}</if> 
+				</foreach>
+			</where>
+			<if test="proParaList != null and proParaList.size()>0">
+				<foreach collection="proParaList" item="proPara">
+					<if test="proPara.PRODUCT_NO =='depAcctBal' and proPara.PARA_VALUE!= '' ">
+						and a.bal>=#{proPara.PARA_VALUE}
+					</if>
+					<if test="proPara.PRODUCT_NO =='depAcctBalAvgM' and proPara.PARA_VALUE!= '' ">
+						and a.bal_avg_y>=#{proPara.PARA_VALUE}
+					</if>
+				</foreach>
+			</if>
+			<if test="KILL != null and KILL != ''">
+			  ${KILL}
+			</if>
+		)T left join (SELECT DISTINCT G.PROCESS_INFO,<foreach collection="bizPKArray" item="bizPk" separator=" , ">J.${bizPk}</foreach>
+                      FROM OP_CLA_PROCESS G
+                      LEFT JOIN ${claTable} J
+                      ON  G.FLOW_ID =J.FLOW_ID) H
+                ON <foreach collection="bizPKArray" item="bizPk" separator=" AND ">T.${bizPk} = H.${bizPk}</foreach>
+      
+		<if test="null != CLASTATUS and CLASTATUS != ''">
+			WHERE T.CLASTATUS = #{CLASTATUS}
+		</if>
+		<if test="ORDERBY != null and ORDERBY != ''">
+			  ${ORDERBY}
+		</if>
+ 	</select>
+ 	
+ 	<!-- 查询调整业务表数据 -->
+ 	<select id="queryDataTiaoListlistPage" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+ 		SELECT T.*,H.PROCESS_INFO FROM(
+	 		SELECT 
+	 			<foreach collection="selectColumnList" item="column" separator=",">
+	 				${column}
+				</foreach>
+					,(CASE WHEN (SELECT COUNT(1) FROM ${asnTable} D WHERE <foreach collection="bizPKArray" item="bizPk" separator=" AND ">A.${bizPk} = D.${bizPk}</foreach> 
+									AND D.START_DATE <![CDATA[<=]]>  #{dataDate,jdbcType=DATE}  AND NVL(D.END_DATE,date'2099-12-31') >= #{dataDate,jdbcType=DATE})  > 0 THEN '2' 
+				
+				
+                <choose>
+                <when test="queryStatus">
+				ELSE 
+                CASE (SELECT max(DECODE(C.STATUS, CC.YES_NEXT_STATUS, '2',CC.NO_NEXT_STATUS,'0', '1')) FROM ${claTable} B 
+                LEFT JOIN OP_CLA_FLOW C ON B.FLOW_ID=C.FLOW_ID
+                LEFT JOIN OP_CLA_FLOWINFO CC ON C.TEMPLATE_CODE=CC.TEMPLATE_CODE
+                WHERE B.START_DATE <![CDATA[<=]]>  #{dataDate,jdbcType=DATE} 
+                AND (B.END_DATE >= #{dataDate,jdbcType=DATE} OR (B.END_DATE IS NULL OR NOT EXISTS(SELECT 1 FROM ${claTable} BB WHERE <foreach collection="bizPKArray" item="bizPk" separator=" AND ">BB.${bizPk} = B.${bizPk}</foreach>
+                	AND BB.START_DATE <![CDATA[<=]]>  #{dataDate,jdbcType=DATE} AND BB.START_DATE > B.START_DATE)))  
+                	AND <foreach collection="bizPKArray" item="bizPk" separator=" AND ">A.${bizPk} = B.${bizPk}</foreach> AND C.STATUS <![CDATA[<>]]> '90') WHEN '2' THEN '2' WHEN '1' THEN '1'  ELSE '0' END
+                </when>
+                <otherwise>
+                  ELSE '0'
+                 </otherwise>
+                </choose> END)
+                AS CLASTATUS
+				,(CASE WHEN 
+				
+				(SELECT COUNT(1) FROM ${asnTable} D WHERE <foreach collection="bizPKArray" item="bizPk" separator=" AND ">A.${bizPk} = D.${bizPk} </foreach>)  > 0 THEN '2' 
+				<!-- <if test="queryStatus">
+				WHEN (SELECT COUNT(1) FROM ${claTable} B 
+                LEFT JOIN OP_CLA_FLOW C ON B.FLOW_ID=C.FLOW_ID
+                WHERE <foreach collection="bizPKArray" item="bizPk" separator=" AND ">A.${bizPk} = B.${bizPk}</foreach> AND C.STATUS NOT IN ('90','80')) > 0 THEN '2'
+                </if> -->
+                 ELSE '0' END)
+                AS ISASN
+			FROM ${bizTable} A 
+			<foreach collection="leftJoinList" item="leftJoin" separator=" ">
+				${leftJoin}
+			</foreach>
+			<foreach collection="privSql" item="privcon" separator=" ">
+				${privcon}
+			</foreach>
+			<where>
+				1=1 
+				<foreach collection="queryConditionList" item="queryCondition" separator=" ">
+					<if test="queryCondition.andOr == null or queryCondition.andOr == '' ">AND</if>  
+					<if test="queryCondition.andOr != null and queryCondition.andOr != '' ">${queryCondition.andOr}</if>  
+					A.${queryCondition.colName} <![CDATA[${queryCondition.operator}]]> 
+					<if test="queryCondition.operator == 'IN' ">${queryCondition.colValue}</if> 
+					<if test="queryCondition.operator != 'IN' ">#{queryCondition.colValue}</if> 
+				</foreach>
+			</where>
+			<if test="proParaList != null and proParaList.size()>0">
+				<foreach collection="proParaList" item="proPara">
+					<if test="proPara.PRODUCT_NO =='depAcctBal' and proPara.PARA_VALUE!= '' ">
+						and a.bal>=#{proPara.PARA_VALUE}
+					</if>
+					<if test="proPara.PRODUCT_NO =='depAcctBalAvgM' and proPara.PARA_VALUE!= '' ">
+						and a.bal_avg_y>=#{proPara.PARA_VALUE}
+					</if>
+				</foreach>
+			</if>
+			<if test="KILL != null and KILL != ''">
+			  ${KILL}
+			</if>
+		)T left join (SELECT DISTINCT G.PROCESS_INFO,<foreach collection="bizPKArray" item="bizPk" separator=" , ">J.${bizPk}</foreach>
+                      FROM OP_CLA_PROCESS G
+                      LEFT JOIN ${claTable} J
+                      ON  G.FLOW_ID =J.FLOW_ID) H
+                ON <foreach collection="bizPKArray" item="bizPk" separator=" AND ">T.${bizPk} = H.${bizPk}</foreach>
+		<if test="null != CLASTATUS and CLASTATUS != ''">
+			WHERE T.CLASTATUS = #{CLASTATUS}
+		</if>
+		<!--<if test="ORDERBY != null and ORDERBY != ''">
+		   ${ORDERBY}
+		</if>-->
+ 	</select>
+ 	<!-- 查询业务表数据 -->
+ 	<select id="queryDataListlistPage" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+ 		SELECT T.* FROM(
+	 		SELECT 
+	 			<foreach collection="selectColumnList" item="column" separator=",">
+	 				${column}
+				</foreach>
+					,(CASE WHEN (SELECT COUNT(1) FROM ${asnTable} D WHERE <foreach collection="bizPKArray" item="bizPk" separator=" AND ">A.${bizPk} = D.${bizPk}</foreach> 
+									AND D.START_DATE <![CDATA[<=]]>  #{dataDate,jdbcType=DATE}  AND NVL(D.END_DATE,date'2099-12-31') >= #{dataDate,jdbcType=DATE})  > 0 THEN '2' 
+                <choose>
+                <when test="queryStatus">
+				ELSE 
+                CASE (SELECT max(DECODE(C.STATUS,'80','2','1')) FROM ${claTable} B 
+                LEFT JOIN OP_CLA_FLOW C ON B.FLOW_ID=C.FLOW_ID
+                WHERE B.START_DATE <![CDATA[<=]]>  #{dataDate,jdbcType=DATE} 
+                AND (B.END_DATE >= #{dataDate,jdbcType=DATE} OR (B.END_DATE IS NULL OR NOT EXISTS(SELECT 1 FROM ${claTable} BB WHERE <foreach collection="bizPKArray" item="bizPk" separator=" AND ">BB.${bizPk} = B.${bizPk}</foreach>
+                	AND BB.START_DATE <![CDATA[<=]]>  #{dataDate,jdbcType=DATE} AND BB.START_DATE > B.START_DATE)))  
+                	AND <foreach collection="bizPKArray" item="bizPk" separator=" AND ">A.${bizPk} = B.${bizPk}</foreach> AND C.STATUS <![CDATA[<>]]> '90') WHEN '2' THEN '2' WHEN '1' THEN '1'  ELSE '0' END
+                </when>
+                <otherwise>
+                  ELSE '0'
+                 </otherwise>
+                </choose> END)
+                AS CLASTATUS
+				,(CASE WHEN 
+				
+				(SELECT COUNT(1) FROM ${asnTable} D WHERE <foreach collection="bizPKArray" item="bizPk" separator=" AND ">A.${bizPk} = D.${bizPk} </foreach>)  > 0 
+				OR (SELECT COUNT(1) FROM ${claTa} E LEFT JOIN OP_CLA_FLOW F
+                                   ON E.FLOW_ID = F.FLOW_ID WHERE <foreach collection="bizPKArray" item="bizPk" separator=" AND ">A.${bizPk} = E.${bizPk} </foreach> AND F.STATUS NOT IN ('90', '80'))  > 0  THEN '2' 
+				<if test="queryStatus">
+				WHEN (SELECT COUNT(1) FROM ${claTable} B 
+                LEFT JOIN OP_CLA_FLOW C ON B.FLOW_ID=C.FLOW_ID
+                WHERE <foreach collection="bizPKArray" item="bizPk" separator=" AND ">A.${bizPk} = B.${bizPk}</foreach> AND C.STATUS NOT IN ('90','80')) > 0 THEN '2'
+                </if>
+                 ELSE '0' END)
+                AS ISASN
+			FROM ${bizTable} A 
+			<foreach collection="leftJoinList" item="leftJoin" separator=" ">
+				${leftJoin}
+			</foreach>
+			<foreach collection="privSql" item="privcon" separator=" ">
+				${privcon}
+			</foreach>
+			<where>
+				1=1 
+				<foreach collection="queryConditionList" item="queryCondition" separator=" ">
+					<if test="queryCondition.andOr == null or queryCondition.andOr == '' ">AND</if>  
+					<if test="queryCondition.andOr != null and queryCondition.andOr != '' ">${queryCondition.andOr}</if>  
+					A.${queryCondition.colName} <![CDATA[${queryCondition.operator}]]> 
+					<if test="queryCondition.operator == 'IN' ">${queryCondition.colValue}</if> 
+					<if test="queryCondition.operator != 'IN' ">#{queryCondition.colValue}</if> 
+				</foreach>
+			</where>
+			<if test="proParaList != null and proParaList.size()>0">
+				<foreach collection="proParaList" item="proPara">
+					<if test="proPara.PRODUCT_NO =='depAcctBal' and proPara.PARA_VALUE!= '' ">
+						and a.bal>=#{proPara.PARA_VALUE}
+					</if>
+					<if test="proPara.PRODUCT_NO =='depAcctBalAvgM' and proPara.PARA_VALUE!= '' ">
+						and a.bal_avg_y>=#{proPara.PARA_VALUE}
+					</if>
+				</foreach>
+			</if>
+			<if test="KILL != null and KILL != ''">
+			  ${KILL}
+			</if>
+		)T
+		<if test="null != CLASTATUS and CLASTATUS != ''">
+			WHERE T.CLASTATUS = #{CLASTATUS}
+		</if>
+		<!--<if test="ORDERBY != null and ORDERBY != ''">
+			${ORDERBY}
+		</if>-->
+ 	</select>
+ 	
+ 	<!-- 查询认领/分配页面的头部的信息 -->
+ 	<select id="getHeadInfo" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+ 		SELECT ${bizCondition} FROM ${bizTable}
+ 		<where>
+ 			<foreach collection="bizPKList" item="bizPK" separator=" ">
+ 				<if test="bizPK.colName != 'DATA_DATE' ">
+	 				AND ${bizPK.colName} = #{bizPK.colValue}
+	 			</if>
+ 				<if test="bizPK.colName == 'DATA_DATE' ">
+	 				AND ${bizPK.colName} = to_date(substr(#{bizPK.colValue},1,10),'yyyy-mm-dd') 
+	 			</if>
+ 			</foreach>
+ 		</where>
+ 	</select>
+ 	
+ 	<!-- 查询某条业绩的认领/分配信息 -->
+ 	<select id="getClaInfo" parameterType="java.util.HashMap" resultMap="claInfoMap">
+ 		SELECT * FROM(
+	 		SELECT 
+			    A.START_DATE,
+			    A.END_DATE,
+			    A.ASN_TYPE AS CLA_TYPE,
+			    A.START_AMT,
+			    A.END_AMT,
+			    B.USERCODE,
+			    B.USERNAME,
+			    A.CUR_ASN_RATE AS CUR_CLA_RATE
+			FROM ${asnTable} A
+			LEFT JOIN PCMC_USER B ON A.ASN_IN_OBJ = B.USERCODE
+			<!-- WHERE A.START_DATE <![CDATA[>=]]> #{backCalcDate} -->
+			<where>
+				<foreach collection="condition" item="pk" separator=" ">
+					<if test="pk.colName != 'DATA_DATE' ">
+	 				  AND ${pk.colName} = #{pk.colValue}
+	 			    </if>
+ 				    <if test="pk.colName == 'DATA_DATE' ">
+	 				  AND ${pk.colName} = to_date(substr(#{pk.colValue},1,10),'yyyy-mm-dd') 
+	 			    </if>
+				</foreach>
+			</where>
+			<if test="unionFlag">
+				UNION
+				SELECT 
+				    A.START_DATE,
+				    A.END_DATE,
+				    A.CLA_TYPE,
+				    A.START_AMT,
+				    A.END_AMT,
+				    B.USERCODE,
+				    B.USERNAME,
+				    A.CUR_CLA_RATE
+				FROM ${claTable} A
+				LEFT JOIN PCMC_USER B ON A.CLA_IN_OBJ = B.USERCODE
+				INNER JOIN OP_CLA_FLOW C ON A.FLOW_ID = C.FLOW_ID 
+				WHERE C.STATUS IN (
+					SELECT D.STATUS FROM OP_FLOW_NODE D WHERE D.TEMPLATE_CODE = C.TEMPLATE_CODE
+				)
+				<foreach collection="condition" item="pk" separator=" ">
+					<if test="pk.colName != 'DATA_DATE' ">
+	 				  AND A.${pk.colName} = #{pk.colValue}
+	 			    </if>
+ 				    <if test="pk.colName == 'DATA_DATE' ">
+	 				  AND A.${pk.colName} = to_date(substr(#{pk.colValue},1,10),'yyyy-mm-dd') 
+	 			    </if>
+				</foreach>
+			</if>
+		)
+		ORDER BY START_DATE
+ 	</select>
+ 	
+ 	<!-- 通过流程ID查询认领信息 -->
+ 	<select id="queryClaInfoByFlowID" parameterType="java.util.HashMap" resultMap="claInfoMap">
+ 		SELECT * FROM ${claTable}
+ 		WHERE FLOW_ID = #{flowID} 
+ 	</select>
+ 	
+ 	<!-- 添加分配信息 -->
+ 	<insert id="addAsnInfo" parameterType="java.util.HashMap">
+ 		INSERT INTO ${asnTable}(ASN_ID,START_DATE,END_DATE,ASN_TYPE,ASN_IN_OBJ,CUR_ASN_RATE,ASN_TIME,OPERATOR,STATUS,ASN_SRC,
+ 		<if test="startAmt != null">
+ 			START_AMT,
+ 		</if>
+ 		<if test="endAmt != null">
+ 			END_AMT,
+ 		</if>
+ 		<foreach collection="asnColStrGetList" item="asnColStrGet" separator=",">
+ 			<if test="asnColStrGet.colValue != null">
+ 				${asnColStrGet.colName}
+ 			</if>
+ 		</foreach>
+ 		)
+ 		VALUES(${asnTable}_SEQ.NEXTVAL,#{startDate},#{endDate},#{asnType},#{asnInObj},#{rate},#{asnTime},#{operator},#{asnStatus},#{asnSrc},
+ 		<if test="startAmt != null">
+ 			#{startAmt},
+ 		</if>
+ 		<if test="endAmt != null">
+ 			#{endAmt},
+ 		</if>
+ 		<foreach collection="asnColStrGetList" item="asnColStrGet" separator=",">
+ 			<if test="asnColStrGet.colValue != null">
+ 				#{asnColStrGet.colValue}
+ 			</if>
+ 		</foreach>
+ 		)
+ 	</insert>
+ 	
+ 	<!-- 清理认领表 -->
+ 	<select id="queryFlowID" parameterType="java.util.HashMap" resultType="String">
+ 		SELECT DISTINCT FLOW_ID FROM ${claTable}
+ 		<where>
+	 		<foreach collection="pkInfo" item="pk">
+	 			<if test="pk.pkName != 'DATA_DATE' ">
+	 				AND ${pk.pkName} = #{pk.pkValue}
+	 			</if>
+ 				<if test="pk.pkName == 'DATA_DATE' ">
+	 				AND ${pk.pkName} = to_date(substr(#{pk.pkValue},1,10),'yyyy-mm-dd') 
+	 			</if>
+	 		</foreach>
+ 		</where>
+ 	</select>
+ 	<delete id="clearClaTable" parameterType="java.util.HashMap">
+ 		DELETE FROM ${claTable} 
+ 		<where>
+	 		<foreach collection="pkInfo" item="pk">
+	 			<if test="pk.pkName != 'DATA_DATE' ">
+	 				AND ${pk.pkName} = #{pk.pkValue}
+	 			</if>
+ 				<if test="pk.pkName == 'DATA_DATE' ">
+	 				AND ${pk.pkName} = to_date(substr(#{pk.pkValue},1,10),'yyyy-mm-dd') 
+	 			</if>
+	 		</foreach>
+ 		</where>
+ 	</delete>
+ 	<delete id="clearOpClaFlow" parameterType="String">
+ 		DELETE FROM OP_CLA_FLOW WHERE FLOW_ID = #{_parameter}
+ 	</delete>
+ 	
+ 	<!-- 清理分配表 -->
+ 	<delete id="clearAsnTable" parameterType="java.util.HashMap">
+ 		DELETE FROM ${asnTable} 
+ 		WHERE START_DATE <![CDATA[>=]]> #{backCalcDate}
+ 		<foreach collection="pkInfo" item="pk">
+ 			    <if test="pk.pkName != 'DATA_DATE' ">
+	 				AND ${pk.pkName} = #{pk.pkValue}
+	 			</if>
+ 				<if test="pk.pkName == 'DATA_DATE' ">
+	 				AND ${pk.pkName} = to_date(substr(#{pk.pkValue},1,10),'yyyy-mm-dd') 
+	 			</if>
+ 		</foreach>
+ 	</delete>
+ 	
+ 	<!-- 获取当前角色 -->
+ 	<select id="getCurrentRoleID" parameterType="String" resultType="String">
+ 		SELECT DEFAULT_ROLE FROM PCMC_USER WHERE USERCODE = #{_parameter}
+ 	</select>
+ 	
+ 	<!-- 取用户当前角色的可审批状态信息 -->
+ 	<select id="getRoleCheckStatus" parameterType="java.util.HashMap" resultMap="roleCheckStatusMap">
+ 		SELECT TEMPLATE_CODE,SORTNO,STATUS,STATUS_NAME,ROLEID,YES_NEXT_STATUS,NO_NEXT_STATUS 
+ 		FROM OP_CLA_FLOWINFO
+ 		WHERE TEMPLATE_CODE = #{templateCode} AND ROLEID = #{roleID}
+ 	</select>
+ 	
+ 	<!-- 取某个审批状态的可审批角色 -->
+ 	<select id="getRoleIDByCheckStatus" parameterType="java.util.HashMap" resultType="String">
+ 		SELECT ROLEID FROM OP_CLA_FLOWINFO WHERE TEMPLATE_CODE = #{templateCode} AND STATUS = #{status}
+ 	</select>
+ 	
+ 	<!-- 查询流程模板信息 -->
+ 	<select id="queryTemplateInfo" parameterType="String" resultMap="templateInfoMap">
+ 		SELECT SUCCESS_STATUS,FAILURE_STATUS FROM OP_FLOW_TEMPLATE WHERE TEMPLATE_CODE = #{_parameter}
+ 	</select>
+ 	
+ 	<!-- 从业务表获取填充字段信息 -->
+ 	<select id="queryColStrGet" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+ 		SELECT ${colStrGet} FROM ${bizTable}
+ 		<where>
+ 			<foreach collection="bizPkList" item="bizPK" separator=" ">
+ 				<if test="bizPK.colName != 'DATA_DATE' ">
+	 				AND ${bizPK.colName} = #{bizPK.colValue}
+	 			</if>
+ 				<if test="bizPK.colName == 'DATA_DATE' ">
+	 				AND ${bizPK.colName} = to_date(substr(#{bizPK.colValue},1,10),'yyyy-mm-dd') 
+	 			</if>
+ 			</foreach>
+ 		</where>
+ 	</select> 	
+</mapper> 	  
+ 	 

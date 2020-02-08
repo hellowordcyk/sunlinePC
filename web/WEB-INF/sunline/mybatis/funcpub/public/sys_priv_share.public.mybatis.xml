@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sunline.funcpub.mybatis.sys_priv_share.public">
+    <resultMap type="com.sunline.funcpub.privilege.bean.SysPrivShare" id="privShare_rsm">
+    	<result column="share_id" property="shareId"/>
+    	<result column="owner_code" property="ownerCode"/>
+    	<result column="sharer_code" property="sharerCode"/>
+    	<result column="corpcode" property="corpcode"/>
+    	<result column="entity_code" property="entityCode"/>
+    	<result column="db_column_pk" property="dbColumnPK"/>
+    	<result column="db_column_pk_a" property="dbColumnPKA"/>
+    	<result column="db_column_pk_b" property="dbColumnPKB"/>
+    	<result column="db_column_pk_c" property="dbColumnPKC"/>
+    	<result column="db_column_pk_d" property="dbColumnPKD"/>
+    	<result column="is_insert" property="isInsert"/>
+    	<result column="is_read" property="isRead"/>
+    	<result column="is_update" property="isUpdate"/>
+    	<result column="is_delete" property="isDelete"/>
+    	<result column="is_transfer" property="isTransfer"/>
+    	<result column="is_share" property="isShare"/>
+    	<result column="create_user" property="createUser"/>
+    	<result column="create_time" property="createTime" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+    	<result column="last_update_user" property="lastUpdateUser"/>
+    	<result column="last_update_time" property="lastUpdateTime" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+    </resultMap>
+    
+    <select id="querySysPrivSharelistPage" parameterType="com.sunline.funcpub.privilege.bean.SysPrivShare" resultMap="privShare_rsm">
+    	select 
+    	<include refid="privShare_field" />
+    	from sys_priv_share 
+    	<where>
+    		<include refid="privEntity_condition"></include>
+    	</where>
+    	order by entity_code asc
+    </select>
+    
+    <delete id="deleteSysPrivShare" parameterType="com.sunline.funcpub.privilege.bean.SysPrivShare">
+    	delete from sys_priv_share
+    	<where>
+    		<include refid="privEntity_condition"></include>
+    	</where>
+    </delete>
+    
+    <select id="isExist" parameterType="com.sunline.funcpub.privilege.bean.SysPrivShare" resultType="java.lang.Integer">
+    	select count(1) from sys_priv_share 
+    	<where>
+    		<include refid="privEntity_condition"></include>
+    	</where>
+    </select>
+    
+    <update id="updateSysPrivShare" parameterType="com.sunline.funcpub.privilege.bean.SysPrivShare">
+    	update sys_priv_share
+    		set
+	    	is_insert=#{isInsert},
+	    	is_read=#{isRead},
+	    	is_update=#{isUpdate},
+	    	is_delete=#{isDelete},
+	    	is_transfer=#{isTransfer},
+	    	is_share=#{isShare},
+			last_update_user=#{lastUpdateUser,jdbcType=VARCHAR},
+			last_update_time=#{lastUpdateTime,jdbcType=TIMESTAMP}
+    	<where>
+    		<include refid="privEntity_condition"></include>
+    	</where>
+    		
+    </update>
+    
+    <insert id="addSysPrivShare" parameterType="com.sunline.funcpub.privilege.bean.SysPrivShare">
+    	insert into sys_priv_share(
+    		<include refid="privShare_field"></include>
+    	)values(
+    		#{shareId,jdbcType=NUMERIC},
+    		#{ownerCode,jdbcType=VARCHAR},
+    		#{sharerCode,jdbcType=VARCHAR},
+    		#{corpcode,jdbcType=VARCHAR},
+    		#{entityCode,jdbcType=VARCHAR},
+    		#{dbColumnPK,jdbcType=VARCHAR},
+	    	#{dbColumnPKA,jdbcType=VARCHAR},
+	    	#{dbColumnPKB,jdbcType=VARCHAR},
+	    	#{dbColumnPKC,jdbcType=VARCHAR},
+	    	#{dbColumnPKD,jdbcType=VARCHAR},
+	    	#{isInsert,jdbcType=VARCHAR},
+	    	#{isRead,jdbcType=VARCHAR},
+	    	#{isUpdate,jdbcType=VARCHAR},
+	    	#{isDelete,jdbcType=VARCHAR},
+	    	#{isTransfer,jdbcType=VARCHAR},
+	    	#{isShare,jdbcType=VARCHAR},
+			#{createUser,jdbcType=VARCHAR},
+			#{createTime,jdbcType=TIMESTAMP},
+			#{lastUpdateUser,jdbcType=VARCHAR},
+			#{lastUpdateTime,jdbcType=TIMESTAMP}
+    	)
+    </insert>
+    
+    <sql id="privShare_field">
+    	share_id,
+    	owner_code,
+    	sharer_code,
+    	corpcode,
+    	entity_code,
+    	db_column_pk,
+    	db_column_pk_a,
+    	db_column_pk_b,
+    	db_column_pk_c,
+    	db_column_pk_d,
+    	is_insert,
+    	is_read,
+    	is_update,
+    	is_delete,
+    	is_transfer,
+    	is_share,
+    	create_user,
+    	create_time,
+    	last_update_user,
+    	last_update_time
+    </sql>
+    
+    <sql id="privEntity_condition">
+    	<if test="shareId!=null ">
+    		and share_id=#{shareId}
+    	</if>
+    	<if test="entityCode!=null and entityCode.trim()!=''">
+    		and entity_code=#{entityCode}
+    	</if>
+    	<if test="corpcode!=null and corpcode.trim()!=''">
+    		and corpcode=#{corpcode}
+    	</if>
+    	<if test="ownerCode!=null and ownerCode.trim()!=''">
+    		and owner_code=#{ownerCode}
+    	</if>
+    	<if test="sharerCode!=null and sharerCode.trim()!=''">
+    		and sharer_code=#{sharerCode}
+    	</if>
+    	<if test="dbColumnPK !=null">
+    		and db_column_pk=#{dbColumnPK}
+    	</if>
+    	<if test="dbColumnPKA!=null">
+    		and db_column_pk_a=#{dbColumnPKA}
+    	</if>
+    	<if test="dbColumnPKB!=null">
+    		and db_column_pk_b=#{dbColumnPKB}
+    	</if>
+    	<if test="dbColumnPKC!=null">
+    		and db_column_pk_c=#{dbColumnPKC}
+    	</if>
+    	<if test="dbColumnPKD!=null">
+    		and db_column_pk_d=#{dbColumnPKD}
+    	</if>
+    </sql>
+</mapper>

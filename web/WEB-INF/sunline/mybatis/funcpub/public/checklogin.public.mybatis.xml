@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="com.sunline.funcpub.mybatis.public.checklogin" >
+	 
+	 <select id="checkLogin"  parameterType="java.util.HashMap" resultType="com.sunline.bimis.pcmc.db.PcmcUser">
+		SELECT * FROM PCMC_USER WHERE USERCODE = #{userCode} and corpcode=#{corpcode}
+	 </select>
+	 
+	 <select id="checkInDate" parameterType="java.util.HashMap" resultType="java.lang.String">
+	 	SELECT PARA_VALUE from SYS_PUB_PARA where PARA_CODE = #{paraCode}
+	 </select>
+	 
+	 <select id="lastUpdate" parameterType="java.util.HashMap" resultType="java.util.Date">
+	     
+	 	SELECT LAST_UP_PS_DATE from PCMC_USER where userid = #{userid} and corpcode=#{corpcode}
+	 	
+	 </select>
+	 
+	 
+	 
+</mapper> 	  
+ 	 

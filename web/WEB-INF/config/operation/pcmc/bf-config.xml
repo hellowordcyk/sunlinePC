@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="gb2312"?>
+<Sunline>
+	<Session></Session>
+	<Operation id="BimisFileActor" bean="com.sunline.bimis.pcmc.sm.BimisFileActor"
+		desc="上传文件管理模块">
+		<Action name="update" desc="修改上传文件信息">
+			<Request multi="false">
+				<Field name="fileid" type="String" notnull="true" />
+			</Request>
+		</Action>
+		<Action name="remove" desc="删除文件"/>
+		<Action name="find" desc="查找文件"/>
+		<Action name="get" desc="取文件信息"/>
+	</Operation>
+</Sunline>

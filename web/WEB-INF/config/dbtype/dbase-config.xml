@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="gb2312"?>
+<root>
+	<dbase key="orcl" name="Oracle" pkey="" type="dbaseora">
+		<dbase-driver key="ora" name="oracle.jdbc.driver.OracleDriver" pkey="orcl" type="sub_dbaseora" />
+	</dbase>
+	<dbase key="acce" name="Access" pkey="" type="dbaseacc">
+		<dbase-driver key="acc" name=" sun.jdbc.odbc.JdbcOdbcDriver" pkey="acce" type="sub_dbaseacc" />
+	</dbase>
+	<dbase key="msql" name="MySQL" pkey="" type="dbasemysql">
+		<dbase-driver key="mys" name="org.gjt.mm.mysql.Driver" pkey="msql" type="sub_dbasemysql" />
+		<dbase-driver key="myl" name="com.mysql.jdbc.Driver" pkey="msql" type="sub_dbasemysql" />
+	</dbase>
+	<dbase key="ddb2" name="DB2" pkey="" type="dbasedb2">
+		<dbase-driver key="dbc" name="com.ibm.db2.jdbc.app.DB2Driver" pkey="ddb2" type="sub_dbasedb2" />
+	</dbase>
+	<dbase key="rmix" name="Informix" pkey="" type="dbasermix">
+		<dbase-driver key="rmi" name="com.informix.jdbc.IfxDriver" pkey="rmix" type="sub_dbasermix" />
+	</dbase>
+	<dbase key="syba" name="sybase" pkey="" type="dbasesyb">
+		<dbase-driver key="syb" name="com.sybase.jdbc.SybDriver" pkey="syba" type="sub_dbasesyb" />
+	</dbase>
+	<dbase key="sqls" name="sql server" pkey="" type="dbasesql">
+		<dbase-driver key="sqs" name="com.microsoft.jdbc.sqlserver.SQLServerDriver","sa","" pkey="sqls" type="sub_dbasesql" />
+	</dbase>
+</root>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sunline.funcpub.mybatis.public.privilegefilterdept" >
+    
+    <!-- 选择未被 删除的部门资源列表 -->
+    <select id="ableResourcelistPage" parameterType="java.util.HashMap" resultType="com.sunline.funcpub.privilege.PrivilegeData">
+        select '${subsysCode}' as subsysCode,'${privType}' as privType,deptcode as privCode,deptname as privName from pcmc_dept d
+        <where> 
+            d.disable='0' and corpcode=#{corpcode}
+            <if test="deptCode != null and deptCode.size() > 0">
+	            and (
+	            <foreach collection="deptCode" index="index" item="dcs" open="" separator="" close="">
+	               <if test="index==0 and dcs.size() > 0" >
+	                 d.deptcode in 
+	                 <foreach collection="dcs" index="index" item="dc" open="(" separator="," close=")">
+	                    #{dc}
+	                 </foreach>
+	               </if>
+	               <if test="index > 0 and dcs.size() > 0" >
+	                 or d.deptcode in     
+	                  <foreach collection="dcs" index="index" item="dc" open="(" separator="," close=")">
+	                      #{dc}
+	                 </foreach>
+	               </if>
+	            </foreach>
+	            )
+	        </if>
+	        <if test="privCode!=null and privCode!='%%' " >
+	        	and (
+	        	   d.deptcode like #{privCode}
+	        	   or
+	        	   d.deptname like #{privCode}
+	        	)
+	        </if>
+        </where>
+    </select>
+</mapper>   

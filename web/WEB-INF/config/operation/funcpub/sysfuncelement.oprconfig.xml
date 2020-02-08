@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="gb2312"?>
+<!-- 功能页面元素  -->
+<Sunline>
+    <Session></Session>
+    
+    <Operation id="sysFuncElementActor" bean="com.sunline.funcpub.portal.func.element.actor.SysFuncElementActor"  
+        desc="系统功能页面元素操作类" >
+        <Action name="addSysFuncElement" desc="新增系统功能页面元素" acttype="add"/>
+        <Action name="updateSysFuncElement" desc="修改系统功能页面元素" acttype="update"/>
+        <Action name="querySysFuncElement" desc="查询系统功能页面元素" acttype="query"/>
+        <Action name="getSysFuncElement" desc="获取系统功能页面元素" acttype="query"/>
+        <Action name="deleteSysFuncElement" desc="删除系统功能页面元素" acttype="delete"/>
+        <Action name="deleteSysFuncElements" desc="批量删除系统功能页面元素" acttype="delete"/>
+    </Operation>
+    
+</Sunline>

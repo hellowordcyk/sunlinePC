@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sunline.funcpub.mybatis.public.organization" >
+	<resultMap type="com.sunline.funcpub.pojo.organization.Organization" id="org_rsm">
+		<result column="org_code" property="orgcode"/>
+		<result column="org_name" property="orgname"/>
+		<result column="corpcode" property="corpcode"/>
+		<result column="disable" property="disable"/>
+		<result column="remark" property="remark"/>
+		<result column="org_type" property="orgType"/>
+		<result column="sort_num" property="sortNum"/>
+	</resultMap>
+	<select id="querylistPage" parameterType="com.sunline.funcpub.pojo.organization.Organization" resultMap="org_rsm">
+		select 
+		<include refid="org_field"></include>
+		 from sys_pub_organization
+		 <where>
+		 	(disable is null or disable='0')  
+		 	<include refid="org_condition"></include>
+		 	<if test="orgname!=null and orgname.trim()!='%%'">
+		 		and (org_name like #{orgname} or org_code like #{orgname}) 
+		 	</if>
+		 </where>
+		 order by sort_num asc
+	</select>
+	
+	<insert id="add" parameterType="com.sunline.funcpub.pojo.organization.Organization">
+		insert into sys_pub_organization
+		(
+			<include refid="org_field"></include>
+		)values(
+			#{orgcode,jdbcType=VARCHAR},
+			#{orgname,jdbcType=VARCHAR},
+			#{corpcode,jdbcType=VARCHAR},
+			#{disable,jdbcType=VARCHAR},
+			#{remark,jdbcType=VARCHAR},
+			#{orgType,jdbcType=VARCHAR},
+			#{sortNum,jdbcType=VARCHAR}
+		)
+	</insert>
+	
+	<update id="update" parameterType="com.sunline.funcpub.pojo.organization.Organization">
+		update sys_pub_organization
+			set 
+			org_name=#{orgname,jdbcType=VARCHAR},
+			disable=#{disable,jdbcType=VARCHAR},
+			remark =#{remark,jdbcType=VARCHAR},
+			org_type=#{orgType,jdbcType=VARCHAR},
+			sort_num=#{sortNum,jdbcType=VARCHAR}
+		<where>
+			<if test="orgcode!=null and orgcode.trim()!=''">
+		 		and org_code=#{orgcode}
+		 	</if>
+		</where>
+	</update>
+	
+	<delete id="delete" parameterType="com.sunline.funcpub.pojo.organization.Organization">
+		delete from sys_pub_organization 
+		<where>
+			<include refid="org_condition"></include>
+		</where>
+	</delete>
+	
+	<select id="isExist"  parameterType="com.sunline.funcpub.pojo.organization.Organization" resultType="java.lang.Integer">
+		select count(1) from sys_pub_organization
+		<where>
+			<include refid="org_condition"></include>
+		</where>
+	</select>
+	
+	<sql id="org_field">
+	   org_code,
+	   org_name,
+	   corpcode,
+	   disable,
+	   remark,
+	   org_type,
+	   sort_num
+	</sql>
+	<sql id="org_condition">
+		<if test="orgcode!=null and orgcode.trim()!=''">
+	 		and org_code=#{orgcode}
+	 	</if>
+	 	<if test="disable!=null and disable.trim()!=''">
+	 		and disable=#{disable} 
+	 	</if>
+	 	<if test="corpcode!=null and corpcode.trim()!=''">
+	 		and corpcode=#{corpcode}
+	 	</if>
+	 	<if test="orgType!=null and orgType.trim()!=''">
+	 		and org_type=#{orgType}
+	 	</if>
+	</sql>
+</mapper> 	  

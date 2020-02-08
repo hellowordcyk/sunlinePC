@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sunline.funcpub.mybatis.public.common">
+	<select id="querySubsys" parameterType="java.util.HashMap" resultType="com.sunline.funcpub.entity.PcmcSubsys">
+		select subsysid,shortname,enname,cnname,
+		issystem,imgurl,orderidx,pubinfourl,linkurl 
+		from pcmc_subsys
+		<where>
+			<if test="subsysid!=null and subsysid!=''">
+				and subsysid = #{subsysid}
+			</if>
+			<if test="shortname!=null and shortname!=''">
+				and shortname = #{shortname}
+			</if>
+		</where>
+	</select>
+	<!-- 是否系统管理员 -->
+	<select id="isSystemAdmin" parameterType="java.util.HashMap" resultType="Long">
+		select count(1) as count
+		from pcmc_role a
+		inner join pcmc_user_role b
+		on a.roleid = b.roleid
+		inner join pcmc_subsys c
+		on a.subsysid = c.subsysid
+		<if test="userCode!=null and userCode.trim()!=''">
+		inner join pcmc_user d 
+		on b.userid = d.userid and d.corpcode=#{corpcode}
+		</if>
+		where a.roletp in('2','3') and a.corpcode=#{corpcode}
+		<if test="subsysCode!=null and subsysCode.trim()!=''">
+			and  c.shortname = #{subsysCode}
+		</if>
+		<choose>
+			<when test="userCode!=null and userCode.trim()!=''">
+				and d.usercode = #{userCode}
+			</when>
+			<otherwise>
+				and b.userid = #{userid}
+			</otherwise>
+		</choose>
+		<if test="roleid !=null and roleid!=''">
+		  and a.roleid=#{roleid}
+		</if>
+	</select>
+	
+	
+	<!-- 是否子系统管理员 -->
+	<select id="isSubSystemAdmin" parameterType="java.util.HashMap" resultType="Long">
+		select count(1) as count
+		from pcmc_role a
+		inner join pcmc_user_role b
+		on a.roleid = b.roleid
+		inner join pcmc_subsys c
+		on a.subsysid = c.subsysid
+		<if test="userCode!=null and userCode.trim()!=''">
+		inner join pcmc_user d 
+		on b.userid = d.userid and d.corpcode=#{corpcode}
+		</if>
+		where a.roletp='2' and a.corpcode=#{corpcode}
+		<if test="subsysCode!=null and subsysCode.trim()!=''">
+			and  c.shortname = #{subsysCode}
+		</if>
+		<choose>
+			<when test="userCode!=null and userCode.trim()!=''">
+				and d.usercode = #{userCode}
+			</when>
+			<otherwise>
+				and b.userid = #{userid}
+			</otherwise>
+		</choose>
+		<if test="roleid !=null and roleid!=''">
+		  and a.roleid=#{roleid}
+		</if>
+	</select>
+	
+	<!-- 是否超级管理员 -->
+	<select id="isSuperAdmin" parameterType="java.util.HashMap" resultType="Long">
+		select count(1) as count
+		from pcmc_role a
+		inner join pcmc_user_role b
+		on a.roleid = b.roleid
+		inner join pcmc_subsys c
+		on a.subsysid = c.subsysid
+		<if test="userCode!=null and userCode.trim()!=''">
+			inner join pcmc_user d 
+			on b.userid = d.userid and d.corpcode=#{corpcode}
+		</if>
+		where a.roletp='3' and a.corpcode=#{corpcode}
+		<if test="subsysCode!=null and subsysCode.trim()!=''">
+			and  c.shortname = #{subsysCode}
+		</if>
+		<choose>
+			<when test="userCode!=null and userCode.trim()!=''">
+				and d.usercode = #{userCode}
+			</when>
+			<otherwise>
+				and b.userid = #{userid}
+			</otherwise>
+		</choose>
+		<if test="roleid !=null and roleid!=''">
+		  and a.roleid=#{roleid}
+		</if>
+	</select>
+	
+	
+	<!-- 获取角色对应子系统 -->
+	<select id="getSubsysByRoleid" parameterType="Long" resultType="com.sunline.funcpub.entity.PcmcSubsys">
+		select b.subsysid,b.shortname,b.enname,b.cnname,
+		b.issystem,b.imgurl,b.orderidx,b.pubinfourl,b.linkurl 
+		from pcmc_role a 
+		inner join pcmc_subsys b 
+		on a.subsysid=b.subsysid 
+		and a.roleid = #{_parameter}
+	</select>
+	
+	<!-- 查询机构信息 -->
+	<select id="queryPcmcDept" parameterType="java.util.HashMap" resultType="com.sunline.funcpub.entity.PcmcDept">
+		select deptid,deptcode,pdeptid,levelp,deptname,orgtype,
+		    orgseq,linkman,phone,brsmna,areano,orgbusssize,
+		    orgnaturetype,orgbusstype,remark,disable,org_code "orgcode"
+		from pcmc_dept 
+		<where>
+		 	corpcode=#{corpcode} and disable='0'
+			<if test="deptid!=null and deptid!=''">
+				 and deptid = #{deptid}
+			</if>
+			<if test="deptcode!=null and deptcode!=''">
+				 and deptcode = #{deptcode}
+			</if>
+			<if test="orgseq!=null and orgseq!=''">
+				 and orgseq like #{orgseq}
+			</if>
+		</where>
+		order by deptcode
+	</select>
+	
+	<!-- 查询用户信息 -->
+	<select id="queryPcmcUser" parameterType="java.util.HashMap" resultType="com.sunline.funcpub.entity.PcmcUser">
+		select userid,usercode,username,userpwd,phone,pagesize,
+		    menutype,disable,deptid,skinname,email,postcode,cred_type,
+		    cred_code,lastrole,remark,ussatg,chpwtm,default_role "defaultRole"
+		from pcmc_user 
+		<where>
+			corpcode=#{corpcode} and disable='0' 
+			<if test="userid!=null and userid!=''">
+				 and userid = #{userid}
+			</if>
+			<if test="usercode!=null and usercode!=''">
+				 and usercode = #{usercode}
+			</if>
+		</where>
+	</select>
+	
+	<!-- 查询用户信息 -->
+	<select id="queryPcmcUserByCode" parameterType="java.util.HashMap" resultType="com.sunline.funcpub.entity.PcmcUser">
+		select userid, usercode, username, userpwd, phone, pagesize, menutype, disable, deptid, skinname, 
+			email, postcode, cred_type, cred_code, lastrole, remark, ussatg, chpwtm, default_role "defaultRole"
+		from pcmc_user 
+		<where>
+			corpcode = #{corpcode} 
+			<if test="usercode!=null and usercode!=''">
+				 and usercode = #{usercode}
+			</if>
+			<if test="disable !=null and disable !=''">
+				 and disable = #{disable}
+			</if>
+		</where>
+	</select>
+	
+	<!-- 删除机构管理人员信息 -->
+	<delete id="deleteDeptManager" parameterType="HashMap" >
+		delete from pcmc_dept_manager
+		<where>
+			corpcode=#{corpcode}
+			<if test="deptCode != null and deptCode!=''">
+			    and deptcode = #{deptCode}
+			</if>
+			<if test="userCode != null and userCode!=''">
+			    and usercode = #{userCode}
+			</if>
+		</where>
+	</delete>
+	
+	<resultMap type="com.sunline.funcpub.entity.PcmcDeptManager" id="deptManager">
+		<id column="manager_id" property="managerId"/>
+		<result column="deptcode" property="deptCode"/>
+		<result column="deptname" property="deptName"/>
+		<result column="usercode" property="userCode"/>
+		<result column="username" property="userName"/>
+	</resultMap>
+	
+	<!-- 查询机构管理人员信息 -->
+	<select id="queryDeptManager" parameterType="HashMap" resultMap="deptManager">
+		select a.manager_id,a.deptcode,a.usercode,b.username,c.deptname 
+		from pcmc_dept_manager a
+		inner join pcmc_user b on a.usercode = b.usercode and a.corpcode=b.corpcode
+		inner join pcmc_dept c on a.deptcode = c.deptcode and a.corpcode=c.corpcode
+		<where>
+			a.corpcode=#{corpcode}
+			<if test="deptCode != null and deptCode!=''">
+			    and a.deptcode = #{deptCode}
+			</if>
+			<if test="userCode != null and userCode!=''">
+			    and a.usercode = #{userCode}
+			</if>
+		</where>
+	</select>
+	
+	<!-- 查询当前用户默认角色(当前角色) -->
+	<select id="getDefaultRoleByUserId" parameterType="java.util.HashMap" resultType="Long">
+		select default_role from pcmc_user
+		where userid = #{userId} and corpcode=#{corpcode}
+	</select>
+	
+	<!-- 通过角色类型为 “机构管理员”查询 本级管辖机构  -->
+	<select id="queryDeptManagerByUser" parameterType="java.util.HashMap" resultType="com.sunline.funcpub.entity.PcmcDept">
+		select  d.deptcode "deptcode",d.deptname "deptname",d.deptid "deptid",d.orgseq "orgseq",d.levelp "levelp",d.pdeptid "pdeptid",d.corpcode "corpcode",d.orgtype "orgtype"
+		  from pcmc_user u
+		 inner join pcmc_dept d
+		    on u.deptid = d.deptid
+		 where exists(
+		       select 1 from pcmc_user_role ur inner join pcmc_role r on ur.roleid=r.roleid where ur.userid=u.userid and r.roletp='4'
+		 )
+		 and u.usercode=#{usercode} and u.corpcode=#{corpcode}
+
+	</select>
+</mapper>

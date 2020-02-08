@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="com.sunline.pams.mybatis.public.pamsoptioncontrols" >
+	<select id="getKpiTableDatalistPage" parameterType="java.util.HashMap" resultType="com.sunline.pams.publi.pamsoptioncontrols.Kpi">
+ 		select  
+ 			kpiid, kpicode, kpiname, kpitype, applytype, 
+ 			basescore, hscore, lscore, spcscore, lbaseline, hbaseline
+ 		from (
+	 		select 
+	 			kpi_id as kpiid,kpi_code as kpicode,kpi_name as kpiname,kpi_type as kpitype,apply_type as applytype,
+	 			null as basescore, null as hscore, null as lscore, null as spcscore, null as lbaseline, null as hbaseline
+	 		from mo_kpi_info
+	 		where status = '1' and del_flag = '0' and area_no = #{corpCode}
+	 		union
+	 		select 
+	 			kpi_id as kpiid,kpi_code as kpicode,kpi_name as kpiname,kpi_type as kpitype,apply_type as applytype,
+	 			base_score as basescore, h_score as hscore, l_score as lscore, spc_score as spcscore, 
+	 			l_base_line as lbaseline, h_base_line as hbaseline
+	 		from mo_kpi_subjective
+	 		where status = '1' and del_flag = '0' and area_no = #{corpCode}
+ 		)t
+ 		<where>
+			<if test="searchCode != null and searchCode != ''">
+				and (t.kpicode like #{searchCode} or t.kpiname like #{searchCode})
+			</if>
+			<if test="kpiTypeList != null and kpiTypeList.size() > 0">
+				and t.kpitype in <foreach collection="kpiTypeList" item="kpiType" open="(" separator="," close=")">#{kpiType}</foreach>
+			</if>
+			<if test="applyTypeList != null and applyTypeList.size() > 0 ">
+				and t.applytype in <foreach collection="applyTypeList" item="applyType" open="(" separator="," close=")">#{applyType}</foreach>
+			</if>
+			<if test="kpiCodeList != null and kpiCodeList.size() > 0">
+				and t.kpicode in <foreach collection="kpiCodeList" item="kpiCode" open="(" separator="," close=")">#{kpiCode}</foreach>
+			</if>
+		</where>
+		order by t.kpiid
+ 	</select>
+ 	
+ 	<select id="getRoleTableDatalistPage" parameterType="java.util.HashMap" resultType="com.sunline.pams.publi.pamsoptioncontrols.Role">
+ 		select roleid,rolename,roletp as roletype from pcmc_role
+ 		where corpcode = #{corpCode}
+ 		<if test="searchCode != null and searchCode != ''">
+			and (roleid like #{searchCode} or rolename like #{searchCode})
+		</if>
+		<if test="roleIDList != null and roleIDList.size() > 0">
+			and roleid in <foreach collection="roleIDList" item="roleID" open="(" separator="," close=")">#{roleID}</foreach>
+		</if>
+		order by roleid
+ 	</select>
+ 	
+ 	<select id="getWayTableDatalistPage" parameterType="java.util.HashMap" resultType="com.sunline.pams.publi.pamsoptioncontrols.Way">
+ 		select 
+ 			t.waycode,
+ 			t.wayname,
+ 			t.waycycle,
+ 			t.objtype 
+ 		from(
+	 		select 
+	 			way_code as waycode, 
+	 			way_name as wayname, 
+	 			way_type as waytype, 
+	 			way_cycle as  waycycle,
+	 			'ORG' as objtype,
+	 			area_no as areano
+	 		from mo_way_org
+	 		union 
+	 		select 
+	 			way_code as waycode, 
+	 			way_name as wayname, 
+	 			way_type as waytype, 
+	 			way_cycle as  waycycle,
+	 			'PERSON' as objtype,
+	 			area_no as areano
+	 		from mo_way_person
+ 		)t
+ 		where areano = #{corpCode}
+ 		<if test="searchCode != null and searchCode != ''">
+			and (t.waycode like #{searchCode} or t.wayname like #{searchCode})
+		</if>
+		<if test="wayCodeList != null and wayCodeList.size() > 0">
+			and t.waycode in <foreach collection="wayCodeList" item="wayCode" open="(" separator="," close=")">#{wayCode}</foreach>
+		</if>
+		<if test="wayType != null and wayType != ''">
+ 			and t.waytype = #{wayType}
+ 		</if>
+		<if test="objType != null and objType != ''">
+ 			and t.objtype = #{objType}
+ 		</if>
+ 		<if test="wayCycle != null and wayCycle != ''">
+ 			and t.waycycle = #{wayCycle}
+ 		</if>
+ 		order by t.waycode
+ 	</select>
+ 	
+ 	<select id="queryDept" parameterType="java.util.HashMap" resultType="com.sunline.pams.publi.pamsoptioncontrols.Dept">
+ 		select 
+ 			deptid, deptcode, deptname, pdeptid 
+ 		from pcmc_dept
+ 		where disable = '0' and corpcode = #{corpCode}
+ 		<if test="deptCodeSql != null and deptCodeSql != ''">
+ 			and deptcode in (${deptCodeSql})
+ 		</if>
+ 		order by deptid
+ 	</select>
+ 	
+ 	<select id="queryDeptAsync" parameterType="java.util.HashMap" resultType="com.sunline.pams.publi.pamsoptioncontrols.Dept">
+ 		select 
+ 			deptid, deptcode, deptname, pdeptid 
+ 		from pcmc_dept
+ 		where disable = '0' and corpcode = #{corpCode}
+ 		<if test="deptCodeSql != null and deptCodeSql != ''">
+ 			and deptcode in (${deptCodeSql})
+ 		</if>
+ 		<choose>
+ 			<when test="deptid != null and deptid != ''">
+ 				and  pdeptid = #{deptid}
+ 			</when>
+ 			<otherwise>
+ 				and pdeptid not in(
+ 					select deptid from pcmc_dept where disable = '0' and corpcode = #{corpCode}
+ 					<if test="deptCodeSql != null and deptCodeSql != ''">
+			 			and deptcode in (${deptCodeSql})
+			 		</if>
+ 				)
+ 			</otherwise>
+ 		</choose>
+ 		order by deptid
+ 	</select>
+ 	
+ 	<select id="queryUser" parameterType="java.util.HashMap" resultType="com.sunline.pams.publi.pamsoptioncontrols.User">
+ 		select
+ 			a.userid,
+ 			a.usercode,
+ 			a.username,
+ 			b.deptid,
+ 			b.deptcode,
+ 			b.deptname
+ 		from pcmc_user a	
+ 		inner join pcmc_dept b on a.deptid = b.deptid and a.corpcode = b.corpcode
+ 		where a.corpcode = #{corpCode}
+		<if test="deptCodeSql != null and deptCodeSql != ''">
+ 			and b.deptcode in (${deptCodeSql})
+ 		</if>
+ 		order by a.userid
+ 	</select>
+ 	
+ 	<select id="queryUserAsync" parameterType="java.util.HashMap" resultType="com.sunline.pams.publi.pamsoptioncontrols.User">
+ 		select
+ 			a.userid,
+ 			a.usercode,
+ 			a.username,
+ 			b.deptid,
+ 			b.deptcode,
+ 			b.deptname
+ 		from pcmc_user a	
+ 		inner join pcmc_dept b on a.deptid = b.deptid and a.corpcode = b.corpcode
+ 		where a.corpcode = #{corpCode}
+		and a.deptid = #{deptid}
+ 		order by a.userid
+ 	</select>
+ 	<!-- 产品查询 -->
+ 	<select id="getProductTreelistPage" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+ 		select a.product_no "prodno",a.product_name "prodna",b.product_no "typecd",b.product_name "typena"
+          from OP_PRD_INFO a
+          left join OP_PRD_INFO b
+          on a.parent_product_no = b.product_no
+          and b.product_level='2'
+         where a.product_level = '3'
+         <if test=" prodcd != null and prodcd.trim() != '' ">
+           and a.parent_product_no = #{prodcd}
+         </if>
+         <if test=" typecd != null and typecd.trim() != '' ">
+           and b.parent_product_no = #{typecd}
+         </if>
+         <if test=" prducdOrNa != null and prducdOrNa.trim() != '' ">
+           and (a.product_no like #{prducdOrNa} or a.product_name like #{prducdOrNa})
+         </if>
+         <if test="selectedColumn != null and selectedColumn != '' and  selectedForSql != null">
+		   and a.${selectedColumn} in 
+				<foreach collection="selectedForSql" index="index" item="dc" open="(" separator="," close=")">
+                      #{dc}
+                </foreach>
+		 </if>
+		 order by  a.parent_product_no,a.product_no
+     </select>	
+     
+     <resultMap type="java.util.HashMap" id="KpiOptionControls">
+		<result column="KPI_CODE" property="kpiCode" javaType="String"/>
+		<result column="KPI_NAME" property="kpiName" javaType="String"/>
+		<result column="NODE_CODE" property="kpiNode" javaType="String"/>
+		<result column="NODE_NAME" property="kpiType" javaType="String"/>		
+ 	 </resultMap>
+ 	 
+     <select id="getKpiOptionDatalistPage" parameterType="java.util.HashMap" resultMap="KpiOptionControls" >
+      select a.kpi_code, a.kpi_name,b.node_code,b.node_name
+       from mo_kpi_info a
+     left join mo_kpi_tree b
+      on a.kpi_category_id = b.node_code
+      where 1=1
+      <if test="kpityp != null and kpityp != ''">
+        and b.node_code=#{kpityp}
+      </if>
+      <if test="usercdOrName != null and usercdOrName != ''">
+        and (a.kpi_code like #{usercdOrName} or a.kpi_name like #{usercdOrName})
+      </if>
+      <if test="selectedColumn != null and selectedColumn != '' and  selectedForSql != null">
+	    and a.${selectedColumn} in 
+		 <foreach collection="selectedForSql" index="index" item="dc" open="(" separator="," close=")">
+              #{dc}
+          </foreach>
+	  </if> 
+	   order by a.kpi_code 
+     </select>
+     
+     <select id="getLevelPrdChild" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+ 		select a.product_no "prodno",a.product_name "prodna"
+          from OP_PRD_INFO a
+         where 1=1
+         <if test=" level != null and level.trim() != '' ">
+           and a.product_level = #{level}
+         </if>
+         <if test=" typecd != null and typecd.trim() != '' ">
+           and a.parent_product_no = #{typecd}
+         </if>
+		 order by  a.product_no
+     </select>	
+</mapper> 	  
+<!--  --> 	 

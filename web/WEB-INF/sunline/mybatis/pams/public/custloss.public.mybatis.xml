@@ -1,0 +1,285 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sunline.pams.mybatis.public.custloss" >
+ 
+ 	 <resultMap type="java.util.HashMap" id="pams_cust_loss_tran_channel_map">
+ 	  		<result column="SUBSCD" property="SUBSCD"/>
+ 	  		<result column="PARATP" property="paratp"/>
+ 	  		<result column="PARACD" property="paracd"/>
+ 	  		<result column="PARANA" property="parana"/>
+ 	  </resultMap>
+      <select id="pams_cust_loss_tran_channel" parameterType="java.util.HashMap" resultMap="pams_cust_loss_tran_channel_map">
+	    SELECT  
+	    SUBSCD as SUBSCD,
+	    PARATP as PARATP,
+	    PARACD as PARACD,
+	    PARANA as PARANA
+		FROM pcmc_knp_para WHERE
+		SUBSCD = 'PAMS'
+        AND PARACD != '%'  
+        AND PARATP = 'tran_channel'
+ 	 </select>
+ 	 
+ 	 <resultMap type="java.util.HashMap" id="pams_cust_loss_area_no_map">
+ 	  		<result column="SUBSCD" property="SUBSCD"/>
+ 	  		<result column="PARATP" property="paratp"/>
+ 	  		<result column="PARACD" property="paracd"/>
+ 	  		<result column="PARANA" property="parana"/>
+ 	  </resultMap>
+ 	  <select id="pams_cust_loss_area_no" parameterType="java.util.HashMap" resultMap="pams_cust_loss_area_no_map">
+	    SELECT  
+	    SUBSCD as SUBSCD,
+	    PARATP as PARATP,
+	    PARACD as PARACD,
+	    PARANA as PARANA
+		FROM pcmc_knp_para WHERE
+		SUBSCD = 'PAMS'
+        AND PARACD != '%'
+        AND PARATP = 'work_area'
+ 	 </select> 	 
+ 	 
+ 	 <resultMap type="java.util.HashMap" id="pams_cust_loss_org_no_map">
+ 	  		<result column="SUBSCD" property="SUBSCD"/>
+ 	  		<result column="PARATP" property="paratp"/>
+ 	  		<result column="PARACD" property="paracd"/>
+ 	  		<result column="PARANA" property="parana"/>
+ 	  </resultMap>
+ 	 <select id="pams_cust_loss_org_no" parameterType="java.util.HashMap" resultMap="pams_cust_loss_org_no_map">
+	    SELECT  
+	    SUBSCD as SUBSCD,
+	    PARATP as PARATP,
+	    PARACD as PARACD,
+	    PARANA as PARANA
+		FROM pcmc_knp_para WHERE
+		SUBSCD = 'PAMS'
+        AND PARACD != '%'
+        AND PARATP = 'org_no'
+ 	 </select> 	 
+ 	 
+ 	 <resultMap type="java.util.HashMap" id="pams_cust_loss_cust_type_map">
+ 	  		<result column="SUBSCD" property="SUBSCD"/>
+ 	  		<result column="PARATP" property="paratp"/>
+ 	  		<result column="PARACD" property="paracd"/>
+ 	  		<result column="PARANA" property="parana"/>
+ 	  </resultMap>
+ 	 <select id="pams_cust_loss_cust_type" parameterType="java.util.HashMap" resultMap="pams_cust_loss_cust_type_map">
+	    SELECT  
+	    SUBSCD as SUBSCD,
+	    PARATP as PARATP,
+	    PARACD as PARACD,
+	    PARANA as PARANA
+		FROM pcmc_knp_para WHERE
+		SUBSCD = 'PAMS'
+        AND PARACD != '%'
+        AND PARATP = 'cust_type' 
+ 	 </select> 	 
+ 	 
+ 	 <resultMap type="java.util.HashMap" id="pams_cust_loss_industry_map">
+ 	  		<result column="SUBSCD" property="SUBSCD"/>
+ 	  		<result column="PARATP" property="paratp"/>
+ 	  		<result column="PARACD" property="paracd"/>
+ 	  		<result column="PARANA" property="parana"/>
+ 	  </resultMap>
+ 	 <select id="pams_cust_loss_industry" parameterType="java.util.HashMap" resultMap="pams_cust_loss_industry_map">
+	    SELECT   
+	    SUBSCD as SUBSCD,
+	    PARATP as PARATP,
+	    PARACD as PARACD,
+	    PARANA as PARANA
+		FROM pcmc_knp_para WHERE
+		SUBSCD = 'PAMS'
+        AND PARACD != '%'
+        AND PARATP = 'industry' 
+ 	 </select>
+ 	  	 
+ 	 <resultMap type="java.util.HashMap" id="pams_cust_loss_in_bank_map">
+ 	  		<result column="SUBSCD" property="SUBSCD"/>
+ 	  		<result column="PARATP" property="paratp"/>
+ 	  		<result column="PARACD" property="paracd"/>
+ 	  		<result column="PARANA" property="parana"/>
+ 	  </resultMap> 	 
+ 	 <select id="pams_cust_loss_in_bank" parameterType="java.util.HashMap" resultMap="pams_cust_loss_in_bank_map">
+	    SELECT   
+	    SUBSCD as SUBSCD,
+	    PARATP as PARATP,
+	    PARACD as PARACD,
+	    PARANA as PARANA
+		FROM pcmc_knp_para WHERE
+		SUBSCD = 'PAMS'
+        AND PARACD != '%'
+        AND PARATP = 'in_bank'  
+ 	 </select> 	
+ 	  
+ 	  <resultMap type="java.util.HashMap" id="pams_cust_loss_in_head_bank_map">
+ 	  		<result column="SUBSCD" property="SUBSCD"/>
+ 	  		<result column="PARATP" property="paratp"/>
+ 	  		<result column="PARACD" property="paracd"/>
+ 	  		<result column="PARANA" property="parana"/>
+ 	  </resultMap> 
+ 	 <select id="pams_cust_loss_in_head_bank" parameterType="java.util.HashMap" resultMap="pams_cust_loss_in_head_bank_map">
+	    SELECT   
+	    SUBSCD as SUBSCD,
+	    PARATP as PARATP,
+	    PARACD as PARACD,
+	    PARANA as PARANA
+		FROM pcmc_knp_para WHERE
+		SUBSCD = 'PAMS'
+        AND PARACD != '%'
+        AND PARATP = 'in_head_bank' 
+ 	 </select> 	 
+ 	 
+ 	 <resultMap type="java.util.HashMap" id="pams_cust_loss_pie_map">
+ 	  		<result column="NAME" property="name"/>
+ 	  		<result column="SUM" property="sum"/>
+ 	  </resultMap>
+ 	 <select id="pams_cust_loss_pie" parameterType="java.util.HashMap" resultMap="pams_cust_loss_pie_map">
+ 	   <![CDATA[
+ 	   Select ${resultStr} as NAME ,count(1) as SUM from MD_CUS_LOSS t  ]]>
+       
+        <if  test="tran_channelStr !='' and tran_channelStr !=null">
+       <![CDATA[inner join pcmc_knp_para b on t.tran_channel=b.parach and b.SUBSCD = 'pams' and b.paratp = 'tran_channel'  and b.PARACD in (${tran_channelStr})]]>
+       </if>
+       
+        <if test="area_noStr !='' and area_noStr !=null">
+       <![CDATA[inner join pcmc_knp_para c on t.area_no=c.parach and c.SUBSCD = 'pams' and c.paratp = 'work_area'  and c.PARACD in (${area_noStr})]]>
+       </if>
+       
+        <if test="org_noStr !='' and org_noStr !=null">
+       <![CDATA[inner join pcmc_knp_para d on t.org_no=d.parach and d.SUBSCD = 'pams' and d.paratp = 'org_no'  and d.PARACD in (${org_noStr})]]>
+       </if>
+       
+        <if test="cust_typeStr !=''and cust_typeStr !=null">
+       <![CDATA[
+       		inner join pcmc_knp_para e on t.cust_type=e.parach and e.SUBSCD = 'pams' and e.paratp = 'cust_type'  and e.PARACD in (${cust_typeStr})]]>
+       </if>
+       
+        <if test="industryStr !='' and industryStr !=null">
+        <![CDATA[inner join pcmc_knp_para f on t.industry=f.parach and f.SUBSCD = 'pams' and f.paratp = 'industry'  and f.PARACD in (${industryStr})]]>
+       </if>
+       
+        <if test="in_bankStr !='' and in_bankStr !=null">
+        <![CDATA[inner join pcmc_knp_para g on t.in_bank_code=g.parach and g.SUBSCD = 'pams' and g.paratp = 'in_bank'  and g.PARACD in (${in_bankStr})]]>
+       </if>
+       
+        <if test="in_head_bankStr !='' and in_head_bankStr !=null">
+       <![CDATA[inner join pcmc_knp_para h on t.in_head_bank_code=h.parach and h.SUBSCD = 'pams' and h.paratp = 'in_head_bank'  and h.PARACD in (${in_head_bankStr})]]>
+       </if>
+       group by ${resultStr}
+     </select>
+     
+      <resultMap type="java.util.HashMap" id="pams_customer_losslistPage_map">
+ 	  		<result column="DATE_DATA" property="data_date"/>
+ 	  		<result column="CUST_NAME" property="cust_name"/>
+ 	  		<result column="INDUSTRY" property="industry"/>
+ 	  		<result column="LOSS_ACCT" property="loss_acct"/>
+ 	  		<result column="LOSS_AMT" property="loss_amt"/>
+ 	  		<result column="IN_ACCT" property="in_acct"/>
+ 	  		<result column="IN_CUST_NAME" property="in_cust_name"/>
+ 	  		<result column="IN_BANK_NAME" property="in_bank_name"/>
+ 	  </resultMap>
+     <select id="pams_customer_losslistPage" parameterType="java.util.HashMap" resultMap="pams_customer_losslistPage_map">
+	    SELECT  
+	    DATE_DATA as DATE_DATA,
+	    CUST_NAME as CUST_NAME,
+	    INDUSTRY as INDUSTRY,
+	    LOSS_ACCT as LOSS_ACCT,
+	    LOSS_AMT as LOSS_AMT,
+	    IN_ACCT  as IN_ACCT,
+	    IN_CUST_NAME as IN_CUST_NAME,
+	    IN_BANK_NAME as IN_BANK_NAME
+		FROM MD_CUS_LOSS WHERE 1=1     
+		<if test= "tran_channelStr != null and tran_channelStr != ''">
+			and tran_channel IN (SELECT  PARACH "PARACH"
+            FROM pcmc_knp_para WHERE
+            SUBSCD = 'PAMS'
+			AND PARACD != '%'  
+			AND PARATP = 'tran_channel'
+			AND PARACD in (${tran_channelStr}))
+        </if>
+        <if test= "area_noStr != null and area_noStr != ''">
+			and area_no IN (SELECT  PARACH "PARACH"
+            FROM pcmc_knp_para WHERE
+            SUBSCD = 'PAMS'
+			AND PARACD != '%'  
+			AND PARATP = 'work_area'
+			AND PARACD in (${area_noStr}))
+        </if>
+       	<if test= "org_noStr != null and org_noStr != ''">
+			and org_no IN (SELECT  PARACH "PARACH"
+            FROM pcmc_knp_para WHERE
+			SUBSCD = 'PAMS'
+			AND PARACD != '%'  
+			AND PARATP = 'org_no'
+			AND PARACD in (${org_noStr}))
+        </if>
+        <if test= "cust_typeStr != null and cust_typeStr != ''">
+			and cust_type IN (SELECT  PARACH "PARACH"
+            FROM pcmc_knp_para WHERE
+            SUBSCD = 'PAMS'
+			AND PARACD != '%'  
+			AND PARATP = 'cust_type'
+			AND PARACD in (${cust_typeStr}))
+        </if>
+        <if test= "industryStr != null and industryStr != ''">
+			and industry IN (SELECT  PARACH "PARACH"
+            FROM pcmc_knp_para WHERE
+            SUBSCD = 'PAMS'
+			AND PARACD != '%'  
+			AND PARATP = 'industry'
+			AND PARACD in (${industryStr}))
+        </if>
+        <if test= "in_bankStr != null and in_bankStr != ''">
+			and in_bank_code IN (SELECT  PARACH "PARACH"
+            FROM pcmc_knp_para WHERE
+            SUBSCD = 'PAMS'
+			AND PARACD != '%'  
+			AND PARATP = 'in_bank'
+			AND PARACD in (${in_bankStr}))
+        </if>
+        <if test= "in_head_bankStr != null and in_head_bankStr != ''">
+			and in_head_bank_code IN (SELECT  PARACH "PARACH"
+            FROM pcmc_knp_para WHERE
+            SUBSCD = 'PAMS'
+			AND PARACD != '%'  
+			AND PARATP = 'in_head_bank'
+			AND PARACD in (${in_head_bankStr}))
+        </if>
+        
+        <if test= "tran_channel != null and tran_channel != ''">
+            and tran_channel in (SELECT  PARACH "PARACH"
+            FROM pcmc_knp_para WHERE
+            parana = #{tran_channel}) 
+        </if>
+        <if test= "work_area != null and work_area != ''">
+            and work_area in (SELECT  PARACH "PARACH"
+            FROM pcmc_knp_para WHERE
+            parana = #{work_area}) 
+        </if>
+        <if test= "org_no != null and org_no != ''">
+            and org_no in (SELECT  PARACH "PARACH"
+            FROM pcmc_knp_para WHERE
+            parana = #{org_no}) 
+        </if>
+        <if test= "cust_type != null and cust_type != ''">
+            and cust_type in (SELECT  PARACH "PARACH"
+            FROM pcmc_knp_para WHERE
+            parana = #{cust_type}) 
+        </if>
+        <if test= "industry != null and industry != ''">
+            and industry in (SELECT  PARACH "PARACH"
+            FROM pcmc_knp_para WHERE
+            parana = #{industry}) 
+        </if>
+        <if test= "in_bank != null and in_bank != ''">
+            and in_bank_code in (SELECT  PARACH "PARACH"
+            FROM pcmc_knp_para WHERE
+            parana = #{in_bank}) 
+        </if>
+        <if test= "in_head_bank != null and in_head_bank != ''">
+            and in_head_bank_code in (SELECT  PARACH "PARACH"
+            FROM pcmc_knp_para WHERE
+            parana = #{in_head_bank}) 
+        </if>
+        
+ 	 </select> 
+</mapper>

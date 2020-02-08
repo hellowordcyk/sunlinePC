@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="com.sunline.pams.mybatis.public.etlhandkpi" >
+ 	<select id="queryHandKpiInfolistPage" parameterType="java.util.HashMap"  resultType="java.util.HashMap" >
+		select  distinct a.MAIN_KPI_CODE "mainKpiCode",a.MAIN_KPI_NAME "mainKpiName",
+				a.BIZ_LINE "bizLine",a.KPI_CATEGORY_ID "nodeId",b.NODE_NAME "nodeName",a.KPI_USED "kpiUsed",
+		        a.DATA_SRC "acctFg",c.SRC_NAME "dataSrcName",a.APPLY_TYPE "applyType",
+		        a.EXCH_TYPE "exchType",a.NEGATIVE "isminu",a.KPI_TYPE "kpiType",a.PRIVATE_FLAG "privateFlag"
+		from mo_kpi_info a
+		left join mo_kpi_tree b on a.KPI_CATEGORY_ID = b.NODE_CODE
+		left join mo_kpi_data_table c on a.DATA_SRC = c.DATA_SRC
+		where a.KPI_ATTRIBUTE = '00' and a.STATUS = '1' and a.DEL_FLAG = '0' 
+		<if test="areaNo !=null and areaNo!= ''">
+			and a.AREA_NO = #{areaNo}
+		</if>
+		<if test="kpiCategoryId != null and kpiCategoryId !='' ">
+		   and a.KPI_CATEGORY_ID = #{kpiCategoryId}
+		</if>
+		<if test="kpiUsed != null and kpiUsed !='' ">
+		   and a.KPI_USED = #{kpiUsed}
+		</if>
+		<if test="acctfg != null and acctfg !='' ">
+		   and a.DATA_SRC = #{acctfg}
+		</if>
+		<if test="mainKpiCode != null and mainKpiCode !='' ">
+		   and a.MAIN_KPI_CODE = #{mainKpiCode}
+		</if>
+ 	    <if test="mainKpiName != null and mainKpiName !='' ">
+	       and a.MAIN_KPI_NAME like #{mainKpiName}
+	    </if>
+	    <if test="kpiType != null and kpiType !='' ">
+	       and a.KPI_TYPE = #{kpiType}
+	    </if>
+	    <if test="usercode != null and usercode !='' ">
+	       and a.operator = #{usercode}
+	    </if>		    
+	    <if test="roleList != null and roleList.size() > 0">
+			and a.INPUT_ROLE in <foreach collection="roleList" item="item" open="(" separator="," close=")">#{item}</foreach>
+		</if>
+ 	</select>
+</mapper> 	  
+ 	 

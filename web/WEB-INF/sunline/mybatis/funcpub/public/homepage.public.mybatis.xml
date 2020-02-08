@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sunline.funcpub.mybatis.public.homepage" >
+	<update id="setDefaultRole" parameterType="java.util.HashMap">
+		update pcmc_user set default_role = #{roleid} where userid = #{userid} and corpcode=#{corpcode}
+	</update>
+
+	<!-- 查询所有角色根据userid -->
+	<select id="queryRolesByUserid" parameterType="java.util.HashMap" resultType="com.sunline.bimis.pcmc.db.PcmcRole">
+		SELECT a.roleid, a.rolename,a.roletp
+		  FROM pcmc_role a
+		 INNER JOIN pcmc_user_role b
+		    ON a.roleid = b.roleid
+		<where>
+			a.corpcode=#{corpcode}
+	    	<if test= "roleid != null and roleid != ''">
+				and a.roleid = #{roleid}
+	        </if>
+	    	<if test= "userid != null and userid != ''">
+				AND b.userid = #{userid}
+	        </if>
+        </where>
+	</select>
+	
+	<!-- 查询首页配置功能 -->
+	<resultMap type="java.util.HashMap" id="homePageFuncMap">
+		<result property="function_id" column="function_id"/>     
+		<result property="function_name" column="function_name"/>     
+	    <result property="function_url" column="function_url"/>  
+	    <result property="function_params" column="function_params"/>  
+	    <result property="cell_coordinate" column="cell_coordinate"/>  
+	    <result property="width_rate" column="width_rate"/>  
+	    <result property="height" column="height"/>  
+	</resultMap>
+	<select id="queryHomePageFuncByRoleid" parameterType="java.util.HashMap" resultMap="homePageFuncMap">
+		SELECT 
+			b.function_id,
+			b.function_url, b.function_name,
+			a.cell_coordinate, a.width_rate, a.height
+		 FROM ap_hmp_role_config a
+		 INNER JOIN ap_hmp_function_register b ON a.function_id = b.function_id and a.corpcode=b.corpcode
+		 WHERE a.roleid = #{roleid} and a.corpcode=#{corpcode}
+		 ORDER BY a.cell_coordinate
+	</select>
+	
+	<!-- 查询首页配置Tab标签页 -->	
+	<resultMap type="java.util.HashMap" id="homePageTabMap">
+		<result property="function_url" column="function_url"/>     
+	    <result property="function_name" column="function_name"/>  
+	    <result property="function_params" column="function_params"/>  
+	</resultMap>
+	
+	<select id="queryHomePageTabByRoleid" parameterType="java.util.HashMap" resultMap="homePageTabMap">
+		 SELECT b.function_url, b.function_name, b.function_params
+		 FROM ap_hmp_role_tab a
+		 INNER JOIN ap_hmp_function_register b ON a.function_id = b.function_id and a.corpcode=b.corpcode
+		 WHERE a.roleid = #{roleid} 
+		 ORDER BY a.sort_num
+	</select>
+	
+	<update id="updateDefaultRole" parameterType="java.util.HashMap">
+		update pcmc_user set default_role = #{roleid} where userid = #{userid} 
+	</update>
+	
+	 <select id="query_user_has_role" parameterType="java.util.HashMap" resultType="java.lang.Integer">
+    	select count(1) rolenum from pcmc_user_role where userid = #{userid} and roleid = #{roleid}
+    </select>
+    
+	 <select id="query_role_isexists" parameterType="java.util.HashMap" resultType="java.lang.Integer">
+    	SELECT count(1) isRole
+		  FROM pcmc_role a
+		 INNER JOIN pcmc_user_role b
+		    ON a.roleid = b.roleid
+		 <where>
+		 	a.roleid = #{roleid} and b.userid = #{userid} and a.corpcode=#{corpcode}
+		 </where>   
+    </select>
+    
+    <!-- 查询数据字典，只试用只有一条记录的paracd  -->
+    <!-- 查询首页配置功能 -->
+	<resultMap type="java.util.HashMap" id="pcmcknppara">
+		<result property="subscd" column="subscd"/>     
+	    <result property="paratp" column="paratp"/>  
+	    <result property="paracd" column="paracd"/>  
+	    <result property="parana" column="parana"/>  
+	</resultMap>
+    <select id="query_one_pcmc_knp_para_by_paratp" parameterType="HashMap" resultMap="pcmcknppara" >
+    	select subscd,paratp,paracd,parana
+    	from pcmc_knp_para
+    	where paratp = #{paratp} and paracd &lt;&gt; '%' and corpcode=#{corpcode}
+    </select>
+    
+    <resultMap type="java.util.HashMap" id="queryRoleHasHomeConfig_rsm">
+    	<result column="roleid" property="roleid"/>
+    	<result column="rolename" property="rolename"/>
+    	<result column="userid" property="userid"/>
+    </resultMap>
+    
+    <select id="queryRoleHasHomeConfig" parameterType="java.util.HashMap" resultMap="queryRoleHasHomeConfig_rsm">
+    	select distinct r.roleid,r.rolename, ur.userid
+		  from (select t1.roleid
+		          from ap_hmp_role_config t1
+		        union
+		        select t2.roleid from ap_hmp_role_tab t2) dd
+		 inner join pcmc_role r
+		    on dd.roleid = r.roleid
+		 inner join pcmc_user_role ur
+		    on r.roleid = ur.roleid
+		 where ur.userid=#{userid}
+    </select>
+</mapper> 	  

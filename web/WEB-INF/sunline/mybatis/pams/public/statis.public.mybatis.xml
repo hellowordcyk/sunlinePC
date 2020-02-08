@@ -1,0 +1,319 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="com.sunline.pams.mybatis.pams.statis" >
+ 	<resultMap type="java.util.HashMap" id="anaKpiOrgOrPersonMap">
+ 		<result column="DATA_DATE" property="dataDate" javaType="Date"/>
+ 		<result column="AREA_NO" property="areaNo" javaType="String"/>
+ 		<result column="DIMEN_TYPE" property="dimenType" javaType="String"/>
+ 		<result column="ANA_TYPE" property="anaType" javaType="String"/>
+ 		<result column="ANA_VALUE" property="value" javaType="Integer"/>
+ 		<result column="ANA_NA" property="name" javaType="String"/>
+ 	</resultMap>
+
+	<select id="query_ana_kpi_org" parameterType="java.util.HashMap" resultMap="anaKpiOrgOrPersonMap">
+		SELECT 
+			A.DATA_DATE ,
+			A.AREA_NO ,
+			A.DIMEN_TYPE ,
+			MAX(A.DIMEN_NA) DIMEN_NA,
+			A.ANA_TYPE,
+			MAX(A.ANA_NA) ANA_NA,
+			count(1) ANA_VALUE
+		FROM ANA_KPI_ORG_DETAIL A INNER JOIN V_AUTH_ORG B 
+		ON A.AREA_NO = B.AREA_NO
+		AND A.ORG_NO = B.DEPTCODE
+		AND B.USERID = #{userId}
+		<where>
+			A.DATA_DATE = #{dataDate}
+			AND A.AREA_NO = #{areaNo}
+			AND A.DIMEN_TYPE = #{anaOrgType}
+		</where>
+		GROUP BY A.DATA_DATE,A.AREA_NO,A.DIMEN_TYPE,A.ANA_TYPE
+		order by A.ANA_TYPE
+	</select> 
+	<resultMap type="java.util.HashMap" id="pcmcKnpParaMap">
+ 		<result column="paracd" property="paracd" javaType="String"/>
+ 		<result column="parana" property="parana" javaType="String"/>
+ 	</resultMap>
+	<select id="query_pcmc_knp_para_orgNatureType" parameterType="HashMap" resultMap="pcmcKnpParaMap">
+		select paracd, parana from pcmc_knp_para 
+		where subscd = #{subscd}
+		and paratp = #{paratp}
+		and corpcode = #{corpcode}
+	</select>
+	
+	<select id="query_ana_kpi_person" parameterType="HashMap" resultMap="anaKpiOrgOrPersonMap">
+		SELECT 
+			A.DATA_DATE ,
+			A.AREA_NO ,
+			A.DIMEN_TYPE ,
+			MAX(A.DIMEN_NA) DIMEN_NA,
+			A.ANA_TYPE,
+			MAX(A.ANA_NA) ANA_NA,
+			count(1) ANA_VALUE
+		FROM ANA_KPI_PERSON_DETAIL A INNER JOIN V_AUTH_ORG B 
+		ON A.AREA_NO = B.AREA_NO
+		AND A.MANAGER_ORG = B.DEPTCODE
+		AND B.USERID = #{userId}
+		<where>
+			A.DATA_DATE = #{dataDate}
+			AND A.AREA_NO = #{areaNo}
+			AND A.DIMEN_TYPE = #{anaPerType}
+			<if test="orgNo != null and orgNo != '' ">
+				AND A.MANAGER_ORG = #{orgNo}
+			</if>
+		</where>
+		GROUP BY A.DATA_DATE,A.AREA_NO,A.DIMEN_TYPE,A.ANA_TYPE
+		order by A.ANA_TYPE
+		
+	</select>
+	<select id="query_ana_kpi_org_detail_listPage" parameterType="HashMap" resultType="HashMap">
+		select A.DATA_DATE,A.AREA_NO,A.ORG_NO,A.DIMEN_TYPE,A.ANA_TYPE,A.RANK,A.RANK_NA,V.DEPTNAME
+		from ANA_KPI_ORG_DETAIL A 
+		INNER JOIN V_AUTH_ORG V 
+    	ON A.AREA_NO = V.AREA_NO  
+    	AND A.ORG_NO = V.DEPTCODE
+		AND V.USERID = #{userId}
+		<where>
+			A.DATA_DATE = #{dataDate}
+			AND A.AREA_NO = #{areaNo}
+			AND A.DIMEN_TYPE = #{dimenType}
+			AND A.ANA_TYPE = #{anaType}
+		</where>
+	</select>
+	
+	<select id="query_ana_kpi_person_detail_listPage" parameterType="HashMap" resultType="HashMap">
+		SELECT A.DATA_DATE,A.AREA_NO,A.MANAGER_NO,A.DIMEN_TYPE,A.ANA_TYPE,A.RANK,A.RANK_NA,b.USERNAME 
+		FROM ANA_KPI_PERSON_DETAIL A left join pcmc_user b
+		on a.AREA_NO =  b.CORPCODE
+		and a.MANAGER_NO = b.USERCODE
+		INNER JOIN V_AUTH_ORG V 
+    	ON A.AREA_NO = V.AREA_NO  
+    	AND A.MANAGER_ORG = V.DEPTCODE
+		AND V.USERID = #{userId}
+		<where>
+			A.DATA_DATE = #{dataDate}
+			AND A.AREA_NO = #{areaNo}
+			AND A.DIMEN_TYPE = #{dimenType}
+			AND A.ANA_TYPE = #{anaType}
+		</where>
+	</select>
+	
+	
+	<resultMap type="java.util.HashMap" id="anaUpgradeOrgMap">
+ 		<result column="DATA_DATE" property="dataDate" javaType="Date"/>
+ 		<result column="AREA_NO" property="areaNo" javaType="String"/>
+ 		<result column="ORG_NO" property="orgNo" javaType="String"/>
+ 		<result column="ANA_TYPE" property="anaType" javaType="String"/>
+ 		<result column="DATE_TYPE" property="dateType" javaType="String"/>
+ 		<result column="ANA_VALUE" property="value" javaType="Integer"/>
+ 		<result column="ANA_NA" property="name" javaType="String"/>
+ 		<result column="DIMEN_TYPE" property="dimenType" javaType="String"/>
+ 	</resultMap>
+	<select id="query_ana_upgrade_org" parameterType="HashMap" resultMap="anaUpgradeOrgMap" >
+		select A.DATA_DATE, A.AREA_NO,A.ANA_TYPE,COUNT(1) ANA_VALUE,
+		MAX(A.ANA_NA) ANA_NA,A.DATE_TYPE,A.DIMEN_TYPE
+		FROM ANA_UPGRADE_ORG_DETAIL A INNER JOIN V_AUTH_ORG V
+      	ON A.ORG_NO = V.DEPTCODE
+		 AND A.AREA_NO = V.AREA_NO
+		 AND V.USERID = #{userId}
+		<where>
+			A.DATE_TYPE = #{dateType}
+			AND a.DATA_DATE = #{dataDate}
+			<if test="orgNo != null and orgNo != '' ">
+				AND a.ORG_NO = #{orgNo}
+			</if>
+			AND a.DIMEN_TYPE = #{dimenType}
+		</where>
+		GROUP BY A.DATA_DATE,A.AREA_NO,A.ANA_TYPE,A.DATE_TYPE,A.DIMEN_TYPE
+		ORDER BY A.ANA_TYPE
+	</select>
+	<select id="query_ana_upgrade_person" parameterType="HashMap" resultMap="anaUpgradeOrgMap" >
+		select A.DATA_DATE, A.AREA_NO,A.ANA_TYPE,COUNT(1) ANA_VALUE,
+		MAX(A.ANA_NA) ANA_NA,A.DATE_TYPE,A.DIMEN_TYPE
+		FROM ANA_UPGRADE_PERSON_DETAIL A INNER JOIN V_AUTH_ORG V
+      	ON A.MANAGER_ORG = V.DEPTCODE
+		 AND A.AREA_NO = V.AREA_NO
+		 AND V.USERID = #{userId}
+		<where>
+			A.DATE_TYPE = #{dateType}
+			AND a.DATA_DATE = #{dataDate}
+			<if test="orgNo != null and orgNo != '' ">
+				AND a.MANAGER_ORG = #{orgNo}
+			</if>
+			AND a.DIMEN_TYPE = #{dimenType}
+		</where>
+		GROUP BY A.DATA_DATE,A.AREA_NO,A.ANA_TYPE,A.DATE_TYPE,A.DIMEN_TYPE
+		ORDER BY A.ANA_TYPE
+	</select>
+	
+	<select id="query_ana_upgrade_org_detail_listPage" parameterType="HashMap" resultType="HashMap" >
+		select A.DATA_DATE,A.AREA_NO,A.ORG_NO,A.DIMEN_TYPE,A.ANA_TYPE,A.RANK,A.RANK_NA,V.DEPTNAME
+		from ANA_UPGRADE_ORG_DETAIL A 
+		INNER JOIN V_AUTH_ORG V
+      	ON A.ORG_NO = V.DEPTCODE
+		 AND A.AREA_NO = V.AREA_NO
+		 AND V.USERID = #{userId}
+		<where>
+			A.DATA_DATE = #{dataDate}
+			AND A.AREA_NO = #{areaNo}
+			AND A.DIMEN_TYPE = #{dimenType}
+			AND A.ANA_TYPE = #{anaType}
+			AND A.DATE_TYPE = #{dateType}
+		</where>
+	</select>
+	<select id="query_ana_upgrade_person_detail_listPage" parameterType="HashMap" resultType="HashMap" >
+		select A.DATA_DATE,A.AREA_NO,A.MANAGER_NO,A.DIMEN_TYPE,A.ANA_TYPE,A.RANK,A.RANK_NA,b.USERNAME 
+		from ANA_UPGRADE_PERSON_DETAIL A left join pcmc_user b
+		on a.AREA_NO =  b.CORPCODE
+		and a.MANAGER_NO = b.USERCODE
+		inner join V_AUTH_ORG v 
+    	on a.area_no = v.area_no  
+     	and a.MANAGER_ORG = v.DEPTCODE
+     	and v.USERID = #{userId}
+		<where>
+			A.DATA_DATE = #{dataDate}
+			AND A.AREA_NO = #{areaNo}
+			AND A.DIMEN_TYPE = #{dimenType}
+			<if test="orgNo != null and orgNo != '' ">
+				AND A.MANAGER_ORG = #{orgNo}
+			</if>
+			AND A.ANA_TYPE = #{anaType}
+			AND A.DATE_TYPE = #{dateType}
+		</where>
+	</select>
+	
+	<resultMap type="java.util.HashMap" id="anaKpiConstituteMap">
+ 		<result column="DATA_DATE" property="dataDate" javaType="Date"/>
+ 		<result column="AREA_NO" property="areaNo" javaType="String"/>
+ 		<result column="DIMEN_TYPE" property="dimenType" javaType="String"/>
+ 		<result column="BIZ_TYPE" property="bizType" javaType="String"/>
+ 		<result column="BIZ_COUNT" property="value" javaType="String"/>
+ 		<result column="BIZ_NA" property="name" javaType="String"/>
+ 		<result column="KPI_VALUE" property="kpiValue" javaType="Double"/>
+ 	</resultMap>
+	<select id="query_ana_kpi_org_constitute" parameterType="HashMap" resultMap="anaKpiConstituteMap">
+		select  A.DATA_DATE,A.AREA_NO, A.DIMEN_TYPE,A.ANA_TYPE,BIZ_TYPE,
+		count(1) BIZ_COUNT,max(BIZ_NA) BIZ_NA
+		from ANA_KPI_ORG_DETAIL A INNER JOIN V_AUTH_ORG V
+		ON A.AREA_NO = V.AREA_NO
+		AND A.ORG_NO = V.DEPTCODE
+		AND V.USERID = #{userId}
+		where A.DATA_DATE = #{dataDate}
+		and A.AREA_NO = #{areaNo}
+		and A.DIMEN_TYPE = #{dimenType}
+		and A.ANA_TYPE = #{anaType}
+		group by A.DATA_DATE,A.AREA_NO,A.DIMEN_TYPE,A.ANA_TYPE,A.BIZ_TYPE
+		order by A.biz_type
+	</select>
+	
+	<select id="query_ana_kpi_person_constitute" parameterType="HashMap" resultMap="anaKpiConstituteMap">
+		select max(DATA_DATE) DATA_DATE,max(AREA_NO) AREA_NO,max(DIMEN_TYPE) DIMEN_TYPE,
+		max(ana_type) ANA_TYPE,BIZ_TYPE,
+		count(BIZ_TYPE) BIZ_COUNT,max(BIZ_NA) BIZ_NA
+		from ANA_KPI_PERSON_DETAIL 
+		where DATA_DATE = #{dataDate}
+		and AREA_NO = #{areaNo}
+		and DIMEN_TYPE = #{dimenType}
+		and ANA_TYPE = #{anaType}
+		group by DATA_DATE,AREA_NO,DIMEN_TYPE,ANA_TYPE,BIZ_TYPE
+		order by biz_type
+	</select>
+	
+	<select id="query_ana_upgrade_org_constitute" parameterType="HashMap" resultMap="anaKpiConstituteMap">
+		select max(DATA_DATE) DATA_DATE,max(AREA_NO) AREA_NO,max(DIMEN_TYPE) DIMEN_TYPE,
+		max(ana_type) ANA_TYPE,BIZ_TYPE,
+		count(BIZ_TYPE) BIZ_COUNT,max(BIZ_NA) BIZ_NA
+		from ANA_UPGRADE_ORG_DETAIL 
+		where DATA_DATE = #{dataDate}
+		and AREA_NO = #{areaNo}
+		and DIMEN_TYPE = #{dimenType}
+		and ANA_TYPE = #{anaType}
+		and DATE_TYPE = #{dateType}
+		group by DATA_DATE,AREA_NO,DATE_TYPE,DIMEN_TYPE,ANA_TYPE,BIZ_TYPE
+		order by biz_type
+	</select>
+	<select id="query_ana_upgrade_per_constitute" parameterType="HashMap" resultMap="anaKpiConstituteMap">
+		select max(DATA_DATE) DATA_DATE,max(AREA_NO) AREA_NO,max(DIMEN_TYPE) DIMEN_TYPE,
+		max(ana_type) ANA_TYPE,BIZ_TYPE,
+		count(BIZ_TYPE) BIZ_COUNT,max(BIZ_NA) BIZ_NA
+		from ANA_UPGRADE_PERSON_DETAIL 
+		where DATA_DATE = #{dataDate}
+		and AREA_NO = #{areaNo}
+		and DIMEN_TYPE = #{dimenType}
+		and ANA_TYPE = #{anaType}
+		and DATE_TYPE = #{dateType}
+		group by DATA_DATE,AREA_NO,DATE_TYPE,DIMEN_TYPE,ANA_TYPE,BIZ_TYPE
+		order by biz_type
+	</select>
+	
+	<select id="query_ana_kpi_org_trend" parameterType="HashMap" resultMap="anaKpiConstituteMap">
+		select max(DATA_DATE) DATA_DATE,max(AREA_NO) AREA_NO,max(DIMEN_TYPE) DIMEN_TYPE,
+		max(ana_type) ANA_TYPE,BIZ_TYPE,
+		count(BIZ_TYPE) BIZ_COUNT,max(BIZ_NA) BIZ_NA,sum(kpi_value) KPI_VALUE
+		from ANA_KPI_ORG_DETAIL 
+		where DATA_DATE IN 
+		<foreach collection="monthDates" item="dataDate" index="index"
+            open="(" close=")" separator=",">
+            #{dataDate}
+        </foreach>
+		AND AREA_NO = #{areaNo}
+		and DIMEN_TYPE = #{dimenType}
+		and ANA_TYPE = #{anaType}
+		group by DATA_DATE,AREA_NO,DIMEN_TYPE,ANA_TYPE,BIZ_TYPE
+		order by DATA_DATE,biz_type
+	</select>
+	
+	<select id="query_ana_kpi_per_trend" parameterType="HashMap" resultMap="anaKpiConstituteMap">
+		select max(DATA_DATE) DATA_DATE,max(AREA_NO) AREA_NO,max(DIMEN_TYPE) DIMEN_TYPE,
+		max(ana_type) ANA_TYPE,BIZ_TYPE,
+		count(BIZ_TYPE) BIZ_COUNT,max(BIZ_NA) BIZ_NA,sum(kpi_value) KPI_VALUE
+		from ANA_KPI_PERSON_DETAIL 
+		where DATA_DATE IN 
+		<foreach collection="monthDates" item="dataDate" index="index"
+            open="(" close=")" separator=",">
+            #{dataDate}
+        </foreach>
+		AND AREA_NO = #{areaNo}
+		and DIMEN_TYPE = #{dimenType}
+		and ANA_TYPE = #{anaType}
+		group by DATA_DATE,AREA_NO,DIMEN_TYPE,ANA_TYPE,BIZ_TYPE
+		order by DATA_DATE,biz_type
+	</select>
+	<select id="query_ana_upgrade_org_trend" parameterType="HashMap" resultMap="anaKpiConstituteMap">
+		select max(DATA_DATE) DATA_DATE,max(AREA_NO) AREA_NO,max(DIMEN_TYPE) DIMEN_TYPE,
+		max(ana_type) ANA_TYPE,BIZ_TYPE,
+		count(BIZ_TYPE) BIZ_COUNT,max(BIZ_NA) BIZ_NA,sum(kpi_value) KPI_VALUE
+		from ANA_UPGRADE_ORG_DETAIL 
+		where DATA_DATE IN 
+		<foreach collection="monthDates" item="dataDate" index="index"
+            open="(" close=")" separator=",">
+            #{dataDate}
+        </foreach>
+		AND AREA_NO = #{areaNo}
+		and DIMEN_TYPE = #{dimenType}
+		and ANA_TYPE = #{anaType}
+		AND DATE_TYPE = #{dateType}
+		group by DATA_DATE,AREA_NO,DIMEN_TYPE,ANA_TYPE,BIZ_TYPE,DATE_TYPE
+		order by DATA_DATE,biz_type
+	</select>
+	<select id="query_ana_upgrade_per_trend" parameterType="HashMap" resultMap="anaKpiConstituteMap">
+		select max(DATA_DATE) DATA_DATE,max(AREA_NO) AREA_NO,max(DIMEN_TYPE) DIMEN_TYPE,
+		max(ana_type) ANA_TYPE,BIZ_TYPE,
+		count(BIZ_TYPE) BIZ_COUNT,max(BIZ_NA) BIZ_NA,sum(kpi_value) KPI_VALUE
+		from ANA_UPGRADE_PERSON_DETAIL 
+		where DATA_DATE IN 
+		<foreach collection="monthDates" item="dataDate" index="index"
+            open="(" close=")" separator=",">
+            #{dataDate}
+        </foreach>
+		AND AREA_NO = #{areaNo}
+		and DIMEN_TYPE = #{dimenType}
+		and ANA_TYPE = #{anaType}
+		AND DATE_TYPE = #{dateType}
+		group by DATA_DATE,AREA_NO,DIMEN_TYPE,ANA_TYPE,BIZ_TYPE,DATE_TYPE
+		order by DATA_DATE,biz_type
+	</select>
+	
+</mapper> 	  
+ 	 

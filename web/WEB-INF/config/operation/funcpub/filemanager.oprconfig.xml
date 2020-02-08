@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="gb2312"?>
+<!-- 描述各个功能模块，以及各个具体的功能点  -->
+<Sunline>
+	<Session></Session>
+	
+	<!-- 文档管理 -->
+	<Operation id="funcpub-search"
+		bean="com.sunline.funcpub.filemanager.actor.GetSelectActor" desc="文档管理">
+		<Action name="getSubsystem" desc="获取子系统" acttype="query" />
+		<Action name="getDircName" desc="获取子系统对应的文档类型" acttype="query" />
+		<Action name="checkType" desc="检验文档类型是否合法" acttype="query" />
+		<Action name="checkFiles" desc="检验文件是否合法" acttype="query" />
+	</Operation>
+
+	<Operation id="funcpub-filemanager"
+		bean="com.sunline.funcpub.filemanager.actor.FileManagerActor" desc="查询文件">
+		<Action name="queryFileTree" desc="查询文档节点信息" acttype="query" />
+		<Action name="queryDocFiles" desc="获取docFiles文件下的文件" acttype="query"></Action>
+		<Action name="packedFiles" desc="打包文件下载" acttype="query"></Action>
+		<Action name="upload" desc="上传文件" acttype="add"></Action>
+		
+		<Action name="addDir" desc="创建目录" acttype="add"></Action>
+		<Action name="deleteDir" desc="删除目录或文件" acttype="delete"></Action>
+		
+		<Action name="createIndex" desc="创建文件索引" acttype="update"></Action>
+	</Operation>
+	
+</Sunline>

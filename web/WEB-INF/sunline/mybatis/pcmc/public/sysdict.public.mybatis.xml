@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="com.sunline.bimis.pcmc.mybatis.sysdict" >
+	
+	<!-- 平台业务参数 操作SQL -->
+	
+	
+	<resultMap type="com.sunline.bimis.pcmc.parameter.dict.bean.SysDict" id="sysDictMap">
+		<result column="sys_code" property="sysCode"/>
+		<result column="dict_code" property="dictCode"/>
+		<result column="dict_type" property="dictType"/>
+		<result column="dict_name" property="dictName"/>
+		<result column="use_flag" property="useFlag"/>
+		<result column="sort_num" property="sortNum"/>
+		<result column="i18n_code" property="i18nCode"/>
+	</resultMap>
+	
+	<select id="queryDictByParamlistPage" parameterType="java.util.HashMap" resultMap="sysDictMap">
+		select 
+			sys_code,
+			dict_code,
+			dict_type,
+			dict_name,
+			use_flag,
+			sort_num,
+			i18n_code
+		 from sys_pub_dict
+		<where>
+			<if test="sysCode !=null and sysCode.trim()!=''">
+				and sys_code = #{sysCode}
+			</if>
+			<if test="dictCode !=null and dictCode.trim()!=''">
+				and dict_code = #{dictCode}
+			</if>
+			<if test="dictType !=null and dictType.trim()!=''">
+				and dict_type = #{dictType}
+			</if>
+			<if test="dictName !=null and dictName.trim()!=''">
+				and dict_name like %#{dictName}%
+			</if>
+			<if test="useFlag !=null and useFlag.trim()!=''">
+				and use_flag = #{useFlag}
+			</if>
+		</where>
+		order by sort_num,sys_code,dict_type,dict_code asc
+	</select>
+	
+	<select id="existDict" parameterType="java.util.HashMap" resultType="java.lang.Integer">
+		select count(1) from sys_pub_dict
+		<where>
+			<if test="sysCode !=null and sysCode.trim()!=''">
+				and sys_code = #{sysCode}
+			</if>
+			<if test="dictCode !=null and dictCode.trim()!=''">
+				and dict_code = #{dictCode}
+			</if>
+			<if test="dictType !=null and dictType.trim()!=''">
+				and dict_type = #{dictType}
+			</if>
+			<if test="dictName !=null and dictName.trim()!=''">
+				and dict_name like %#{dictName}%
+			</if>
+			<if test="useFlag !=null and useFlag.trim()!=''">
+				and use_flag = #{useFlag}
+			</if>
+		</where>
+	</select>
+</mapper> 	  

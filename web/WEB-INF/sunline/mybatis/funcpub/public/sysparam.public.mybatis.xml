@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="com.sunline.funcpub.mybatis.public.sysparam" >
+	 
+	 <insert id="insertSysParam" parameterType="java.util.HashMap" >
+		INSERT INTO PCMC_KNP_PARA (SUBSCD,PARATP,PARACD,PARANA,PARAAM,CORPCODE) VALUES(#{subscd,jdbcType=VARCHAR},#{paratp,jdbcType=VARCHAR},#{paracd,jdbcType=VARCHAR},#{parana,jdbcType=VARCHAR},#{paraam,jdbcType=NUMERIC},#{corpcode,jdbcType=VARCHAR})
+ 	 </insert> 
+ 	 
+ 	 <select id="existKnpPara" parameterType="java.util.HashMap" resultType="java.lang.Integer">
+ 	 	select count(1) from pcmc_knp_para
+ 	 	<where>
+ 	 		<if test="subscd!=null and subscd.trim()!=''">
+ 	 			and subscd=#{subscd}
+ 	 		</if>
+ 	 		<if test="paratp!=null and paratp.trim()!=''">
+ 	 			and paratp=#{paratp}
+ 	 		</if>
+ 	 	</where>
+ 	 </select>
+ 	 
+ 	 <insert id="insertSysParam1" parameterType="java.util.HashMap" >
+		INSERT INTO PCMC_KNP_PARA (SUBSCD,PARATP,PARACD,PARANA,CORPCODE
+		<if test= "paraam != null and paraam != ''">
+		,PARAAM
+		</if>
+        <if test= "paradt != null and paradt != ''">
+		,PARADT
+		</if>
+        <if test= "parach != null and parach != ''">
+		,PARACH
+		</if>
+        <if test= "parbch != null and parbch != ''">
+		,PARBCH
+		</if>
+        <if test= "parcch != null and parcch != ''">
+		,PARCCH
+		</if>
+        <if test= "pardch != null and pardch != ''">
+		,PARDCH
+		</if>
+        <if test= "parech != null and parech != ''">
+		,PARECH
+		</if>
+		 <if test= "disable != null and disable != ''">
+		,DISABLE
+		 </if>
+		<if test= "sortno != null and sortno != ''">
+		,SORTNO
+		</if>
+		) 
+		VALUES(#{subscd},#{paratp},#{paracd},#{parana},#{corpcode}
+		<if test= "paraam != null and paraam != ''">
+		,#{paraam,jdbcType=NUMERIC}
+		</if>
+        <if test= "paradt != null and paradt != ''">
+		,#{paradt,jdbcType=VARCHAR}
+		</if>
+		<if test= "parach != null and parach != ''">
+        ,#{parach,jdbcType=VARCHAR}
+        </if>
+        <if test= "parbch != null and parbch != ''">
+        ,#{parbch,jdbcType=VARCHAR}
+        </if>
+        <if test= "parcch != null and parcch != ''">
+        ,#{parcch,jdbcType=VARCHAR}
+        </if>
+        <if test= "pardch != null and pardch != ''">
+        ,#{pardch,jdbcType=VARCHAR}
+        </if>
+        <if test= "parech != null and parech != ''">
+        ,#{parech,jdbcType=VARCHAR}
+        </if>
+        <if test= "disable != null and disable != ''">
+        ,#{disable,jdbcType=VARCHAR}
+        </if>
+		<if test= "sortno != null and sortno != ''">
+		,#{sortno,jdbcType=NUMERIC}
+		</if>
+		)
+ 	 </insert> 
+ 	 
+ 	 
+ 	 <delete id="delSysParam" parameterType="java.util.HashMap" >
+    	DELETE FROM PCMC_KNP_PARA WHERE 1=1
+    	<if test= "subscd != null and subscd != ''">
+			AND SUBSCD=#{subscd}
+        </if>
+        <if test= "paratp != null and paratp != ''">
+			AND PARATP=#{paratp}
+        </if>
+        <if test= "paracd != null and paracd != ''">
+			AND PARACD=#{paracd}
+        </if>
+        <if test= "corpcode != null and corpcode != ''">
+			AND CORPCODE=#{corpcode}
+        </if>
+     </delete>	
+     
+     <delete id="delSysParam1" parameterType="java.util.HashMap" >
+    	<![CDATA[
+    		DELETE FROM PCMC_KNP_PARA WHERE paracd <> '%'
+    	]]>
+    	<if test= "paramp != null and paramp != ''">
+			AND SUBSCD=#{subscd}
+        </if>
+        <if test= "paratp != null and paratp != ''">
+			AND PARATP=#{paratp}
+        </if>
+        <if test= "corpcode != null and corpcode != ''">
+			AND CORPCODE=#{corpcode}
+        </if>
+     </delete>	
+     
+     <!-- 删除页面已存在的 -->
+     <delete id="delSysParam2" parameterType="java.util.HashMap" >
+    	<![CDATA[
+    		DELETE FROM PCMC_KNP_PARA WHERE paracd <> '%'
+    	]]>
+    	<if test= "subscd != null and subscd != ''">
+			AND SUBSCD=#{subscd}
+        </if>
+        <if test= "paratp != null and paratp != ''">
+			AND PARATP=#{paratp}
+        </if>
+        <if test="delstr != null">
+        	AND PARACD IN 
+        	<foreach collection="delstr" index="index" item="dc" open="(" separator="," close=")">
+        	    #{dc}
+        	</foreach>
+        </if>
+        <if test= "corpcode != null and corpcode != ''">
+			AND CORPCODE=#{corpcode}
+        </if>
+     </delete>	
+     
+     <update id="updateSysParam" parameterType="java.util.HashMap" >  
+        UPDATE PCMC_KNP_PARA SET PARANA=#{parana},PARACH=#{parach},
+        						  PARBCH=#{parbch},PARCCH=#{parcch},PARDCH=#{pardch},PARECH=#{parech}
+        
+        <if test="paraam != null and paraam !=''">
+        ,PARAAM=#{paraam,jdbcType=NUMERIC}
+        </if>
+        <if test="paraam == null or paraam ==''">
+        ,PARAAM= null
+        </if>
+        <if test="paradt != null and paradt !=''">
+        ,PARADT=#{paradt}
+        </if>
+        <if test="paradt == null or paradt ==''">
+        ,PARADT= null
+        </if>
+        <if test="sortno != null and sortno !=''">
+        ,SORTNO=#{sortno,jdbcType=NUMERIC}
+        </if>
+        <if test="sortno == null or sortno ==''">
+        ,SORTNO= null
+        </if>
+        WHERE SUBSCD=#{subscd} and PARATP=#{paratp} and PARACD =#{paracd} and CORPCODE=#{corpcode}
+     </update>
+     
+     
+     <select id="querySysParamlistPage" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		 select SUBSCD	"subscd",
+				PARATP	"paratp",
+				PARACD	"paracd",
+				PARANA	"parana",
+				PARAAM	"paraam",
+				PARADT	"paradt",
+				PARACH	"parach",
+				PARBCH	"parbch",
+				PARCCH	"parcch",
+				PARDCH	"pardch",
+				PARECH 	"parech",
+				SORTNO	"sortno"
+		  FROM PCMC_KNP_PARA where 1=1 
+		<if test= "subscd != null and subscd != ''">
+			AND SUBSCD=#{subscd}
+        </if>
+        <if test= "paratp != null and paratp != ''">
+			AND PARATP=#{paratp}
+        </if>
+        <if test= "paracd != null and paracd != ''">
+			AND PARACD=#{paracd}
+        </if>
+        <if test= "corpcode != null and corpcode != ''">
+			AND CORPCODE=#{corpcode}
+        </if>
+        <if test= "parana != null and parana !='' and parana != '%%'">
+			AND PARANA like   #{parana}
+        </if>
+        ORDER BY SUBSCD,PARATP,SORTNO,PARAAM
+        
+     </select> 	
+ 	
+ 	 <select id="querySysParamGrouplistPage" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		 <![CDATA[
+		 select SUBSCD	"subscd",
+				PARATP	"paratp",
+				PARACD	"paracd",
+				PARANA	"parana",
+				PARAAM	"paraam",
+				PARADT	"paradt",
+				PARACH	"parach",
+				PARBCH	"parbch",
+				PARCCH	"parcch",
+				PARDCH	"pardch",
+				PARECH 	"parech",
+				DISABLE "disable",
+				SORTNO	"sortno"
+		  FROM PCMC_KNP_PARA where PARACD <> '%' 
+		  ]]>
+		<if test= "subscd != null and subscd != ''">
+			AND SUBSCD=#{subscd}
+        </if>
+        <if test= "paratp != null and paratp != ''">
+			AND PARATP=#{paratp}
+        </if>
+         <if test= "paracd != null and paracd != ''">
+			AND PARACD=#{paracd}
+        </if>
+         <if test= "parana != null and parana != '%%'">
+			AND PARANA like   #{parana}
+        </if>
+        <if test= "corpcode != null and corpcode != ''">
+			AND CORPCODE=#{corpcode}
+        </if>
+        order by sortno,paracd
+ 	</select> 	
+ 	
+ 	<select id="querySysCdByTp" parameterType="java.util.HashMap" resultType="Integer">
+		 <![CDATA[
+		 	select paracd as "paracd" FROM PCMC_KNP_PARA where PARACD <> '%' 
+		  ]]>
+        <if test= "_parameter != null and _parameter != ''">
+			AND PARATP=#{_parameter}
+        </if>
+        <if test= "corpcode != null and corpcode != ''">
+			AND CORPCODE=#{corpcode}
+        </if>
+ 	</select>
+ 	
+ 	
+ 	<resultMap type="com.sunline.funcpub.entity.SysPubPara" id="sysPubPara">
+ 		<result property="paracode" column="para_code" jdbcType="VARCHAR"/>
+ 		<result property="paraname" column="para_name" jdbcType="VARCHAR"/>
+ 		<result property="paravalue" column="para_value" jdbcType="VARCHAR"/>
+ 		<result property="valuetype" column="value_type" jdbcType="VARCHAR"/>
+ 		<result property="remark" column="remark" jdbcType="VARCHAR"/>
+ 	</resultMap>
+ 	
+	<select id="getSysPubPara" parameterType="com.sunline.funcpub.entity.SysPubPara" resultMap="sysPubPara">
+		select para_code, para_name, para_value, value_type, remark
+		from sys_pub_para
+		<where>
+			<if test="paracode!=null and paracode!=''">
+				and para_code = #{paracode}
+			</if>		
+		</where>
+	</select>
+ 	
+</mapper> 	  
+ 	 

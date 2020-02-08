@@ -1,0 +1,651 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="com.sunline.pams.mybatis.public.sbjplan" >
+	<!-- 分页查询机构360评价方案 -->
+	<select id="queryMoSbjOrglistPage" parameterType="com.sunline.pams.planmanager.sbjplan.bean.MoSbjOrg" resultType="com.sunline.pams.planmanager.sbjplan.bean.MoSbjOrg">
+		SELECT 
+		    WAY_CODE AS WAYCODE,
+		    WAY_NAME AS WAYNAME,
+		    START_DAT AS STARTDATE,
+		    END_DAT AS ENDDATE,
+		    WAY_CYCLE AS WAYCYCLE,
+		    STATUS,
+		    IS_EXE AS ISEXE
+		FROM MO_SBJ_ORG
+		<where>
+			<if test="wayName != null and wayName != ''">
+				AND WAY_NAME LIKE #{wayName}
+			</if>
+			<if test="status != null and status != ''">
+				AND STATUS = #{status}
+			</if>
+			<if test="areaNo != null and areaNo != ''">
+				AND AREA_NO = #{areaNo}
+			</if>
+		</where>
+	</select>
+	<select id="queryMoSbjOrg" parameterType="java.util.List" resultType="com.sunline.pams.planmanager.sbjplan.bean.MoSbjOrg">
+		SELECT 
+		    WAY_CODE AS WAYCODE,
+		    WAY_NAME AS WAYNAME,
+		    START_DAT AS STARTDATE,
+		    END_DAT AS ENDDATE,
+		    WAY_CYCLE AS WAYCYCLE,
+		    STATUS,
+		    IS_EXE AS ISEXE
+		FROM MO_SBJ_ORG
+		<where>
+			<if test="list != null and list.size() != ''">
+				AND WAY_CODE IN(<foreach item="wayCode" collection="list">#{wayCode}</foreach>)
+			</if>
+		</where>
+	</select>
+	
+	
+ 	
+ 	<select id="takeDcit" parameterType="java.util.HashMap"  resultType="java.lang.String" >
+		select 
+		      PARACD 
+	    from 
+	         pcmc_knp_para 
+	         where PARANA like #{paranaKey}
+	         <if test="paratpKey != null and paratpKey != ''">
+	            and PARATP = #{paratpKey}
+	         </if>
+	         <if test="subscdKey != null and subscdKey != ''">
+	            and SUBSCD = #{subscdKey}
+	         </if>
+ 	</select>
+	
+	<!-- 分页查询人员360评价方案 -->
+	<select id="queryMoSbjPersonlistPage" parameterType="com.sunline.pams.planmanager.sbjplan.bean.MoSbjPerson" resultType="com.sunline.pams.planmanager.sbjplan.bean.MoSbjPerson">
+		SELECT 
+		    WAY_CODE AS WAYCODE,
+		    WAY_NAME AS WAYNAME,
+		    START_DAT AS STARTDATE,
+		    END_DAT AS ENDDATE,
+		    WAY_CYCLE AS WAYCYCLE,
+		    STATUS,
+		    IS_EXE AS ISEXE
+		FROM MO_SBJ_PERSON
+		<where>
+			<if test="wayName != null and wayName != ''">
+				AND WAY_NAME LIKE #{wayName}
+			</if>
+			<if test="status != null and status != ''">
+				AND STATUS = #{status}
+			</if>
+			<if test="areaNo != null and areaNo != ''">
+				AND AREA_NO = #{areaNo}
+			</if>
+		</where>
+	</select>
+	<select id="queryMoSbjPerson" parameterType="java.util.List" resultType="com.sunline.pams.planmanager.sbjplan.bean.MoSbjPerson">
+		SELECT 
+		    WAY_CODE AS WAYCODE,
+		    WAY_NAME AS WAYNAME,
+		    START_DAT AS STARTDATE,
+		    END_DAT AS ENDDATE,
+		    WAY_CYCLE AS WAYCYCLE,
+		    STATUS,
+		    IS_EXE AS ISEXE
+		FROM MO_SBJ_PERSON
+		<where>
+			<if test="list != null and list.size() != ''">
+				AND WAY_CODE IN(<foreach item="wayCode" collection="list">#{wayCode}</foreach>)
+			</if>
+		</where>
+	</select>
+	
+	<!-- 根据方案编号查询单个方案信息 -->
+	<select id="getMoSbjOrg" parameterType="String" resultType="com.sunline.pams.planmanager.sbjplan.bean.MoSbjOrg">
+		SELECT 
+			WAY_CODE AS WAYCODE, 
+			AREA_NO AS AREANO, 
+			WAY_NAME AS WAYNAME, 
+			START_DAT AS STARTDATE, 
+			END_DAT AS ENDDATE,
+			WAY_CYCLE AS WAYCYCLE, 
+			RESERVE_DAY AS RESERVEDAY, 
+			DELAY_DAY AS DELAYDAY, 
+			EDIT_ORG AS EDITORG, 
+			EDIT_ROLE AS EDITROLE,
+			WAY_DESC AS WAYDESC, 
+			STATUS, 
+			CREATE_TIME AS CREATETIME, 
+			OPERATOR, 
+			REVIEW_MAN AS REVIEWMAN, 
+			REVIEW_STATUS AS REVIEWSTATUS, 
+			REVIEW_OPINION AS REVIEWOPINION, 
+			IS_EXE AS ISEXE
+		FROM MO_SBJ_ORG 
+		WHERE WAY_CODE = #{_parameter}
+	</select>
+	<select id="getMoSbjPerson" parameterType="String" resultType="com.sunline.pams.planmanager.sbjplan.bean.MoSbjPerson">
+		SELECT 
+			WAY_CODE AS WAYCODE, 
+			AREA_NO AS AREANO, 
+			WAY_NAME AS WAYNAME, 
+			START_DAT AS STARTDATE, 
+			END_DAT AS ENDDATE,
+			WAY_CYCLE AS WAYCYCLE, 
+			RESERVE_DAY AS RESERVEDAY, 
+			DELAY_DAY AS DELAYDAY, 
+			EDIT_ORG AS EDITORG, 
+			EDIT_ROLE AS EDITROLE,
+			WAY_DESC AS WAYDESC, 
+			STATUS, 
+			CREATE_TIME AS CREATETIME, 
+			OPERATOR, 
+			REVIEW_MAN AS REVIEWMAN, 
+			REVIEW_STATUS AS REVIEWSTATUS, 
+			REVIEW_OPINION AS REVIEWOPINION, 
+			IS_EXE AS ISEXE
+		FROM MO_SBJ_PERSON 
+		WHERE WAY_CODE = #{_parameter}
+	</select>
+	
+	<!-- 根据方案编号查询查询维度 -->
+	<select id="getMoSbjOrgDimension" parameterType="String" resultType="com.sunline.pams.planmanager.sbjplan.bean.MoSbjOrgDimension">
+		SELECT 
+			WAY_CODE AS WAYCODE, 
+			DIMENSION_NO AS DIMENSIONNO, 
+			DIMENSION_NAME AS DIMENSIONNAME,
+			DIMENSION_RATE AS DIMENSIONRATE, 
+			SEQ_NUM AS SEQNUM
+		FROM MO_SBJ_ORG_DIMENSION
+		WHERE WAY_CODE = #{_parameter}
+		ORDER BY SEQ_NUM
+	</select>
+	<select id="getMoSbjPersonDimension" parameterType="String" resultType="com.sunline.pams.planmanager.sbjplan.bean.MoSbjPersonDimension">
+		SELECT 
+			WAY_CODE AS WAYCODE, 
+			DIMENSION_NO AS DIMENSIONNO, 
+			DIMENSION_NAME AS DIMENSIONNAME,
+			DIMENSION_RATE AS DIMENSIONRATE, 
+			SEQ_NUM AS SEQNUM
+		FROM MO_SBJ_PERSON_DIMENSION
+		WHERE WAY_CODE = #{_parameter}
+		ORDER BY SEQ_NUM
+	</select>
+	
+	<!-- 根据方案编号查询查询维度指标 -->
+	<select id="getMoSbjOrgKpi" parameterType="String" resultType="com.sunline.pams.planmanager.sbjplan.bean.MoSbjOrgKpi">
+		SELECT 
+			A.WAY_CODE AS WAYCODE, 
+			A.SEQ_NUM AS SEQNUM, 
+			A.KPI_CODE AS KPICODE, 
+			B.KPI_NAME AS KPINAME,
+			A.DIMENSION_NO AS DIMENSIONNO, 
+			A.RATE, 
+			A.APPRAISE_METHOD AS APPRAISEMETHOD, 
+			A.BASE_SCORE AS BASESCORE, 
+			A.H_SCORE AS HSCORE, 
+			A.L_SCORE AS LSCORE, 
+			A.SPC_SCORE AS SPCSCORE, 
+			A.L_BASE_LINE AS LBASELINE, 
+			A.H_BASE_LINE AS HBASELINE
+		FROM MO_SBJ_ORG_KPI A
+		LEFT JOIN MO_KPI_SUBJECTIVE B ON A.KPI_CODE = B.KPI_CODE
+		WHERE A.WAY_CODE = #{_parameter}
+		ORDER BY A.SEQ_NUM
+	</select>
+	<select id="getMoSbjPersonKpi" parameterType="String" resultType="com.sunline.pams.planmanager.sbjplan.bean.MoSbjPersonKpi">
+		SELECT 
+			A.WAY_CODE AS WAYCODE, 
+			A.SEQ_NUM AS SEQNUM, 
+			A.KPI_CODE AS KPICODE, 
+			B.KPI_NAME AS KPINAME,
+			A.DIMENSION_NO AS DIMENSIONNO, 
+			A.RATE, 
+			A.APPRAISE_METHOD AS APPRAISEMETHOD, 
+			A.BASE_SCORE AS BASESCORE, 
+			A.H_SCORE AS HSCORE, 
+			A.L_SCORE AS LSCORE, 
+			A.SPC_SCORE AS SPCSCORE, 
+			A.L_BASE_LINE AS LBASELINE, 
+			A.H_BASE_LINE AS HBASELINE
+		FROM MO_SBJ_PERSON_KPI A
+		LEFT JOIN MO_KPI_SUBJECTIVE B ON A.KPI_CODE = B.KPI_CODE
+		WHERE A.WAY_CODE = #{_parameter}
+		ORDER BY A.SEQ_NUM
+	</select>
+	
+	<!-- 根据方案编号查询查询对象 -->
+	<select id="getMoSbjOrgObj" parameterType="String" resultType="com.sunline.pams.planmanager.sbjplan.bean.MoSbjOrgObj">
+		SELECT 
+			WAY_CODE AS WAYCODE, 
+			SEQ_NUM AS SEQNUM, 
+			WAY_RANGE AS WAYRANGE,
+			WHITE_LIST AS WHITELIST,
+			BLACK_LIST AS BLACKLIST, 
+			SPR_POST AS SPRPOST, 
+			SPR_WHITE_LIST AS SPRWHITELIST, 
+			SPR_BLACK_LIST AS SPRBLACKLIST, 
+			SBDN_POST AS SBDNPOST, 
+			SBDN_WHITE_LIST AS SBDNWHITELIST, 
+			SBDN_BLACK_LIST AS SBDNBLACKLIST, 
+			PEER_POST AS PEERPOST, 
+			PEER_WHITE_LIST AS PEERWHITELIST, 
+			PEER_BLACK_LIST AS PEERBLACKLIST
+		FROM MO_SBJ_ORG_OBJ
+		WHERE WAY_CODE = #{_parameter}
+		ORDER BY SEQ_NUM
+	</select>
+	<select id="getMoSbjPersonObj" parameterType="String" resultType="com.sunline.pams.planmanager.sbjplan.bean.MoSbjPersonObj">
+		SELECT 
+			WAY_CODE AS WAYCODE, 
+			SEQ_NUM AS SEQNUM, 
+			WAY_RANGE AS WAYRANGE,
+			WHITE_LIST AS WHITELIST,
+			BLACK_LIST AS BLACKLIST, 
+			SPR_POST AS SPRPOST, 
+			SPR_WHITE_LIST AS SPRWHITELIST, 
+			SPR_BLACK_LIST AS SPRBLACKLIST, 
+			SBDN_POST AS SBDNPOST, 
+			SBDN_WHITE_LIST AS SBDNWHITELIST, 
+			SBDN_BLACK_LIST AS SBDNBLACKLIST, 
+			PEER_POST AS PEERPOST, 
+			PEER_WHITE_LIST AS PEERWHITELIST, 
+			PEER_BLACK_LIST AS PEERBLACKLIST
+		FROM MO_SBJ_PERSON_OBJ
+		WHERE WAY_CODE = #{_parameter}
+		ORDER BY SEQ_NUM
+	</select>
+	
+	<!-- 根据维护机构编码查询维护机构名称 -->
+	<select id="getEditOrgNa" parameterType="java.util.HashMap" resultType="String">
+		SELECT DEPTNAME FROM PCMC_DEPT
+		WHERE CORPCODE = #{corpCode}
+		AND DEPTCODE IN <foreach item="editOrg" collection="editOrgList" open="(" separator="," close=")">#{editOrg}</foreach>
+	</select>
+	
+	<!-- 根据维护角色编码查询维护角色名称 -->
+	<select id="getEditRoleNa" parameterType="java.util.HashMap" resultType="String">
+		SELECT ROLENAME FROM PCMC_ROLE
+		WHERE CORPCODE = #{corpCode}
+		AND ROLEID IN <foreach item="editRole" collection="editRoleList" open="(" separator="," close=")">#{editRole}</foreach>
+	</select>
+	
+	<!-- 删除机构360评价方案：方案信息 -->
+	<delete id="deleteMoSbjOrg" parameterType="java.util.List">
+		DELETE FROM MO_SBJ_ORG WHERE WAY_CODE IN <foreach collection="list" item="wayCode" open="(" close=")" separator=",">#{wayCode}</foreach>
+	</delete>
+	
+	<!-- 删除机构360评价方案：维度 -->
+	<delete id="deleteMoSbjOrgDimension" parameterType="java.util.List">
+		DELETE FROM MO_SBJ_ORG_DIMENSION WHERE WAY_CODE IN <foreach collection="list" item="wayCode" open="(" close=")" separator=",">#{wayCode}</foreach>
+	</delete>
+	
+	<!-- 删除机构360评价方案：指标 -->
+	<delete id="deleteMoSbjOrgKpi" parameterType="java.util.List">
+		DELETE FROM MO_SBJ_ORG_KPI WHERE WAY_CODE IN <foreach collection="list" item="wayCode" open="(" close=")" separator=",">#{wayCode}</foreach>
+	</delete>
+	
+	<!-- 删除机构360评价方案：对象 -->
+	<delete id="deleteMoSbjOrgObj" parameterType="java.util.List">
+		DELETE FROM MO_SBJ_ORG_OBJ WHERE WAY_CODE IN <foreach collection="list" item="wayCode" open="(" close=")" separator=",">#{wayCode}</foreach>
+	</delete>
+	
+	<!-- 删除人员360评价方案：方案信息 -->
+	<delete id="deleteMoSbjPerson" parameterType="java.util.List">
+		DELETE FROM MO_SBJ_PERSON WHERE WAY_CODE IN <foreach collection="list" item="wayCode" open="(" close=")" separator=",">#{wayCode}</foreach>
+	</delete>
+	
+	<!-- 删除人员360评价方案：维度 -->
+	<delete id="deleteMoSbjPersonDimension" parameterType="java.util.List">
+		DELETE FROM MO_SBJ_PERSON_DIMENSION WHERE WAY_CODE IN <foreach collection="list" item="wayCode" open="(" close=")" separator=",">#{wayCode}</foreach>
+	</delete>
+	
+	<!-- 删除人员360评价方案：指标 -->
+	<delete id="deleteMoSbjPersonKpi" parameterType="java.util.List">
+		DELETE FROM MO_SBJ_PERSON_KPI WHERE WAY_CODE IN <foreach collection="list" item="wayCode" open="(" close=")" separator=",">#{wayCode}</foreach>
+	</delete>
+	
+	<!-- 删除人员360评价方案：对象 -->
+	<delete id="deleteMoSbjPersonObj" parameterType="java.util.List">
+		DELETE FROM MO_SBJ_PERSON_OBJ WHERE WAY_CODE IN <foreach collection="list" item="wayCode" open="(" close=")" separator=",">#{wayCode}</foreach>
+	</delete>
+	
+	<!-- 新增定性指标 -->
+	<insert id="addSubjectiveKpi" parameterType="com.sunline.pams.planmanager.sbjplan.bean.MoKpiSubjective">
+		INSERT INTO MO_KPI_SUBJECTIVE(
+			KPI_ID, AREA_NO, KPI_CODE, KPI_NAME, KPI_TYPE, APPLY_TYPE, ORG_NO, CREATE_TIME, OPERATOR, STATUS, 
+			DEL_FLAG, REMARK, SBJ_TYPE, SBJ_FREQUENCY, RESERVE_DAY, AUTO_SBJ, BASE_SCORE, H_SCORE, L_SCORE, SPC_SCORE, 
+			L_BASE_LINE, H_BASE_LINE
+		)VALUES(
+			#{kpiID},#{areaNo},#{kpiCode},#{kpiName},#{kpiType},#{applyType},#{orgNo},#{createTime},#{operator},#{status},
+			#{delFlag},#{remark,jdbcType=VARCHAR},#{sbjType},#{sbjFrequency},#{reserveDay},#{autoSbj},#{baseScore},
+			#{hScore,jdbcType=NUMERIC},#{lScore,jdbcType=NUMERIC},#{spcScore,jdbcType=NUMERIC},
+			#{lBaseLine,jdbcType=NUMERIC},#{hBaseLine,jdbcType=NUMERIC}
+		)
+	</insert>
+	
+	<!-- 新增机构360评价方案：方案信息 -->
+	<insert id="addMoSbjOrg" parameterType="com.sunline.pams.planmanager.sbjplan.bean.MoSbjOrg">
+		INSERT INTO MO_SBJ_ORG(
+			WAY_CODE, AREA_NO, WAY_NAME, START_DAT, END_DAT, WAY_CYCLE, RESERVE_DAY, DELAY_DAY, EDIT_ORG, 
+			EDIT_ROLE, WAY_DESC, STATUS, CREATE_TIME, OPERATOR, REVIEW_MAN, REVIEW_TIME, REVIEW_STATUS, REVIEW_OPINION, IS_EXE
+		)VALUES(
+			#{wayCode},#{areaNo},#{wayName},#{startDate},#{endDate},#{wayCycle},#{reserveDay,jdbcType=NUMERIC},
+			#{delayDay,jdbcType=NUMERIC},#{editOrg},#{editRole},#{wayDesc,jdbcType=VARCHAR},#{status},#{createTime},#{operator},
+			#{reviewMan,jdbcType=VARCHAR},#{reviewTime,jdbcType=TIMESTAMP},#{reviewStatus,jdbcType=VARCHAR},
+			#{reviewOpinion,jdbcType=VARCHAR},#{isExe}
+		)
+	</insert>
+	
+	<!-- 新增机构360评价方案：维度 -->
+	<insert id="addMoSbjOrgDimension" parameterType="com.sunline.pams.planmanager.sbjplan.bean.MoSbjOrgDimension">
+		INSERT INTO MO_SBJ_ORG_DIMENSION(
+			WAY_CODE, DIMENSION_NO, DIMENSION_NAME, DIMENSION_RATE, SEQ_NUM
+		)VALUES(
+			#{wayCode},#{dimensionNo},#{dimensionName},#{dimensionRate,jdbcType=NUMERIC},#{seqNum,jdbcType=NUMERIC}
+		)
+	</insert>
+	
+	<!-- 新增机构360评价方案：指标 -->
+	<insert id="addMoSbjOrgKpi" parameterType="com.sunline.pams.planmanager.sbjplan.bean.MoSbjOrgKpi">
+		INSERT INTO MO_SBJ_ORG_KPI(
+			WAY_CODE, SEQ_NUM, KPI_CODE, DIMENSION_NO, RATE, APPRAISE_METHOD, BASE_SCORE, H_SCORE, L_SCORE, SPC_SCORE, 
+			L_BASE_LINE, H_BASE_LINE
+		)VALUES(
+			#{wayCode},#{seqNum,jdbcType=NUMERIC},#{kpiCode},#{dimensionNo},#{rate,jdbcType=NUMERIC},
+			#{appraiseMethod,jdbcType=VARCHAR},#{baseScore},#{hScore,jdbcType=NUMERIC},#{lScore,jdbcType=NUMERIC},
+			#{spcScore,jdbcType=NUMERIC},#{lBaseLine,jdbcType=NUMERIC},#{hBaseLine,jdbcType=NUMERIC}
+		) 
+	</insert>
+	
+	<!-- 新增机构360评价方案：对象-->
+	<insert id="addMoSbjOrgObj" parameterType="com.sunline.pams.planmanager.sbjplan.bean.MoSbjOrgObj">
+		INSERT INTO MO_SBJ_ORG_OBJ(
+			WAY_CODE, SEQ_NUM, WAY_RANGE, WHITE_LIST, BLACK_LIST, SPR_POST, SPR_WHITE_LIST, SPR_BLACK_LIST, SBDN_POST, 
+			SBDN_WHITE_LIST, SBDN_BLACK_LIST, PEER_POST, PEER_WHITE_LIST, PEER_BLACK_LIST
+		)VALUES(
+			#{wayCode},#{seqNum,jdbcType=NUMERIC},#{wayRange,jdbcType=VARCHAR},#{whiteList,jdbcType=VARCHAR},
+			#{blackList,jdbcType=VARCHAR},#{sprPost,jdbcType=VARCHAR},#{sprWhiteList,jdbcType=VARCHAR},
+			#{sprBlackList,jdbcType=VARCHAR},#{sbdnPost,jdbcType=VARCHAR},#{sbdnWhiteList,jdbcType=VARCHAR},
+			#{sbdnBlackList,jdbcType=VARCHAR},#{peerPost,jdbcType=VARCHAR},#{peerWhiteList,jdbcType=VARCHAR},
+			#{peerBlackList,jdbcType=VARCHAR}
+		) 
+	</insert>
+	
+	<!-- 新增人员360评价方案：方案信息 -->
+	<insert id="addMoSbjPerson" parameterType="com.sunline.pams.planmanager.sbjplan.bean.MoSbjPerson">
+		INSERT INTO MO_SBJ_PERSON(
+			WAY_CODE, AREA_NO, WAY_NAME, START_DAT, END_DAT, WAY_CYCLE, RESERVE_DAY, DELAY_DAY, EDIT_ORG, 
+			EDIT_ROLE, WAY_DESC, STATUS, CREATE_TIME, OPERATOR, REVIEW_MAN, REVIEW_TIME, REVIEW_STATUS, REVIEW_OPINION, IS_EXE
+		)VALUES(
+			#{wayCode},#{areaNo},#{wayName},#{startDate},#{endDate},#{wayCycle},#{reserveDay,jdbcType=NUMERIC},
+			#{delayDay,jdbcType=NUMERIC},#{editOrg},#{editRole},#{wayDesc,jdbcType=VARCHAR},#{status},#{createTime},#{operator},
+			#{reviewMan,jdbcType=VARCHAR},#{reviewTime,jdbcType=TIMESTAMP},#{reviewStatus,jdbcType=VARCHAR},
+			#{reviewOpinion,jdbcType=VARCHAR},#{isExe}
+		)
+	</insert>
+	
+	<!-- 新增人员360评价方案：维度 -->
+	<insert id="addMoSbjPersonDimension" parameterType="com.sunline.pams.planmanager.sbjplan.bean.MoSbjPersonDimension">
+		INSERT INTO MO_SBJ_PERSON_DIMENSION(
+			WAY_CODE, DIMENSION_NO, DIMENSION_NAME, DIMENSION_RATE, SEQ_NUM
+		)VALUES(
+			#{wayCode},#{dimensionNo},#{dimensionName},#{dimensionRate,jdbcType=NUMERIC},#{seqNum,jdbcType=NUMERIC}
+		)
+	</insert>
+	
+	<!-- 新增人员360评价方案：指标 -->
+	<insert id="addMoSbjPersonKpi" parameterType="com.sunline.pams.planmanager.sbjplan.bean.MoSbjPersonKpi">
+		INSERT INTO MO_SBJ_PERSON_KPI(
+			WAY_CODE, SEQ_NUM, KPI_CODE, DIMENSION_NO, RATE, APPRAISE_METHOD, BASE_SCORE, H_SCORE, L_SCORE, SPC_SCORE, 
+			L_BASE_LINE, H_BASE_LINE
+		)VALUES(
+			#{wayCode},#{seqNum,jdbcType=NUMERIC},#{kpiCode},#{dimensionNo},#{rate,jdbcType=NUMERIC},
+			#{appraiseMethod,jdbcType=VARCHAR},#{baseScore},#{hScore,jdbcType=NUMERIC},#{lScore,jdbcType=NUMERIC},
+			#{spcScore,jdbcType=NUMERIC},#{lBaseLine,jdbcType=NUMERIC},#{hBaseLine,jdbcType=NUMERIC}
+		) 
+	</insert>
+	
+	<!-- 新增人员360评价方案：对象-->
+	<insert id="addMoSbjPersonObj" parameterType="com.sunline.pams.planmanager.sbjplan.bean.MoSbjPersonObj">
+		INSERT INTO MO_SBJ_PERSON_OBJ(
+			WAY_CODE, SEQ_NUM, WAY_RANGE, WHITE_LIST, BLACK_LIST, SPR_POST, SPR_WHITE_LIST, SPR_BLACK_LIST, SBDN_POST, 
+			SBDN_WHITE_LIST, SBDN_BLACK_LIST, PEER_POST, PEER_WHITE_LIST, PEER_BLACK_LIST
+		)VALUES(
+			#{wayCode},#{seqNum,jdbcType=NUMERIC},#{wayRange,jdbcType=VARCHAR},#{whiteList,jdbcType=VARCHAR},
+			#{blackList,jdbcType=VARCHAR},#{sprPost,jdbcType=VARCHAR},#{sprWhiteList,jdbcType=VARCHAR},
+			#{sprBlackList,jdbcType=VARCHAR},#{sbdnPost,jdbcType=VARCHAR},#{sbdnWhiteList,jdbcType=VARCHAR},
+			#{sbdnBlackList,jdbcType=VARCHAR},#{peerPost,jdbcType=VARCHAR},#{peerWhiteList,jdbcType=VARCHAR},
+			#{peerBlackList,jdbcType=VARCHAR}
+		) 
+	</insert>
+	
+	
+	<!-- 查询机构360评价方案自评对象 -->
+	<select id="queryMoSbjOrgObjForSelfEva" parameterType="java.util.List" resultType="com.sunline.pams.planmanager.sbjplan.bean.MoSbjOrgObj">
+		SELECT 
+			WAY_CODE AS WAYCODE, 
+			WAY_RANGE AS WAYRANGE, 
+			WHITE_LIST AS WHITELIST, 
+			BLACK_LIST AS BLACKLIST
+		FROM MO_SBJ_ORG_OBJ
+		WHERE WAY_CODE IN <foreach item="moSbjOrg" collection="list" open="(" separator="," close=")">#{moSbjOrg.wayCode}</foreach>
+	</select>
+	
+	<select id="queryMoSbjOrgExec" parameterType="java.util.List" resultType="com.sunline.pams.planmanager.sbjplan.bean.MoSbjOrgExec">
+		SELECT 
+			A.WAY_CODE AS WAYCODE, 
+			B.WAY_NAME AS WAYNAME,
+			A.PERIOD, 
+			A.KPI_CODE AS KPICODE, 
+			A.ORG_NO AS ORGNO, 
+			A.APPRAISER, 
+			A.AREA_NO AS AREANO, 
+			A.START_DATE AS STARTDATE, 
+			A.END_DATE AS ENDDATE, 
+			A.APPRAISE_METHOD AS APPRAISEMETHOD, 
+			A.BASE_SCORE AS BASESCORE, 
+			A.H_SCORE AS HSCORE, 
+			A.L_SCORE AS LSCORE, 
+			A.SPC_SCORE AS SPCSCORE, 
+			A.L_BASE_LINE AS LBASELINE, 
+			A.SBJ_SCORE AS SBJSCORE, 
+			A.SBJ_CONTENT AS SBJCONTENT, 
+			A.OPERATOR, 
+			A.SBJ_TIME AS SBJTIME, 
+			A.SBJ_FLAG AS SBJFLAG
+		FROM MO_SBJ_ORG_EXEC A
+		LEFT JOIN MO_SBJ_ORG B ON A.WAY_CODE = B.WAY_CODE AND A.AREA_NO = B.AREA_NO
+		WHERE A.WAY_CODE IN <foreach item="wayCode" collection="list" open="(" separator="," close=")">#{wayCode}</foreach>
+	</select>
+	
+	<select id="getJarPath" parameterType="String" resultType="String">
+		SELECT PARA_VALUE FROM SYS_PUB_PARA WHERE PARA_CODE = #{_parameter}
+	</select>
+	
+	
+	<select id="queryOrgSbjPlanEvalistPage" parameterType="java.util.HashMap" resultType="com.sunline.pams.planmanager.sbjplan.bean.MoSbjOrgExec">
+		SELECT DISTINCT
+		    A.WAY_CODE AS WAYCODE,
+		    B.WAY_NAME AS WAYNAME,
+		    A.ORG_NO AS ORGNO,
+		    C.DEPTNAME AS ORGNAME,
+		    A.PERIOD
+		FROM MO_SBJ_ORG_EXEC A
+		INNER JOIN MO_SBJ_ORG B ON A.WAY_CODE = B.WAY_CODE AND A.AREA_NO = B.AREA_NO
+		INNER JOIN PCMC_DEPT C ON A.ORG_NO = C.DEPTCODE AND A.AREA_NO = C.CORPCODE
+		INNER JOIN MO_SBJ_ORG_KPI D ON A.WAY_CODE = D.WAY_CODE AND A.KPI_CODE = D.KPI_CODE
+		WHERE A.AREA_NO = #{areaNo} AND D.DIMENSION_NO = #{dimNo}
+		AND A.APPRAISER = #{userCode}
+		<if test="wayName != null and wayName != ''">
+			AND B.WAY_NAME LIKE #{wayName}
+		</if>
+	</select>
+	<select id="queryPersonSbjPlanEvalistPage" parameterType="java.util.HashMap" resultType="com.sunline.pams.planmanager.sbjplan.bean.MoSbjPersonExec">
+		SELECT DISTINCT
+		    A.WAY_CODE AS WAYCODE,
+		    B.WAY_NAME AS WAYNAME,
+		    A.MANAGER_NO AS MANAGERNO,
+		    C.USERNAME AS MANAGERGNAME,
+		    A.PERIOD
+		FROM MO_SBJ_PERSON_EXEC A
+		INNER JOIN MO_SBJ_PERSON B ON A.WAY_CODE = B.WAY_CODE AND A.AREA_NO = B.AREA_NO
+		INNER JOIN PCMC_USER C ON A.MANAGER_NO = C.USERCODE AND A.AREA_NO = C.CORPCODE
+		INNER JOIN MO_SBJ_PERSON_KPI D ON A.WAY_CODE = D.WAY_CODE AND A.KPI_CODE = D.KPI_CODE
+		WHERE A.AREA_NO = #{areaNo} AND D.DIMENSION_NO = #{dimNo}
+		AND A.APPRAISER = #{userCode}
+		<if test="wayName != null and wayName != ''">
+			AND B.WAY_NAME LIKE #{wayName}
+		</if>
+	</select>
+	
+	<select id="queryOrgSbjExec"  parameterType="java.util.HashMap" resultType="com.sunline.pams.planmanager.sbjplan.bean.MoSbjOrgExec">
+		SELECT 
+			A.KPI_CODE AS KPICODE,
+			B.KPI_NAME AS KPINAME,
+			A.BASE_SCORE AS BASESCORE,
+			A.H_SCORE AS HSCORE,
+			A.L_SCORE AS LSCORE,
+			A.SPC_SCORE AS SPCSCORE,
+			A.APPRAISE_METHOD AS APPRAISEMETHOD,
+			A.SBJ_SCORE AS SBJSCORE
+		FROM MO_SBJ_ORG_EXEC A
+		INNER JOIN MO_KPI_SUBJECTIVE B ON A.KPI_CODE = B.KPI_CODE AND A.AREA_NO = B.AREA_NO
+		INNER JOIN MO_SBJ_ORG_KPI C ON A.WAY_CODE = C.WAY_CODE AND A.KPI_CODE = C.KPI_CODE
+		WHERE A.AREA_NO = #{areaNo} AND A.APPRAISER = #{userCode} AND A.WAY_CODE = #{wayCode}
+		AND A.ORG_NO = #{orgNo} AND C.DIMENSION_NO = #{dimNo} 
+	</select>
+	<select id="queryPersonSbjExec"  parameterType="java.util.HashMap" resultType="com.sunline.pams.planmanager.sbjplan.bean.MoSbjPersonExec">
+		SELECT 
+			A.KPI_CODE AS KPICODE,
+			B.KPI_NAME AS KPINAME,
+			A.BASE_SCORE AS BASESCORE,
+			A.H_SCORE AS HSCORE,
+			A.L_SCORE AS LSCORE,
+			A.SPC_SCORE AS SPCSCORE,
+			A.APPRAISE_METHOD AS APPRAISEMETHOD,
+			A.SBJ_SCORE AS SBJSCORE
+		FROM MO_SBJ_PERSON_EXEC A
+		INNER JOIN MO_KPI_SUBJECTIVE B ON A.KPI_CODE = B.KPI_CODE AND A.AREA_NO = B.AREA_NO
+		INNER JOIN MO_SBJ_PERSON_KPI C ON A.WAY_CODE = C.WAY_CODE AND A.KPI_CODE = C.KPI_CODE
+		WHERE A.AREA_NO = #{areaNo} AND A.APPRAISER = #{userCode} AND A.WAY_CODE = #{wayCode}
+		AND A.MANAGER_NO = #{managerNo} AND C.DIMENSION_NO = #{dimNo}
+	</select>
+	
+	<update id="updateMoSbjOrgExec" parameterType="com.sunline.pams.planmanager.sbjplan.bean.MoSbjOrgExec">
+		UPDATE MO_SBJ_ORG_EXEC SET
+			SBJ_SCORE = #{sbjScore}
+		WHERE AREA_NO = #{areaNo} AND WAY_CODE = #{wayCode} 
+		AND ORG_NO =#{orgNo} AND KPI_CODE  = #{kpiCode}
+	</update>
+	<update id="updateMoSbjPersonExec" parameterType="com.sunline.pams.planmanager.sbjplan.bean.MoSbjPersonExec">
+		UPDATE MO_SBJ_PERSON_EXEC SET
+			SBJ_SCORE = #{sbjScore}
+		WHERE AREA_NO = #{areaNo} AND WAY_CODE = #{wayCode} 
+		AND MANAGER_NO =#{managerNo} AND KPI_CODE  = #{kpiCode}
+	</update>
+	
+	<select id="queryMoSbjOrgTotallistPage" parameterType="java.util.HashMap" resultType="com.sunline.pams.planmanager.sbjplan.bean.MoSbjOrgTotal">
+		SELECT DISTINCT
+		    A.DATA_DATE AS DATADATE,
+		    A.WAY_CODE AS WAYCODE,
+		    B.WAY_NAME AS WAYNAME,
+		    A.ORG_NO AS ORGNO,
+		    C.DEPTNAME AS ORGNAME,
+		    A.TOTAL_SCORE AS TOTALSCORE,
+		    A.EDIT_SCORE AS EDITSCORE
+		FROM (
+			SELECT DATA_DATE, WAY_CODE, ORG_NO, TOTAL_SCORE, EDIT_SCORE, AREA_NO FROM MO_SBJ_ORG_TOTAL
+			UNION
+			SELECT DATA_DATE, WAY_CODE, ORG_NO, TOTAL_SCORE, EDIT_SCORE, AREA_NO FROM MO_SBJ_ORG_TOTAL_H
+		) A
+		INNER JOIN MO_SBJ_ORG B ON A.WAY_CODE = B.WAY_CODE AND A.AREA_NO = B.AREA_NO
+		INNER JOIN PCMC_DEPT C ON A.ORG_NO = C.DEPTCODE AND A.AREA_NO = C.CORPCODE
+		WHERE A.AREA_NO = #{areaNo}
+		<if test="dataDate != null and dataDate != ''">
+			AND A.DATA_DATE = #{dataDate}
+		</if>
+		<if test="orgNo != null and orgNo != ''">
+			AND A.ORG_NO = #{orgNo}
+		</if>
+		<if test="wayName != null and wayName != ''">
+			AND B.WAY_NAME LIKE #{wayName}
+		</if>
+	</select>
+	<select id="queryMoSbjPersonTotallistPage" parameterType="java.util.HashMap" resultType="com.sunline.pams.planmanager.sbjplan.bean.MoSbjPersonTotal">
+		SELECT DISTINCT
+		    A.DATA_DATE AS DATADATE,
+		    A.WAY_CODE AS WAYCODE,
+		    B.WAY_NAME AS WAYNAME,
+		    A.MANAGER_NO AS MANAGERNO,
+		    C.USERNAME AS MANAGERNAME,
+		    A.TOTAL_SCORE AS TOTALSCORE,
+		    A.EDIT_SCORE AS EDITSCORE
+		FROM(
+			SELECT DATA_DATE, WAY_CODE, MANAGER_NO, TOTAL_SCORE, EDIT_SCORE, AREA_NO FROM MO_SBJ_PERSON_TOTAL
+			UNION
+			SELECT DATA_DATE, WAY_CODE, MANAGER_NO, TOTAL_SCORE, EDIT_SCORE, AREA_NO FROM MO_SBJ_PERSON_TOTAL_H
+		) A
+		INNER JOIN MO_SBJ_PERSON B ON A.WAY_CODE = B.WAY_CODE AND A.AREA_NO = B.AREA_NO
+		INNER JOIN PCMC_USER C ON A.MANAGER_NO = C.USERCODE AND A.AREA_NO = C.CORPCODE
+		WHERE A.AREA_NO = #{areaNo}
+		<if test="dataDate != null and dataDate != ''">
+			AND A.DATA_DATE = #{dataDate}
+		</if>
+		<if test="managerNo != null and managerNo != ''">
+			AND A.MANAGER_NO = #{managerNo}
+		</if>
+		<if test="wayName != null and wayName != ''">
+			AND B.WAY_NAME LIKE #{wayName}
+		</if>
+	</select>
+	
+	<select id="queryMoSbjOrgDetail" parameterType="java.util.HashMap" resultType="com.sunline.pams.planmanager.sbjplan.bean.MoSbjOrgDetail">
+		SELECT DISTINCT
+		    A.DATA_DATE AS DATADATE, 
+		    A.WAY_CODE AS WAYCODE,
+		    B.WAY_NAME AS WAYNAME,
+		    A.ORG_NO AS ORGNO,
+		    C.DEPTNAME AS ORGNAME,
+		    A.KPI_CODE AS KPICODE,
+		    D.KPI_NAME AS KPINAME,
+		    E.RATE AS KPIRATE,
+		    F.DIMENSION_RATE AS DIMRATE,
+		    A.SBJ_SCORE AS SBJSCORE,
+		    A.EDIT_SCORE AS EDIT_SCORE
+		FROM (
+			SELECT DATA_DATE, WAY_CODE, ORG_NO, KPI_CODE, SBJ_SCORE, EDIT_SCORE, AREA_NO FROM MO_SBJ_ORG_DETAIL
+			UNION
+			SELECT DATA_DATE, WAY_CODE, ORG_NO, KPI_CODE, SBJ_SCORE, EDIT_SCORE, AREA_NO FROM MO_SBJ_ORG_DETAIL_H
+		) A
+		INNER JOIN MO_SBJ_ORG B ON A.WAY_CODE = B.WAY_CODE AND A.AREA_NO = B.AREA_NO
+		INNER JOIN PCMC_DEPT C ON A.ORG_NO = C.DEPTCODE AND A.AREA_NO = C.CORPCODE
+		INNER JOIN MO_KPI_SUBJECTIVE D ON A.KPI_CODE = D.KPI_CODE AND A.AREA_NO = D.AREA_NO
+		INNER JOIN MO_SBJ_ORG_KPI E ON A.WAY_CODE = E.WAY_CODE AND A.KPI_CODE = E.KPI_CODE
+		INNER JOIN MO_SBJ_ORG_DIMENSION F ON E.WAY_CODE = F.WAY_CODE AND E.DIMENSION_NO = F.DIMENSION_NO
+		WHERE A.AREA_NO = #{areaNo} AND A.WAY_CODE = #{wayCode} AND A.DATA_DATE = #{dataDate}
+	</select>
+	<select id="queryMoSbjPersonDetail" parameterType="java.util.HashMap" resultType="com.sunline.pams.planmanager.sbjplan.bean.MoSbjPersonDetail">
+		SELECT 
+		    A.DATA_DATE AS DATADATE, 
+		    A.WAY_CODE AS WAYCODE,
+		    B.WAY_NAME AS WAYNAME,
+		    A.MANAGER_NO AS MANAGERNO,
+		    C.USERNAME AS MANAGERNAME,
+		    A.KPI_CODE AS KPICODE,
+		    D.KPI_NAME AS KPINAME,
+		    E.RATE AS KPIRATE,
+		    F.DIMENSION_RATE AS DIMRATE,
+		    A.SBJ_SCORE AS SBJSCORE,
+		    A.EDIT_SCORE AS EDIT_SCORE
+		FROM (
+			SELECT DATA_DATE, WAY_CODE, MANAGER_NO, KPI_CODE, SBJ_SCORE, EDIT_SCORE, AREA_NO FROM MO_SBJ_PERSON_DETAIL
+			UNION
+			SELECT DATA_DATE, WAY_CODE, MANAGER_NO, KPI_CODE, SBJ_SCORE, EDIT_SCORE, AREA_NO FROM MO_SBJ_PERSON_DETAIL_H
+		) A
+		INNER JOIN MO_SBJ_PERSON B ON A.WAY_CODE = B.WAY_CODE AND A.AREA_NO = B.AREA_NO
+		INNER JOIN PCMC_USER C ON A.MANAGER_NO = C.USERCODE AND A.AREA_NO = C.CORPCODE
+		INNER JOIN MO_KPI_SUBJECTIVE D ON A.KPI_CODE = D.KPI_CODE AND A.AREA_NO = D.AREA_NO
+		INNER JOIN MO_SBJ_PERSON_KPI E ON A.WAY_CODE = E.WAY_CODE AND A.KPI_CODE = E.KPI_CODE
+		INNER JOIN MO_SBJ_PERSON_DIMENSION F ON E.WAY_CODE = F.WAY_CODE AND E.DIMENSION_NO = F.DIMENSION_NO
+		WHERE A.AREA_NO = #{areaNo} AND A.WAY_CODE = #{wayCode} AND A.DATA_DATE = #{dataDate} AND A.MANAGER_NO = #{managerNo}
+	</select>
+</mapper> 	  
+ 	 

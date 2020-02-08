@@ -1,0 +1,1212 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sunline.pams.mybatis.public.homepage">
+	<select id="getFunctionParam" parameterType="String" resultType="String">
+ 		SELECT A.FUNCTION_PARAMS FROM AP_HMP_FUNCTION_REGISTER A WHERE A.FUNCTION_ID = #{_parameter}
+ 	</select>	
+	<!-- 全辖主要目标完成进度 -->
+	<resultMap type="java.util.HashMap" id="AllMailGoalRate">
+		<result column="KPICODE" property="kpiCode" />
+		<result column="KPINAME" property="kpiName" />
+		<result column="MBOVALUE" property="mboValue" />
+		<result column="KPIVALUE" property="kpiValue" />
+		<result column="RATE" property="rate" />
+	</resultMap>
+	<select id="getAllMailGoalRate" parameterType="java.util.HashMap"
+		resultMap="AllMailGoalRate">
+		SELECT DISTINCT
+		A.KPI_CODE AS KPICODE,
+		A.KPI_NAME AS KPINAME,
+		B.MBO_VALUE AS MBOVALUE,
+		B.KPI_VALUE AS KPIVALUE,
+		(CASE
+		WHEN B.MBO_VALUE IS NULL OR B.MBO_VALUE = '' THEN NULL
+		ELSE (B.KPI_VALUE/B.MBO_VALUE)*100
+		END
+		)AS RATE
+		FROM MO_KPI_INFO A
+		LEFT JOIN PI_ORG_KPI B ON A.KPI_CODE = B.KPI_CODE AND
+		A.AREA_NO = B.AREA_NO
+		AND B.DATA_DATE = #{dataDate}
+		AND B.ORG_NO = #{deptCode}
+		WHERE A.AREA_NO = #{corpCode}
+		AND A.KPI_CODE IN
+		<foreach item="functionDataSrc" collection="functionDataSrcList"
+			open="(" separator="," close=")">
+			#{functionDataSrc.srcCode}
+		</foreach>
+	</select>
+
+	<select id="getUserMailGoalRate" parameterType="java.util.HashMap"
+		resultMap="AllMailGoalRate">
+		SELECT DISTINCT
+		A.KPI_CODE AS KPICODE,
+		A.KPI_NAME AS KPINAME,
+		B.MBO_VALUE AS MBOVALUE,
+		B.KPI_VALUE AS KPIVALUE,
+		(CASE
+		WHEN B.MBO_VALUE IS NULL OR B.MBO_VALUE = '' THEN NULL
+		ELSE (B.KPI_VALUE/B.MBO_VALUE)*100
+		END
+		)AS RATE
+		FROM MO_KPI_INFO A
+		LEFT JOIN PI_ORG_KPI_PERSON B ON A.KPI_CODE = B.KPI_CODE
+		AND B.AREA_NO = A.AREA_NO
+		AND B.DATA_DATE = #{dataDate}
+		AND B.MANAGER_NO = #{userCode}
+		WHERE A.AREA_NO = #{corpCode}
+		AND A.KPI_CODE
+		IN
+		<foreach item="functionDataSrc" collection="functionDataSrcList"
+			open="(" separator="," close=")">
+			#{functionDataSrc.srcCode}
+		</foreach>
+	</select>
+
+	<!-- 绩效(薪酬)方案排名 -->
+	<resultMap type="java.util.HashMap" id="PlanList">
+		<result column="WAYCODE" property="wayCode" />
+		<result column="WAYNAME" property="wayName" />
+		<result column="WAYTYPE" property="wayType" />
+		<result column="DEPTCODE" property="deptCode" />
+		<result column="DEPTNAME" property="deptName" />
+		<result column="USERCODE" property="userCode" />
+		<result column="USERNAME" property="userName" />
+		<result column="SCORE" property="score" />
+	</resultMap>
+	<select id="queryPlanList" parameterType="java.util.HashMap"
+		resultMap="PlanList">
+		SELECT WAY_CODE AS WAYCODE,WAY_NAME AS WAYNAME,WAY_TYPE AS WAYTYPE
+		FROM MO_WAY_PERSON
+		WHERE WAY_TYPE = #{wayType}
+		AND AREA_NO = #{corpCode}
+		AND WAY_CODE IN
+		<foreach item="functionDataSrc" collection="functionDataSrcList"
+			open="(" separator="," close=")">
+			#{functionDataSrc.srcCode}
+		</foreach>
+	</select>
+	<select id="queryPlanRankInfolistPage" parameterType="java.util.HashMap"
+		resultMap="PlanList">
+		SELECT * FROM(
+		SELECT
+		A.WAY_CODE AS WAYCODE, B.WAY_NAME AS WAYNAME,
+		A.MANAGER_ORG AS DEPTCODE,C.DEPTNAME AS DEPTNAME,
+		A.MANAGER_NO AS USERCODE,D.USERNAME,
+		CASE WHEN A.EDIT_SCORE IS NULL OR A.EDIT_SCORE = '' THEN A.TOTAL_SCORE
+		ELSE A.EDIT_SCORE END AS SCORE
+		FROM MO_WAY_PERSON_TOTAL A
+		LEFT JOIN MO_WAY_PERSON B ON A.WAY_CODE = B.WAY_CODE AND A.AREA_NO =
+		B.AREA_NO
+		LEFT JOIN PCMC_DEPT C ON A.MANAGER_ORG = C.DEPTCODE AND A.AREA_NO =
+		C.AREANO
+		LEFT JOIN PCMC_USER D ON A.MANAGER_NO = D.USERCODE AND A.AREA_NO =
+		D.CORPCODE
+		WHERE A.WAY_TYPE = #{wayType} AND A.WAY_CODE = #{wayCode} AND A.AREA_NO =
+		#{corpCode}
+		<if test="dataDate != null and dataDate != ''">
+			AND A.DATA_DATE = #{dataDate}
+		</if>
+		) E
+		ORDER BY E.SCORE ${orderBy}
+	</select>
+
+	<!-- 全行绩效工资运用情况 -->
+	<resultMap type="java.util.HashMap" id="PaWageUseSituation">
+		<result column="WAYCODE" property="wayCode" />
+		<result column="WAYNAME" property="wayName" />
+		<result column="ALLSCORE" property="allScore" />
+		<result column="TOTALSCORE" property="totalScore" />
+	</resultMap>
+	<select id="allPaWageUseSituation" parameterType="java.util.HashMap"
+		resultMap="PaWageUseSituation">
+		SELECT
+		A.WAY_CODE AS WAYCODE,
+		A.WAY_NAME AS WAYNAME,
+		A.ALL_SCORE AS ALLSCORE,
+		B.TOTAL_SCORE AS TOTALSCORE
+		FROM MO_WAY_ORG A
+		LEFT JOIN (
+		SELECT
+		WAY_CODE,
+		DATA_DATE,
+		AREA_NO,
+		SUM(
+		CASE WHEN EDIT_SCORE IS NULL OR EDIT_SCORE = ''
+		THEN TOTAL_SCORE
+		ELSE EDIT_SCORE
+		END
+		) AS TOTAL_SCORE
+		FROM MO_WAY_ORG_TOTAL
+		GROUP BY WAY_CODE,DATA_DATE,AREA_NO
+		) B ON A.WAY_CODE = B.WAY_CODE AND A.AREA_NO = B.AREA_NO AND
+		B.DATA_DATE = #{dataDate}
+		WHERE A.WAY_CODE IN
+		<foreach item="functionDataSrc" collection="functionDataSrcList"
+			open="(" separator="," close=")">
+			#{functionDataSrc.srcCode}
+		</foreach>
+		AND A.AREA_NO = #{corpCode}
+		UNION
+		SELECT
+		A.WAY_CODE AS WAYCODE,
+		A.WAY_NAME AS WAYNAME,
+		A.ALL_SCORE AS ALLSCORE,
+		B.TOTAL_SCORE AS TOTALSCORE
+		FROM MO_WAY_PERSON A
+		LEFT JOIN (
+		SELECT
+		WAY_CODE,
+		DATA_DATE,
+		AREA_NO,
+		SUM(
+		CASE WHEN EDIT_SCORE IS NULL OR EDIT_SCORE = ''
+		THEN TOTAL_SCORE
+		ELSE EDIT_SCORE
+		END
+		) AS TOTAL_SCORE
+		FROM MO_WAY_PERSON_TOTAL
+		GROUP BY WAY_CODE,DATA_DATE,AREA_NO
+		) B ON A.WAY_CODE = B.WAY_CODE AND A.AREA_NO = B.AREA_NO AND
+		B.DATA_DATE = #{dataDate}
+		WHERE A.WAY_CODE IN
+		<foreach item="functionDataSrc" collection="functionDataSrcList"
+			open="(" separator="," close=")">
+			#{functionDataSrc.srcCode}
+		</foreach>
+		AND A.AREA_NO = #{corpCode}
+	</select>
+
+	<resultMap type="java.util.HashMap" id="orgPaWageListTotalMap">
+		<result column="DEPTCODE" property="deptCode" />
+		<result column="DEPTNAME" property="deptName" />
+		<result column="TOTALVALUE" property="totalValue" />
+	</resultMap>
+	<select id="orgPaWageListTotal" parameterType="java.util.HashMap"
+		resultMap="orgPaWageListTotalMap">
+		SELECT
+		T.DEPTCODE,
+		T.DEPTNAME,
+		T.TOTALVALUE
+		FROM(
+		SELECT
+		A.DEPTCODE,
+		A.DEPTNAME,
+		SUM(CASE WHEN B.EDIT_SCORE IS NULL THEN B.TOTAL_SCORE ELSE B.EDIT_SCORE END)
+		AS TOTALVALUE
+		FROM PCMC_DEPT A
+		LEFT JOIN MO_WAY_ORG_TOTAL B ON A.AREANO = B.AREA_NO AND A.DEPTCODE =
+		B.ORG_NO AND B.DATA_DATE = #{dataDate}
+		AND B.WAY_CODE IN
+		<foreach item="functionDataSrc" collection="functionDataSrcList"
+			open="(" separator="," close=")">
+			#{functionDataSrc.srcCode}
+		</foreach>
+		WHERE A.AREANO = #{corpCode}
+		GROUP BY A.DEPTCODE,A.DEPTNAME
+		)T
+		ORDER BY T.TOTALVALUE DESC
+	</select>
+	<resultMap type="java.util.HashMap" id="orgPaWageListMap">
+		<result column="DEPTCODE" property="deptCode" />
+		<result column="DEPTNAME" property="deptName" />
+		<result column="WAY_CODE" property="wayCode" />
+		<result column="VALUE" property="value" />
+	</resultMap>
+	<select id="orgPaWageList" parameterType="java.util.HashMap"
+		resultMap="orgPaWageListMap">
+		SELECT
+		A.DEPTCODE,
+		A.DEPTNAME,
+		B.WAY_CODE,
+		CASE WHEN B.EDIT_SCORE IS NULL THEN B.TOTAL_SCORE ELSE B.EDIT_SCORE END AS
+		VALUE
+		FROM PCMC_DEPT A
+		LEFT JOIN MO_WAY_ORG_TOTAL B ON A.AREANO =
+		B.AREA_NO AND A.DEPTCODE = B.ORG_NO AND B.DATA_DATE = #{dataDate}
+		AND B.WAY_CODE IN
+		<foreach item="functionDataSrc" collection="functionDataSrcList"
+			open="(" separator="," close=")">
+			#{functionDataSrc.srcCode}
+		</foreach>
+		WHERE A.AREANO = #{corpCode}
+	</select>
+
+	<!-- 存贷款余额变动 -->
+	<resultMap type="java.util.HashMap" id="depositLoanBalance">
+		<result column="DATA_DATE" property="dataDate" javaType="String" />
+		<result column="KPI_CODE" property="kpiCode" />
+		<result column="KPI_VALUE" property="kpiValue" />
+	</resultMap>
+	<select id="depositLoanBalanceInfo" parameterType="java.util.HashMap"
+		resultMap="depositLoanBalance">
+		SELECT
+		B.DATA_DATE,
+		A.KPI_CODE,
+		B.KPI_VALUE
+		FROM MO_KPI_INFO A
+		LEFT JOIN PI_ORG_KPI B ON A.KPI_CODE = B.KPI_CODE
+		AND A.AREA_NO = B.AREA_NO
+		AND B.DATA_DATE IN
+		<foreach collection="dateList" item="date" separator="," open="("
+			close=")">#{date}</foreach>
+		AND B.ORG_NO = #{deptCode}
+		WHERE A.KPI_CODE IN
+		<foreach item="functionDataSrc" collection="functionDataSrcList"
+			open="(" separator="," close=")">
+			#{functionDataSrc.srcCode}
+		</foreach>
+		AND A.AREA_NO = #{corpCode}
+	</select>
+
+
+	<!-- 机构存贷款规模 -->
+	<resultMap type="java.util.HashMap" id="orgDepositLoanMap">
+		<result column="DEPTCODE" property="deptCode" />
+		<result column="DEPTNAME" property="deptName" />
+		<result column="KPI_CODE" property="kpiCode" />
+		<result column="KPI_NAME" property="kpiName" />
+		<result column="KPI_VALUE" property="kpiValue" />
+	</resultMap>
+	<select id="orgDepositLoan" parameterType="java.util.HashMap"
+		resultMap="orgDepositLoanMap">
+		SELECT
+		A.DEPTCODE,
+		A.DEPTNAME,
+		B.KPI_CODE,
+		B.KPI_NAME,
+		C.KPI_VALUE
+		FROM PCMC_DEPT A
+		LEFT JOIN MO_KPI_INFO B ON A.AREANO = B.AREA_NO
+		AND B.KPI_CODE IN
+		<foreach item="functionDataSrc" collection="functionDataSrcList"
+			open="(" separator="," close=")">
+			#{functionDataSrc.srcCode}
+		</foreach>
+		LEFT JOIN PI_ORG_KPI C ON A.DEPTCODE = C.ORG_NO AND A.AREANO =
+		C.AREA_NO AND B.KPI_CODE = C.KPI_CODE
+		AND C.DATA_DATE = #{dataDate}
+		WHERE A.PDEPTID = #{deptID}
+		AND A.AREANO = #{corpCode}
+	</select>
+
+	<!-- 分支机构排行榜 -->
+	<resultMap type="java.util.HashMap" id="orgRank">
+		<result column="DEPTCODE" property="deptCode" />
+		<result column="DEPTNAME" property="deptName" />
+		<result column="KPI_CODE" property="kpiCode" />
+		<result column="KPI_NAME" property="kpiName" />
+		<result column="KPI_VALUE" property="kpiValue" />
+	</resultMap>
+	<select id="orgRankList1" parameterType="java.util.HashMap"
+		resultMap="orgRank">
+		SELECT
+		A.DEPTCODE,
+		A.DEPTNAME,
+		B.KPI_CODE,
+		B.KPI_NAME,
+		C.KPI_VALUE
+		FROM PCMC_DEPT A
+		LEFT JOIN MO_KPI_INFO B ON A.AREANO = B.AREA_NO
+		AND B.KPI_CODE IN
+		<foreach item="functionDataSrc" collection="functionDataSrcList"
+			open="(" separator="," close=")">
+			#{functionDataSrc.srcCode}
+		</foreach>
+		LEFT JOIN PI_ORG_KPI C ON B.AREA_NO = C.AREA_NO AND C.KPI_CODE =
+		B.KPI_CODE AND A.DEPTCODE = C.ORG_NO AND C.DATA_DATE = #{dataDate}
+		WHERE A.PDEPTID = #{deptID}
+		AND A.AREANO = #{corpCode}
+	</select>
+	<select id="orgRankList2" parameterType="java.util.HashMap"
+		resultMap="orgRank">
+		SELECT
+		A.DEPTCODE,
+		A.DEPTNAME
+		FROM PCMC_DEPT A
+		WHERE A.PDEPTID = #{deptID}
+		AND A.AREANO = #{corpCode}
+	</select>
+
+	<!-- 机构主要业务变动情况 -->
+	<resultMap type="java.util.HashMap" id="OrgMainBizChangeInfo">
+		<result column="VALUE1A" property="value1A" />
+		<result column="VALUE1B" property="value1B" />
+		<result column="VALUE1C" property="value1C" />
+		<result column="VALUE1D" property="value1D" />
+		<result column="VALUE1E" property="value1E" />
+		<result column="VALUE1F" property="value1F" />
+		<result column="VALUE1G" property="value1G" />
+		<result column="VALUE1H" property="value1H" />
+		<result column="VALUE1I" property="value1I" />
+		<result column="VALUE1J" property="value1J" />
+		<result column="VALUE1K" property="value1K" />
+
+		<result column="VALUE2A" property="value2A" />
+		<result column="VALUE2B" property="value2B" />
+		<result column="VALUE2C" property="value2C" />
+		<result column="VALUE2D" property="value2D" />
+		<result column="VALUE2E" property="value2E" />
+		<result column="VALUE2F" property="value2F" />
+		<result column="VALUE2G" property="value2G" />
+		<result column="VALUE2H" property="value2H" />
+		<result column="VALUE2I" property="value2I" />
+		<result column="VALUE2J" property="value2J" />
+		<result column="VALUE2K" property="value2K" />
+	</resultMap>
+	<select id="queryOrgMainBizChangeInfo" parameterType="java.util.HashMap"
+		resultMap="OrgMainBizChangeInfo">
+		SELECT
+		SUM(CASE WHEN KPI_CODE = #{kpiCode1A} THEN (CASE WHEN EDIT_VALUE IS NULL OR
+		EDIT_VALUE = '' THEN KPI_VALUE ELSE EDIT_VALUE END) END) AS VALUE1A,
+		SUM(CASE WHEN KPI_CODE = #{kpiCode1B} THEN (CASE WHEN EDIT_VALUE IS
+		NULL OR EDIT_VALUE = '' THEN KPI_VALUE ELSE EDIT_VALUE END) END) AS
+		VALUE1B,
+		SUM(CASE WHEN KPI_CODE = #{kpiCode1C} THEN (CASE WHEN EDIT_VALUE IS NULL OR
+		EDIT_VALUE = '' THEN KPI_VALUE ELSE EDIT_VALUE END) END) AS VALUE1C,
+		SUM(CASE WHEN KPI_CODE = #{kpiCode1D} THEN (CASE WHEN EDIT_VALUE IS
+		NULL OR EDIT_VALUE = '' THEN KPI_VALUE ELSE EDIT_VALUE END) END) AS
+		VALUE1D,
+		SUM(CASE WHEN KPI_CODE = #{kpiCode1E} THEN (CASE WHEN EDIT_VALUE IS NULL OR
+		EDIT_VALUE = '' THEN KPI_VALUE ELSE EDIT_VALUE END) END) AS VALUE1E,
+		SUM(CASE WHEN KPI_CODE = #{kpiCode1F} THEN (CASE WHEN EDIT_VALUE IS
+		NULL OR EDIT_VALUE = '' THEN KPI_VALUE ELSE EDIT_VALUE END) END) AS
+		VALUE1F,
+		SUM(CASE WHEN KPI_CODE = #{kpiCode1G} THEN (CASE WHEN EDIT_VALUE IS NULL OR
+		EDIT_VALUE = '' THEN KPI_VALUE ELSE EDIT_VALUE END) END) AS VALUE1G,
+		SUM(CASE WHEN KPI_CODE = #{kpiCode1H} THEN (CASE WHEN EDIT_VALUE IS
+		NULL OR EDIT_VALUE = '' THEN KPI_VALUE ELSE EDIT_VALUE END) END) AS
+		VALUE1H,
+		SUM(CASE WHEN KPI_CODE = #{kpiCode1I} THEN (CASE WHEN EDIT_VALUE IS NULL OR
+		EDIT_VALUE = '' THEN KPI_VALUE ELSE EDIT_VALUE END) END) AS VALUE1I,
+		SUM(CASE WHEN KPI_CODE = #{kpiCode1J} THEN (CASE WHEN EDIT_VALUE IS
+		NULL OR EDIT_VALUE = '' THEN KPI_VALUE ELSE EDIT_VALUE END) END) AS
+		VALUE1J,
+		SUM(CASE WHEN KPI_CODE = #{kpiCode1K} THEN (CASE WHEN EDIT_VALUE IS NULL OR
+		EDIT_VALUE = '' THEN KPI_VALUE ELSE EDIT_VALUE END) END) AS VALUE1K,
+		SUM(CASE WHEN KPI_CODE = #{kpiCode2A} THEN (CASE WHEN EDIT_VALUE IS
+		NULL OR EDIT_VALUE = '' THEN KPI_VALUE ELSE EDIT_VALUE END) END) AS
+		VALUE2A,
+		SUM(CASE WHEN KPI_CODE = #{kpiCode2B} THEN (CASE WHEN EDIT_VALUE IS NULL OR
+		EDIT_VALUE = '' THEN KPI_VALUE ELSE EDIT_VALUE END) END) AS VALUE2B,
+		SUM(CASE WHEN KPI_CODE = #{kpiCode2C} THEN (CASE WHEN EDIT_VALUE IS
+		NULL OR EDIT_VALUE = '' THEN KPI_VALUE ELSE EDIT_VALUE END) END) AS
+		VALUE2C,
+		SUM(CASE WHEN KPI_CODE = #{kpiCode2D} THEN (CASE WHEN EDIT_VALUE IS NULL OR
+		EDIT_VALUE = '' THEN KPI_VALUE ELSE EDIT_VALUE END) END) AS VALUE2D,
+		SUM(CASE WHEN KPI_CODE = #{kpiCode2E} THEN (CASE WHEN EDIT_VALUE IS
+		NULL OR EDIT_VALUE = '' THEN KPI_VALUE ELSE EDIT_VALUE END) END) AS
+		VALUE2E,
+		SUM(CASE WHEN KPI_CODE = #{kpiCode2F} THEN (CASE WHEN EDIT_VALUE IS NULL OR
+		EDIT_VALUE = '' THEN KPI_VALUE ELSE EDIT_VALUE END) END) AS VALUE2F,
+		SUM(CASE WHEN KPI_CODE = #{kpiCode2G} THEN (CASE WHEN EDIT_VALUE IS
+		NULL OR EDIT_VALUE = '' THEN KPI_VALUE ELSE EDIT_VALUE END) END) AS
+		VALUE2G,
+		SUM(CASE WHEN KPI_CODE = #{kpiCode2H} THEN (CASE WHEN EDIT_VALUE IS NULL OR
+		EDIT_VALUE = '' THEN KPI_VALUE ELSE EDIT_VALUE END) END) AS VALUE2H,
+		SUM(CASE WHEN KPI_CODE = #{kpiCode2I} THEN (CASE WHEN EDIT_VALUE IS
+		NULL OR EDIT_VALUE = '' THEN KPI_VALUE ELSE EDIT_VALUE END) END) AS
+		VALUE2I,
+		SUM(CASE WHEN KPI_CODE = #{kpiCode2J} THEN (CASE WHEN EDIT_VALUE IS NULL OR
+		EDIT_VALUE = '' THEN KPI_VALUE ELSE EDIT_VALUE END) END) AS VALUE2J,
+		SUM(CASE WHEN KPI_CODE = #{kpiCode2K} THEN (CASE WHEN EDIT_VALUE IS
+		NULL OR EDIT_VALUE = '' THEN KPI_VALUE ELSE EDIT_VALUE END) END) AS
+		VALUE2K
+		FROM PI_ORG_KPI
+		WHERE ORG_NO = #{deptCode} AND DATA_DATE = #{dataDate}
+	</select>
+
+	<!-- 绩效工资/考核得分 -->
+	<resultMap type="java.util.HashMap" id="planInfoMap">
+		<result column="WAY_CODE" property="wayCode" />
+		<result column="WAY_NAME" property="wayName" />
+		<result column="SCORE" property="score" />
+	</resultMap>
+	<select id="queryPlanInfo" parameterType="java.util.HashMap"
+		resultMap="planInfoMap">
+		SELECT
+		A.WAY_CODE,
+		A.WAY_NAME,
+		CASE WHEN B.EDIT_SCORE IS NULL THEN B.TOTAL_SCORE ELSE B.EDIT_SCORE END AS
+		SCORE
+		FROM MO_WAY_ORG A
+		LEFT JOIN MO_WAY_ORG_TOTAL B ON A.AREA_NO =
+		B.AREA_NO AND A.WAY_CODE = B.WAY_CODE
+		AND B.DATA_DATE = #{dataDate}
+		AND B.ORG_NO = #{deptCode}
+		WHERE A.AREA_NO = #{corpCode}
+		AND A.WAY_TYPE =
+		#{wayType}
+		AND A.WAY_CODE IN
+		<foreach item="functionDataSrc" collection="functionDataSrcList"
+			open="(" separator="," close=")">
+			#{functionDataSrc.srcCode}
+		</foreach>
+	</select>
+
+	<!-- 客户经理排行榜 -->
+	<resultMap type="java.util.HashMap" id="custManagerKpiRankMap">
+		<result column="KPI_CODE" property="kpiCode" />
+		<result column="KPI_NAME" property="kpiName" />
+		<result column="KPI_VALUE" property="kpiValue" />
+		<result column="RANK_ALL" property="rank" />
+	</resultMap>
+	<select id="custManagerKpiRank" parameterType="java.util.HashMap"
+		resultMap="custManagerKpiRankMap">
+		SELECT
+		A.KPI_CODE,
+		A.KPI_NAME,
+		B.KPI_VALUE,
+		B.RANK_ALL
+		FROM MO_KPI_INFO A
+		LEFT JOIN PI_ORG_KPI_PERSON B ON A.KPI_CODE =
+		B.KPI_CODE AND A.AREA_NO = B.AREA_NO
+		AND B.DATA_DATE = #{dataDate}
+		AND B.MANAGER_NO = #{userCode}
+		WHERE A.KPI_CODE IN
+		<foreach item="functionDataSrc" collection="functionDataSrcList"
+			open="(" separator="," close=")">
+			#{functionDataSrc.srcCode}
+		</foreach>
+		AND A.AREA_NO = #{corpCode}
+	</select>
+
+	<!-- 客户经理存贷款规模占比 -->
+	<select id="userDepositLoanRate" parameterType="java.util.HashMap"
+		resultMap="custManagerKpiRankMap">
+		SELECT
+		A.KPI_CODE,
+		A.KPI_NAME,
+		B.KPI_VALUE
+		FROM MO_KPI_INFO A
+		LEFT JOIN PI_ORG_KPI_PERSON B ON A.KPI_CODE =
+		B.KPI_CODE AND A.AREA_NO = B.AREA_NO
+		AND B.DATA_DATE = #{dataDate}
+		AND B.MANAGER_NO = #{userCode}
+		WHERE A.KPI_CODE IN
+		<foreach item="functionDataSrc" collection="functionDataSrcList"
+			open="(" separator="," close=")">
+			#{functionDataSrc.srcCode}
+		</foreach>
+		AND A.AREA_NO = #{corpCode}
+	</select>
+
+
+	<resultMap type="com.sunline.pams.publi.homepage.ApHmpFunctionDataSrc"
+		id="ApHmpFunctionDataSrc">
+		<result column="FUNCTION_ID" property="functionID" />
+		<result column="SRC_CODE" property="srcCode" />
+		<result column="SRC_NAME" property="srcName" />
+		<result column="AREA_NO" property="areaNo" />
+		<result column="SORTNO" property="sortNo" />
+	</resultMap>
+	<select id="getFunctionDataSrc" parameterType="java.util.HashMap"
+		resultMap="ApHmpFunctionDataSrc">
+		SELECT FUNCTION_ID,SRC_CODE,SRC_NAME,AREA_NO,SORTNO FROM
+		AP_HMP_FUNCTION_DATASRC
+		WHERE AREA_NO = #{areaNo}
+		AND FUNCTION_ID =
+		(SELECT FUNCTION_ID FROM AP_HMP_FUNCTION_REGISTER WHERE FUNCTION_URL =
+		#{functionUrl} AND CORPCODE = #{areaNo})
+		ORDER BY SORTNO
+	</select>
+
+	<select id="queryFunctionPersonKpiValueList" parameterType="java.util.HashMap" resultType="String">
+		SELECT A.KPI_VALUE FROM PI_ORG_KPI_PERSON A
+		INNER JOIN MO_KPI_INFO B ON A.KPI_CODE=B.KPI_CODE
+		WHERE A.AREA_NO=#{areaNo} AND B.KPI_NAME = #{kpiName} AND A.DATA_DATE = #{dataDate}
+		AND A.MANAGER_NO = #{objCode}
+	</select>
+
+	<select id="queryFunctionOrgKpiValueList" parameterType="java.util.HashMap" resultType="String">
+		SELECT A.KPI_VALUE FROM PI_ORG_KPI A
+		INNER JOIN MO_KPI_INFO B ON A.KPI_CODE=B.KPI_CODE
+		WHERE A.AREA_NO=#{areaNo} AND B.KPI_NAME = #{kpiName} AND A.DATA_DATE = #{dataDate}
+		AND A.ORG_NO = #{objCode}
+	</select>
+
+	<select id="queryFunctionRegisterKpilistPage" parameterType="java.util.HashMap"
+		resultType="java.util.HashMap">
+		select
+		KPI_NAME,
+		KPI_CODE
+		from
+		mo_kpi_info
+		where area_no = #{areaNo}
+		<if test="applyTypeList != null and applyTypeList.size() > 0 ">
+			and apply_type in <foreach collection="applyTypeList" item="applyType" open="(" separator="," close=")">#{applyType}</foreach>
+		</if>
+		<if test="KPI_NAME!=null and KPI_NAME != ''">
+			and KPI_NAME like #{KPI_NAME}
+		</if>
+		<if test="KPI_CODE!=null and KPI_CODE != ''">
+			and KPI_CODE = #{KPI_CODE}
+		</if>
+		<if test="applyTypeList != null and applyTypeList.size()>0">
+			AND APPLY_TYPE IN(<foreach item="applyType" collection="applyTypeList" separator=",">#{applyType}</foreach>)
+		</if>
+	</select>
+	
+	<select id="queryFunctionRegisterMoWaylistPage" parameterType="java.util.HashMap"
+		resultType="java.util.HashMap">
+		select 
+				WAY_NAME,
+				WAY_CODE 
+		from MO_WAY_ORG 
+		WHERE AREA_NO = #{areaNo} AND WAY_TYPE = #{wayType}
+		<if test="WAY_NAME!=null and WAY_NAME != ''">
+			AND WAY_NAME LIKE #{WAY_NAME}
+		</if>
+		<if test="WAY_CODE!=null and WAY_CODE != ''">
+			AND WAY_CODE = #{WAY_CODE}
+		</if>
+	</select>
+	
+	<select id="queryFunctionRegisterPeronMoWaylistPage" parameterType="java.util.HashMap"
+		resultType="java.util.HashMap">
+		select 
+				WAY_NAME,
+				WAY_CODE 
+		from MO_WAY_PERSON 
+		WHERE AREA_NO = #{areaNo} AND WAY_TYPE = #{wayType}
+		<if test="WAY_NAME!=null and WAY_NAME != ''">
+			AND WAY_NAME LIKE #{WAY_NAME}
+		</if>
+		<if test="WAY_CODE!=null and WAY_CODE != ''">
+			AND WAY_CODE = #{WAY_CODE}
+		</if>
+	</select>
+
+	<select id="queryFunctionRegisterMBOKpilistPage" parameterType="java.util.HashMap"
+		resultType="java.util.HashMap">
+		select distinct
+		A.KPI_CODE "KPI_CODE",
+		B.KPI_NAME "KPI_NAME"
+		from AP_MBO_ORG_VALUE A
+		inner join mo_kpi_info B ON A.KPI_CODE=B.KPI_CODE
+		where B.area_no =
+		#{areaNo}
+		<if test="KPI_NAME!=null and KPI_NAME != ''">
+			and B.KPI_NAME like #{KPI_NAME}
+		</if>
+		<if test="KPI_CODE!=null and KPI_CODE != ''">
+			and A.KPI_CODE = #{KPI_CODE}
+		</if>
+	</select>
+	
+	<select id="queryFunctionRegisterPersonMBOKpilistPage" parameterType="java.util.HashMap"
+		resultType="java.util.HashMap">
+		select distinct
+		A.KPI_CODE "KPI_CODE",
+		B.KPI_NAME "KPI_NAME"
+		from AP_MBO_PERSON_VALUE A
+		inner join mo_kpi_info B ON A.KPI_CODE=B.KPI_CODE
+		where B.area_no =
+		#{areaNo}
+		<if test="KPI_NAME!=null and KPI_NAME != ''">
+			and B.KPI_NAME like #{KPI_NAME}
+		</if>
+		<if test="KPI_CODE!=null and KPI_CODE != ''">
+			and A.KPI_CODE = #{KPI_CODE}
+		</if>
+	</select>
+
+	<select id="queryFunctionRegisterDeptlistPage" parameterType="java.util.HashMap"
+		resultType="java.util.HashMap">
+		select
+		PDEPTID,
+		DEPTCODE,
+		DEPTNAME
+		from
+		PCMC_DEPT
+		where CORPCODE = #{corpCode}
+		<if test="deptCode!=null and deptCode!=''">
+			and deptCode = #{deptCode}
+		</if>
+		<if test="DEPTNAME!=null and DEPTNAME!=''">
+			and DEPTNAME like #{DEPTNAME}
+		</if>
+	</select>
+	
+	<select id="queryPDeptIdByDeptCode" parameterType="java.util.HashMap" resultType="int">
+		select ORG_PDETP_ID from SYS_PUB_ORG_SUB_V_TEST where ORG_NO = #{deptCode}
+	</select>
+	
+	<select id="queryFunctionRegisterDeptslistPage" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		SELECT DEPTCODE, DEPTNAME FROM PCMC_DEPT
+		WHERE CORPCODE = #{corpCode}
+		<if test="deptName != null and deptName != ''">
+			AND DEPTNAME LIKE #{deptName}
+		</if>
+		<if test="deptCode != null and deptCode != ''">
+			AND DEPTCODE = #{deptCode}
+		</if>
+		<if test="orgScrope != null and orgScrope != ''">
+			AND DEPTCODE IN (${orgScrope})
+		</if>
+	</select>
+	
+	<select id="queryFunctionRegisterUserlistPage" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		SELECT USERCODE, USERNAME FROM PCMC_USER
+		WHERE CORPCODE = #{corpCode}
+		<if test="userName != null and userName != ''">
+			AND USERNAME LIKE #{userName}
+		</if>
+		<if test="userCode != null and userCode != ''">
+			AND USERCODE = #{userCode}
+		</if>
+		<if test="userScrope != null and userScrope != ''">
+			AND USERCODE IN (${userScrope})
+		</if>
+	</select>
+
+	<select id="getKpiCodeByName" parameterType="java.util.HashMap"
+		resultType="String">
+		SELECT KPI_CODE FROM MO_KPI_INFO WHERE AREA_NO =
+		#{corpCode} AND KPI_NAME = #{kpiName}
+	</select>
+	
+	<select id="getWayCodeByName" parameterType="java.util.HashMap"
+		resultType="String">
+		select way_code from mo_way_org where area_no = #{corpCode} 
+		and way_name= #{wayName} and way_type=#{wayType}
+	</select>
+	
+	<select id="getPersonWayCodeByName" parameterType="java.util.HashMap"
+		resultType="String">
+		select way_code from mo_way_person where area_no = #{corpCode} 
+		and way_name= #{wayName} and way_type=#{wayType}
+	</select>
+	
+	<select id="getDeptCodeByName" parameterType="java.util.HashMap"
+		resultType="String">
+		SELECT deptcode FROM pcmc_dept 
+		WHERE corpcode =#{corpCode} 
+		<if test="DEPTNAME!=null and DEPTNAME!=''">
+			and DEPTNAME = #{DEPTNAME}
+		</if>
+		
+	</select>
+	
+	<select id="getUserCodeByName" parameterType="java.util.HashMap"
+		resultType="String">
+		SELECT usercode FROM pcmc_user 
+		WHERE corpcode =#{corpCode} and username = #{username}
+
+		
+	</select>
+
+	<resultMap type="java.util.HashMap" id="agencyRankOrgMap">
+		<result column="DEPTCODE" property="deptCode" />
+		<result column="DEPTNAME" property="deptName" />
+		<result column="KPI_VALUE" property="kpiValue" />
+	</resultMap>
+	<select id="agencyRankOrglistPage" parameterType="java.util.HashMap"
+		resultMap="agencyRankOrgMap">
+		SELECT B.DEPTCODE, B.DEPTNAME, A.KPI_VALUE FROM PI_ORG_KPI A
+		INNER JOIN PCMC_DEPT B ON A.ORG_NO = B.DEPTCODE AND A.AREA_NO =
+		B.CORPCODE
+		WHERE A.AREA_NO = #{corpCode} AND A.DATA_DATE = #{dataDate}
+		AND A.KPI_CODE = #{kpiCode}
+		<if test="orgType != null and orgType != ''">
+			AND B.ORGTYPE = #{orgType}
+		</if>
+		ORDER BY A.KPI_VALUE ${orderBy}
+	</select>
+	
+	<resultMap type="java.util.HashMap" id="agencyRankUserMap">
+		<result column="USERCODE" property="userCode" />
+		<result column="USERNAME" property="userName" />
+		<result column="KPI_VALUE" property="kpiValue" />
+	</resultMap>
+	<select id="agencyRankUserlistPage" parameterType="java.util.HashMap" resultMap="agencyRankUserMap">
+		SELECT B.USERCODE, B.USERNAME, A.KPI_VALUE FROM PI_ORG_KPI_PERSON A
+		INNER JOIN PCMC_USER B ON A.MANAGER_NO = B.USERCODE AND A.AREA_NO = B.CORPCODE
+		WHERE A.AREA_NO = #{corpCode} AND A.DATA_DATE = #{dataDate}
+		AND A.KPI_CODE = #{kpiCode}
+		<if test="userScorpe != null and userScorpe != ''">
+			AND B.USERCODE IN(${userScorpe})
+		</if>
+		<if test="deptCodeList != null and deptCodeList.size()>0">
+			AND B.DEPTID IN(
+				SELECT DEPTID FROM PCMC_DEPT WHERE DEPTCODE IN(
+					<foreach item="deptCode" collection="deptCodeList" separator=",">#{deptCode}</foreach>
+				)
+			)
+		</if>
+		ORDER BY A.KPI_VALUE ${orderBy}
+	</select>
+
+	<select id="queryOrgKpiList" parameterType="java.util.HashMap"
+		resultType="java.util.HashMap">
+		select
+		A.DATA_DATE "DATA_DATE",
+		A.KPI_VALUE "KPI_VALUE",
+		B.KPI_NAME "KPI_NAME",
+		C.Deptname "objName"
+		from pi_org_kpi A
+		left join mo_kpi_info B ON A.KPI_CODE=B.KPI_CODE
+		left join pcmc_dept C ON A.ORG_NO=C.DEPTCODE
+		where A.AREA_NO=#{areaNo}		
+			and A.kpi_code = #{kpiCode}	
+			and A.DATA_DATE = #{dataDate}
+			and A.ORG_NO = #{objNo}
+
+	</select>
+	
+	<select id="queryPersonKpiList" parameterType="java.util.HashMap"
+		resultType="java.util.HashMap">
+	
+	 SELECT
+		    A.DATA_DATE "DATA_DATE",
+		    A.KPI_VALUE "KPI_VALUE",
+		    B.KPI_NAME "KPI_NAME",
+		    C.USERNAME "objName"
+     FROM PI_ORG_KPI_PERSON A 
+     LEFT JOIN MO_KPI_INFO B ON A.KPI_CODE=B.KPI_CODE
+     LEFT JOIN PCMC_USER C  ON A.MANAGER_NO = C.USERCODE
+     WHERE A.AREA_NO=#{areaNo}
+          AND A.KPI_CODE = #{kpiCode}
+          AND A.DATA_DATE = #{dataDate}
+          AND A.MANAGER_NO = #{objNo}
+	</select>
+
+	<select id="querypieProportionMBOKpiValueList" parameterType="java.util.HashMap"
+		resultType="java.util.HashMap">
+		select
+			MBO_VALUE
+		from AP_MBO_ORG_VALUE A
+		where A.AREA_NO = #{areaNo}
+		<if test="cycle!=null and cycle!=''">
+		AND A.CYCLE = #{cycle}
+		</if>
+		<if test="kpiCode!=null and kpiCode!=''">
+		AND A.KPI_CODE = #{kpiCode}
+		</if>
+		<if test="dataDate!=null and dataDate!=''">
+		AND A.END_DATE = #{dataDate}
+		</if>
+		<if test="objCode!=null and objCode!=''">
+		AND A.ORG_NO = #{objCode}
+		</if>
+	</select>
+	
+	<select id="querypieProportionPersonMBOKpiValueList" parameterType="java.util.HashMap"
+		resultType="java.util.HashMap">
+		 select 
+		 	MBO_VALUE 
+		 from AP_MBO_PERSON_VALUE A
+    	 where A.AREA_NO = #{areaNo}
+	    <if test="cycle!=null and cycle!=''">
+	    	AND A.CYCLE = #{cycle}
+	    </if>
+	    <if test="kpiCode!=null and kpiCode!=''">
+	    	AND A.KPI_CODE = #{kpiCode}
+	    </if>
+	    <if test="dataDate!=null and dataDate!=''">
+	   		AND A.END_DATE = #{dataDate}
+	    </if>
+	    <if test="objCode !=null and objCode !=''">
+	    	AND A.MANAGER_NO = #{objCode}
+	    </if>
+	</select>
+
+
+	<select id="queryMoWayOrg" parameterType="java.util.HashMap"
+		resultType="java.util.HashMap">
+		select
+				A.DATA_DATE "DATA_DATE",
+				A.TOTAL_SCORE "TOTAL_SCORE",
+				A.EDIT_SCORE "EDIT_SCORE",
+				C.DEPTNAME "OBJNAME"
+		from mo_way_org_total_h A		
+		left join pcmc_dept C ON A.ORG_NO=C.DEPTCODE 	
+		where AREA_NO = #{areaNo} 
+		AND DATA_DATE = #{dataDate} 
+		AND WAY_CODE = #{wayCode} 
+		AND ORG_NO = #{orgNo}
+		AND WAY_TYPE= #{wayType}			
+	</select>
+	
+	<select id="queryMoWayPerson" parameterType="java.util.HashMap"
+		resultType="java.util.HashMap">
+		select
+				A.DATA_DATE "DATA_DATE",
+				A.TOTAL_SCORE "TOTAL_SCORE",
+				A.EDIT_SCORE "EDIT_SCORE",
+				C.USERNAME "OBJNAME"
+		from mo_way_person_total_h A		
+		left join pcmc_user C ON A.MANAGER_NO=C.USERCODE	
+  		where AREA_NO = #{areaNo} 
+    	AND DATA_DATE = #{dataDate} 
+		AND WAY_CODE = #{wayCode} 
+    	AND MANAGER_NO = #{userCode}
+    	AND WAY_TYPE= #{wayType}			
+	</select>
+	
+	<resultMap type="java.util.HashMap" id="OpCherkListMap">
+		<result column="bsm" property="bsm"/>
+		<result column="ts" property="ts"/>
+	</resultMap>
+	<select id='queryOpCherkList' parameterType="java.util.HashMap" resultMap="OpCherkListMap">
+		     SELECT '29' AS Bsm，count（1） AS Ts
+              FROM (SELECT a.Org_No,
+                           a.Flow_Id,
+                           b.Roleid
+                      FROM Op_Cla_Cust_Unit a
+                      LEFT JOIN Op_Cla_Flow b
+                        ON a.Flow_Id = b.Flow_Id
+                     WHERE b.End_Time IS NULL
+                       AND b.Template_Code IN
+                           (SELECT DISTINCT Tep.Template_Code FROM Op_Cla_Config Tep)) Cla
+             WHERE 1 = 1
+               AND EXISTS
+             (SELECT 1
+                      FROM Pcmc_User_Role e
+                     WHERE e.Userid = #{userid}
+                       AND e.Roleid IN (SELECT Regexp_Substr(Clf.Roleid,
+                                                             '[^,]+',
+                                                             1,
+                                                             x.n) AS Roleid
+                                          FROM Op_Cla_Flow Clf,
+                                               (SELECT Rownum n FROM Dual CONNECT BY Rownum <![CDATA[<=]]>  1000) x
+                                         WHERE Cla.Flow_Id = Clf.Flow_Id))
+               AND Cla.Org_No IN (${bizScopeSql})
+            UNION ALL
+            SELECT '0' AS Bsm，count（1） AS Ts
+              FROM (SELECT a.Org_No,
+                           a.Flow_Id,
+                           b.Roleid
+                      FROM Op_Cla_Card a
+                      LEFT JOIN Op_Cla_Flow b
+                        ON a.Flow_Id = b.Flow_Id
+                     WHERE b.End_Time IS NULL
+                       AND b.Template_Code IN
+                           (SELECT DISTINCT Tep.Template_Code FROM Op_Cla_Config Tep)) Cla
+             WHERE 1 = 1
+               AND EXISTS
+             (SELECT 1
+                      FROM Pcmc_User_Role e
+                     WHERE e.Userid = #{userid}
+                       AND e.Roleid IN (SELECT Regexp_Substr(Clf.Roleid,
+                                                             '[^,]+',
+                                                             1,
+                                                             x.n) AS Roleid
+                                          FROM Op_Cla_Flow Clf,
+                                               (SELECT Rownum n FROM Dual CONNECT BY Rownum <![CDATA[<=]]>  1000) x
+                                         WHERE Cla.Flow_Id = Clf.Flow_Id))
+               AND Cla.Org_No IN (${bizScopeSql})
+            UNION ALL
+            SELECT '1' AS Bsm，count（1） AS Ts
+              FROM (SELECT a.Org_No,
+                           a.Flow_Id,
+                           b.Roleid
+                      FROM Op_Cla_Deposit_Unit a
+                      LEFT JOIN Op_Cla_Flow b
+                        ON a.Flow_Id = b.Flow_Id
+                     WHERE b.End_Time IS NULL
+                       AND b.Template_Code IN
+                           (SELECT DISTINCT Tep.Template_Code FROM Op_Cla_Config Tep)) Cla
+             WHERE 1 = 1
+               AND EXISTS
+             (SELECT 1
+                      FROM Pcmc_User_Role e
+                     WHERE e.Userid = #{userid}
+                       AND e.Roleid IN (SELECT Regexp_Substr(Clf.Roleid,
+                                                             '[^,]+',
+                                                             1,
+                                                             x.n) AS Roleid
+                                          FROM Op_Cla_Flow Clf,
+                                               (SELECT Rownum n FROM Dual CONNECT BY Rownum <![CDATA[<=]]>  1000) x
+                                         WHERE Cla.Flow_Id = Clf.Flow_Id))
+               AND Cla.Org_No IN (${bizScopeSql})
+            UNION ALL
+            SELECT '2' AS Bsm，count（1） AS Ts
+              FROM (SELECT a.Org_No,
+                           a.Flow_Id,
+                           b.Roleid
+                      FROM Op_Cla_Deposit_Person a
+                      LEFT JOIN Op_Cla_Flow b
+                        ON a.Flow_Id = b.Flow_Id
+                     WHERE b.End_Time IS NULL
+                       AND b.Template_Code IN
+                           (SELECT DISTINCT Tep.Template_Code FROM Op_Cla_Config Tep)) Cla
+             WHERE 1 = 1
+               AND EXISTS
+             (SELECT 1
+                      FROM Pcmc_User_Role e
+                     WHERE e.Userid = #{userid}
+                       AND e.Roleid IN (SELECT Regexp_Substr(Clf.Roleid,
+                                                             '[^,]+',
+                                                             1,
+                                                             x.n) AS Roleid
+                                          FROM Op_Cla_Flow Clf,
+                                               (SELECT Rownum n FROM Dual CONNECT BY Rownum <![CDATA[<=]]>  1000) x
+                                         WHERE Cla.Flow_Id = Clf.Flow_Id))
+               AND Cla.Org_No IN (${bizScopeSql})
+            UNION ALL
+            SELECT '3' AS Bsm，count（1） AS Ts
+              FROM (SELECT a.Org_No,
+                           a.Flow_Id,
+                           b.Roleid
+                      FROM Op_Cla_Loan_Unit a
+                      LEFT JOIN Op_Cla_Flow b
+                        ON a.Flow_Id = b.Flow_Id
+                     WHERE b.End_Time IS NULL
+                       AND b.Template_Code IN
+                           (SELECT DISTINCT Tep.Template_Code FROM Op_Cla_Config Tep)) Cla
+             WHERE 1 = 1
+               AND EXISTS
+             (SELECT 1
+                      FROM Pcmc_User_Role e
+                     WHERE e.Userid = #{userid}
+                       AND e.Roleid IN (SELECT Regexp_Substr(Clf.Roleid,
+                                                             '[^,]+',
+                                                             1,
+                                                             x.n) AS Roleid
+                                          FROM Op_Cla_Flow Clf,
+                                               (SELECT Rownum n FROM Dual CONNECT BY Rownum <![CDATA[<=]]>  1000) x
+                                         WHERE Cla.Flow_Id = Clf.Flow_Id))
+               AND Cla.Org_No IN (${bizScopeSql})
+            UNION ALL
+            SELECT '4' AS Bsm，count（1） AS Ts
+              FROM (SELECT a.Org_No,
+                           a.Flow_Id,
+                           b.Roleid
+                      FROM Op_Cla_Loan_Person a
+                      LEFT JOIN Op_Cla_Flow b
+                        ON a.Flow_Id = b.Flow_Id
+                     WHERE b.End_Time IS NULL
+                       AND b.Template_Code IN
+                           (SELECT DISTINCT Tep.Template_Code FROM Op_Cla_Config Tep)) Cla
+             WHERE 1 = 1
+               AND EXISTS
+             (SELECT 1
+                      FROM Pcmc_User_Role e
+                     WHERE e.Userid = #{userid}
+                       AND e.Roleid IN (SELECT Regexp_Substr(Clf.Roleid,
+                                                             '[^,]+',
+                                                             1,
+                                                             x.n) AS Roleid
+                                          FROM Op_Cla_Flow Clf,
+                                               (SELECT Rownum n FROM Dual CONNECT BY Rownum <![CDATA[<=]]>  1000) x
+                                         WHERE Cla.Flow_Id = Clf.Flow_Id))
+               AND Cla.Org_No IN (${bizScopeSql})
+            UNION ALL
+            SELECT '30' AS Bsm，count（1） AS Ts
+              FROM (SELECT a.Org_No,
+                           a.Flow_Id,
+                           b.Roleid
+                      FROM Op_Cla_Cust_Person a
+                      LEFT JOIN Op_Cla_Flow b
+                        ON a.Flow_Id = b.Flow_Id
+                     WHERE b.End_Time IS NULL
+                       AND b.Template_Code IN
+                           (SELECT DISTINCT Tep.Template_Code FROM Op_Cla_Config Tep)) Cla
+             WHERE 1 = 1
+               AND EXISTS
+             (SELECT 1
+                      FROM Pcmc_User_Role e
+                     WHERE e.Userid = #{userid}
+                       AND e.Roleid IN (SELECT Regexp_Substr(Clf.Roleid,
+                                                             '[^,]+',
+                                                             1,
+                                                             x.n) AS Roleid
+                                          FROM Op_Cla_Flow Clf,
+                                               (SELECT Rownum n FROM Dual CONNECT BY Rownum <![CDATA[<=]]>  1000) x
+                                         WHERE Cla.Flow_Id = Clf.Flow_Id))
+               AND Cla.Org_No IN (${bizScopeSql})
+	</select>
+	
+	<select id="qryloanDepositlistPage" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+     SELECT A.DPLONA,
+            to_char(A.DATA_DATE,'yyyy-mm-dd') DATA_DATE,
+            A.ACLONO,
+            A.MANAGER_NO,
+            NVL(C.USERNAME,A.MANAGER_NO) USERNAME,
+            A.ORG_NO,
+            NVL(B.DEPTNAME,A.ORG_NO) DEPTNAME,
+            A.CURRENCY,
+            A.CUR_ASN_RATE*100 CUR_ASN_RATE,
+            A.BAL,
+            A.MARG
+        FROM ORG_DEPLOAN_PERUNIT A
+        LEFT JOIN PCMC_DEPT B
+          ON A.ORG_NO=B.DEPTCODE
+        LEFT JOIN PCMC_USER C
+          ON A.MANAGER_NO=C.USERCODE
+		WHERE 1=1	
+		<if test="userCode !=null and userCode !=''">
+		  AND  A.MANAGER_NO = #{userCode}
+		</if>
+		<if test="startDate !=null and startDate !=''">
+		  AND  A.DATA_DATE to_date(#{startDate},'yyyy-mm-dd')
+		</if>	
+		<if test="endDate !=null and endDate !=''">
+		  AND  A.DATA_DATE to_date(#{endDate},'yyyy-mm-dd')
+		</if>	
+		<if test="dplona !=null and dplona !=''">
+		  AND  A.DPLONA = #{dplona}
+		</if>	
+		<if test="aclono !=null and aclono !=''">
+		  AND  A.ACLONO = #{aclono}
+		</if>	
+		ORDER BY ACLONO,DATA_DATE	
+	</select>
+	
+	<select id="kpiContrastOptionsList" parameterType="java.util.HashMap" resultType="java.util.HashMap" >
+	    select to_char(a.data_date, 'yyyy-mm-dd') data_date,
+                       a.${selclom},
+                       a.kpi_code,
+                       c.kpi_name,
+                       a.area_no,
+                       to_number(round(a.kpi_value/${unitnm},2)) kpi_value,
+                       to_number(round((a.kpi_value - b.kpi_value)/${unitnm},2)) balance
+                  from ${tempTable} a
+                  left join ${tempTable} b
+                    on a.${selclom} = b.${selclom}
+                   and a.kpi_code = b.kpi_code
+                   and b.${selclom} is not null
+                  left join mo_kpi_info c
+                    on a.kpi_code=c.kpi_code
+                 where 1 = 1
+                 <if test="qrymtd != null and qrymtd != '' and qrymtd='D' ">
+                 and a.data_date - 1 = b.data_date
+                 </if>
+                 <if test="dataDate != null and dataDate != '' ">
+                 and to_char(a.data_date, 'yyyy-mm-dd') = #{dataDate}
+                 </if>
+                 <if test="qrykey != null and qrykey != '' and qrykey =='brch'">
+                 and nvl(a.ORG_NO, '0') = #{deptCode}
+                 </if>
+                 <if test="qrykey != null and qrykey != '' and qrykey =='user'">
+                 and nvl(a.MANAGER_NO, '0') = #{userCode}
+                 </if>
+                 and a.kpi_code in (select x.kpi_code
+                                from mo_kpi_info x
+                               where 1=1
+                               <if test="showl1 != null and showl1 != ''">
+                                and x.kpi_name in <foreach item="def" index="index" collection="showl1" open="(" separator="," close=")">#{def}</foreach>
+                               </if>
+                               )
+         order by balance desc
+	</select>
+	
+	<select id="strategicOptionsList" parameterType="java.util.HashMap" resultType="java.util.HashMap" >
+      select *
+      from
+      (select to_char(a.data_date, 'yyyy-mm-dd') "data_date",
+             <if test="qrykey != null and qrykey != '' and qrykey =='brch'">
+             b.parent_org_no "manager_org",
+             b.parent_org_name "manager_org_name",
+             </if>
+             <if test="qrykey != null and qrykey != '' and qrykey =='user'">
+             a.manager_no "manager_no",
+             a.manager_o_name "manager_o_name",
+             a.manager_org "manager_org",
+             a.manager_org_name "manager_org_name",
+             </if>
+             a.product_name "product_name",
+             nvl(sum(a.bal),0) "bal",
+             nvl(a.danjia,0) "danjia",
+             nvl(sum(a.dui_bal),0) "dui_bal"
+        from rpt_data_zhandetail a
+        <if test="qrykey != null and qrykey != '' and qrykey =='brch'">
+        left join sys_pub_org_sub_v b
+        on a.manager_org = b.org_no
+        </if>
+        where 1=1
+        <if test="dataDate != null and dataDate != ''">
+         and to_char(a.data_date,'yyyy-mm-dd')=#{dataDate}
+	    </if> 
+	    <if test="qrykey != null and qrykey != '' and qrykey =='user'">
+	         <if test="userCode != null and userCode !='' ">
+	          and a.manager_no =#{userCode}
+	         </if>
+             <if test="deptCode != null and deptCode !=''">
+              and a.manager_org =#{deptCode}
+             </if>
+        </if>
+	    <if test="qrykey != null and qrykey != '' and qrykey =='brch'">
+             <if test="deptCode != null and deptCode  !='' ">
+	          and b.parent_org_no =#{deptCode}
+	         </if>
+	    </if>
+	    <if test="showl2 != null and showl2 != '' and showl2 != 'ALL'">
+             <if test="showl1 != null and showl1 != ''">
+              and a.product_name in <foreach item="def" index="index" collection="showl1" open="(" separator="," close=")">#{def}</foreach>
+             </if>
+	    </if>
+        group by to_char(a.data_date, 'yyyy-mm-dd'),
+                <if test="qrykey != null and qrykey != '' and qrykey =='brch'">
+                 b.parent_org_no,
+                 b.parent_org_name,
+                 </if>
+                 <if test="qrykey != null and qrykey != '' and qrykey =='user'">
+                 a.manager_no,
+                 a.manager_o_name,
+                 a.manager_org,
+                 a.manager_org_name,
+                 </if>
+                 a.product_name,
+                 a.danjia
+        order by a.product_name) g
+      --where rownum  <![CDATA[ <= ]]> 12
+	</select> 
+	
+	<select id="orgMargContrastOptions" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+        SELECT substr(to_char(a.Data_Date,'yyyy/MM/dd'),6) Data_Date,
+               a.${selclom},
+               a.Kpi_Code,
+               round(a.Kpi_Value/10000,2) Kpi_Value,
+               round(a.Kpi_Value_Us/10000,2) Kpi_Value_Us,
+               b.Kpi_Name
+          FROM ${tempTable} a
+          LEFT JOIN Mo_Kpi_Info b
+            ON a.Kpi_Code = b.Kpi_Code
+          where 1=1
+         <if test="dataDate != null and dataDate != '' ">
+         and to_char(a.data_date+${qryDay},'yyyy-MM-dd') <![CDATA[ > ]]> #{dataDate}
+         </if>
+         <if test=" qrykey != null and qrykey != '' and qrykey =='brch' ">
+             <if test="deptCode != null and deptCode != '' ">
+              and a.${selclom} = #{deptCode}
+             </if>
+         </if>
+         <if test=" qrykey != null and qrykey != '' and qrykey =='user' ">
+             <if test="userCode != null and userCode != '' ">
+              and a.${selclom} = #{userCode}
+             </if>
+         </if>
+          and b.kpi_name = #{qryTyp}
+          order by a.Kpi_Code,substr(to_char(a.Data_Date,'yyyy/MM/dd'),6)
+	</select>
+	
+	<select id="dpLoanContrastOptions" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+        SELECT to_char(a.Data_Date,'yyyy-MM-dd') Data_Date,
+               a.${selclom},
+               a.Kpi_Code,
+               round(a.Kpi_Value/10000,2) Kpi_Value,
+               round(a.Kpi_Value_Us/10000,2) Kpi_Value_Us,
+               b.Kpi_Name
+          FROM ${tempTable} a
+          LEFT JOIN Mo_Kpi_Info b
+            ON a.Kpi_Code = b.Kpi_Code
+          where 1=1
+         <if test="dataDate != null and dataDate != '' ">
+         and to_char(a.data_date,'yyyy-MM-dd') = #{dataDate}
+         </if>
+         <if test=" qrykey != null and qrykey != '' and qrykey =='brch' ">
+             <if test="deptCode != null and deptCode != '' ">
+              and a.${selclom} = #{deptCode}
+             </if>
+         </if>
+         <if test=" qrykey != null and qrykey != '' and qrykey =='user' ">
+             <if test="userCode != null and userCode != '' ">
+              and a.${selclom} = #{userCode}
+             </if>
+         </if>
+          and b.kpi_name in <foreach item="def" index="index" collection="showl1" open="(" separator="," close=")">#{def}</foreach>
+	</select>
+</mapper> 	  
+ 	 

@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 2006-2-13 17:30:07 by Hibernate Tools 3.1.0.beta4 -->
+<hibernate-mapping>
+    <class name="com.sunline.bimis.pcmc.db.OamsMalSrvuser" table="oams_mal_srvuser" schema="dbo" catalog="imps">
+        <id name="username" type="string">
+            <column name="username" length="64" />
+            <generator class="assigned" />
+        </id>
+        <property name="pwdHash" type="string">
+            <column name="pwdHash" length="50" />
+        </property>
+        <property name="pwdAlgorithm" type="string">
+            <column name="pwdAlgorithm" length="20" />
+        </property>
+        <property name="useForwarding" type="java.lang.Short">
+            <column name="useForwarding" />
+        </property>
+        <property name="forwardDestination" type="string">
+            <column name="forwardDestination" />
+        </property>
+        <property name="useAlias" type="java.lang.Short">
+            <column name="useAlias" />
+        </property>
+        <property name="alias" type="string">
+            <column name="alias" />
+        </property>
+    </class>
+</hibernate-mapping>

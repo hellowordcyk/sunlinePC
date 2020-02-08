@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="gb2312"?>
+<!-- 描述各个功能模块，以及各个具体的功能点  -->
+<Sunline>
+	<Session></Session>
+	
+	<!-- 报表模板导入导出 -->
+	<Operation id="sunrpt-report"  bean="com.sunline.sunrpt.report.ReprotAction"  desc="报表模板"
+	 filterpath="/sunrpt/report/">
+		<Action name="addRpt" desc="新增手工开发报表" acttype="add"/>
+		<Action name="impReport" desc="报表模板导入" acttype="deal"/>
+		<Action name="queryReport" desc="报表模板导出" acttype="deal"/>
+		<Action name="searchReport" desc="查询报表模板"  acttype="query"/>
+		<Action name="addReport" desc="新增报表模板"  acttype="add"/>
+		<Action name="exportExcelTp" desc="导出填写模板"  acttype="deal"/>
+		<Action name="expReportExcel" desc="导出查询数据"   acttype="deal"/>
+		<Action name="delRptReport" desc="删除报表" bean="com.sunline.sunrpt.report.ReprotDelActor"  acttype="delete"/>
+		<Action name="publishMenuAction" desc="添加具体功能点叶子节点" acttype="deal" bean="com.sunline.funcpub.portal.menu.MenuPublish"/>
+	</Operation>   
+	<!-- 报表删除 -->
+	<Operation id="sunrpt-report-del"  bean="com.sunline.sunrpt.report.ReprotDelActor"  desc="报表模板">
+		<Action name="delRptReport" desc="删除报表"/>
+	</Operation>   
+	
+</Sunline>

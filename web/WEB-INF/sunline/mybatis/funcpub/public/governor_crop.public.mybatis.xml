@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sunline.governor.mybatis.public.corp">
+	
+	<resultMap id="queryCorplistPage_resultMap" type="java.util.HashMap">
+		<result property="corpCode" column="corp_code"/> 
+		<result property="corpName" column="corp_name"/> 
+		<result property="corpShortname" column="corp_shortname"/> 
+		<result property="corpFromcore" column="corp_fromcore"/> 
+		<result property="corpParent" column="corp_parent"/> 
+		<result property="corpLoginlogo" column="corp_loginlogo" jdbcType="BLOB" typeHandler="org.apache.ibatis.type.BlobTypeHandler"/> 
+		<result property="corpIndexlogo" column="corp_indexlogo" jdbcType="BLOB" typeHandler="org.apache.ibatis.type.BlobTypeHandler"/> 
+		<result property="corpCreatetime" column="corp_createtime" javaType="java.sql.Timestamp" jdbcType="TIMESTAMP"/> 
+		<result property="corpDisable" column="corp_disable"/>
+	</resultMap>
+	<!-- 法人列表分页查询 -->
+	<select id="queryCorplistPage" parameterType="java.util.HashMap" resultMap="queryCorplistPage_resultMap">
+		select corp_code, corp_name, corp_shortname, corp_fromcore, corp_parent, corp_loginlogo, corp_indexlogo, corp_createtime, corp_disable
+		from sys_pub_corporation 
+		<where>
+			<if test="disable != null and disable != ''">
+				and corp_disable != #{disable}
+			</if>
+			<if test="corpCode != null and corpCode !='%%'">
+				and corp_code like #{corpCode}
+			</if>
+			<if test="corpName != null and corpName !='%%'">
+				and corp_name like #{corpName}
+			</if>
+			<if test="corpcodeOrName != null and menuname.trim()!='' and  corpcodeOrName.trim()!='%%'">
+				and (corp_name like  #{corpcodeOrName} or corp_code like  #{corpcodeOrName})
+			</if>
+		</where>
+		order by corp_createtime desc
+	</select>
+	
+	<!--新增法人信息  -->
+	<insert id="addCorp" parameterType="java.util.HashMap">
+		insert into sys_pub_corporation (corp_code, corp_name, corp_shortname, corp_fromcore, corp_parent, corp_createtime,corp_loginlogo,corp_indexlogo,corp_disable) 
+		values(#{corpCode}, #{corpName}, #{corpShortname}, #{corpFromcore}, #{corpParent}, #{corpCreatetime,jdbcType=TIMESTAMP},#{corpLoginlogo,jdbcType=BLOB},#{corpIndexlogo,jdbcType=BLOB},'0')
+	</insert>
+	<insert id="addArea" parameterType="java.util.HashMap">
+		INSERT INTO SYS_PUB_AREA(AREA_NO, AREA_NAME, HO_FLAG)
+		VALUES(#{corpCode}, #{corpName}, '1')
+	</insert>
+	
+	<!--获取法人基本信息  -->
+	<select id="getCorp" parameterType="string" resultMap="queryCorplistPage_resultMap">
+		select corp_code, corp_name, corp_shortname, corp_fromcore, corp_parent, corp_loginlogo, corp_indexlogo, corp_createtime, corp_disable
+		from sys_pub_corporation 
+		<where>
+			<if test="_parameter != null and _parameter !=''">
+				corp_code = #{_parameter}
+			</if>
+		</where>
+	</select>
+	
+	<!--修改法人信息  -->
+	<update id="editCorp" parameterType="java.util.HashMap">
+		update sys_pub_corporation set 
+			corp_name=#{corpName}, 
+			corp_shortname=#{corpShortname}, 
+			corp_fromcore=#{corpFromcore}, 
+			corp_parent=#{corpParent}, 
+			corp_createtime=#{corpCreatetime}
+		<if test="corpLoginlogo != null and corpLoginlogo !=''">
+			,corp_loginlogo=#{corpLoginlogo,jdbcType=BLOB}
+		</if>
+		<if test="corpIndexlogo != null and corpIndexlogo !=''">
+		 	,corp_indexlogo=#{corpIndexlogo,jdbcType=BLOB}
+		</if>
+		<where>
+			<if test="corpCode != null and corpCode !=''">
+				corp_code = #{corpCode}
+			</if>
+		</where>
+	</update>
+	<insert id="editArea" parameterType="java.util.HashMap">
+		UPDATE SYS_PUB_AREA SET AREA_NAME = #{corpName} WHERE AREA_NO = #{corpCode}
+	</insert>
+	
+	<!--删除法人信息，这里假删除  -->
+	<update id="delCorp" parameterType="string">
+		update sys_pub_corporation 
+		set corp_disable = '1'
+		<where>
+			<if test="_parameter != null and _parameter !=''">
+				corp_code = #{_parameter}
+			</if>
+		</where>
+	</update>
+	<update id="delArea" parameterType="string">
+		UPDATE SYS_PUB_AREA SET HO_FLAG = '0' WHERE AREA_NO =  #{_parameter}
+	</update>
+	
+	<update id="updateCorp" parameterType="string">
+		update sys_pub_corporation 
+		set corp_disable = '0'
+		<where>
+			<if test="_parameter != null and _parameter !=''">
+				corp_code = #{_parameter}
+			</if>
+		</where>
+	</update>
+	<update id="updateArea" parameterType="string">
+		UPDATE SYS_PUB_AREA SET HO_FLAG = '1' WHERE AREA_NO =  #{_parameter}
+	</update>
+	
+	<!--判断法人编码唯一性  -->
+	<select id="checkCorpUnique" parameterType="string" resultType="Integer">
+		select count(*)
+		from sys_pub_corporation 
+		<where>
+			<if test="_parameter != null and _parameter !=''">
+				corp_code = #{_parameter}
+			</if>
+		</where>
+	</select>
+	
+	
+	<select id="queryCorpration" parameterType="java.util.HashMap" resultMap="queryCorplistPage_resultMap">
+		select corp_code, corp_name, corp_shortname, corp_fromcore, corp_parent, corp_loginlogo, corp_indexlogo, corp_createtime, corp_disable
+		from sys_pub_corporation 
+		<where>
+			<if test="disable!=null and disable!=''">
+				and corp_disable = #{disable}
+			</if>
+			<if test="corpCode != null and corpCode.trim() !=''">
+				and corp_code = #{corpCode}
+			</if>
+		</where>
+	</select>
+	
+	<!-- 判断法人corp_indexlogo是否为空 -->
+	<select id="checkIndexlogo" parameterType="string" resultType="Integer">
+		select isnull(corp_indexlogo) from sys_pub_corporation where corp_code = #{_parameter}
+	</select>
+	
+</mapper>

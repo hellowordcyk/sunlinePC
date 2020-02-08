@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 2006-1-9 20:10:32 by Hibernate Tools 3.1.0 beta1JBIDERC2 -->
+<hibernate-mapping>
+    <class name="com.sunline.bimis.pcmc.db.PcmcUserRole" table="pcmc_user_role">
+        <id name="userroleid" type="java.lang.Long">
+            <column name="userroleid" scale="0" />
+      		<generator class="com.sunline.jraf.id.HBNIDGenerator" >
+			    <param name="seqname">pcmc_user_role</param>
+			    <param name="column">userroleid</param>
+			</generator>
+        </id>
+        <many-to-one name="pcmcUser" class="com.sunline.bimis.pcmc.db.PcmcUser" fetch="select">
+            <column name="userid" scale="0" not-null="true" />
+        </many-to-one>
+        <many-to-one name="pcmcRole" class="com.sunline.bimis.pcmc.db.PcmcRole" fetch="select">
+            <column name="roleid" scale="0" not-null="true" />
+        </many-to-one>
+    </class>
+</hibernate-mapping>

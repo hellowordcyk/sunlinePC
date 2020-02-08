@@ -1,0 +1,175 @@
+.list-table {
+	width: 100%;
+	/*margin-top: 2px;
+	margin-bottom: 5px;*/
+	font-size:12px;
+	padding: 0;
+	border-collapse: collapse;
+}
+.list-table tr td{
+	  border-right: 1px solid #bfbebe;
+    border-bottom: 1px solid #bfbebe;
+	//*-------------border-bottom: 1px solid #dee3f2;
+	border-right: 1px solid #dee3f2;	-------------*//
+	height: 25px;
+	padding: 0 5px;
+	}
+.list-table thead tr caption{
+  background-color: buttonface;
+  color:buttontext;
+  text-align: center;
+}
+
+.list-table thead th {	
+	background: url(../images/th_bg.gif) repeat-x;
+	font-size:12px;
+	border: 1px solid #bfafaf;
+	color: #333;
+	font-weight: normal;
+	height:25px;
+	text-align: left;
+}
+.list-table tbody{
+	border: 1px solid #c0b0b0;
+}
+
+.list-table tfoot td{
+	border-right: 1px solid #c0b0b1;
+	border-bottom: 1px solid #c0b0b1;
+	background-color:rgb(240, 240, 233);
+}
+.list-table tr.empty{
+	background-color: #fff;
+}
+.list-table tr.even {
+	background-color: rgb(255, 240, 240);
+	font-family:ËÎÌו, Arial, Helvetica, sans-serif;
+}
+.list-table tr.even a, table.list-table tr.odd a{
+	color: #003871;
+}
+.list-table tr.even a:hover, table.list-table tr.odd a:hover{
+	color:#dc4e01;
+}
+.list-table tr.odd {
+	background-color: #fff;
+	font-size:12px;
+	color:#000000;
+	height:25px;
+	font-family:ËÎÌו, Arial, Helvetica, sans-serif;
+}
+.list-table tr.select, .list-table tr.selected, .list-table tr.clicked{
+	background-color: #ebebeb;
+    background-image: url("../images/tag/selectedrow.gif");
+    background-attachment: fixed;
+    background-repeat: repeat-x;
+    background-position: left top;
+}
+.list-table td,.list-table th{
+	white-space: nowrap;
+	table-layout:fixed;
+	height:25px;
+}
+.list-table  th.sorted a,.list-table  th.sortable a,.list-table  td a {
+	background-position: right;
+	display: block;
+	width: 100%;
+}
+.list-table tr td.tips{
+	background-color:#ffd3bb;
+}
+
+.list-table a:hover {
+	text-decoration: underline;
+}
+.list-table th.sortable a {
+	background-image:url("../images/tag/arrow_off.png"); 
+}
+.list-table th.order1 a {
+	background-image: url(../images/tag/arrow_down.png);
+}
+.list-table th.order2 a {
+	background-image: url(../images/tag/arrow_up.png);
+}
+.list-table th.sorted {
+    background-color: #698;
+}
+.list-table span,table.list-table a{
+		background-repeat:no-repeat;
+}	
+.list-table img{ 
+	border:none;
+}
+.list-table th, .list-table td {
+	padding: 0px 4px 0px 4px;
+	vertical-align: middle;
+}
+
+.list-table tr.tableRowEven {
+  background-color: #fea
+}
+
+.list-table td.tableCellError {
+	background-color: #d00;
+	color: #fff;
+}
+
+.list-table td.textRed {color: #b11;}
+
+.list-table  .sublist {
+	margin: 0 0 0 0;
+	width: 100%;
+}
+.list-table .sublist td,.list-table  .sublist th {
+	width: 50%;
+}
+
+.list-table  input.button{
+	margin: 1px 2px 1px 2px;
+}
+div.exportlinks {
+	background-color: #eee;
+	border: 1px dotted #999;
+	padding: 2px 4px 2px 4px;
+	margin: 1px 0 10px 0;
+	width: 100%;
+
+}
+
+span.export {
+	padding: 0 4px 1px 20px;
+	display:inline; display:inline-block;
+	cursor: pointer;
+   background-repeat:no-repeat;
+}
+
+span.excel {
+	background-image: url(../images/tag/ico_file_excel.png);
+}
+span.csv {
+	background-image: url(../images/tag/ico_file_csv.png);
+}
+span.xml {
+	background-image: url(../images/tag/ico_file_xml.png);
+}
+span.pdf {
+	background-image: url(../images/tag/ico_file_pdf.png);
+}
+
+span.pagebanner {
+	background-color: #eee;
+	padding: 2px 4px 2px 4px;
+	border-bottom: none;
+	border-right: none;
+	margin-bottom: -5px;
+}
+
+span.pagelinks {
+	background-color: #eee;
+	padding: 2px 4px 2px 4px;
+	border-bottom: none;
+	border-left: none;
+	margin-bottom: -5px;
+}
+
+

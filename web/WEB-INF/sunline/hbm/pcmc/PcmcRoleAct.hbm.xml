@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 2006-1-9 20:10:33 by Hibernate Tools 3.1.0 beta1JBIDERC2 -->
+<hibernate-mapping>
+    <class name="com.sunline.bimis.pcmc.db.PcmcRoleAct" table="pcmc_role_act">
+        <id name="roleactid" type="java.lang.Long">
+            <column name="roleactid" scale="0" />
+      		<generator class="com.sunline.jraf.id.HBNIDGenerator" >
+			    <param name="seqname">pcmc_role_act</param>
+			    <param name="column">roleactid</param>
+			</generator>
+        </id>
+        <many-to-one name="pcmcRole" class="com.sunline.bimis.pcmc.db.PcmcRole" fetch="select">
+            <column name="roleid" scale="0" not-null="true" />
+        </many-to-one>
+        <property name="oprid" type="string">
+            <column name="oprid" length="40" not-null="true" />
+        </property>
+        <property name="action" type="string">
+            <column name="action" length="40" not-null="true" />
+        </property>
+    </class>
+</hibernate-mapping>

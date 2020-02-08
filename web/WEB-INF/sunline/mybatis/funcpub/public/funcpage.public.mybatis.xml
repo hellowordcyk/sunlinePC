@@ -1,0 +1,338 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="com.sunline.funcpub.mybatis.public.funcpage" >
+	
+	<insert id="addFuncPage" parameterType="java.util.HashMap">
+	   insert into sys_func_page(
+	       page_code,
+	       page_subsysid,
+	       page_desc,
+	       page_name,
+	       page_link_url,
+	       page_menuid,
+	       page_pcode,
+	       page_seq,
+	       page_isleaf,
+	       page_filter_path,
+	       corpcode
+	   )values(
+	       #{pageCode,jdbcType=VARCHAR},
+           #{pageSubsysid,jdbcType=NUMERIC},
+           #{pageDesc,jdbcType=VARCHAR},
+           #{pageName,jdbcType=VARCHAR},
+           #{pageLinkUrl,jdbcType=VARCHAR},
+           #{pageMenuid,jdbcType=NUMERIC},
+           #{pagePcode,jdbcType=VARCHAR},
+           #{pageSeq,jdbcType=VARCHAR},
+           #{pageIsleaf,jdbcType=VARCHAR},
+           #{pageFilterPath,jdbcType=VARCHAR},
+           #{corpcode,jdbcType=VARCHAR}
+	   )
+	</insert>
+	<update id="updateFuncPage" parameterType="java.util.HashMap">
+	   update sys_func_page set
+	       page_name=#{pageName,jdbcType=VARCHAR},
+           page_desc=#{pageDesc,jdbcType=VARCHAR},
+           page_link_url=#{pageLinkUrl,jdbcType=VARCHAR},
+           page_menuid=#{pageMenuid,jdbcType=NUMERIC},
+           page_pcode=#{pagePcode,jdbcType=VARCHAR},
+           page_seq=#{pageSeq,jdbcType=VARCHAR},
+           page_isleaf=#{pageIsleaf,jdbcType=VARCHAR},
+           page_filter_path=#{pageFilterPath,jdbcType=VARCHAR}
+	   <where>
+	       page_code=#{pageCode} and corpcode=#{corpcode}
+	   </where>
+	</update>
+	
+	<update id="updateFuncPageIsleaf" parameterType="java.util.HashMap">
+       update sys_func_page set
+           page_isleaf=#{pageIsleaf,jdbcType=VARCHAR}
+       <where>
+           page_code=#{pageCode} and corpcode=#{corpcode}
+       </where>
+    </update>
+	
+	<resultMap type="com.sunline.funcpub.portal.func.page.bean.SysFuncPage" id="queryFuncPagelistPage_rsm">
+       <result column="page_code" property="pageCode"/>
+       <result column="page_name" property="pageName"/>
+       <result column="page_subsysid" property="pageSubsysid"/>
+       <result column="page_desc" property="pageDesc"/>
+       <result column="page_link_url" property="pageLinkUrl"/>
+       <result column="page_menuid" property="pageMenuid"/>
+       <result column="page_pcode" property="pagePcode"/>
+       <result column="page_seq" property="pageSeq"/>
+       <result column="page_isleaf" property="pageIsleaf"/>
+       <result column="page_filter_path" property="pageFilterPath"/>
+	</resultMap>
+	<select id="queryFuncPagelistPage" parameterType="java.util.HashMap" resultMap="queryFuncPagelistPage_rsm">
+	   select 
+	       page_code,
+           page_subsysid,
+           page_desc,
+           page_name,
+           page_link_url,
+           page_menuid,
+           page_pcode,
+           page_seq,
+           page_isleaf,
+           page_filter_path
+         from sys_func_page 
+       <where>
+       		corpcode=#{corpcode}
+          <if test="pageCode != null and pageCode.trim() !=''">
+            and page_code = #{pageCode}
+          </if>
+          <if test="menuId != null and menuId !=''">
+            and page_menuid =#{menuId}
+          </if>
+          <if test="pagePcode != null and pagePcode.trim() !=''">
+            and page_pcode =#{pagePcode}
+          </if>
+          <if test="pageSeq !=null and pageSeq.trim()!='' and pageSeq.trim()!='%%'">
+            and page_seq like #{pageSeq}
+          </if>
+          <if test="menuids != null and menuids.size() > 0">
+               and (
+                <foreach collection="menuids" index="index" item="dcs" open="" separator="" close="">
+                   <if test="index==0">
+                     page_menuid in 
+                      <foreach collection="dcs" index="index" item="dc" open="(" separator="," close=")">
+                      #{dc}
+                  </foreach>
+                   </if>
+                   <if test="index > 0">
+                     or page_menuid in      
+                     <foreach collection="dcs" index="index" item="dc" open="(" separator="," close=")">
+                      #{dc}
+                  </foreach>
+                   </if>
+                </foreach>
+                )
+            </if>
+            <if test="pageCodes!=null and pageCodes.size()>0">
+                and (
+                <foreach collection="pageCodes" index="index" item="dcs" open="" separator="" close="">
+                   <if test="index==0">
+                     page_code in   
+                     <foreach collection="dcs" index="index" item="dc" open="(" separator="," close=")">
+                      #{dc}
+                  </foreach>
+                   </if>
+                   <if test="index > 0">
+                     or page_code in  
+                     <foreach collection="dcs" index="index" item="dc" open="(" separator="," close=")">
+                      #{dc}
+                  </foreach>
+                   </if>
+                </foreach>
+                )
+            </if>
+       </where>
+	</select>
+	
+	
+	<resultMap type="java.util.HashMap" id="queryFuncPageWithPriv_rsm">
+       <result column="page_code" property="pageCode"/>
+       <result column="page_name" property="pageName"/>
+       <result column="page_subsysid" property="pageSubsysid"/>
+       <result column="page_desc" property="pageDesc"/>
+       <result column="page_link_url" property="pageLinkUrl"/>
+       <result column="page_menuid" property="pageMenuid"/>
+       <result column="page_pcode" property="pagePcode"/>
+       <result column="page_seq" property="pageSeq"/>
+       <result column="page_isleaf" property="pageIsleaf"/>
+       <result column="page_filter_path" property="pageFilterPath"/>
+       <result column="role_id" property="roleId"/>
+    </resultMap>
+    <select id="queryFuncPageWithPriv" parameterType="java.util.HashMap" resultMap="queryFuncPageWithPriv_rsm">
+       select 
+           t1.page_code,
+           t1.page_subsysid,
+           t1.page_desc,
+           t1.page_name,
+           t1.page_link_url,
+           t1.page_menuid,
+           t1.page_pcode,
+           t1.page_seq,
+           t1.page_isleaf,
+           t1.page_filter_path,
+           t2.role_id
+         from sys_func_page t1 left join sys_func_page_priv t2 on t1.page_code=t2.page_code
+         <if test="roleId != null and roleId !=''">
+            and t2.role_id = #{roleId}
+          </if>
+       <where>
+       		t1.corpcode=#{corpcode}
+          <if test="pageCode != null and pageCode.trim() !=''">
+            and page_code = #{pageCode}
+          </if>
+          
+          <if test="menuId != null and menuId !=''">
+            and page_menuid =#{menuId}
+          </if>
+          <if test="pagePcode != null and pagePcode.trim() !=''">
+            and page_pcode =#{pagePcode}
+          </if>
+          <if test="pageSeq !=null and pageSeq.trim()!='' and pageSeq.trim()!='%%'">
+            and page_seq like #{pageSeq}
+          </if>
+          <if test="menuids != null and menuids.size() > 0">
+               and (
+                <foreach collection="menuids" index="index" item="dcs" open="" separator="" close="">
+                   <if test="index==0">
+                     page_menuid in  
+                     <foreach collection="dcs" index="index" item="dc" open="(" separator="," close=")">
+                      #{dc}
+                  </foreach>
+                   </if>
+                   <if test="index > 0">
+                     or page_menuid in  
+                     <foreach collection="dcs" index="index" item="dc" open="(" separator="," close=")">
+                      #{dc}
+                  </foreach>
+                   </if>
+                </foreach>
+                )
+            </if>
+            <if test="pageCodes!=null and pageCodes.size()>0">
+                and (
+                <foreach collection="pageCodes" index="index" item="dcs" open="" separator="" close="">
+                   <if test="index==0">
+                     page_code in  
+                     <foreach collection="dcs" index="index" item="dc" open="(" separator="," close=")">
+                      #{dc}
+                  </foreach>
+                   </if>
+                   <if test="index > 0">
+                     or page_code in  
+                     <foreach collection="dcs" index="index" item="dc" open="(" separator="," close=")">
+                      #{dc}
+                  </foreach>
+                   </if>
+                </foreach>
+                )
+            </if>
+       </where>
+    </select>
+	
+	
+	<select id="existFuncPage" parameterType="java.util.HashMap" resultType="java.lang.Integer">
+	   select count(*) from sys_func_page
+	   <where>
+	   		corpcode=#{corpcode}
+	       <if test="pageCode !=null and pageCode.trim()!=''">
+	           and page_code=#{pageCode}
+	       </if>
+	       <if test="pageName !=null and pageName.trim()!=''">
+               and page_name=#{pageName}
+           </if>
+	   </where>
+	</select>
+	
+	<resultMap type="java.util.HashMap" id="getFuncPage_rsm">
+       <result column="page_code" property="pageCode"/>
+       <result column="page_name" property="pageName"/>
+       <result column="page_subsysid" property="pageSubsysid"/>
+       <result column="page_desc" property="pageDesc"/>
+       <result column="page_link_url" property="pageLinkUrl"/>
+       <result column="page_menuid" property="pageMenuid"/>
+       <result column="page_pcode" property="pagePcode"/>
+       <result column="page_seq" property="pageSeq"/>
+       <result column="page_isleaf" property="pageIsleaf"/>
+       <result column="page_filter_path" property="pageFilterPath"/>
+       <result column="pPageCode" property="pPagecode"/>
+       <result column="pPageName" property="pPagename"/>
+       <result column="menuid" property="pmenuid"/>
+       <result column="menuname" property="pmenuname"/>
+    </resultMap>
+	<select id="getFuncPage" parameterType="java.util.HashMap" resultMap="getFuncPage_rsm">
+	   select 
+	       p1.page_code,
+           p1.page_subsysid,
+           p1.page_desc,
+           p1.page_name,
+           p1.page_link_url,
+           p1.page_menuid,
+           p1.page_pcode,
+           p1.page_seq,
+           p1.page_isleaf,
+           p1.page_filter_path,
+           p2.page_code as pPageCode,
+           p2.page_name as pPageName,
+           m.menuid,
+           m.menuname
+	    from sys_func_page p1 left join sys_func_page p2 on p1.page_pcode=p2.page_code and p1.corpcode=p2.corpcode
+	     left join pcmc_menu m on p1.page_menuid=m.menuid and p1.corpcode=m.corpcode
+	   <where>
+	   		p1.corpcode=#{corpcode}
+	       <if test="pageCode!=null and pageCode.trim() !=''">
+	           and p1.page_code=#{pageCode}
+	       </if>
+	   </where>
+	</select>
+	
+	<select id="getPageChildCound" parameterType="java.util.HashMap" resultType="java.lang.Integer">
+	   select sum(cc) from(
+			select count(*) as cc from sys_func_page where page_pcode=#{pageCode} and corpcode=#{corpcode}
+			union
+			select count(*) as cc from sys_func_method where method_page_code=#{pageCode} and corpcode=#{corpcode}
+		) t
+	</select>
+	
+	<delete id="deleteFuncPageByCode" parameterType="java.lang.String">
+	   delete from sys_func_page 
+	   <where>
+	       page_code=#{pageCode} and corpcode=#{corpcode}
+	   </where>
+	</delete>
+	
+	<delete id="deleteFuncPageByCodes" parameterType="java.util.HashMap">
+	   delete from sys_func_page
+       <where>
+       		corpcode=#{corpcode}
+           <if test="pageCodes != null and pageCodes.size() > 0">
+               and (
+                <foreach collection="pageCodes" index="index" item="dcs" open="" separator="" close="">
+                   <if test="index==0">
+                     page_code in  
+                     <foreach collection="dcs" index="index" item="dc" open="(" separator="," close=")">
+                      #{dc}
+                  </foreach>
+                   </if>
+                   <if test="index > 0">
+                     or page_code in  
+                     <foreach collection="dcs" index="index" item="dc" open="(" separator="," close=")">
+                      #{dc}
+                  </foreach>
+                   </if>
+                </foreach>
+                )
+            </if>
+       </where>
+	</delete>
+	
+	<delete id="deleteFuncPageUnderMenuids" parameterType="java.util.HashMap">
+	    delete from sys_func_page
+       <where>
+       		corpcode=#{corpcode}
+           <if test="menuids != null and menuids.size() > 0">
+                and (
+                <foreach collection="menuids" index="index" item="dc" open="" separator="" close="">
+                   <if test="index==0">
+                     page_menuid in 
+                      <foreach collection="dcs" index="index" item="dc" open="(" separator="," close=")">
+                      #{dc}
+                  </foreach>
+                   </if>
+                   <if test="index > 0">
+                     or page_menuid in 
+                     <foreach collection="dcs" index="index" item="dc" open="(" separator="," close=")">
+                      #{dc}
+                  </foreach>
+                   </if>
+                </foreach>
+                )
+            </if>
+       </where>
+	</delete>
+</mapper> 	  

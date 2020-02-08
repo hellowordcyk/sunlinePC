@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="gb2312"?>
+<!-- 功能页面  -->
+<Sunline>
+    <Session></Session>
+    
+    <Operation id="page-privilege"  bean="com.sunline.funcpub.actor.pageprivilege.PagePrivilegeActor"  
+        desc="系统功能页面操作类" >
+        <Action name="queryPagePrivTree" desc="获取页面权限树形数据" acttype="query"/>
+        <Action name="getPagePrivInfo" desc="获取页面权限节点信息数据" acttype="query"/>
+        <Action name="getPagePrivList" desc="获取页面权限节点列表数据" acttype="query"/>
+        <Action name="savePagePriv" desc="保存标签权限授权角色的关联数据" acttype="update"/>
+        <Action name="refreshPagePriv" desc="刷新权限" acttype="update" />
+        <Action name="test" desc="保存标签权限授权角色的关联数据" acttype="query"/>
+    </Operation>
+    
+</Sunline>

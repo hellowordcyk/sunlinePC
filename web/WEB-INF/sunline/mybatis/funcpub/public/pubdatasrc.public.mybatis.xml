@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="com.sunline.funcpub.mybatis.public.pubdatasrc" >
+	 	  
+ 	 <select id="pubdatasrclistPage" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		SELECT  FUNCID "funcid",FUNCCODE "funccode",FUNCNAME "funcname",
+		FUNCADDRES "funcaddres",FUNC_DATASRC "func_datasrc",REMARK "remark"
+		FROM PUB_DATASRC_FUNMAP WHERE 1=1 
+    	<if test= "funcname != null and funcname != ''">
+			AND FUNCNAME LIKE #{funcname}
+        </if>
+        <if test= "funcid != null and funcid != ''">
+			AND FUNCID =  #{funcid} 
+		</if>	 
+ 	 </select> 	
+ 	 
+ 	 <insert id="insertPubDataSrcFunmap" parameterType="java.util.HashMap" >
+	 	INSERT INTO PUB_DATASRC_FUNMAP (FUNCID,FUNCCODE,FUNCNAME,FUNCADDRES,FUNC_DATASRC,REMARK) VALUES(#{funcid,jdbcType=NUMERIC},#{funccode,jdbcType=VARCHAR},#{funcname,jdbcType=VARCHAR},#{funcaddres,jdbcType=VARCHAR},#{func_datasrc,jdbcType=VARCHAR},#{remark,jdbcType=VARCHAR})
+ 	 </insert>
+
+     <update id="updateFuncMenu" parameterType="java.util.HashMap" >  
+        UPDATE PUB_DATASRC_FUNMAP SET FUNCID=#{funcid,jdbcType=NUMERIC},FUNCCODE=#{funccode,jdbcType=VARCHAR},FUNCNAME=#{funcname,jdbcType=VARCHAR},FUNCADDRES=#{funcaddres,jdbcType=VARCHAR},FUNC_DATASRC=#{func_datasrc,jdbcType=VARCHAR},REMARK=#{remark,jdbcType=VARCHAR}  WHERE FUNCID=#{funcid}
+     </update>
+     
+     <delete id="delFuncMenu" parameterType="java.util.HashMap" >
+    	DELETE FROM PUB_DATASRC_FUNMAP WHERE FUNCID=#{funcid}
+     </delete>
+     
+     <resultMap type="java.util.HashMap" id="pcmc_knp_para_rsm">
+        <result column="paracd" property="paracd"/>
+        <result column="parana" property="parana"/>
+     </resultMap>
+     <select id="pcmc_knp_para" parameterType="java.util.HashMap" resultMap="pcmc_knp_para_rsm">   <!-- 下拉列表值查询 -->
+		SELECT PARACD paracd,PARANA parana
+		FROM  PCMC_KNP_PARA WHERE 1 =1
+    	<if test= "paratp != null and paratp != ''">
+			AND PARATP=#{paratp}
+        </if>
+        <if test= "corpcode != null and corpcode != ''">
+			AND CORPCODE=#{corpcode}
+        </if>
+ 	 </select> 	
+
+</mapper> 	  
+ 	 

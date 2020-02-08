@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="gb2312"?>
+<Sunline>
+	<Session></Session>
+    <!-- 区域管理 -->
+    <Operation id="dict_test" bean="com.sunline.funcpub.test.Test" >
+        <Action name="selectLink" desc="下拉框联动" acttype="query" />
+    </Operation>
+
+</Sunline>

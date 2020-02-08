@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="gb2312"?>
+<Sunline>
+	<Session></Session>
+    <!-- 区域管理 -->
+    <Operation id="SysPubArea"
+        bean="com.sunline.funcpub.portal.para.area.SysPubArea" desc="区域管理"
+        filterpath="/funcpub/portal/para/area/">
+        <Action name="queryArea" desc="查询数据" acttype="query" />
+        <Action name="addArea" desc="增加数据" acttype="add" />
+        <Action name="updateArea" desc="修改数据" acttype="update" />
+        <Action name="delArea" desc="删除数据" acttype="delete" />
+        <Action name="area_import" desc="导入" acttype="import"/>
+       <Action name="downLoadAreaTemplate" desc="模板" acttype="import"/>
+       <Action name="area_export" desc="导出" acttype="export"/>
+    </Operation>
+
+</Sunline>

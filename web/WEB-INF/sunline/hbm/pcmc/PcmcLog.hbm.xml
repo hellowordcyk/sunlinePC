@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 2006-1-9 20:10:33 by Hibernate Tools 3.1.0 beta1JBIDERC2 -->
+<hibernate-mapping>
+    <class name="com.sunline.bimis.pcmc.db.PcmcLog" table="pcmc_log">
+        <id name="logid" type="java.lang.Long">
+            <column name="logid" scale="0" />
+      		<generator class="com.sunline.jraf.id.HBNIDGenerator" >
+			    <param name="seqname">pcmc_log</param>
+			    <param name="column">logid</param>
+			</generator>
+        </id>
+        <many-to-one name="pcmcUser" class="com.sunline.bimis.pcmc.db.PcmcUser" fetch="select">
+            <column name="userid" scale="0" not-null="true" />
+        </many-to-one>        
+        <property name="begintime" type="timestamp">
+            <column name="begintime" length="23" />
+        </property>
+        <property name="endtime" type="timestamp">
+            <column name="endtime" length="23" />
+        </property>
+        <property name="sysname" type="string">
+            <column name="sysname" length="40" />
+        </property>
+        <property name="oprid" type="string">
+            <column name="oprid" length="40" />
+        </property>
+        <property name="actions" type="string">
+            <column name="actions" length="40" not-null="true" />
+        </property>
+        <property name="successful" type="java.lang.Long">
+            <column name="succtg" precision="1" scale="0" not-null="true" />
+        </property>
+        <property name="xmldoc" type="string">
+            <column name="xmldoc" />
+        </property>
+        <property name="ipaddr" type="string">
+            <column name="ipaddr" length="15" />
+        </property>
+        <property name="isovtm" type="string">
+            <column name="isovtm" length="10" />
+        </property>
+    </class>
+</hibernate-mapping>

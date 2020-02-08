@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 2006-2-9 18:26:18 by Hibernate Tools 3.1.0.beta4 -->
+<hibernate-mapping>
+    <class name="com.sunline.bimis.pcmc.db.SysPubArea" table="sys_pub_area">
+        <id name="areano" type="string">
+            <column name="AREA_NO" scale="0"/>
+            <generator class="com.sunline.jraf.id.HBNIDGenerator" >
+			    <param name="seqname">sys_pub_area</param>
+			    <param name="column">areano</param>
+			</generator>
+        </id>
+        <property name="areaname" type="string">
+            <column name="AREA_NAME" length="50"/>
+        </property>
+        <property name="sortnum" type="integer">
+            <column name="SORT_NUM"/>
+        </property>
+        <property name="hoflag" type="string">
+            <column name="HO_FLAG" length="1"/>
+        </property>
+        <property name="hqflag" type="string">
+            <column name="HQ_FLAG" length="1"/>
+        </property>
+        <property name="tabspace" type="string">
+            <column name="TAB_SPACE" length="2"/>
+        </property>
+        <property name="orgstr" type="string">
+            <column name="ORG_STR" length="200"/>
+        </property>
+       
+    </class>
+</hibernate-mapping>

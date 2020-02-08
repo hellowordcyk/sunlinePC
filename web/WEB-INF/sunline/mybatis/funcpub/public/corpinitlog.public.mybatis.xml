@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="com.sunline.funcpub.mybatis.public.corpinitlog" >
+	
+	<resultMap type="com.sunline.funcpub.pojo.corpinitlog.CorpInitLog" id="corpInitLog_rsm">
+	   <result column="log_id" property="logId"/>
+	   <result column="function_id" property="functionId"/>
+	   <result column="corpcode" property="corpcode"/>
+	   <result column="execution_status" property="executionStatus"/>
+	   <result column="execution_usercode" property="executionUsercode"/>
+	   <result column="execution_ip" property="executionIp"/>
+	   <result column="execution_time" property="executionTime" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+	</resultMap>
+	
+	<select id="queryCorpInitLoglistPage" parameterType="java.util.HashMap" resultMap="corpInitLog_rsm">
+	   select 
+	       log_id,
+	       function_id,
+	       corpcode,
+	       execution_status,
+	       execution_usercode,
+	       execution_ip,
+	       execution_time
+	    from sys_init_log
+	   <where>
+	       <if test="qIp!=null and qIp.trim()!=''">
+	           and execution_ip like #{qIp}
+	       </if>
+	       <if test="qStatus !=null and qStatus.trim()!=''">
+	           and execution_status = #{qStatus}
+	       </if>
+	       <if test="startTime !=null ">
+	           and execution_time &gt; #{startTime}
+	       </if>
+	       <if test="endTime !=null ">
+	           and execution_time &lt; #{endTime}
+	       </if>
+	       <if test="functionId !=null ">
+	           and function_id= #{functionId}
+	       </if>
+	       <if test="corpcode !=null ">
+	           and corpcode = #{corpcode}
+	       </if>
+	   </where>
+	</select>
+	
+	<insert id="insertCorpInitLog" parameterType="com.sunline.funcpub.pojo.corpinitlog.CorpInitLog">
+	   insert into sys_init_log(
+		   log_id,
+		   function_id,
+		   corpcode,
+	       execution_status,
+	       execution_usercode,
+	       execution_ip,
+	       execution_time
+	   )
+	   values(
+	       #{logId,jdbcType=NUMERIC},
+	       #{functionId,jdbcType=NUMERIC},
+	       #{corpcode,jdbcType=VARCHAR},
+	       #{executionStatus,jdbcType=VARCHAR},
+	       #{executionUsercode,jdbcType=VARCHAR},
+	       #{executionIp,jdbcType=VARCHAR},
+	       #{executionTime,jdbcType=TIMESTAMP}
+	   )
+	</insert>
+	<update id="updateCorpInitLog" parameterType="com.sunline.funcpub.pojo.corpinitlog.CorpInitLog">
+		update sys_init_log set
+		   execution_status=#{executionStatus,jdbcType=VARCHAR},
+	       execution_usercode=#{executionUsercode,jdbcType=VARCHAR},
+	       execution_ip= #{executionIp,jdbcType=VARCHAR},
+	       execution_time=#{executionTime,jdbcType=TIMESTAMP}
+	    <where>
+	    	<if test="logId!=null">
+	    		and log_id=#{logId,jdbcType=NUMERIC}
+	    	</if>
+	    	<if test="functionId!=null">
+	    		and function_id=#{functionId}
+	    	</if>
+	    	<if test="corpcode!=null and corpcode.trim()!=''">
+	    		and corpcode=#{corpcode}
+	    	</if>
+	    </where>
+	</update>
+	
+	<select id="existInitLog" parameterType="java.util.HashMap" resultType="java.lang.Integer">
+		select count(*) from sys_init_log
+		<where>
+			<if test="logId!=null">
+				and log_id=#{logId}
+			</if>
+			<if test="functionId!=null">
+				and function_id=#{functionId}
+			</if>
+			<if test="corpcode!=null and corpcode.trim()!=''">
+				and corpcode=#{corpcode}
+			</if>
+		</where>
+	</select>
+</mapper> 	  

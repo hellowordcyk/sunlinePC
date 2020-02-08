@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="gb2312"?>
+<!-- 消息  -->
+<Sunline>
+	<Session></Session>
+	<Operation id="funcpubNews"  bean="com.sunline.funcpub.notice.actor.NewsActor"  desc="消息">
+		<Action name="getUnReadMsgCount" desc="获取未读消息数"/>
+	</Operation>
+	<Operation id="info"  bean="com.sunline.funcpub.notice.actor.SysInfoActor"  desc="公告信息的管理"
+	filterpath="/funcpub/workstation/pm/">
+		<Action name="addPcmcInfo" desc="新增公告信息" acttype="add"/>
+        <Action name="queryPcmcInfoByManager" desc="管理员角色查询公告信息"/>
+        <Action name="queryPcmcInfoByLogUser" desc="登录用户角色查询公告信息"/>
+        <Action name="deletePcmcInfo" desc="删除公告信息"/>
+        <Action name="updatePcmcInfo" desc="更新公告信息"/>
+        <Action name="getPcmcInfoById"  desc="查询个人发布公告信息"/>
+        <Action name="readPcmcInfo"  desc="查看公告信息"/>
+        <Action name="markNoCare"  desc="公告消息标记为不关心"/>
+        <Action name="queryInfoContent"  desc="查询公告内容"/>
+        <Action name="queryNoticeInfo"  desc="查询提示公告"/>
+        <Action name="getUserSysInfolistPage" desc="读取用户的消息列表"/>
+	</Operation>
+	
+</Sunline>

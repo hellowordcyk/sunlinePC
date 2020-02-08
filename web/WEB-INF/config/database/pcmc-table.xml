@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="gb2312"?>
+<Database type="MSSQLSERVER">
+    <Table name="param_master" desc="参数主表" pk="paramid">
+        <Field name="paramname" title="参数名称" type="String" maxlen="40" notnull="true"></Field>
+        <Field name="paramdesc" title="参数描述" type="String" maxlen="100" notnull="false"></Field>
+    </Table>
+    <Table name="param_detail" desc="参数明细表" pk="paramdetailid">
+        <Field name="paramid" title="参数流水" type="long" maxlen="19" notnull="true"></Field>
+        <Field name="paramcode" title="参数代码" type="String" maxlen="40" notnull="true"></Field>
+        <Field name="parammeanings" title="参数解释" type="String" maxlen="100" notnull="true"></Field>
+    </Table>
+    <Table name="seq_block" desc="Sequence表" pk="name">
+        <Field name="idx" title="当前Sequence" type="long" maxlen="19" notnull="true"></Field>
+    </Table>
+    <Table name="pcmc_pendjob" desc="待办事宜表" pk="pendjobid">
+        <Field name="userid" title="操作员流水号" type="long" maxlen="19" notnull="true" fk="true"></Field>
+        <Field name="title" title="待办事宜标题" type="String" maxlen="60" notnull="true"></Field>
+        <Field name="url" title="功能URL" type="String" maxlen="1000" notnull="true"></Field>
+        <Field name="sendtime" title="发送时间" type="Timestamp" notnull="false"></Field>
+        <Field name="isvisited" title="是否已访问" type="String" maxlen="1" minlen="1" notnull="true"></Field>
+    </Table>
+	<Table name="pcmc_dept" desc="部门信息表" pk="deptid">
+		<Field name="deptcode" title="部门编号" type="String" maxlen="20"
+			notnull="true" />
+		<Field name="pdeptid" title="上级部门流水号" type="long" maxlen="19"
+			notnull="true" />
+		<Field name="levelp" title="层次号" type="long" maxlen="3"
+			notnull="false" />
+		<Field name="deptname" title="部门名称" type="String" maxlen="100"
+			notnull="true" />
+		<Field name="leader" title="部门长" type="long" maxlen="19"
+			notnull="false" />
+		<Field name="viceleader" title="副部门长" type="String" maxlen="255"
+			notnull="false" />
+		<Field name="filereceiver" title="文件接收员" type="long" maxlen="19"
+			notnull="false" />
+		<Field name="linkman" title="联系人" type="String" maxlen="40"
+			notnull="false" />
+		<Field name="phone" title="联系电话" type="String" maxlen="60"
+			notnull="false" />
+		<Field name="remark" title="备注" type="String" maxlen="200"
+			notnull="false" />
+	</Table>
+    <Table name="pcmc_user" desc="操作员信息表" pk="userid">
+        <Field name="deptid" title="部门流水号" type="long" maxlen="19" notnull="true"></Field>
+        <Field name="usercode" title="操作员编号" type="String" minlen="2" maxlen="20" notnull="true"></Field>
+        <Field name="username" title="操作员姓名" type="String" maxlen="40" notnull="true"></Field>
+        <Field name="userpwd" title="操作员口令" type="String" minlen="3" maxlen="100" notnull="true"></Field>
+        <Field name="phone" title="办公电话" type="String" maxlen="60" notnull="false"></Field>
+        <Field name="faxno" title="传真" type="String" maxlen="30" notnull="false"></Field>
+        <Field name="mobile" title="手机" type="String" maxlen="20" notnull="false"></Field>
+        <Field name="hmphone" title="家庭电话" type="String" maxlen="30" notnull="false"></Field>
+        <Field name="jobno" title="职位" type="String" maxlen="2" notnull="false"></Field>
+        <Field name="homead" title="家庭住址" type="String" maxlen="100" notnull="false"></Field>
+        <Field name="pagesize" title="每页显示记录数" type="long" maxlen="3" notnull="true"></Field>
+        <Field name="menutype" title="菜单类型" type="String" maxlen="3" notnull="false"></Field>
+        <Field name="disable" title="是否冻结" type="String" maxlen="1" minlen="1" notnull="true"></Field>
+        <Field name="remark" title="备注" type="String" maxlen="200" notnull="false"></Field>
+    </Table>
+    <Table name="pcmc_role" desc="角色信息表" pk="roleid">
+        <Field name="subsysid" title="子系统流水号" type="long" maxlen="19" notnull="true"></Field>
+        <Field name="rolename" title="角色名称" type="String" maxlen="40" notnull="true"></Field>
+        <Field name="remark" title="备注" type="String" maxlen="200" notnull="false"></Field>
+        <Field name="deptid" title="机构ID" type="long" maxlen="19" notnull="true"></Field>
+    </Table>
+    <Table name="pcmc_role_act" desc="角色交易权限集" pk="roleactid">
+        <Field name="roleid" title="角色流水号" type="long" maxlen="19" notnull="true" fk="true"></Field>
+        <Field name="oprid" title="OPERATION" type="String" maxlen="40" notnull="true"></Field>
+        <Field name="action" title="ACTION" type="String" maxlen="40" notnull="true"></Field>
+    </Table>
+    <Table name="pcmc_subsys" desc="子系统信息表" pk="subsysid" idx="orderidx">
+        <Field name="shortname" title="英文简写" type="String" maxlen="10" notnull="true"></Field>
+        <Field name="enname" title="英文名称" type="String" maxlen="40" notnull="true"></Field>
+        <Field name="cnname" title="中文名称" type="String" maxlen="40" notnull="true"></Field>
+        <Field name="imgurl" title="图片地址" type="String" maxlen="100" notnull="false"></Field>
+        <Field name="linkurl" title="主页地址" type="String" maxlen="200" notnull="true"></Field>
+        <Field name="pubinfourl" title="公共信息页面" type="String" maxlen="200" notnull="false"></Field>
+        <Field name="orderidx" title="显示编号" type="long" maxlen="5" notnull="false"></Field>
+    </Table>
+    <Table name="pcmc_menu" desc="菜单信息表" pk="menuid" idx="sortno">
+        <Field name="subsysid" title="子系统流水号" type="long" maxlen="19" notnull="true"></Field>
+        <Field name="pmenuid" title="父菜单流水号" type="long" maxlen="19" notnull="false"></Field>
+        <Field name="levelp" title="层次号" type="long" maxlen="3" notnull="true"></Field>
+        <Field name="menuname" title="菜单名称" type="String" maxlen="50" notnull="true"></Field>
+        <Field name="imgurl" title="图片地址" type="String" maxlen="100" notnull="false"></Field>
+        <Field name="linkurl" title="超链接地址" type="String" maxlen="200" notnull="false"></Field>
+        <Field name="isinternet" title="是否公网发布" type="String" maxlen="1" notnull="true"></Field>
+        <Field name="remark" title="备注" type="String" maxlen="200" notnull="false"></Field>
+        <Field name="sortno" title="显示编号" type="long" maxlen="5" notnull="false"></Field>
+    </Table>
+    <Table name="pcmc_role_menu" desc="角色菜单权限集" pk="rolemenuid">
+        <Field name="roleid" title="角色流水号" type="long" maxlen="19" notnull="true"></Field>
+        <Field name="menuid" title="菜单流水号" type="long" maxlen="19" notnull="true"></Field>
+    </Table>
+    <Table name="pcmc_log" desc="日志信息表" pk="logid">
+        <Field name="userid" title="操作员流水号" type="long" maxlen="19" notnull="true" fk="true"></Field>
+        <Field name="begintime" title="交易开始时间" type="Timestamp" notnull="false"></Field>
+        <Field name="endtime" title="交易结束时间" type="Timestamp" notnull="false"></Field>
+        <Field name="sysname" title="子系统编号" type="String" maxlen="40" notnull="false"></Field>
+        <Field name="oprid" title="业务编号" type="String" maxlen="40" notnull="false"></Field>
+        <Field name="actions" title="交易编号" type="String" maxlen="40" notnull="true"></Field>
+        <Field name="successful" title="是否成功" type="long" maxlen="1" notnull="true"></Field>
+        <Field name="xmldoc" title="XML数据" type="String" maxlen="8000" notnull="false"></Field>
+        <Field name="ipaddr" title="IP地址" type="String" maxlen="15" notnull="false"></Field>
+    </Table>
+    <Table name="pcmc_shortcut" desc="快捷方式表" pk="shortcutid">
+        <Field name="userid" title="操作员流水号" type="long" maxlen="19" notnull="true"></Field>
+        <Field name="menuid" title="菜单流水号" type="long" maxlen="19" notnull="true"></Field>
+        <Field name="hint" title="提示信息" type="String" maxlen="50" notnull="false"></Field>
+    </Table>
+    <Table name="pcmc_user_role" desc="操作员角色集" pk="userroleid">
+        <Field name="userid" title="操作员流水号" type="long" maxlen="19" notnull="true"></Field>
+        <Field name="roleid" title="角色流水号" type="long" maxlen="19" notnull="true"></Field>
+    </Table>
+    <Table name="pcmc_info" desc="公共信息表" pk="infoid">
+        <Field name="infotype" title="信息类别" type="String" maxlen="2" notnull="true"></Field>
+        <Field name="title" title="标题" type="String" maxlen="60" notnull="true"></Field>
+        <Field name="content" title="内容" type="String" maxlen="8000" notnull="false"></Field>
+        <Field name="createuser" title="发布人" type="long" maxlen="19" notnull="false"></Field>
+        <Field name="createtime" title="发布时间" type="Timestamp" notnull="false"></Field>
+        <Field name="dPcStart" title="公告有效开始日期" type="Timestamp" notnull="false"></Field>
+        <Field name="dPcEnd" title="公告有效截止日期" type="Timestamp" notnull="false"></Field>
+        <Field name="secrflag" title="保密标志" type="String" maxlen="1" notnull="false"></Field>
+    </Table>
+    <Table name="pcmc_message" desc="消息表" pk="messageid">
+        <Field name="title" title="标题" type="String" maxlen="60" notnull="false"></Field>
+        <Field name="content" title="内容" type="String" maxlen="8000" notnull="false"></Field>
+        <Field name="createuser" title="发送人" type="long" maxlen="19" notnull="false"></Field>
+        <Field name="createtime" title="发送时间" type="Timestamp" notnull="false"></Field>
+    </Table>
+    <Table name="pcmc_sendgroup" desc="发送对象表" pk="sendgroupid">
+        <Field name="messageid" title="消息流水号" type="long" maxlen="19" notnull="true"></Field>
+        <Field name="targetuser" title="接收人" type="long" maxlen="19" notnull="true"></Field>
+        <Field name="receivetime" title="接收时间" type="Timestamp" notnull="false"></Field>
+        <Field name="isread" title="是否已阅读" type="String" maxlen="1" minlen="1" notnull="false"></Field>
+    </Table>
+    <Table name="pcmc_frdlink" desc="友情链接表" pk="frdlinkid">
+        <Field name="imgurl" title="图片地址" type="String" maxlen="100" notnull="false"></Field>
+        <Field name="linkurl" title="链接地址" type="String" maxlen="200" notnull="true"></Field>
+        <Field name="hint" title="提示信息" type="String" maxlen="50" notnull="false"></Field>
+    </Table>
+
+<Table name="pcmc_knp_para" desc="系统参数信息">
+
+  <Field name="subscd" title="系统编码" type="String" maxlen="4" notnull="true" pk="true"/>
+  <Field name="paratp" title="参数类型" type="String" maxlen="8" notnull="true" pk="true"/>
+  <Field name="paracd" title="参数编码" type="String" maxlen="8" notnull="true" pk="true"/>
+  <Field name="parana" title="参数名称" type="String" maxlen="80" notnull="false" />
+  <Field name="paraam" title="货币类型" type="money" notnull="false" />
+  <Field name="paradt" title="日期类型" type="Timestamp" notnull="false" />
+  <Field name="parach" title="参数别名a" type="String" maxlen="50" notnull="false" />
+  <Field name="parbch" title="参数别名b" type="String" maxlen="50" notnull="false" />
+  <Field name="parcch" title="参数别名c" type="String" maxlen="50" notnull="false" />
+  <Field name="pardch" title="参数别名d" type="String" maxlen="50" notnull="false" />
+  <Field name="parech" title="参数别名e" type="String" maxlen="50" notnull="false" />
+
+</Table>
+
+</Database>

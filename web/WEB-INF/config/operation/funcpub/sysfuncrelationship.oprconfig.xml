@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="gb2312"?>
+<!-- 功能页面关系  -->
+<Sunline>
+    <Session></Session>
+    
+    <Operation id="sysFuncRelationshipActor"  bean="com.sunline.funcpub.portal.func.page.actor.SysFuncRelationshipActor"  
+        desc="系统功能页面关系操作类" >
+        <Action name="addSysFuncRelationship" desc="新增系统功能页面关系" acttype="add"/>
+        <Action name="querySysFuncRelationship" desc="查询系统功能页面关系" acttype="query"/>
+        <Action name="deleteSysFuncRelationship" desc="删除系统功能页面关系" acttype="delete"/>
+        <Action name="deleteSysFuncRelationships" desc="批量删除系统功能页面关系" acttype="delete"/>
+        <Action name="queryUnRelationPages" desc="查询未关联的功能页面" acttype="query"/>
+    </Operation>
+    
+</Sunline>

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="com.sunline.funcpub.mybatis.public.bdbackTable" >
+	 
+	 <select id="queryTableData"  parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		 <![CDATA[
+		 	SELECT EXESQL "exesql" FROM SYS_PUB_DIFFSQL WHERE FUNCTYPE = '2' 
+		 	AND DBTYPE = #{DBType}
+		 ]]>
+	 </select>
+	 
+	 
+	 <select id="queryCaCtlDataBaklistPage"  parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		 <![CDATA[
+		 	 SELECT TABLE_NAME		"tableName",
+			        TABLE_INFO		"tableInfo",
+			        BAK_COND		"bakCond",
+			        BAK_FLAG		"bakFlag"
+			 FROM CA_CTL_DATA_BAK
+			 WHERE 1=1 
+		 ]]>
+		 <if test="tableName1 !=null  and tableName1 !='%%'">
+		 	 AND TABLE_NAME LIKE  #{tableName1}
+		 </if>
+		 <if test="tableInfo1 !=null and tableInfo1 !='%%'">
+		 	 AND TABLE_INFO LIKE #{tableInfo1}
+		 </if>
+		 <if test="tableName !=null and tableName !='%%'">
+		 	 AND TABLE_NAME = #{tableName}
+		 </if>
+		 <if test="bakFlag !=null and bakFlag !=''">
+		 	 AND BAK_FLAG = #{bakFlag}
+		 </if>
+		 <if test="codes != null and codes.size() > 0">
+               AND (
+                <foreach collection="codes" index="index" item="dcs" open="" separator="" close="">
+                   <if test="index==0">
+                     TABLE_NAME IN  
+                     <foreach collection="dcs" index="n" item="dc" open="(" close=")" separator=",">
+                        #dc
+                     </foreach>
+                   </if>
+                   <if test="index > 0">
+                     OR TABLE_NAME IN  
+                       <foreach collection="dcs" index="n" item="dc" open="(" close=")" separator=",">
+                          #dc
+                       </foreach>
+                   </if>
+                </foreach>
+                )
+            </if>		 
+	 </select>
+	 
+	 <update id="updateCaCtlDataBak"  parameterType="java.util.HashMap" >
+		 <![CDATA[
+		 	UPDATE CA_CTL_DATA_BAK SET TABLE_INFO = #{tableInfo,jdbcType=VARCHAR}, BAK_COND = #{bakCond,jdbcType=VARCHAR}, BAK_FLAG = #{bakFlag,jdbcType=CHAR}
+		 	WHERE TABLE_NAME = #{tableName}
+		  ]]>
+	 </update>
+	 
+	 <insert id="addCaCtlDataBak"  parameterType="java.util.HashMap" >
+	 	<![CDATA[
+		 	INSERT INTO CA_CTL_DATA_BAK(TABLE_NAME, TABLE_INFO, BAK_COND, BAK_FLAG ) VALUES(#{tableName,jdbcType=VARCHAR},#{tableInfo,jdbcType=VARCHAR},#{bakCond,jdbcType=VARCHAR},#{bakFlag,jdbcType=CHAR})
+		]]>
+	 </insert>
+	 
+	 <delete id="delCaCtlDataBak"  parameterType="java.util.HashMap" >
+	 	<![CDATA[
+		 	DELETE FROM CA_CTL_DATA_BAK WHERE TABLE_NAME = #{tableName}
+		]]>
+	 </delete>
+	 
+</mapper> 	  
+ 	 

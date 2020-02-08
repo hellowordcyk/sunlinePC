@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="com.sunline.funcpub.mybatis.public.aphmp" >
+	<select id="getFunctionRegisterlistPage" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		 select 
+		 	a.function_id		"function_id",
+			a.function_url		"function_url",
+			a.function_name		"function_name",
+			a.function_params 	"function_params",
+			a.descriptions			"describe"
+		 from ap_hmp_function_register a
+		 where a.corpcode=#{corpcode}
+		<if test="functionName!=null and functionName!=''">
+		    and function_name like #{functionName}
+		</if>
+	</select>
+	
+	<insert id="insertFunctionRegister" parameterType="java.util.HashMap">
+		INSERT INTO AP_HMP_FUNCTION_REGISTER(FUNCTION_ID, CORPCODE, FUNCTION_URL, FUNCTION_NAME, FUNCTION_PARAMS, DESCRIPTIONS)
+		VALUES(
+		    #{functionId,jdbcType=NUMERIC},
+		    #{corpcode,jdbcType=VARCHAR},
+		    #{functionUrl,jdbcType=VARCHAR},
+		    #{functionName,jdbcType=VARCHAR},
+		    #{functionParams,jdbcType=VARCHAR},
+		    #{describe,jdbcType=VARCHAR}
+		)
+	</insert>
+	
+	<select id="getFunctionRegisterById" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		select 
+		 	a.function_id		"function_id",
+			a.function_url		"function_url",
+			a.function_name		"function_name",
+			a.function_params 	"function_params",
+			a.descriptions			"describe"
+		 from ap_hmp_function_register a
+		<where>
+			corpcode=#{corpcode}
+			<if test="functionId!=null and functionId!=''">  
+			    and function_id = #{functionId} 
+			</if>
+		</where>
+	</select>
+	
+	<update id="updateFunctionRegister" parameterType="java.util.HashMap">
+		update ap_hmp_function_register set 
+			function_name=#{functionName},
+			function_url=#{functionUrl},
+			function_params=#{functionParams},
+			descriptions=#{describe}
+		where function_id=#{functionId} and corpcode=#{corpcode}
+	</update>
+	
+	<delete id="delFunctionRegister" parameterType="java.util.HashMap">
+		delete from ap_hmp_function_register where function_id=#{functionId} and corpcode=#{corpcode}
+	</delete>
+	
+	
+	
+	
+	
+	
+	
+	<select id="getFunctionRegister" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		SELECT FUNCTION_ID   AS "functionID",
+       FUNCTION_URL  AS "functionUrl",
+       FUNCTION_NAME AS "functionName"
+       FROM AP_HMP_FUNCTION_REGISTER
+       WHERE  corpcode =#{corpcode}
+	</select>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<select id="getRolelistPage" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		select a.roleid "roleid",b.cnname "cnname",a.rolename "rolename",c.deptname "deptname" from pcmc_role a
+		left join pcmc_subsys b on a.subsysid = b.subsysid 
+		left join pcmc_dept c on a.deptid= c.deptid and a.corpcode=c.corpcode
+		<where>
+			a.corpcode=#{corpcode}
+			<if test="rolename != null and rolename != '' and rolename != '%%'">  
+			    and a.rolename like  #{rolename}
+			</if>
+		</where> 
+	</select>
+	
+	<select id="getRoleCoordinateByRoleId" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+			SELECT ROLEID AS "roleID",ROW_NUM AS "rowNum",COLUMN_NUM AS "columnNum" 
+			FROM AP_HMP_ROLE_COORDINATE 
+			WHERE ROLEID = #{roleID,jdbcType=NUMERIC} and corpcode=#{corpcode}
+	</select>
+	
+	<delete id="delRoleCoordinateByRoleId" parameterType="java.util.HashMap">
+		delete from ap_hmp_role_coordinate where roleid = #{roleid,jdbcType=NUMERIC} and corpcode=#{corpcode}
+	</delete>
+	
+	<insert id="insertRoleCoordinate" parameterType="java.util.HashMap">
+		insert into ap_hmp_role_coordinate values(#{roleid,jdbcType=NUMERIC},#{row_num,jdbcType=NUMERIC},#{column_num,jdbcType=NUMERIC},#{createDate,jdbcType=DATE},#{userid,jdbcType=NUMERIC},#{corpcode,jdbcType=VARCHAR})
+	</insert>
+	
+	<select id="getRoleFunctionByRoleId" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		SELECT A.ROLEID AS "roleID",A.CELL_COORDINATE AS "cellCoordinate",A.FUNCTION_ID AS "functionID",
+			   B.FUNCTION_NAME AS "functionName",B.FUNCTION_URL AS "functionUrl" 
+		FROM AP_HMP_ROLE_CONFIG A
+		LEFT JOIN AP_HMP_FUNCTION_REGISTER B ON A.FUNCTION_ID = B.FUNCTION_ID and a.corpcode=b.corpcode
+		WHERE A.ROLEID = #{roleID,jdbcType=NUMERIC} and a.corpcode=#{corpcode,jdbcType=VARCHAR}
+	</select>
+	
+	<delete id="delRoleFunctionByRoleId" parameterType="java.util.HashMap">
+		DELETE FROM AP_HMP_ROLE_CONFIG WHERE ROLEID = #{roleID,jdbcType=NUMERIC} and corpcode=#{corpcode,jdbcType=VARCHAR}
+	</delete>
+	
+	<insert id="addRoleFunction" parameterType="java.util.HashMap">
+		INSERT INTO AP_HMP_ROLE_CONFIG(ROLEID,CELL_COORDINATE, FUNCTION_ID,CREATEDT,USERID,CORPCODE) 
+		VALUES(#{roleID,jdbcType=NUMERIC},#{cellCoordinate,jdbcType=VARCHAR},#{functionID,jdbcType=VARCHAR},#{createDate,jdbcType=DATE},#{userID,jdbcType=NUMERIC},#{corpcode,jdbcType=VARCHAR})
+	</insert>
+</mapper> 	  

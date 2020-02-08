@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sunline.funcpub.mybatis.public.menuexport" >
+	<resultMap type="com.sunline.funcpub.portal.menu.menuObject" id="queryMenu">
+ 		<result column="menuid" property="menuid"/>
+ 		<result column="corpcode" property="corpcode"/>
+ 		<result column="subsysid" property="subsysid"/>
+ 		<result column="pmenuid" property="pmenuid"/>
+ 		<result column="levelp" property="levelp"/>
+ 		<result column="menuname" property="menuname"/>
+ 		<result column="imgurl" property="imgurl"/>
+ 		<result column="linkurl" property="linkurl"/>
+ 		<result column="isinternet" property="isinternet"/>
+ 		<result column="remark" property="remark"/>
+ 		<result column="sortno" property="sortno"/>
+ 		<result column="is_leaf" property="is_leaf"/>
+ 	</resultMap>
+	
+	<select id="getSubsys" parameterType="java.util.HashMap"   resultType="String">
+ 		select subsysid "subsysid" from pcmc_subsys 
+ 	</select>
+ 	
+ 	<select id="queryMenu" parameterType="java.util.HashMap" resultMap="queryMenu">
+ 		select 
+ 			menuid,
+ 			corpcode,
+ 			subsysid,
+ 			pmenuid,
+ 			levelp,
+ 			menuname,
+ 			imgurl,
+ 			linkurl,
+ 			isinternet,
+ 			remark,
+ 			sortno,
+ 			is_leaf,
+ 			menuseq
+ 		 from pcmc_menu
+ 		<where>
+ 			<if test="corpcode!=null and corpcode.trim()!=''">
+ 				and corpcode=#{corpcode}
+ 			</if>
+ 			<if test="pid != null and pid==-1">
+ 				and pmenuid is null
+ 			</if>
+ 			<if test="pid !=null and pid != -1">
+ 				and pmenuid = #{pid}
+ 			</if>
+ 			<if test="menuid!=null">
+ 				and menuid=#{menuid}
+ 			</if>
+ 			<if test="levelp!=null">
+ 				and levelp=#{levelp}
+ 			</if>
+ 			<if test="menuname!=null and menuname!='' and menuname.trim()!='%%'">
+ 				and menuname like  #{menuname} 
+ 			</if>
+ 		</where>
+ 	</select>
+	 
+	 
+</mapper> 	  

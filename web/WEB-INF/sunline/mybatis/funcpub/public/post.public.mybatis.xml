@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="com.sunline.funcpub.mybatis.public.post" >
+	
+	<resultMap type="com.sunline.funcpub.portal.post.bean.Post" id="post_rsm">
+		<result column="post_id" property="postId"/>
+		<result column="post_code" property="postCode"/>
+		<result column="post_title" property="postTitle"/>
+		<result column="post_description" property="postDescription"/>
+		<result column="sort_no" property="sortNo"/>
+	</resultMap>
+	
+	<select id="queryPostlistPage" parameterType="java.util.HashMap" resultMap="post_rsm">
+		select 
+			post_id,
+			post_code,
+			post_title,
+			post_description,
+			sort_no
+		 from sys_pub_post t1
+		<where>
+			corpcode=#{corpcode}
+			<if test="postId !=null and postId !=''">
+				and post_id = #{postId}
+			</if>
+			<if test="postCode !=null and postCode.trim() !=''">
+				and post_code = #{postCode}
+			</if>
+			<if test="qName !=null and qName.trim()!='' and qName.trim()!='%%'">
+				and post_title like #{qName}
+			</if>
+		</where>
+		<if test="orderList != null and orderList.size()>0">
+		order by
+			<foreach item="order" collection="orderList" separator=",">
+				${order.orderField} ${order.orderDirection}
+			</foreach>
+		</if>
+	</select>
+	
+	<insert id="add" parameterType="java.util.HashMap">
+		insert into sys_pub_post(
+				post_id,
+				post_code,
+				post_title,
+				post_description,
+				sort_no,
+				corpcode
+			)values(
+				#{postId,jdbcType=NUMERIC},
+				#{postCode,jdbcType=VARCHAR},
+				#{postTitle,jdbcType=VARCHAR},
+				#{postDescription,jdbcType=VARCHAR},
+				#{sortNo,jdbcType=NUMERIC},
+				#{corpcode,jdbcType=VARCHAR}
+			)
+	</insert>
+	
+	<update id="update" parameterType="java.util.HashMap">
+		update sys_pub_post set
+			 post_title=#{postTitle,jdbcType=VARCHAR},
+			 post_description=#{postDescription,jdbcType=VARCHAR},
+			 sort_no=#{sortNo,jdbcType=NUMERIC}
+		<where>
+			post_id=#{postId}
+		</where>
+	</update>
+	
+	<delete id="delete" parameterType="java.lang.Long">
+		delete from sys_pub_post
+		<where>
+			post_id=#{postId}
+		</where>
+	</delete>
+	
+	<select id="postCodeExist" parameterType="java.util.HashMap" resultType="java.lang.Integer">
+		select count(*) from sys_pub_post
+		<where>
+			corpcode=#{corpcode}
+			<if test="postCode !=null and postCode.trim() !=''">
+				and post_code = #{postCode}
+			</if>
+		</where>
+	</select>
+</mapper> 	  

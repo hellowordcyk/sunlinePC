@@ -1,0 +1,90 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 2006-2-9 18:26:18 by Hibernate Tools 3.1.0.beta4 -->
+<hibernate-mapping>
+    <class name="com.sunline.bimis.pcmc.db.JbUserprops" table="JB_USERPROPS">
+        <id name="IUserid" type="integer">
+            <column name="I_USERID" />
+            <generator class="assigned" />
+        </id>
+        <many-to-one name="jbUser" class="com.sunline.bimis.pcmc.db.JbUser" update="false" insert="false" fetch="select">
+            <column name="I_USERID" not-null="true" unique="true" />
+        </many-to-one>
+        <property name="VSign" type="string">
+            <column name="V_SIGN" />
+        </property>
+        <property name="VSex" type="string">
+            <column name="V_SEX" length="3" />
+        </property>
+        <property name="VHomepage" type="string">
+            <column name="V_HOMEPAGE" />
+        </property>
+        <property name="ILogins" type="integer">
+            <column name="I_LOGINS" not-null="true" />
+        </property>
+        <property name="VFace" type="string">
+            <column name="V_FACE" />
+        </property>
+        <property name="IWidth" type="integer">
+            <column name="I_WIDTH" />
+        </property>
+        <property name="IHeight" type="integer">
+            <column name="I_HEIGHT" />
+        </property>
+        <property name="VOicq" type="string">
+            <column name="V_OICQ" />
+        </property>
+        <property name="VLastaccess" type="string">
+            <column name="V_LASTACCESS" length="17" />
+        </property>
+        <property name="VLastlogin" type="string">
+            <column name="V_LASTLOGIN" length="17" />
+        </property>
+        <property name="IOnlinetime" type="integer">
+            <column name="I_ONLINETIME" not-null="true" />
+        </property>
+        <property name="IUserlevel" type="integer">
+            <column name="I_USERLEVEL" not-null="true" />
+        </property>
+        <property name="IUserwealth" type="integer">
+            <column name="I_USERWEALTH" />
+        </property>
+        <property name="IUserep" type="integer">
+            <column name="I_USEREP" />
+        </property>
+        <property name="IUsercp" type="integer">
+            <column name="I_USERCP" />
+        </property>
+        <property name="VTitle" type="string">
+            <column name="V_TITLE" />
+        </property>
+        <property name="VIcq" type="string">
+            <column name="V_ICQ" />
+        </property>
+        <property name="VMsn" type="string">
+            <column name="V_MSN" />
+        </property>
+        <property name="VPhone" type="string">
+            <column name="V_PHONE" />
+        </property>
+        <property name="VCompany" type="string">
+            <column name="V_COMPANY" />
+        </property>
+        <property name="VCompanysite" type="string">
+            <column name="V_COMPANYSITE" />
+        </property>
+        <property name="VBrief" type="string">
+            <column name="V_BRIEF" />
+        </property>
+        <property name="VBirthday" type="string">
+            <column name="V_BIRTHDAY" length="17" />
+        </property>
+        <property name="VSkinpath" type="string">
+            <column name="V_SKINPATH" />
+        </property>
+        <property name="IStatus" type="short">
+            <column name="I_STATUS" not-null="true" />
+        </property>
+    </class>
+</hibernate-mapping>

@@ -1,0 +1,57 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 2006-10-19 9:58:55 by Hibernate Tools 3.2.0.beta6a -->
+<hibernate-mapping>
+    <class name="com.sunline.bimis.pcmc.db.PcmcAdobj" table="pcmc_adobj" schema="dbo">
+        <id name="guid" type="string">
+            <column name="GUID" length="260" />
+            <generator class="assigned" />
+        </id>
+        <property name="dn" type="string">
+            <column name="DN" length="260" not-null="true" />
+        </property>
+        <property name="objectClass" type="string">
+            <column name="objectClass" length="20" not-null="true" />
+        </property>
+        <property name="domain" type="string">
+            <column name="domain" length="50" not-null="true" />
+        </property>
+        <property name="name" type="string">
+            <column name="Name" length="260" />
+        </property>
+        <property name="remktx" type="string">
+            <column name="remktx" length="260" />
+        </property>
+        <set name="pcmcAdous" inverse="true">
+            <key>
+                <column name="GUID" length="260" not-null="true" unique="true" />
+            </key>
+            <one-to-many class="com.sunline.bimis.pcmc.db.PcmcAdou" />
+        </set>
+        <set name="pcmcAdobjroles" inverse="true">
+            <key>
+                <column name="GUID" length="260" not-null="true" />
+            </key>
+            <one-to-many class="com.sunline.bimis.pcmc.db.PcmcAdobjrole" />
+        </set>
+        <set name="pcmcAdoumembers" inverse="true">
+            <key>
+                <column name="GUID" length="260" not-null="true" />
+            </key>
+            <one-to-many class="com.sunline.bimis.pcmc.db.PcmcAdoumember" />
+        </set>
+        <set name="pcmcAdusers" inverse="true">
+            <key>
+                <column name="GUID" length="260" not-null="true" unique="true" />
+            </key>
+            <one-to-many class="com.sunline.bimis.pcmc.db.PcmcAduser" />
+        </set>
+        <set name="pcmcAdgroups" inverse="true">
+            <key>
+                <column name="GUID" length="260" not-null="true" unique="true" />
+            </key>
+            <one-to-many class="com.sunline.bimis.pcmc.db.PcmcAdgroup" />
+        </set>
+    </class>
+</hibernate-mapping>

@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 2006-1-9 20:10:32 by Hibernate Tools 3.1.0 beta1JBIDERC2 -->
+<hibernate-mapping>
+    <class name="com.sunline.bimis.pcmc.db.PcmcRole" table="pcmc_role">
+        <id name="roleid" type="java.lang.Long">
+            <column name="roleid" scale="0" />
+      		<generator class="com.sunline.jraf.id.HBNIDGenerator" >
+			    <param name="seqname">pcmc_role</param>
+			    <param name="column">roleid</param>
+			</generator>
+        </id>
+        <many-to-one name="pcmcSubsys" class="com.sunline.bimis.pcmc.db.PcmcSubsys" fetch="select">
+            <column name="subsysid" scale="0" not-null="true" />
+        </many-to-one>
+        <many-to-one name="pcmcDept" class="com.sunline.bimis.pcmc.db.PcmcDept" fetch="select">
+            <column name="deptid" scale="0" not-null="true" />
+        </many-to-one>
+        <property name="rolename" type="string">
+            <column name="rolename" length="40" not-null="true" />
+        </property>
+        <property name="roletp" type="string">
+            <column name="roletp" length="12" not-null="true" />
+        </property>
+        <property name="remark" type="string">
+            <column name="remark" length="200" />
+        </property>
+        <set name="pcmcUserRoles" inverse="true">
+            <key>
+                <column name="roleid" scale="0" not-null="true" />
+            </key>
+            <one-to-many class="com.sunline.bimis.pcmc.db.PcmcUserRole" />
+        </set>
+        <set name="pcmcRoleMenus" inverse="true">
+            <key>
+                <column name="roleid" scale="0" not-null="true" />
+            </key>
+            <one-to-many class="com.sunline.bimis.pcmc.db.PcmcRoleMenu" />
+        </set>
+        <!--  
+        <set name="pcmcRoleActs" inverse="true">
+            <key>
+                <column name="roleid" scale="0" not-null="true" />
+            </key>
+            <one-to-many class="com.sunline.bimis.pcmc.db.PcmcRoleAct" />
+        </set>
+        -->
+    </class>
+</hibernate-mapping>

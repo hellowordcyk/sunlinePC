@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="gb2312"?>
+<config>
+    <debug>true</debug>
+    <log4j_path>../classes/log4j.properties</log4j_path>
+
+    <monitor mode="true">
+    	<param name="time"></param>
+    	<param name="">adapter operator success exception average exceptionmsg</param>
+    </monitor>
+
+    <socket_server>
+    	<param name="port" desc="端口">3434</param>
+        <param name="bindAddr" desc="绑定地址">127.0.0.1</param>
+        <param name="backlog" desc="最大连接数">1000</param>
+        <param name="timeout" desc="连接超时">1200000</param>
+        
+        <param name="maxPoolSize" desc="最大活动线程数">500</param>
+        <param name="minPoolSize" desc="最小活动线程数">10</param>
+        <param name="waitThreadSize" desc="允许等待线程数">10</param>
+        <param name="keepAliveTime" desc="活动线程生命周期(s)">300000</param><!--5mins-->
+        <param name="initThreadSize" desc="初始活动线程数">5</param>
+    </socket_server>
+
+	<listener_conf>
+		<listener class="com.sunline.gw.netbank.event.DefaultListener">
+            <adapter class="com.sunline.gw.netbank.adapter.DefaultAdapter" module="bma">
+            	<sender class="com.sunline.gw.netbank.output.TuxedoSender">
+                	<!--<param name="userid">01110</param>
+                    <param name="login">brchno=|tmnlno=|userid=01110|csbxno=|prcscd=userin|servtp=CNT|winame=SIGNON_WIN|authsq=|cnfmsq=|wndwda=tmnlno\=\|user_id\=01110\|usqx\=\|usps\=]l\:^YH9IB08P\|mgntcd\=\||ckbkus=|ckbkpw=|userpw=]l\:^YH9IB08P|versno=V3.00|tmnlip=10.1.104.245|tmntty=|cityno=020|</param>
+                	-->
+                	<param name="limitLens">8000</param>
+                	<param name="wsnaddr">WSNADDR=//ltts.bank.com:1234</param>
+                	<param name="service">LTTS</param>
+                </sender>
+                <convertor class="com.sunline.gw.netbank.convert.StringConvertor"/>
+            </adapter>
+        </listener>
+    </listener_conf>
+</config>

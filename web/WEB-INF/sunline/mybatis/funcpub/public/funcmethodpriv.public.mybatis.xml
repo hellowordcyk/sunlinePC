@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="com.sunline.funcpub.mybatis.public.funcmethodpriv" >
+	
+	<insert id="grantFuncMethodPrivByRoleId" parameterType="java.util.HashMap">
+	   insert into sys_func_method_priv(
+	       method_code,
+	       role_id
+	   )values(
+	       #{methodCode,jdbcType=VARCHAR},
+           #{roleId,jdbcType=NUMERIC}
+	   )
+	</insert>
+	
+	<resultMap type="java.util.HashMap" id="queryFuncMethodPriv_rsm">
+	   <result  column="role_id" property="roleId"/>
+	   <result  column="method_code" property="methodCode"/>
+	</resultMap>
+	<select id="queryFuncMethodPriv" parameterType="java.util.HashMap" resultMap="queryFuncMethodPriv_rsm">
+	   select role_id,method_code from sys_func_method_priv
+	   <where>
+	       <if test="roleId!=null and roleId!=''">
+	           and role_id=#{roleId}
+	       </if>
+	       <if test="methodCode!=null and methodCode.trim()!=''">
+	           and method_code=#{methodCode}
+	       </if>
+	   </where>
+	</select>
+	
+	<delete id="revokeFuncMethodPriv" parameterType="java.util.HashMap">
+	   delete from sys_func_method_priv
+	   <where>
+	       <if test="methodCode != null and methodCode.trim()!=''">
+	           and method_code=#{methodCode}
+	       </if>
+	       <if test="roleId != null and roleId!=''">
+	           and role_id=#{roleId}
+	       </if>
+	   </where>
+	</delete>
+</mapper> 	  

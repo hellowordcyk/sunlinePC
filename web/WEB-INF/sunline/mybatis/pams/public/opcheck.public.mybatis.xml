@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="com.sunline.pams.mybatis.public.opcheck" >
+ 	<!-- resultMap -->
+ 	<resultMap id="claInfoMap" type="java.util.HashMap">
+ 		<result column="STARTDATE" property="startDate" javaType="String"/>
+ 		<result column="ENDDATE" property="endDate" javaType="String"/>
+ 		<result column="CLATYPE" property="claType" javaType="String"/>
+ 		<result column="STARTAMT" property="startAmt" javaType="String"/>
+ 		<result column="ENDAMT" property="endAmt" javaType="String"/>
+ 		<result column="USERCODE" property="userCode" javaType="String"/>
+ 		<result column="USERNAME" property="userName" javaType="String"/>
+ 		<result column="RATE" property="rate" javaType="String"/>
+ 	</resultMap>
+ 	
+ 	<resultMap id="opClaProcessInfoMap" type="java.util.HashMap">
+ 		<result column="PROCESS_STATUS" property="status"/>
+ 		<result column="STATUS_NAME" property="statusName"/>
+ 		<result column="OPERATOR" property="userCode"/>
+ 		<result column="USERNAME" property="userName"/>
+ 		<result column="DEPTCODE" property="deptCode"/>
+ 		<result column="DEPTNAME" property="deptName"/>
+ 		<result column="START_TIME" property="startName" javaType="String"/>
+ 		<result column="END_TIME" property="endTime" javaType="String"/>
+ 		<result column="PROCESS_INFO" property="processInfo"/>
+ 	</resultMap>
+ 	
+ 	<resultMap id="opClaFlowInfoMap" type="java.util.HashMap">
+ 		<result column="FLOW_ID" property="flowID"/>
+ 		<result column="AREA_NO" property="areaNo"/>
+ 		<result column="START_TIME" property="startTime"/>
+ 		<result column="STATUS" property="status"/>
+ 		<result column="OPERATOR" property="operator"/>
+ 	</resultMap>
+ 	
+ 	<resultMap type="java.util.HashMap" id="checkStatusMap">
+ 		<result column="STATUS" property="status"/>
+ 		<result column="STATUS_NAME" property="statusName"/>
+ 	</resultMap>
+ 	
+ 	<!-- 查询需要审批的认领信息 -->
+ 	<select id="queryClaInfo" parameterType="java.util.HashMap" resultMap="claInfoMap">
+ 		SELECT 
+		    A.START_DATE AS STARTDATE,
+		    A.END_DATE AS ENDDATE,
+		    A.CLA_TYPE AS CLATYPE,
+		    A.START_AMT AS STARTAMT,
+		    A.END_AMT AS ENDAMT,
+		    B.USERCODE AS USERCODE,
+		    B.USERNAME AS USERNAME,
+		    A.CUR_CLA_RATE AS RATE
+		FROM ${claTable} A
+		LEFT JOIN PCMC_USER B ON A.CLA_IN_OBJ = B.USERCODE
+		WHERE A.FLOW_ID = #{flowID}
+ 	</select>
+ 	
+ 	<!-- 查询认领过程信息 -->
+ 	<select id="queryOpClaProcessInfo" parameterType="String" resultMap="opClaProcessInfoMap">
+ 		SELECT 
+		    A.PROCESS_STATUS,
+		    C.STATUS_NAME,
+		    A.OPERATOR,
+		    D.USERNAME,
+		    E.DEPTCODE,
+		    E.DEPTNAME,
+		    A.START_TIME,
+		    A.END_TIME,
+		    A.PROCESS_INFO
+		FROM OP_CLA_PROCESS A
+		LEFT JOIN OP_CLA_FLOW B ON A.FLOW_ID = B.FLOW_ID
+		LEFT JOIN OP_FLOW_NODE C ON B.TEMPLATE_CODE = C.TEMPLATE_CODE AND A.PROCESS_STATUS = B.STATUS
+		LEFT JOIN PCMC_USER D ON A.OPERATOR = D.USERCODE
+		LEFT JOIN PCMC_DEPT E ON D.DEPTID = E.DEPTID
+		WHERE A.FLOW_ID = #{_parameter}
+ 	</select>
+ 	
+ 	<!-- 查询流程信息 -->
+ 	<select id="queryOpClaFlowInfo" parameterType="String" resultMap="opClaFlowInfoMap">
+ 		SELECT FLOW_ID,AREA_NO,START_TIME,STATUS,OPERATOR FROM OP_CLA_FLOW WHERE FLOW_ID = #{_parameter}
+ 	</select>
+ 	
+ 	<!-- 查询审批状态 -->
+ 	<select id="queryCheckStatus" parameterType="java.util.HashMap" resultMap="checkStatusMap">
+ 		<if test="null != roleID and roleID != ''">
+ 			SELECT 
+			    A.STATUS,A.STATUS_NAME
+				FROM OP_FLOW_NODE A
+				LEFT JOIN OP_CLA_FLOWINFO B ON A.TEMPLATE_CODE = B.TEMPLATE_CODE AND A.STATUS = B.STATUS  
+				WHERE A.TEMPLATE_CODE = #{templateCode} AND B.ROLEID = #{roleID} 
+			UNION
+ 		</if>
+		SELECT 
+		    A.SUCCESS_STATUS AS  STATUS,
+		    '通过' AS STATUS_NAME
+		FROM OP_FLOW_TEMPLATE A
+		WHERE A.TEMPLATE_CODE = #{templateCode} 
+		UNION
+		SELECT 
+		    A.FAILURE_STATUS AS STATUS,
+		    '退回' AS STATUS_NAME
+		FROM OP_FLOW_TEMPLATE A
+		WHERE A.TEMPLATE_CODE = #{templateCode} 
+ 	</select>
+ 	
+ 	<!-- 查询审批数据 -->
+ 	<select id="queryCheckDataListlistPage" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+ 		<foreach item="bizCheckTable" collection="bizCheckTableArray" separator="UNION">
+ 			SELECT DISTINCT T.* FROM(
+		 		SELECT 
+		 			<foreach collection="selectColumnList" item="column" separator="," close=",">
+		 				${column}
+					</foreach>
+					AB.USERNAME,
+					B.STATUS,
+					to_char(B.END_TIME,'yyyy-mm-dd') END_TIME,
+					(CASE WHEN B.STATUS = D.SUCCESS_STATUS THEN '通过' WHEN B.STATUS = D.FAILURE_STATUS THEN '退回' ELSE C.STATUS_NAME END) AS STATUS_NAME
+				FROM ${bizCheckTable} A
+				LEFT JOIN PCMC_USER AB ON A.Cla_In_Obj = AB.USERCODE
+				LEFT JOIN OP_CLA_FLOW B ON A.FLOW_ID = B.FLOW_ID 
+				LEFT JOIN OP_FLOW_NODE C ON B.TEMPLATE_CODE = C.TEMPLATE_CODE AND B.STATUS = C.STATUS
+				LEFT JOIN OP_FLOW_TEMPLATE D ON B.TEMPLATE_CODE = D.TEMPLATE_CODE
+				<foreach collection="leftJoinList" item="leftJoin" separator=" ">
+					${leftJoin}
+				</foreach>
+				WHERE A.FLOW_ID NOT IN(SELECT FLOW_ID FROM ${bizCheckTable} WHERE RECHECK IN('0','2'))
+				<foreach collection="queryConditionList" item="queryCondition" separator=" ">
+					<if test="queryCondition.andOr == null or queryCondition.andOr == '' ">AND</if>  
+					<if test="queryCondition.andOr != null and queryCondition.andOr != '' ">${queryCondition.andOr}</if>  
+					A.${queryCondition.colName} <![CDATA[${queryCondition.operator}]]> 
+					<if test="queryCondition.operator == 'IN' ">${queryCondition.colValue}</if> 
+					<if test="queryCondition.operator != 'IN' ">#{queryCondition.colValue}</if> 
+				</foreach>
+			)T
+			<where>
+				<if test="null != statusScope and statusScope != ''">
+				${statusScope}
+					AND T.STATUS IN (
+					<foreach collection="statusScopes" item="statusScope" index="index" separator=",">#{statusScope}</foreach>
+					)
+				</if>
+				<if test="null != STATUS and STATUS != ''">
+					AND T.STATUS = #{STATUS}
+				</if>
+				<if test="null != startDate and startDate != ''">
+					AND T.END_TIME <![CDATA[>=]]>  #{startDate}
+				</if>
+				<if test="null != endDate and endDate != ''">
+					AND T.END_TIME <![CDATA[<]]>  #{endDate}
+				</if>
+			</where>
+			order by T.STATUS
+ 		</foreach>
+ 		
+ 	</select>
+ 	
+ 	<!-- 添加流程过程信息 -->
+ 	<insert id="insertProcessInfo" parameterType="java.util.HashMap">
+ 		INSERT INTO OP_CLA_PROCESS(PROCESS_ID,AREA_NO,FLOW_ID,START_TIME,END_TIME,PROCESS_STATUS,OPERATOR,PROCESS_INFO)
+ 		VALUES(#{processID},#{areaNo},#{flowID},#{startTime},#{endTime},#{status},#{operator},#{processInfo})
+ 	</insert>
+ 	
+ 	<!-- 修改流程信息 -->
+ 	<update id="updateOpClaFlow" parameterType="java.util.HashMap">
+ 		UPDATE OP_CLA_FLOW SET
+ 			STATUS = #{status},
+ 			<if test="startTime != null">
+ 				START_TIME = #{startTime},
+ 				ROLEID = #{roleID}
+ 			</if>
+			<if test="endTime != null">
+ 				END_TIME = #{endTime}
+ 			</if>
+ 		WHERE FLOW_ID = #{flowID}
+ 	</update>
+</mapper> 	  
+ 	 

@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="com.sunline.bimis.pcmc.priv.db.MdsPrvRole" table="MDS_PRV_ROLE">
+		<composite-id name="id" class="com.sunline.bimis.pcmc.priv.db.MdsPrvRoleId">
+			<key-property name="funcrl" type="string">
+				<column length="32" name="FUNCRL"/>
+			</key-property>
+		</composite-id>
+		
+		<property name="bscode" type="string">
+			<column length="32" name="BSCODE"/>
+		</property>
+		<property name="funccd" type="string">
+			<column length="32" name="FUNCCD"/>
+		</property>
+		<property name="rolena" type="string">
+			<column length="64" name="ROLENA"/>
+		</property>
+		<property name="typeim" type="string">
+			<column length="128" name="TYPEIM"/>
+		</property>
+		
+		<many-to-one name="mdsPrvFunc" class="com.sunline.bimis.pcmc.priv.db.MdsPrvFunc" update="false" insert="false" fetch="select">
+            <column length="32" name="BSCODE"/>
+            <column length="32" name="FUNCCD"/>
+        </many-to-one>
+	</class>
+</hibernate-mapping>

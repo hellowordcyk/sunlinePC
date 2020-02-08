@@ -1,0 +1,232 @@
+@font-face {
+  font-family: 'icomoon';
+  src:  url('../fonts/jf-icomoon.eot?jg4oze');
+  src:  url('../fonts/jf-icomoon.eot?jg4oze#iefix') format('embedded-opentype'),
+    url('../fonts/jf-icomoon.ttf?jg4oze') format('truetype'),
+    url('../fonts/jf-icomoon.woff?jg4oze') format('woff'),
+    url('../fonts/jf-icomoon.svg?jg4oze#icomoon') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+
+[class^="jf-btn-"], [class*=" jf-btn-"] {
+  /* use !important to prevent issues with browser extensions that change fonts */
+  font-family: 'icomoon' !important;
+  speak: none;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.jf-btn-CPU:before {
+  content: "\e939";
+}
+.jf-btn-memory:before {
+  content: "\e93a";
+}
+.jf-btn-server:before {
+  content: "\e93b";
+}
+.jf-btn-down-line:before {
+  content: "\e93c";
+}
+.jf-btn-down:before {
+  content: "\e93d";
+}
+.jf-btn-left-line:before {
+  content: "\e93e";
+}
+.jf-btn-left:before {
+  content: "\e93f";
+}
+.jf-btn-right-line:before {
+  content: "\e940";
+}
+.jf-btn-right:before {
+  content: "\e941";
+}
+.jf-btn-up-line:before {
+  content: "\e942";
+}
+.jf-btn-up:before {
+  content: "\e943";
+}
+.jf-btn-a:before {
+  content: "\e926";
+}
+.jf-btn-b:before {
+  content: "\e927";
+}
+.jf-btn-c:before {
+  content: "\e928";
+}
+.jf-btn-d:before {
+  content: "\e929";
+}
+.jf-btn-e:before {
+  content: "\e92a";
+}
+.jf-btn-f:before {
+  content: "\e92b";
+}
+.jf-btn-g:before {
+  content: "\e92c";
+}
+.jf-btn-chaxun:before {
+  content: "\e92d";
+}
+.jf-btn-fenxi:before {
+  content: "\e92e";
+}
+.jf-btn-jiashicang:before {
+  content: "\e92f";
+}
+.jf-btn-h:before {
+  content: "\e930";
+}
+.jf-btn-i:before {
+  content: "\e931";
+}
+.jf-btn-j:before {
+  content: "\e932";
+}
+.jf-btn-k:before {
+  content: "\e933";
+}
+.jf-btn-l:before {
+  content: "\e934";
+}
+.jf-btn-m:before {
+  content: "\e935";
+}
+.jf-btn-n:before {
+  content: "\e936";
+}
+.jf-btn-o:before {
+  content: "\e937";
+}
+.jf-btn-p:before {
+  content: "\e938";
+}
+.jf-btn-menu-one:before {
+  content: "\e920";
+}
+.jf-btn-menu-two:before {
+  content: "\e921";
+}
+.jf-btn-menu-three:before {
+  content: "\e922";
+}
+.jf-btn-menu-four:before {
+  content: "\e923";
+}
+.jf-btn-menu-five:before {
+  content: "\e924";
+}
+.jf-btn-menu-six:before {
+  content: "\e925";
+}
+.jf-btn-add:before {
+  content: "\e900";
+}
+.jf-btn-calendar:before {
+  content: "\e901";
+}
+.jf-btn-check:before {
+  content: "\e902";
+}
+.jf-btn-close:before {
+  content: "\e903";
+}
+.jf-btn-compute:before {
+  content: "\e904";
+}
+.jf-btn-delete:before {
+  content: "\e905";
+}
+.jf-btn-deploy:before {
+  content: "\e906";
+}
+.jf-btn-download:before {
+  content: "\e907";
+}
+.jf-btn-edit:before {
+  content: "\e908";
+}
+.jf-btn-export:before {
+  content: "\e909";
+}
+.jf-btn-import:before {
+  content: "\e916";
+}
+.jf-btn-key:before {
+  content: "\e917";
+}
+.jf-btn-maintain:before {
+  content: "\e918";
+}
+.jf-btn-more:before {
+  content: "\e919";
+}
+.jf-btn-position:before {
+  content: "\e91a";
+}
+.jf-btn-refresh:before {
+  content: "\e91b";
+}
+.jf-btn-run:before {
+  content: "\e910";
+}
+.jf-btn-save:before {
+  content: "\e911";
+}
+.jf-btn-score:before {
+  content: "\e912";
+}
+.jf-btn-setting:before {
+  content: "\e913";
+}
+.jf-btn-stop:before {
+  content: "\e914";
+}
+.jf-btn-upload:before {
+  content: "\e915";
+}
+.jf-btn-skin:before {
+  content: "\e91c";
+}
+.jf-btn-switch:before {
+  content: "\e91d";
+}
+.jf-btn-home:before {
+  content: "\e91e";
+}
+.jf-btn-mine:before {
+  content: "\e91f";
+}
+.jf-btn-common:before {
+  content: "\e90a";
+}
+.jf-btn-screen:before {
+  content: "\e90b";
+}
+.jf-btn-out:before {
+  content: "\e90c";
+}
+.jf-btn-red:before {
+  content: "\e90d";
+  color: #ff3b54;
+}
+.jf-btn-blue:before {
+  content: "\e90e";
+  color: #1b87e0;
+}
+.jf-btn-black:before {
+  content: "\e90f";
+}

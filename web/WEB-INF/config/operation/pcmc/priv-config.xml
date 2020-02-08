@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="gb2312"?>
+<Sunline>
+	<Session></Session>
+	
+	<Operation id="functionActor" bean="com.sunline.bimis.pcmc.priv.Actor.FunctionManagerActor" desc="权限配置模块">
+	
+        <Action name="saveTodb" desc="获取配置文档的信息保存数据库" />
+		<Action name="getNewInfo" desc="获取配置文档的信息" />
+		<Action name="getSysname" desc="获取配置文档子系统的信息" />
+		<Action name="getOper" desc="获取配置文档交易号的信息" />
+		<Action name="getActionInfo" desc="获取配置文档操作的信息" />
+		<Action name="queryActGroupByName" desc="获取功能组的信息" />
+		<Action name="doRefreshAct" desc="刷新功能配置信息" />
+		<Action name="getTreeDataFromMap" desc="获取功能树" />
+		<Action name="getActData" desc="获取功能的详细信息"/>
+		
+		<Action name="queryPcmcRoleAct" desc="获取授权操作的信息" />
+		<Action name="saveToPcmcAct" desc="保存角色表信息" />
+		<Action name="savePcmcActGrantInfo" desc="保存功能节点授权操作的信息" />
+		<Action name="saveToPcmcActgroup" desc="保存功能组操作的信息" />
+		<Action name="queryPcmcActgroupGrantInfo" desc="查询功能组角色授权操作的信息" />
+		<Action name="savePcmcActGroupGrantInfo" desc="保存功能组角色授权操作的信息" />
+		<Action name="queryPcmcActGroupPrivInfo" desc="查询功能组授权信息" />
+	</Operation>
+	
+	<Operation id="privActor" bean="com.sunline.bimis.pcmc.priv.PrivActor" desc="权限配置模块">
+		<!-- 系统权限分类  -->
+		<Action name="queryPrvBase" desc="查询系统权限分类" />
+		<Action name="addPrvBase" desc="新增系统权限分类" />
+		<Action name="updatePrvBase" desc="修改系统权限分类" />
+		<Action name="deletePrvBase" desc="删除系统权限分类" />
+		<!-- 权限模块分类  -->
+		<Action name="queryPrvFuncByID" desc="查询权限模块分类"/>
+		<Action name="addPrvFunc" desc="新增权限模块分类" />
+		<Action name="updatePrvFunc" desc="修改权限模块分类" />
+		<Action name="deletePrvFunc" desc="删除权限模块分类" />
+		<!-- 权限模块角色  -->
+		<Action name="queryPrvPoleByID" desc="查询权限模块角色"/>
+		<Action name="addPrvRole" desc="新增权限模块角色" />
+		<Action name="updatePrvRole" desc="修改权限模块角色" />
+		<Action name="deletePrvRole" desc="删除权限模块角色" />
+		<!-- 授权功能、角色、类型  -->
+		<Action name="queryPrvFuncRole" desc="查询权限模块和角色" />
+		<Action name="queryPrvType" desc="查询权限功能类型" />
+		<Action name="queryPrvTypeTree" desc="查询权限功能类型树" />
+		<Action name="queryPrvButn" desc="查询JSP功能类型要素" />
+		<Action name="saveOrUpdatePrvType" desc="保存权限功能类型" />
+		<Action name="savePrvButn" desc="维护JSP权限要素信息" />
+		<!-- 选择控件查询  -->
+		<Action name="queryBsCode" desc="查询系统分类" />
+		<Action name="queryPcmcUser" desc="查询系统用户" />
+		<!-- 权限功能授权（业务人员）  -->
+		<Action name="queryPrvBusiTree" desc="查询权限功能树" />
+		<Action name="queryPrvGrantRole" desc="查询权限角色授权信息" />
+		<Action name="queryPrvGrantUser" desc="查询权限用户授权信息" />
+		<Action name="savePrvGrantInfo" desc="保存权限授权信息" />
+		<!-- 根据配置的用户和角色权限，查询配置的页面对象访问权限  -->
+		<Action name="getJSPPriv" desc="查询配置的页面对象访问权限" />
+		<Action name="getSEARCHPriv" desc="查询配置的数据对象访问权限" />
+		<Action name="getRolePriv" desc="查询当前用户的机构" />
+	</Operation>
+</Sunline>

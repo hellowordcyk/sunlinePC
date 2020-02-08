@@ -1,0 +1,3882 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sunline.pams.mybatis.public.plan">
+	<resultMap type="java.util.HashMap" id="roleMap">
+		<result column="roleid" property="roleid" />
+		<result column="rolename" property="rolename" />
+		<result column="paracd" property="paracd" />
+		<result column="parana" property="parana" />
+	</resultMap>
+	<!-- 删除机构考核 张然 17/08/24 start -->
+	<delete id="deleteMoWayOrg1" parameterType="java.util.HashMap">
+		delete from mo_way_org
+		where way_code = #{wayCode}
+	</delete>
+	<delete id="deleteMoWayOrgDimension" parameterType="java.util.HashMap">
+		delete from mo_way_org_dimension
+		where way_code = #{wayCode}
+	</delete>
+	<delete id="deleteMoWayOrgKpi" parameterType="java.util.HashMap">
+		delete from mo_way_org_kpi
+		where way_code = #{wayCode}
+	</delete>
+	<!-- 删除人员考核 张然 17/08/24 -->
+	<delete id="deleteMoWayPerson1" parameterType="java.util.HashMap">
+		delete from mo_way_person
+		where way_code = #{wayCode}
+	</delete>
+	<delete id="deleteMoWayPersonDimension" parameterType="java.util.HashMap">
+		delete from mo_way_person_dimension
+		where way_code = #{wayCode}
+	</delete>
+	<delete id="deleteMoWayPersonKpi" parameterType="java.util.HashMap">
+		delete from mo_way_person_kpi
+		where way_code = #{wayCode}
+	</delete><!-- over -->
+	
+	<delete id="deleteData" parameterType="java.util.HashMap">
+	    DELETE FROM ${tableName} A WHERE A.DATA_DATE<![CDATA[>=]]>to_date(#{startDate},'yyyy-mm-dd') AND A.DATA_DATE<![CDATA[<=]]>to_date(#{endDate},'yyyy-mm-dd') AND  A.WAY_CODE=#{wayCode}
+	</delete>
+	
+	<delete id="deleteDataDetail" parameterType="java.util.HashMap">
+	    DELETE FROM ${dtableName} A WHERE A.DATA_DATE<![CDATA[>=]]>to_date(#{startDate},'yyyy-mm-dd') AND A.DATA_DATE<![CDATA[<=]]>to_date(#{endDate},'yyyy-mm-dd') AND  A.WAY_CODE=#{wayCode}
+	</delete>
+	
+	<select id="initRuleSelect" parameterType="java.util.HashMap"
+		resultMap="roleMap">
+		select roleid,rolename from pcmc_role
+		<if test="_parameter != null and _parameter != ''">
+			where 
+			<foreach collection="_parameter" index="index" item="dc"  open="(" separator="," close=")">
+				deptid in #{dc} or 
+			</foreach>
+		</if>
+		deptid = (select deptid from pcmc_dept where pdeptid = -1 and DISABLE
+		= '0')
+	</select>
+	<select id="initOrgTypeSelect" parameterType="java.util.HashMap"
+		resultMap="roleMap">
+		select paracd as paracd,parana as parana from pcmc_knp_para where subscd =
+		'pams'
+		and paratp ='orgNatureType' and area_no_str = #{areano}
+	</select>
+
+	<resultMap type="java.util.HashMap" id="OrgDimensionKpiMap">
+		<result column="way_code" property="wayCode" />
+		<result column="dimension_name" property="dimensionName" />
+		<result column="dimension_rate" property="dimensionRate" />
+		<result column="kpi_str" property="kpiStr" />
+		<result column="kpi_str_cn" property="kpiStrCn" />
+		<result column="rate" property="rate" />
+		<result column="appraise_method" property="appraiseMethod" />
+		<result column="model_code" property="modelCode" />
+		<result column="model_formula" property="modelFormula" />
+		<result column="src_code" property="kpicode" />
+		<result column="model_name" property="modelName" />
+		<result column="alias_name" property="aliasName" />
+	</resultMap>
+	<select id="queryOrgDimensionByWayCode" parameterType="java.util.HashMap"
+		resultMap="OrgDimensionKpiMap">
+		select
+		    a.way_code,b.dimension_name,b.dimension_rate,a.kpi_str,
+		    a.kpi_str_cn,a.rate,a.appraise_method,a.model_code,a.model_formula,a.src_code,a.alias_name
+		from mo_way_org_kpi a
+		left join mo_way_org_dimension b on a.way_code =
+		b.way_code and a.dimension_no = b.dimension_no
+		where a.way_code =
+		#{wayCode}
+		order by a.seq_num asc
+	</select>
+	
+	<select id="queryOrgDimensionHisByWayCode" parameterType="java.util.HashMap"
+		resultMap="OrgDimensionKpiMap">
+		select
+		a.way_code,b.dimension_name,b.dimension_rate,a.kpi_str,a.kpi_str_cn,a.rate,
+		    a.appraise_method,a.model_code,a.model_formula,a.src_code,model.model_name,a.alias_name
+		from mo_way_org_kpi_h a
+		left join mo_way_org_dimension_h b on a.way_code = b.way_code 
+		    and a.dimension_no = b.dimension_no and a.way_version = b.way_version
+		left join mo_way_model model on a.model_code = model.model_code
+		where a.way_code = #{wayCode} and a.way_version = #{wayVersion}
+	</select>
+	
+	<select id="queryPersonDimensionByWayCode" parameterType="java.util.HashMap"
+		resultMap="OrgDimensionKpiMap">
+		select
+		    a.way_code,b.dimension_name,b.dimension_rate,a.kpi_str,a.kpi_str_cn,a.rate,
+		    a.appraise_method,a.model_code,a.model_formula,a.src_code,a.alias_name
+		from mo_way_person_kpi a
+		left join mo_way_person_dimension b on
+		a.way_code = b.way_code and a.dimension_no = b.dimension_no
+		where
+		a.way_code = #{wayCode}
+		order by a.seq_num
+	</select>
+	
+	<select id="queryPersonDimensionByWayCodeHis" parameterType="java.util.HashMap"
+		resultMap="OrgDimensionKpiMap">
+		select
+		    a.way_code,b.dimension_name,b.dimension_rate,a.kpi_str,
+		    a.kpi_str_cn,a.rate,a.appraise_method,a.model_code,a.model_formula,a.src_code,model.model_name,a.alias_name
+		from mo_way_person_kpi_h a
+		left join mo_way_person_dimension_h b on a.way_code = b.way_code 
+		    and a.dimension_no = b.dimension_no and a.way_version=b.way_version
+		LEFT JOIN MO_WAY_MODEL model on a.model_code = model.model_code
+		where
+		a.way_code = #{wayCode} and a.way_version = #{wayVersion}
+	</select>
+
+
+	<!-- 机构考核方案结果 -->
+	<resultMap type="com.sunline.pams.plan.bean.MoWayOrg" id="moWayOrgResult">
+		<result column="way_code" property="wayCode" jdbcType="VARCHAR" />
+		<result column="area_no" property="areaNo" jdbcType="CHAR" />
+		<result column="way_type" property="wayType" jdbcType="CHAR" />
+		<result column="way_name" property="wayName" jdbcType="VARCHAR" />
+		<result column="way_range" property="wayRange" jdbcType="VARCHAR" />
+		<result column="all_score" property="allScore" jdbcType="NUMERIC" />
+		<result column="org_level" property="orgLevel" jdbcType="VARCHAR" />
+		<result column="org_type" property="orgType" jdbcType="VARCHAR" />
+		<result column="white_list" property="whiteList" jdbcType="VARCHAR" />
+		<result column="black_list" property="blackList" jdbcType="VARCHAR" />
+		<result column="start_dat" property="startDate" jdbcType="DATE" />
+		<result column="end_dat" property="endDate" jdbcType="DATE" />
+		<result column="way_cycle" property="wayCycle" jdbcType="CHAR" />
+		<result column="edit_org" property="editOrg" jdbcType="VARCHAR" />
+		<result column="edit_role" property="editRole" jdbcType="VARCHAR" />
+		<result column="way_desc" property="wayDesc" jdbcType="VARCHAR" />
+		<result column="status" property="status" jdbcType="VARCHAR" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="operator" property="operator" jdbcType="VARCHAR" />
+		<result column="review_man" property="reviewMan" jdbcType="VARCHAR" />
+		<result column="review_time" property="reviewTime" jdbcType="TIMESTAMP" />
+		<result column="review_status" property="reviewStatus" jdbcType="VARCHAR" />
+		<result column="review_opinion" property="reviewOpinion" jdbcType="VARCHAR" />
+		<result column="is_exe" property="isExe" jdbcType="CHAR" />
+		<result column="exeStatus" property="exeStatus" jdbcType="VARCHAR" />
+		
+	</resultMap>
+
+	<!-- 查询单个机构考核方案 -->
+	<select id="getMoWayOrg" parameterType="java.util.HashMap"
+		resultMap="moWayOrgResult">
+		select
+		a.way_code, a.way_type, a.way_name, a.way_range, a.all_score, a.org_level,
+		a.org_type, a.white_list, a.black_list, a.start_dat, a.end_dat,
+		a.way_cycle,
+		a.edit_org, a.edit_role, a.way_desc, a.status, a.create_time, a.operator,
+		a.review_man, a.review_time, a.review_status, a.review_opinion,
+		a.is_exe
+		from mo_way_org a where a.way_code = #{wayCode}
+	</select>
+	
+	<select id="queryMoWayOrgHis" parameterType="java.util.HashMap"
+		resultMap="moWayOrgResult">
+		select
+		a.way_code, a.way_type, a.way_name, a.way_range, a.all_score, a.org_level,
+		a.org_type, a.white_list, a.black_list, a.start_dat, a.end_dat,
+		a.way_cycle,
+		a.edit_org, a.edit_role, a.way_desc, a.status, a.create_time, a.operator,
+		a.review_man, a.review_time, a.review_status, a.review_opinion,
+		a.is_exe
+		from mo_way_org_h a 
+		where a.way_code = #{wayCode} and a.way_version = #{wayVersion}
+	</select>
+	
+	<!-- 保存机构考核方案 -->
+	<insert id="insertMoWayOrg" parameterType="com.sunline.pams.plan.bean.MoWayOrg">
+		insert into mo_way_org(way_code, way_type, way_name, way_range, all_score,
+		org_level,
+		org_type, white_list, black_list, start_dat, end_dat, way_cycle,
+		edit_org, edit_role, way_desc, status, create_time, operator,
+		review_man, review_time, review_status, review_opinion, is_exe,area_no,way_level)
+		values(
+		#{wayCode, jdbcType=VARCHAR},
+		#{wayType, jdbcType=CHAR},
+		#{wayName, jdbcType=VARCHAR},
+		#{wayRange, jdbcType=NUMERIC},
+		#{allScore, jdbcType=VARCHAR},
+		#{orgLevel, jdbcType=VARCHAR},
+		#{orgType, jdbcType=VARCHAR},
+		#{whiteList, jdbcType=VARCHAR},
+		#{blackList, jdbcType=VARCHAR},
+		#{startDate, jdbcType=DATE},
+		#{endDate, jdbcType=DATE},
+		#{wayCycle, jdbcType=VARCHAR},
+		#{editOrg, jdbcType=VARCHAR},
+		#{editRole, jdbcType=VARCHAR},
+		#{wayDesc, jdbcType=VARCHAR},
+		#{status, jdbcType=VARCHAR},
+		#{createTime, jdbcType=TIMESTAMP},
+		#{operator, jdbcType=VARCHAR},
+		#{reviewMan, jdbcType=VARCHAR},
+		#{reviewTime, jdbcType=TIMESTAMP},
+		#{reviewStatus, jdbcType=VARCHAR},
+		#{reviewOpinion, jdbcType=VARCHAR},
+		#{isExe, jdbcType=CHAR},
+		#{areaNo, jdbcType=CHAR},
+		#{wayLevel, jdbcType=CHAR}
+		)
+	</insert>
+	<insert id="insertMoWayOrgByMap" parameterType="java.util.HashMap">
+		insert into mo_way_org(way_code, way_type, way_name, way_range, all_score,
+		org_level,
+		org_type, white_list, black_list, start_dat, end_dat, way_cycle,
+		edit_org, edit_role, way_desc, status, create_time, operator,is_exe,area_no,way_level)
+		values(
+		#{wayCode, jdbcType=VARCHAR},
+		#{wayType, jdbcType=CHAR},
+		#{wayName, jdbcType=VARCHAR},
+		#{wayRange, jdbcType=NUMERIC},
+		#{allScore, jdbcType=VARCHAR},
+		#{orgLevel, jdbcType=VARCHAR},
+		#{orgType, jdbcType=VARCHAR},
+		#{whiteList, jdbcType=VARCHAR},
+		#{blackList, jdbcType=VARCHAR},
+		#{startDate, jdbcType=DATE},
+		#{endDate, jdbcType=DATE},
+		#{wayCycle, jdbcType=VARCHAR},
+		#{editOrg, jdbcType=VARCHAR},
+		#{editRole, jdbcType=VARCHAR},
+		#{wayDesc, jdbcType=VARCHAR},
+		#{status, jdbcType=VARCHAR},
+		#{createTime, jdbcType=TIMESTAMP},
+		#{operator, jdbcType=VARCHAR},
+		#{isExe, jdbcType=CHAR},
+		#{areaNo, jdbcType=CHAR},
+		#{wayLevel, jdbcType=VARCHAR}
+		)
+	</insert>
+	<update id="updateMoWayOrg" parameterType="java.util.HashMap">
+		update mo_way_org set
+		    way_type = #{wayType, jdbcType=CHAR},
+            way_name = #{wayName, jdbcType=VARCHAR},
+            WAY_RANGE =#{wayRange, jdbcType=NUMERIC},
+            ALL_SCORE =#{allScore, jdbcType=VARCHAR},
+            ORG_LEVEL =#{orgLevel, jdbcType=VARCHAR},
+            ORG_TYPE = #{orgType, jdbcType=VARCHAR},
+            WHITE_LIST = #{whiteList, jdbcType=VARCHAR},
+            BLACK_LIST = #{blackList, jdbcType=VARCHAR},
+            START_DAT =#{startDate, jdbcType=DATE},
+            END_DAT =#{endDate, jdbcType=DATE},
+            WAY_CYCLE =#{wayCycle, jdbcType=VARCHAR},
+            EDIT_ORG = #{editOrg, jdbcType=VARCHAR},
+            EDIT_ROLE =#{editRole, jdbcType=VARCHAR},
+            WAY_DESC = #{wayDesc, jdbcType=VARCHAR},
+            
+            CREATE_TIME =#{createTime, jdbcType=TIMESTAMP},
+            OPERATOR = #{operator, jdbcType=VARCHAR},
+           
+            AREA_NO =#{areaNo, jdbcType=CHAR}
+		where way_code = #{wayCode}
+	</update>
+
+	<!-- 逻辑删除方案 -->
+	<update id="deleteMoWayOrg" parameterType="java.util.HashMap">
+		update mo_way_org set status = #{status} where way_code = #{wayCode}
+	</update>
+
+	<!-- 逻辑删除人员方案 -->
+	<update id="deleteMoWayPerson" parameterType="java.util.HashMap">
+		update MO_WAY_PERSON set status = #{status} where way_code = #{wayCode}
+	</update>
+
+	<!-- 机构考核方案维度结果 -->
+	<resultMap type="com.sunline.pams.plan.bean.MoWayOrgDimension"
+		id="moWayOrgDimensionResult">
+		<result column="way_code" property="wayCode" jdbcType="VARCHAR" />
+		<result column="dimension_no" property="dimensionNo" jdbcType="VARCHAR" />
+		<result column="dimension_name" property="dimensionName"
+			jdbcType="VARCHAR" />
+		<result column="dimension_rate" property="dimensionRate"
+			jdbcType="NUMERIC" />
+		<result column="seq_num" property="seqNum" jdbcType="INTEGER" />
+	</resultMap>
+
+	<!-- 保存机构考核方案维度 -->
+	<select id="queryMoWayOrgDimension" parameterType="java.util.HashMap"
+		resultMap="moWayOrgDimensionResult">
+		select way_code, dimension_no, dimension_name, dimension_rate, seq_num
+		from mo_way_org_dimension
+		<where>
+			<if test="wayCode!=null and wayCode!=''">
+				and way_code = #{wayCode}
+			</if>
+			<if test="dimensionName!=null and dimensionName!=''">
+				and dimension_name like #{dimensionName}
+			</if>
+		</where>
+		order by seq_num
+	</select>
+
+	<!-- 保存机构考核方案维度 -->
+	<insert id="insertMoWayOrgDimension" parameterType="com.sunline.pams.plan.bean.MoWayOrgDimension">
+		insert into mo_way_org_dimension(way_code, dimension_no,
+		dimension_name, dimension_rate, seq_num)
+		values
+		(
+			#{wayCode, jdbcType=VARCHAR},
+			#{dimensionNo, jdbcType=VARCHAR},
+			#{dimensionName, jdbcType=VARCHAR},
+			#{dimensionRate, jdbcType=NUMERIC},
+			#{seqNum, jdbcType=INTEGER}
+			)
+	</insert>
+	<insert id="insertMoWayOrgDimensionByMap" parameterType="java.util.HashMap">
+		insert into mo_way_org_dimension(way_code, dimension_no, dimension_name,
+		dimension_rate, seq_num)
+		values(
+		#{wayCode, jdbcType=VARCHAR},
+		#{dimensionNo, jdbcType=VARCHAR},
+		#{dimensionName, jdbcType=VARCHAR},
+		#{dimensionRate, jdbcType=NUMERIC},
+		#{seqNum, jdbcType=INTEGER}
+		)
+	</insert>
+
+	<!-- 删除机构方案 -->
+	<delete id="deleteWayOrgByCode" parameterType="java.util.HashMap">
+		delete from mo_way_org where WAY_CODE=#{wayCode}
+	</delete>
+
+	<!-- 删除机构方案维度信息 -->
+	<delete id="deleteWayOrgDimensionByCode" parameterType="java.util.HashMap">
+		delete from MO_WAY_ORG_DIMENSION where WAY_CODE=#{wayCode}
+	</delete>
+
+	<!-- 删除机构方案指标信息 -->
+	<delete id="deleteWayOrgKpiByCode" parameterType="java.util.HashMap">
+		delete from MO_WAY_ORG_KPI where WAY_CODE=#{wayCode}
+	</delete>
+
+	<!-- 机构考核方案维度结果 -->
+	<resultMap type="com.sunline.pams.plan.bean.MoWayOrgKpi" id="moWayOrgKpiResult">
+		<result column="way_code" property="wayCode" jdbcType="VARCHAR" />
+		<result column="seq_num" property="seqNum" jdbcType="INTEGER" />
+		<result column="kpi_str" property="kpiStr" jdbcType="VARCHAR" />
+		<result column="kpi_str_cn" property="kpiStrCn" jdbcType="VARCHAR" />
+		<result column="dimension_no" property="dimensionNo" jdbcType="VARCHAR" />
+		<result column="rate" property="rate" jdbcType="NUMERIC" />
+		<result column="appraise_method" property="appraiseMethod"
+			jdbcType="VARCHAR" />
+		<result column="model_code" property="modelCode" jdbcType="VARCHAR" />
+		<result column="model_formula" property="modelFormula"
+			jdbcType="VARCHAR" />
+		<result column="model_fc" property="modelFc" jdbcType="VARCHAR" />
+		<result column="way_src" property="waySrc" jdbcType="VARCHAR" />
+		<result column="src_code" property="srcCode" jdbcType="VARCHAR" />
+		<result column="src_rule" property="srcRule" jdbcType="VARCHAR" />
+		<result column="alias_name" property="aliasName" jdbcType="VARCHAR" />
+	</resultMap>
+
+	<!-- 保存机构考核方案维度 -->
+	<select id="queryMoWayOrgKpi" parameterType="java.util.HashMap"
+		resultMap="moWayOrgKpiResult">
+		select a.way_code, a.seq_num, a.kpi_str, a.kpi_str_cn, a.dimension_no,
+		a.rate,
+		a.appraise_method, b.MODEL_NAME as model_code, a.model_formula, a.model_fc, a.way_src,
+		a.src_code, a.src_rule,a.alias_name
+		from mo_way_org_kpi a
+		left join MO_WAY_MODEL b
+		on a.model_code=b.model_code
+		<where>
+			<if test="wayCode!=null and wayCode!=''">
+				and a.way_code = #{wayCode}
+			</if>
+			<if test="seqNum!=null and seqNum!=''">
+				and a.seq_num = #{seqNum}
+			</if>
+			<if test="dimensionNo!=null and dimensionNo!=''">
+				and a.dimension_no = #{dimensionNo}
+			</if>
+			<if test="kpiStrCn!=null and kpiStrCn!=''">
+				and a.kpi_str_cn like #{kpiStrCn}
+			</if>
+		</where>
+		order by a.seq_num
+	</select>
+
+
+	<!-- 保存机构考核方案指标 -->
+	<insert id="insertMoWayOrgKpi" parameterType="com.sunline.pams.plan.bean.MoWayOrgKpi">
+		insert into mo_way_org_kpi(way_code, seq_num, kpi_str, kpi_str_cn,
+		dimension_no, rate, appraise_method, model_code, model_formula,
+		model_fc, way_src, src_code, src_rule,alias_name)
+		values
+		(
+			#{wayCode, jdbcType=VARCHAR},
+			#{seqNum, jdbcType=INTEGER},
+			#{kpiStr, jdbcType=VARCHAR},
+			#{kpiStrCn, jdbcType=VARCHAR},
+			#{dimensionNo, jdbcType=VARCHAR},
+			#{rate, jdbcType=NUMERIC},
+			#{appraiseMethod, jdbcType=VARCHAR},
+			#{modelCode, jdbcType=VARCHAR},
+			#{modelFormula, jdbcType=VARCHAR},
+			#{modelFc, jdbcType=VARCHAR},
+			#{waySrc, jdbcType=VARCHAR},
+			#{srcCode, jdbcType=VARCHAR},
+			#{srcRule, jdbcType=VARCHAR},
+			#{aliasName, jdbcType=VARCHAR}
+			)
+	</insert>
+	<insert id="insertMoWayOrgKpiByMap" parameterType="java.util.HashMap">
+		insert into mo_way_org_kpi(way_code, seq_num, kpi_str, kpi_str_cn,
+		dimension_no, rate, appraise_method, model_code, model_formula,
+		model_fc, way_src, src_code, src_rule,alias_name)
+		values(
+		#{wayCode, jdbcType=VARCHAR},
+			#{seqNum, jdbcType=INTEGER},
+			#{kpiStr, jdbcType=VARCHAR},
+			#{kpiStrCn, jdbcType=VARCHAR},
+			#{dimensionNo, jdbcType=VARCHAR},
+			#{rate, jdbcType=NUMERIC},
+			#{appraiseMethod, jdbcType=VARCHAR},
+			#{modelCode, jdbcType=VARCHAR},
+			#{modelFormula, jdbcType=VARCHAR},
+			#{modelFc, jdbcType=VARCHAR},
+			#{waySrc, jdbcType=VARCHAR},
+			#{srcCode, jdbcType=VARCHAR},
+			#{srcRule, jdbcType=VARCHAR},
+			#{aliasName, jdbcType=VARCHAR}
+		)
+	</insert>
+
+
+
+
+	<resultMap type="com.sunline.pams.plan.bean.MoWayPerson" id="moWayPersonResult">
+		<result column="way_code" property="wayCode" jdbcType="VARCHAR" />
+		<result column="area_no" property="areaNo" jdbcType="CHAR" />
+		<result column="way_type" property="wayType" jdbcType="CHAR" />
+		<result column="way_name" property="wayName" jdbcType="VARCHAR" />
+		<result column="way_range" property="wayRange" jdbcType="VARCHAR" />
+		<result column="all_score" property="allScore" jdbcType="NUMERIC" />
+		<result column="org_level" property="orgLevel" jdbcType="VARCHAR" />
+		<result column="org_type" property="orgType" jdbcType="VARCHAR" />
+		<result column="way_post" property="wayPost" jdbcType="VARCHAR" />
+		<result column="white_list" property="whiteList" jdbcType="VARCHAR" />
+		<result column="black_list" property="blackList" jdbcType="VARCHAR" />
+		<result column="start_dat" property="startDate" jdbcType="DATE" />
+		<result column="end_dat" property="endDate" jdbcType="DATE" />
+		<result column="way_cycle" property="wayCycle" jdbcType="CHAR" />
+		<result column="edit_org" property="editOrg" jdbcType="VARCHAR" />
+		<result column="edit_role" property="editRole" jdbcType="VARCHAR" />
+		<result column="way_desc" property="wayDesc" jdbcType="VARCHAR" />
+		<result column="status" property="status" jdbcType="VARCHAR" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="operator" property="operator" jdbcType="VARCHAR" />
+		<result column="review_man" property="reviewMan" jdbcType="VARCHAR" />
+		<result column="review_time" property="reviewTime" jdbcType="TIMESTAMP" />
+		<result column="review_status" property="reviewStatus"
+			jdbcType="VARCHAR" />
+		<result column="review_opinion" property="reviewOpinion"
+			jdbcType="VARCHAR" />
+		<result column="is_exe" property="isExe" jdbcType="CHAR" />
+		<result column="exeStatus" property="exeStatus" />
+		
+	</resultMap>
+
+	<!-- 查询单个考核方案 -->
+	<select id="getMoWayPerson" parameterType="java.util.HashMap"
+		resultMap="moWayPersonResult">
+		select
+		a.way_code,a.area_no,a.way_type, a.way_name, a.way_range, a.all_score, a.org_level,
+		a.org_type, a.way_post, a.white_list, a.black_list, a.start_dat, a.end_dat,
+		a.way_cycle,
+		a.edit_org, a.edit_role, a.way_desc, a.status, a.create_time, a.operator,
+		a.review_man, a.review_time, a.review_status, a.review_opinion,
+		a.is_exe
+		from mo_way_person a where a.way_code = #{wayCode}
+	</select>
+	
+	<!-- 查询行员考核方案历史 -->
+	<select id="getMoWayPersonHis" parameterType="java.util.HashMap"
+		resultMap="moWayPersonResult">
+		select
+		a.way_code,a.area_no,a.way_type, a.way_name, a.way_range, a.all_score, a.org_level,
+		a.org_type, a.way_post, a.white_list, a.black_list, a.start_dat, a.end_dat,
+		a.way_cycle,
+		a.edit_org, a.edit_role, a.way_desc, a.status, a.create_time, a.operator,
+		a.review_man, a.review_time, a.review_status, a.review_opinion,
+		a.is_exe
+		from mo_way_person_h a where a.way_code = #{wayCode} and a.way_version = #{wayVersion}
+	</select>
+
+	<!-- 查询人员考核方案 -->
+	
+
+	<!-- 根据way_code查询人员考核方案 -->
+	<select id="queryMoWayPersonByWaycodeAreano" parameterType="java.util.HashMap"
+		resultMap="moWayPersonResult">
+		select way_code ,area_no , way_type ,
+		way_name , way_range , all_score ,
+		org_level ,
+		org_type , way_post, white_list, black_list, start_dat, end_dat , way_cycle,
+		edit_org , edit_role, way_desc "way_desc", status, create_time, operator ,
+		review_man, review_time , review_status, review_opinion , is_exe 
+		from mo_way_person
+		<where>
+			<if test="wayCode != null and wayCode != ''">
+				and way_code = #{wayCode}
+			</if>
+			<if test="area_no != null and area_no != ''">
+				and area_no = #{area_no}
+			</if>
+		</where>
+	</select>
+
+
+	<!-- 保存人员考核方案 -->
+	<insert id="insertMoWayPerson" parameterType="com.sunline.pams.plan.bean.MoWayPerson">
+		insert into mo_way_person(way_code, area_no,way_type, way_name, way_range,
+		all_score, org_level,
+		org_type, way_post, white_list, black_list, start_dat, end_dat, way_cycle,
+		edit_org, edit_role, way_desc, status, create_time, operator,
+		review_man, review_time, review_status, review_opinion, is_exe,way_level)
+		values(
+		#{wayCode,jdbcType=VARCHAR},
+		#{areaNo,jdbcType=VARCHAR},
+		#{wayType,jdbcType=VARCHAR},
+		#{wayName,jdbcType=VARCHAR},
+		#{wayRange,jdbcType=VARCHAR},
+		#{allScore,jdbcType=NUMERIC},
+		#{orgLevel,jdbcType=VARCHAR},
+		#{orgType,jdbcType=VARCHAR},
+		#{wayPost,jdbcType=VARCHAR},
+		#{whiteList,jdbcType=VARCHAR},
+		#{blackList,jdbcType=VARCHAR},
+		#{startDate,jdbcType=DATE},
+		#{endDate,jdbcType=DATE},
+		#{wayCycle,jdbcType=VARCHAR},
+		#{editOrg,jdbcType=VARCHAR},
+		#{editRole,jdbcType=VARCHAR},
+		#{wayDesc,jdbcType=VARCHAR},
+		#{status,jdbcType=VARCHAR},
+		#{createTime,jdbcType=TIMESTAMP},
+		#{operator,jdbcType=VARCHAR},
+		#{reviewMan,jdbcType=VARCHAR},
+		#{reviewTime,jdbcType=TIMESTAMP},
+		#{reviewStatus,jdbcType=VARCHAR},
+		#{reviewOpinion,jdbcType=VARCHAR},
+		#{isExe,jdbcType=VARCHAR},
+		#{wayLevel,jdbcType=VARCHAR}
+		)
+	</insert>
+	<insert id="insertMoWayPersonByMap" parameterType="java.util.HashMap">
+		insert into mo_way_person(way_code, area_no,way_type, way_name, way_range,
+		all_score, org_level,
+		org_type, way_post, white_list, black_list, start_dat, end_dat, way_cycle,
+		edit_org, edit_role, way_desc, status, create_time, operator,is_exe,way_level)
+		values(
+		#{wayCode,jdbcType=VARCHAR},
+		#{areaNo,jdbcType=VARCHAR},
+		#{wayType,jdbcType=VARCHAR},
+		#{wayName,jdbcType=VARCHAR},
+		#{wayRange,jdbcType=VARCHAR},
+		#{allScore,jdbcType=NUMERIC},
+		#{orgLevel,jdbcType=VARCHAR},
+		#{orgType,jdbcType=VARCHAR},
+		#{wayPost,jdbcType=VARCHAR},
+		#{whiteList,jdbcType=VARCHAR},
+		#{blackList,jdbcType=VARCHAR},
+		#{startDate,jdbcType=DATE},
+		#{endDate,jdbcType=DATE},
+		#{wayCycle,jdbcType=VARCHAR},
+		#{editOrg,jdbcType=VARCHAR},
+		#{editRole,jdbcType=VARCHAR},
+		#{wayDesc,jdbcType=VARCHAR},
+		#{status,jdbcType=VARCHAR},
+		#{createTime,jdbcType=TIMESTAMP},
+		#{operator,jdbcType=VARCHAR},
+		#{isExe,jdbcType=VARCHAR},
+		#{wayLevel,jdbcType=VARCHAR}
+		
+		)
+	</insert>
+	<update id="updateMoWayPerson" parameterType="java.util.HashMap">
+		update mo_way_person set
+		way_type = #{wayType,jdbcType=VARCHAR },
+		way_name = #{wayName,jdbcType=VARCHAR},
+		WAY_RANGE = #{wayRange,jdbcType=VARCHAR},
+		way_post =#{wayPost,jdbcType=VARCHAR},
+		ALL_SCORE = #{allScore,jdbcType=NUMERIC},
+		ORG_LEVEL = #{orgLevel,jdbcType=VARCHAR},
+		ORG_TYPE = #{orgType,jdbcType=VARCHAR},
+		WHITE_LIST = #{whiteList,jdbcType=VARCHAR},
+		BLACK_LIST = #{blackList,jdbcType=VARCHAR},
+		START_DAT = #{startDate,jdbcType=DATE},
+		END_DAT = #{endDate,jdbcType=DATE},
+		WAY_CYCLE = #{wayCycle,jdbcType=VARCHAR},
+		EDIT_ORG = #{editOrg,jdbcType=VARCHAR},
+		EDIT_ROLE = #{editRole,jdbcType=VARCHAR},
+		WAY_DESC = #{wayDesc,jdbcType=VARCHAR},
+		
+		CREATE_TIME = #{createTime,jdbcType=TIMESTAMP},
+		OPERATOR = #{operator,jdbcType=VARCHAR},
+		
+		AREA_NO = #{areaNo,jdbcType=VARCHAR}
+		where way_code = #{wayCode}
+	</update>
+
+
+	<!-- 人员维度映射 -->
+	<resultMap type="com.sunline.pams.plan.bean.MoWayPersonDimension"
+		id="moWayPersonDimensionResult">
+		<result column="WAY_CODE" property="wayCode" jdbcType="VARCHAR" />
+		<result column="DIMENSION_NO" property="dimensionNo" jdbcType="VARCHAR" />
+		<result column="DIMENSION_NAME" property="dimensionName" jdbcType="VARCHAR" />
+		<result column="DIMENSION_RATE" property="dimensionRate" jdbcType="NUMERIC" />
+		<result column="SEQ_NUM" property="seqNum" jdbcType="INTEGER" />
+	</resultMap>
+
+	<!-- 查询维度 -->
+	<select id="queryMoWayPersonDimension" parameterType="java.util.HashMap"
+		resultMap="moWayPersonDimensionResult">
+		select way_code, dimension_no, dimension_name, dimension_rate, seq_num
+		from MO_WAY_PERSON_DIMENSION
+		<where>
+			<if test="wayCode!=null and wayCode!=''">
+				and way_code = #{wayCode}
+			</if>
+			<if test="dimensionName!=null and dimensionName!=''">
+				and dimension_name like #{dimensionName}
+			</if>
+		</where>
+		order by seq_num
+	</select>
+
+	<!-- 保存人员考核方案维度 -->
+	<insert id="insertMoWayPersonDimension" parameterType="com.sunline.pams.plan.bean.MoWayPersonDimension">
+		insert into mo_way_person_dimension(way_code, dimension_no,
+		dimension_name, dimension_rate, seq_num)
+		values
+		(
+			#{wayCode,jdbcType=VARCHAR},
+			#{dimensionNo,jdbcType=VARCHAR},
+			#{dimensionName,jdbcType=VARCHAR},
+			#{dimensionRate,jdbcType=NUMERIC},
+			#{seqNum,jdbcType=NUMERIC}
+			)
+	</insert>
+	<insert id="insertMoWayPersonDimensionByMap" parameterType="java.util.HashMap">
+		insert into mo_way_person_dimension(way_code, dimension_no,
+		dimension_name, dimension_rate, seq_num)
+		values(
+		#{wayCode,jdbcType=VARCHAR},
+			#{dimensionNo,jdbcType=VARCHAR},
+			#{dimensionName,jdbcType=VARCHAR},
+			#{dimensionRate,jdbcType=NUMERIC},
+			#{seqNum,jdbcType=NUMERIC}
+		)
+	</insert>
+
+	<!-- 行员指标映射 -->
+	<resultMap type="com.sunline.pams.plan.bean.MoWayPersonKpi"
+		id="moWayPersonKpiResult">
+		<result column="way_code" property="wayCode" jdbcType="VARCHAR" />
+		<result column="seq_num" property="seqNum" jdbcType="INTEGER" />
+		<result column="kpi_str" property="kpiStr" jdbcType="VARCHAR" />
+		<result column="kpi_str_cn" property="kpiStrCn" jdbcType="VARCHAR" />
+		<result column="dimension_no" property="dimensionNo" jdbcType="VARCHAR" />
+		<result column="rate" property="rate" jdbcType="NUMERIC" />
+		<result column="appraise_method" property="appraiseMethod"
+			jdbcType="VARCHAR" />
+		<result column="model_code" property="modelCode" jdbcType="VARCHAR" />
+		<result column="model_formula" property="modelFormula"
+			jdbcType="VARCHAR" />
+		<result column="model_fc" property="modelFc" jdbcType="VARCHAR" />
+		<result column="way_src" property="waySrc" jdbcType="VARCHAR" />
+		<result column="src_code" property="srcCode" jdbcType="VARCHAR" />
+		<result column="src_rule" property="srcRule" jdbcType="VARCHAR" />
+		<result column="alias_name" property="aliasName" jdbcType="VARCHAR" />
+	</resultMap>
+
+	<select id="queryMoWayPersonKpi" parameterType="java.util.HashMap"
+		resultMap="moWayPersonKpiResult">
+		select a.way_code, a.seq_num, a.kpi_str, a.kpi_str_cn, a.dimension_no,
+		a.rate,
+		a.appraise_method, b.MODEL_NAME as model_code, a.model_formula, a.model_fc, a.way_src,
+		a.src_code, a.src_rule,a.alias_name
+		from MO_WAY_PERSON_KPI a
+		left join MO_WAY_MODEL b
+		on a.model_code=b.model_code
+		<where>
+			<if test="wayCode!=null and wayCode!=''">
+				and a.way_code = #{wayCode}
+			</if>
+			<if test="seqNum!=null and seqNum!=''">
+				and a.seq_num = #{seqNum}
+			</if>
+			<if test="dimensionNo!=null and dimensionNo!=''">
+				and a.dimension_no = #{dimensionNo}
+			</if>
+			<if test="kpiStrCn!=null and kpiStrCn!=''">
+				and a.kpi_str_cn like #{kpiStrCn}
+			</if>
+		</where>
+		order by a.seq_num
+	</select>
+
+	<!-- 保存机构考核方案指标 -->
+	<insert id="insertMoWayPersonKpi" parameterType="com.sunline.pams.plan.bean.MoWayPersonKpi">
+		insert into mo_way_person_kpi(way_code, seq_num, kpi_str, kpi_str_cn,
+		dimension_no, rate, appraise_method, model_code, model_formula,
+		model_fc, way_src, src_code, src_rule,alias_name)
+		values
+		(
+			#{wayCode,jdbcType=VARCHAR},
+			#{seqNum,jdbcType=NUMERIC},
+			#{kpiStr,jdbcType=VARCHAR},
+			#{kpiStrCn,jdbcType=VARCHAR},
+			#{dimensionNo,jdbcType=VARCHAR},
+			#{rate,jdbcType=NUMERIC},
+			#{appraiseMethod,jdbcType=VARCHAR},
+			#{modelCode,jdbcType=VARCHAR},
+			#{modelFormula,jdbcType=VARCHAR},
+			#{modelFc,jdbcType=VARCHAR},
+			#{waySrc,jdbcType=VARCHAR},
+			#{srcCode,jdbcType=VARCHAR},
+			#{srcRule,jdbcType=VARCHAR},
+			#{aliasName,jdbcType=VARCHAR}
+		)
+	</insert>
+	<insert id="insertMoWayPersonKpiByMap" parameterType="java.util.HashMap">
+		insert into mo_way_person_kpi(way_code, seq_num, kpi_str, kpi_str_cn,
+		dimension_no, rate, appraise_method, model_code, model_formula,
+		model_fc, way_src, src_code, src_rule,alias_name)
+		values(
+		#{wayCode,jdbcType=VARCHAR},
+			#{seqNum,jdbcType=NUMERIC},
+			#{kpiStr,jdbcType=VARCHAR},
+			#{kpiStrCn,jdbcType=VARCHAR},
+			#{dimensionNo,jdbcType=VARCHAR},
+			#{rate,jdbcType=NUMERIC},
+			#{appraiseMethod,jdbcType=VARCHAR},
+			#{modelCode,jdbcType=VARCHAR},
+			#{modelFormula,jdbcType=VARCHAR},
+			#{modelFc,jdbcType=VARCHAR},
+			#{waySrc,jdbcType=VARCHAR},
+			#{srcCode,jdbcType=VARCHAR},
+			#{srcRule,jdbcType=VARCHAR},
+			#{aliasName,jdbcType=VARCHAR}
+		)
+	</insert>
+
+	<!-- 物理删除人员方案 -->
+	<delete id="deleteWayPersonByCode" parameterType="java.util.HashMap">
+		delete from mo_way_PERSON where WAY_CODE=#{wayCode}
+	</delete>
+
+	<!-- 物理删除人员方案维度 -->
+	<delete id="deleteWayPersonDimensionByCode" parameterType="java.util.HashMap">
+		delete from MO_WAY_PERSON_DIMENSION where WAY_CODE=#{wayCode}
+	</delete>
+
+	<!-- 物理删除人员方案指标 -->
+	<delete id="deleteWayPersonKpiByCode" parameterType="java.util.HashMap">
+		delete from MO_WAY_PERSON_KPI where WAY_CODE=#{wayCode}
+	</delete>
+
+	<!-- 评分模型 -->
+	<resultMap type="com.sunline.pams.plan.bean.MoWayModel" id="moWayModelResult">
+		<result column="model_code" property="modelCode" />
+		<result column="model_name" property="modelName" />
+		<result column="model_fc" property="modelFc" />
+		<result column="model_formula" property="modelFormula" />
+		<result column="model_desc" property="modelDesc" />
+		<result column="model_order" property="modelOrder" />
+		<result column="status" property="status" />
+		<result column="create_time" property="createTime" />
+		<result column="operator" property="operator" />
+	</resultMap>
+
+	<select id="queryMoWayModel" parameterType="java.util.HashMap"
+		resultMap="moWayModelResult">
+		select model_code, model_name, model_fc, model_formula, model_desc,
+		model_order, status, create_time, operator
+		from mo_way_model
+		<where>
+			<if test="modelCode !=null and modelCode != ''">
+				and model_code like #{modelCode}
+			</if>
+			<if test="model_Name != null and model_Name != ''">
+				and model_Name like #{modelName}
+			</if>
+			<if test="status != null and status != ''">
+				and status = #{status}
+			</if>
+			<if test="wayType != null and wayType != ''">
+				and WAY_TYPE = #{wayType}
+			</if>
+		</where>
+		order by model_order
+	</select>
+
+	<resultMap type="java.util.HashMap" id="knpParam">
+		<result column="paratp" property="paratp" />
+		<result column="paracd" property="paracd" />
+		<result column="parana" property="parana" />
+	</resultMap>
+
+	<select id="queryPamsKnpParameter" resultMap="knpParam">
+ 		<![CDATA[
+ 		select paratp, paracd, parana 
+ 		from pcmc_knp_para 
+ 		where subscd = 'pams' 
+ 		and paracd <> '%'
+ 		]]>
+	</select>
+
+	<!-- 根据定量指标名称获取指标编码 -->
+	<select id="getKoKpiCodeByName" parameterType="java.util.HashMap"
+		resultType="java.lang.String">
+		select kpi_code from mo_kpi_info where kpi_name = #{kpiName} and area_no =
+		#{areaNo}
+		union
+		select kpi_code from mo_kpi_info where kpi_name = #{kpiName} and area_no =
+		'0000'
+	</select>
+
+	<!-- 根据定性指标名称获取指标编码 -->
+	<select id="getKsKpiCodeByName" parameterType="java.util.HashMap"
+		resultType="java.lang.String">
+		select kpi_code from mo_kpi_subjective where kpi_name = #{kpiName} and
+		area_no = #{areaNo}
+	</select>
+
+
+	<resultMap type="java.util.HashMap" id="paraMap">
+		<result column="PARACD" property="paraCd"/>
+		<result column="PARANA" property="paraNa"/>
+	</resultMap>
+	<!-- 根据机构参数名称获取机构参数编码O -->
+	<select id="getOrgSumWayParaCode" parameterType="java.util.HashMap"
+		resultMap="paraMap" >
+		SELECT PARACD AS PARACD,PARANA AS PARANA
+		FROM PCMC_KNP_PARA
+		WHERE PARATP = 'orgSumWay'
+		and PARANA = #{paraNa}
+	</select>
+
+	<!-- 根据机构参数名称获取机构参数编码O -->
+	<select id="getSumDateParaCode" parameterType="java.util.HashMap"
+		resultMap="paraMap" >
+		SELECT PARACD AS PARACD,PARANA AS PARANA
+		FROM PCMC_KNP_PARA
+		where paratp = 'sumDate'
+		and PARANA = #{paraNa}
+	</select>
+
+	<!-- 方案计算 -->
+	<!-- 查询机构考核方案 -->
+	<select id="queryFormalOrgWaylistPage" parameterType="java.util.HashMap"
+		resultMap="moWayOrgResult">
+		select way_code, way_type,area_no, way_name, way_range, all_score,
+		org_level,
+		org_type, white_list, black_list, start_dat, end_dat, way_cycle,
+		edit_org, edit_role, way_desc, status, create_time, operator,
+		review_man, review_time, review_status, review_opinion, is_exe
+		from mo_way_org
+		<where>
+			<if test="wayCode != null and wayCode != ''">
+				and way_code = #{wayCode}
+			</if>
+			<if test="wayType!=null and wayType != ''">
+				and way_type = #{wayType}
+			</if>
+			<if test="startDate!=null">
+				and start_dat &gt;= #{startDate}
+			</if>
+			<if test="endDate != null">
+				and start_dat &lt;= #{endDate}
+			</if>
+			<if test="status != null and status != '' ">
+				and status = #{status}
+			</if>
+		</where>
+		order by way_code
+	</select>
+
+	<!-- 查询行员考核方案 -->
+	<select id="queryFormalCmWaylistPage" parameterType="java.util.HashMap"
+		resultMap="moWayOrgResult">
+		select way_code, way_type,area_no, way_name, way_range, all_score,
+		org_level,
+		org_type, white_list, black_list, start_dat, end_dat, way_cycle,
+		edit_org, edit_role, way_desc, status, create_time, operator,
+		review_man, review_time, review_status, review_opinion, is_exe
+		from mo_way_person
+		<where>
+			<if test="wayCode != null and wayCode != ''">
+				and way_code = #{wayCode}
+			</if>
+			<if test="wayType!=null and wayType != ''">
+				and way_type = #{wayType}
+			</if>
+			<if test="startDate!=null">
+				and start_dat &gt;= #{startDate}
+			</if>
+			<if test="endDate != null">
+				and start_dat &lt;= #{endDate}
+			</if>
+			<if test="status != null and status != '' ">
+				and status = #{status}
+			</if>
+		</where>
+		order by way_code
+	</select>
+
+	<!-- 查询机构考核方案指标 -->
+	<select id="getOrgWayKpi" parameterType="java.util.HashMap"
+		resultType="java.util.HashMap">
+		SELECT SRC_CODE,WAY_SRC,KPI_STR_CN
+		FROM MO_WAY_ORG_KPI
+		<where>
+			<if test=" wayCode != null and wayCode != '' ">
+				AND WAY_CODE=#{wayCode}
+			</if>
+		</where>
+	</select>
+
+	<!-- 查询人员考核方案指标 -->
+	<select id="getPerWayKpi" parameterType="java.util.HashMap"
+		resultType="java.util.HashMap">
+		SELECT KPI_STR,WAY_SRC,KPI_STR_CN
+		FROM MO_WAY_PERSON_KPI
+		<where>
+			<if test=" wayCode != null and wayCode != '' ">
+				AND WAY_CODE=#{wayCode}
+			</if>
+		</where>
+	</select>
+
+	<!-- 查询人员考核方案 -->
+	<select id="queryFormalPerWaylistPage" parameterType="java.util.HashMap"
+		resultMap="moWayPersonResult">
+		select way_code,area_no, way_type, way_name, way_range, all_score,
+		org_level,
+		org_type,way_post, white_list, black_list, start_dat, end_dat, way_cycle,
+		edit_org, edit_role, way_desc, status, create_time, operator,
+		review_man, review_time, review_status, review_opinion, is_exe
+		from mo_way_person
+		<where>
+			<if test="wayCode != null and wayCode != ''">
+				and way_code = #{wayCode}
+			</if>
+			<if test="wayName != null and wayName != ''">
+				and way_name like #{wayName}
+			</if>
+			<if test="wayNameLike != null and wayNameLike != ''">
+				and way_name like #{wayNameLike}
+			</if>
+			<if test="wayType!=null and wayType != ''">
+				and way_type = #{wayType}
+			</if>
+			<if test="startDate!=null">
+				and start_dat &gt;= #{startDate}
+			</if>
+			<if test="endDate">
+				and start_dat &lt;= #{endDate}
+			</if>
+			<if test="status != null and status != '' ">
+				and status = #{status}
+			</if>
+		</where>
+		order by way_code
+	</select>
+
+	<!-- 查询考核方案指标 -->
+	<select id="getWayPerKpiAndObj" parameterType="java.util.HashMap"
+		resultType="java.util.HashMap">
+		SELECT SRC_CODE,WAY_SRC,KPI_STR_CN
+		FROM MO_WAY_PERSON_KPI
+		WHERE
+		<if test=" wayCode != null and wayCode != '' ">
+			WAY_CODE=#{wayCode}
+		</if>
+	</select>
+
+	<!-- 执行解析出来的考核对象sql -->
+	<select id="exeQueryWayObjSql" parameterType="java.util.HashMap"
+		resultType="java.util.HashMap">
+		${rangeSql}
+	</select>
+
+	<insert id="insertWayExec" parameterType="com.sunline.pams.plan.bean.MoWayExec">
+		insert into MO_WAY_EXEC
+		(EXEC_ID,WAY_OBJ_TYPE,WAY_CODE,AREA_NO,WAY_NAME,EXEC_LEVEL,OPERATOR,
+		OBJ_STR,KPI_STR,DATA_DATE,IS_KEEP,EXE_STATUS,NUM) values
+		(#{execID,jdbcType=VARCHAR},#{wayObjType,jdbcType=VARCHAR},#{wayCode,jdbcType=VARCHAR},
+		#{areaNo,jdbcType=VARCHAR},#{wayName,jdbcType=VARCHAR},
+			#{execLevel,jdbcType=NUMERIC},#{operator,jdbcType=VARCHAR},#{objStr,jdbcType=VARCHAR},
+			#{kpiStr,jdbcType=VARCHAR},#{dataDate,jdbcType=DATE},#{isKeep,jdbcType=VARCHAR},#{exeStatus,jdbcType=VARCHAR},#{num,jdbcType=NUMERIC})
+	</insert>
+
+
+
+
+
+	<!-- 上传excel，处理失败，删除记录 -->
+	<delete id="plan_del_upfile_record" parameterType="java.util.HashMap">
+		DELETE FROM OAMS_FILEINFO WHERE FILEID=#{fileid}
+	</delete>
+
+	<!-- 判断方案的周期是否合法 -->
+	<select id="plan_org_is_legal" parameterType="java.util.HashMap"
+		resultType="java.util.HashMap">
+		select CYC_CODE,CYC_NAME,CYC_UNIT_ID
+		from MO_PLAN_CYC
+		where CYC_START_DAT=#{cycstartdat} and CYC_END_DAT=#{cycenddat}
+	</select>
+
+	<!-- 获取分阶段考核方式 -->
+	<select id="plan_org_get_seg_type" parameterType="java.util.HashMap"
+		resultType="java.util.HashMap">
+		select DICT_CODE from SYS_PUB_DICT WHERE DICT_NAME=#{segtype} AND
+		DICT_TYPE='plancycunit'
+	</select>
+
+	<!-- 获取分阶段方案 -->
+	<select id="plan_org_get_cyc" parameterType="java.util.HashMap"
+		resultType="java.util.HashMap">
+		select CYC_CODE,CYC_NAME,CYC_UNIT_ID ,CYC_START_DAT,CYC_END_DAT
+		from MO_PLAN_CYC
+		where CYC_START_DAT &gt;=#{cycstartdat} and CYC_UNIT_ID=#{cycunitid} and
+		CYC_END_DAT &lt;=#{cycenddat}
+	</select>
+
+	<!-- 根据用户名称获取用户id -->
+	<select id="plan_org_get_username_by_id" parameterType="java.util.HashMap"
+		resultType="java.util.HashMap">
+		SELECT USERID
+		FROM PCMC_USER
+		WHERE USERNAME=#{username}
+		and DISABLE != '1'
+	</select>
+
+	<!-- 插入机构考核方案 -->
+	<insert id="plan_insert_org_way" parameterType="java.util.HashMap">
+		insert into MO_EWM_ORG
+		(WAY_CODE,WAY_NAME,CYC_CODE,SEG_FLAG,SEG_TYPE,START_DAT,
+		END_DAT,WAY_DESC,REMARK,BLD_DAT,BLD_PSN_ID,IS_FORMAL) values
+		(#{waycode},#{wayname},#{cyccode},#{segflag},#{segtype},#{startdat},#{enddat},#{waydesc},#{remark},#{blddat},
+		#{bldpsnid},#{isformal})
+	</insert>
+
+	<!-- 插入机构考核方案阶段 -->
+	<insert id="plan_insert_org_seg" parameterType="java.util.List">
+		insert into MO_EWM_ORG_SEG
+		(WAY_CODE,SEG_CODE,SEG_NAME,CYC_CODE,START_DAT,END_DAT,
+		BLD_DAT,BLD_PSN_ID) values
+		<foreach collection="list" item="item" index="index"
+			separator=",">
+			(#{item.waycode},#{item.segcode},#{item.segname},#{item.cyccode},#{item.startdat},
+			#{item.enddat},#{item.blddat},#{item.bldpsnid})
+		</foreach>
+	</insert>
+
+	<!-- 获取机构列表 -->
+	<select id="plan_org_get_org_id" parameterType="java.lang.reflect.Array"
+		resultType="java.util.HashMap">
+		SELECT DEPTID ,DEPTNAME
+		FROM PCMC_DEPT
+		WHERE DISABLE = '0' and DEPTNAME IN
+		<foreach collection="array" item="item" index="" open="("
+			close=")" separator=",">
+			#{item}
+		</foreach>
+	</select>
+
+	<!-- 获取考核机构类别 -->
+	<select id="plan_org_get_org_type" parameterType="java.util.HashMap"
+		resultType="java.util.HashMap">
+		select PARACD
+		from pcmc_knp_para
+		where PARATP='orgtype' and PARANA=#{parana}
+	</select>
+
+	<!-- 获取机构业务分类类别 -->
+	<select id="plan_org_get_org_buss_type" parameterType="java.util.HashMap"
+		resultType="java.util.HashMap">
+		select PARACD
+		from pcmc_knp_para
+		where PARATP='orgbusstype' and PARANA=#{parana}
+	</select>
+
+	<!-- 获取子机构列表 -->
+	<select id="plan_org_get_childorg_id" parameterType="java.util.HashMap"
+		resultType="java.util.HashMap">
+		SELECT DEPTID ,DEPTNAME
+		FROM PCMC_DEPT
+		WHERE PDEPTID =#{deptid} and DISABLE = '0'
+		<if test=" orgtype!=null and orgtype!='' ">
+			AND ORGTYPE=#{orgtype}
+		</if>
+		<if test=" orgbusstype!=null and orgbusstype!='' ">
+			AND ORGBUSSTYPE=#{orgbusstype}
+		</if>
+	</select>
+
+	<!-- 插入机构考核执行 -->
+	<insert id="plan_insert_eem_org" parameterType="java.util.HashMap">
+		insert into MO_EEM_ORG (EEM_CODE,WAY_CODE,SEG_CODE) values
+		(#{eemcode},#{waycode},#{segcode})
+	</insert>
+
+	<!-- 插入机构考核方案执行-适用机构 -->
+	<insert id="plan_insert_eem_fit_org" parameterType="java.util.List">
+		insert into MO_EEM_FIT_ORG (EEM_CODE,ORG_ID) values
+		<foreach collection="list" item="item" index="index"
+			separator=",">
+			(#{item.eemcode},#{item.orgid})
+		</foreach>
+	</insert>
+
+	<!-- 插入机构考核方案执行-适用机构 黑白名单 -->
+	<insert id="plan_insert_eem_fit_org_filter" parameterType="java.util.List">
+		insert into MO_EEM_FIT_ORG_FILTER (EEM_CODE,ORG_ID,FILTER_TYPE) values
+		<foreach collection="list" item="item" index="index"
+			separator=",">
+			(#{item.eemcode},#{item.orgid},#{item.filtertype})
+		</foreach>
+	</insert>
+
+	<!-- 获取指标代码 -->
+	<select id="plan_org_get_kpi_id" parameterType="java.util.HashMap"
+		resultType="java.util.HashMap">
+		SELECT KPI_CODE ,KPI_NAME
+		FROM MO_KPI_INFO
+		WHERE KPI_NAME=#{targetname}
+	</select>
+
+	<!-- 获取评价模型信息 -->
+	<select id="plan_org_get_model_info" parameterType="java.util.HashMap"
+		resultType="java.util.HashMap">
+		SELECT SCR_MODEL_CODE ,SCR_EXP
+		FROM MO_SCR_MODEL
+		WHERE SCR_MODEL_NAME=#{modelname}
+	</select>
+
+	<!-- 插入维度 -->
+	<insert id="plan_org_insert_dimension" parameterType="java.util.HashMap">
+		insert into MO_EWM_ORG_DIMENSION
+		(WAY_CODE,DIMENSION_NO,DIMENSION_NAME,DIMENSION_RATE,SEQ_NUM) values
+		(#{waycode},#{dimensionno},#{dimensionname},#{dimensionrate},#{seqnum})
+	</insert>
+
+	<!-- 批量插入维度指标 -->
+	<insert id="plan_org_insert_kpi" parameterType="java.util.List">
+		insert into MO_EWM_ORG_TRG_RATE
+		(WAY_CODE,TARGET_CODE,RATE,SCR_MODEL_CODE,SQL_EXP,BLD_DAT,BLD_PSN_ID,DIMENSION_NO,SEQ_NUM)
+		values
+		<foreach collection="list" item="item" index="index"
+			separator=",">
+			(
+			#{item.waycode},#{item.targetcode},#{item.rate},#{item.scrmodelcode},#{item.sqlexp},
+			#{item.blddat},#{item.bldpsnid},#{item.dimensionno},#{item.seqnum} )
+		</foreach>
+	</insert>
+
+	<!-- 批量插入机构考核-导出辅助信息 -->
+	<insert id="plan_org_insert_assit" parameterType="java.util.List">
+		insert into MO_EWM_ORG_ASSIST
+		(WAY_CODE,DIMENSION_NO,TARGET_CODE,ORG,ORG_TYPE,ORG_BUSS_TYPE,WHITE,BLACK,DIMENSION_DX,DIMENSION_DX_RATE,APPRAISE_METHOD,TEMPLET_CONFIG)
+		values
+		<foreach collection="list" item="item" index="index"
+			separator=",">
+			(
+			#{item.waycode},#{item.dimensionno},#{item.targetcode},#{item.org},#{item.orgtype},#{item.orgbusstype},
+			#{item.white},#{item.black},#{item.dimensiondx},#{item.dimensiondxrate},#{item.appraisemethod},#{item.templetconfig}
+			)
+		</foreach>
+	</insert>
+
+	<!-- 批量插入人员考核-导出辅助信息 -->
+	<insert id="plan_cm_insert_assit" parameterType="java.util.List">
+		insert into MO_EWM_CM_ASSIST
+		(WAY_CODE,DIMENSION_NO,TARGET_CODE,ORG,STAFF_POST,ORG_TYPE,ORG_BUSS_TYPE,WHITE,BLACK,DIMENSION_DX,DIMENSION_DX_RATE,APPRAISE_METHOD,TEMPLET_CONFIG)
+		values
+		<foreach collection="list" item="item" index="index"
+			separator=",">
+			(
+			#{item.waycode},#{item.dimensionno},#{item.targetcode},#{item.org},#{item.staffpost},#{item.orgtype},#{item.orgbusstype},
+			#{item.white},#{item.black},#{item.dimensiondx},#{item.dimensiondxrate},#{item.appraisemethod},#{item.templetconfig}
+			)
+		</foreach>
+	</insert>
+
+	<!-- 获取员工岗位编号 -->
+	<select id="plan_cm_get_manager_post" parameterType="java.util.HashMap"
+		resultType="java.util.HashMap">
+		select PARACD
+		from pcmc_knp_para
+		where PARATP='managerpost' and PARANA=#{parana}
+	</select>
+
+	<!-- 根据机构，获取员工列表 -->
+	<select id="plan_cm_get_staff_id" parameterType="java.util.HashMap"
+		resultType="java.util.HashMap">
+		SELECT MANAGER_NO ,MANAGER_NAME
+		FROM SYS_PUB_MANAGER
+		WHERE ORG_NO=#{deptid} and START_DATE &lt; #{nowdate} and END_DATE &gt;
+		#{nowdate}
+		<if test=" busstype!=null and busstype!='' ">
+			and POST=#{busstype}
+		</if>
+	</select>
+
+	<!-- 根据机构，获取白名单员工列表 -->
+	<select id="plan_cm_get_white_staff" parameterType="java.lang.reflect.Array"
+		resultType="java.util.HashMap">
+		SELECT MANAGER_NO ,MANAGER_NAME,POST
+		FROM SYS_PUB_MANAGER
+		WHERE START_DATE &lt; CURDATE() and END_DATE &gt; CURDATE()
+		and MANAGER_NAME in
+		<foreach collection="array" item="item" index="" open="("
+			close=")" separator=",">
+			#{item}
+		</foreach>
+	</select>
+
+	<!-- 批量插入人员考核方案维度指标 -->
+	<insert id="plan_cm_insert_kpi" parameterType="java.util.List">
+		insert into MO_EWM_CM_TRG_RATE
+		(WAY_CODE,TARGET_CODE,RATE,SCR_MODEL_CODE,SQL_EXP,BLD_DAT,BLD_PSN_ID,DIMENSION_NO,SEQ_NUM)
+		values
+		<foreach collection="list" item="item" index="index"
+			separator=",">
+			(
+			#{item.waycode},#{item.targetcode},#{item.rate},#{item.scrmodelcode},#{item.sqlexp},
+			#{item.blddat},#{item.bldpsnid},#{item.dimensionno},#{item.seqnum} )
+		</foreach>
+	</insert>
+
+	<!-- 插入人员考核方案维度 -->
+	<insert id="plan_cm_insert_dimension" parameterType="java.util.HashMap">
+		insert into MO_EWM_CM_DIMENSION
+		(WAY_CODE,DIMENSION_NO,DIMENSION_NAME,DIMENSION_RATE,SEQ_NUM) values
+		(#{waycode},#{dimensionno},#{dimensionname},#{dimensionrate},#{seqnum})
+	</insert>
+
+	<!-- 插入人员考核执行 -->
+	<insert id="plan_insert_eem_cm" parameterType="java.util.HashMap">
+		insert into MO_EEM_CM (EEM_CODE,WAY_CODE,SEG_CODE) values
+		(#{eemcode},#{waycode},#{segcode})
+	</insert>
+
+	<!-- 插入人员考核方案执行-适用人员 -->
+	<insert id="plan_insert_eem_fit_cm" parameterType="java.util.List">
+		insert into MO_EEM_FIT_STAFF (EEM_CODE,STAFF_ID) values
+		<foreach collection="list" item="item" index="index"
+			separator=",">
+			(#{item.eemcode},#{item.staffid})
+		</foreach>
+	</insert>
+
+	<!-- 插入人员考核方案执行-适用人员 黑白名单 -->
+	<insert id="plan_insert_eem_fit_cm_filter" parameterType="java.util.List">
+		insert into MO_EEM_FIT_STAFF_FILTER (EEM_CODE,STAFF_ID,FILTER_TYPE)
+		values
+		<foreach collection="list" item="item" index="index"
+			separator=",">
+			(#{item.eemcode},#{item.staffid},#{item.filtertype})
+		</foreach>
+	</insert>
+
+	<!-- 插入人员考核方案执行-适用岗位 -->
+	<insert id="plan_insert_eem_fit_cm_post" parameterType="java.util.HashMap">
+		insert into MO_EEM_FIT_STAFF_POST (EEM_CODE,POST) values
+		(#{eemcode},#{post})
+	</insert>
+
+	<!-- 插入人员考核方案阶段 -->
+	<insert id="plan_insert_cm_seg" parameterType="java.util.List">
+		insert into MO_EWM_CM_SEG
+		(WAY_CODE,SEG_CODE,SEG_NAME,CYC_CODE,START_DAT,END_DAT,
+		BLD_DAT,BLD_PSN_ID) values
+		<foreach collection="list" item="item" index="index"
+			separator=",">
+			(#{item.waycode},#{item.segcode},#{item.segname},#{item.cyccode},#{item.startdat},
+			#{item.enddat},#{item.blddat},#{item.bldpsnid})
+		</foreach>
+	</insert>
+
+	<!-- 插入人员考核方案 -->
+	<insert id="plan_insert_cm_way" parameterType="java.util.HashMap">
+		insert into MO_EWM_CM
+		(WAY_CODE,WAY_NAME,CYC_CODE,SEG_FLAG,SEG_TYPE,START_DAT,
+		END_DAT,WAY_DESC,REMARK,BLD_DAT,BLD_PSN_ID,IS_FORMAL) values
+		(#{waycode},#{wayname},#{cyccode},#{segflag},#{segtype},#{startdat},#{enddat},#{waydesc},#{remark},#{blddat},
+		#{bldpsnid},#{isformal})
+	</insert>
+
+	<!-- 导出机构考核方案功能-获取机构方案信息 -->
+	<select id="plan_org_export_get_wayinfo" parameterType="java.lang.reflect.Array"
+		resultType="java.util.HashMap">
+		SELECT
+		A.WAY_CODE,A.WAY_NAME,C.DICT_NAME,A.REMARK,A.WAY_DESC,A.START_DAT,A.END_DAT,H.USERNAME,A.BLD_DAT,B.ORG,B.ORG_TYPE,B.ORG_BUSS_TYPE,
+		B.WHITE,B.BLACK,D.DIMENSION_NO,D.DIMENSION_NAME,D.SEQ_NUM,B.DIMENSION_DX,B.DIMENSION_DX_RATE,E.SEQ_NUM,G.KPI_NAME,E.RATE,
+		F.SCR_MODEL_NAME,B.APPRAISE_METHOD,B.TEMPLET_CONFIG
+		FROM MO_EWM_ORG A
+		LEFT JOIN MO_EWM_ORG_DIMENSION D ON A.WAY_CODE=D.WAY_CODE
+		LEFT JOIN SYS_PUB_DICT C ON A.SEG_TYPE=C.DICT_CODE
+		LEFT JOIN MO_EWM_ORG_TRG_RATE E ON D.DIMENSION_NO=E.DIMENSION_NO
+		LEFT JOIN MO_SCR_MODEL F ON E.SCR_MODEL_CODE=F.SCR_MODEL_CODE
+		LEFT JOIN MO_KPI_INFO G ON E.TARGET_CODE=G.KPI_CODE
+		LEFT JOIN MO_EWM_ORG_ASSIST B ON E.WAY_CODE=B.WAY_CODE AND
+		E.TARGET_CODE=B.TARGET_CODE
+		LEFT JOIN PCMC_USER H ON A.BLD_PSN_ID=H.USERID and H.DISABLE != '1'
+		WHERE A.WAY_CODE in
+		<foreach collection="array" item="item" index="" open="("
+			close=")" separator=",">
+			#{item}
+		</foreach>
+		ORDER BY A.WAY_CODE,D.SEQ_NUM ASC,E.SEQ_NUM ASC
+	</select>
+
+	<!-- 获取人员考核方案 -->
+	<select id="plan_cm_select_way_listPage" parameterType="java.util.HashMap"
+		resultType="java.util.HashMap">
+		select
+		A.WAY_CODE,A.WAY_NAME,C.DICT_NAME,A.START_DAT,A.END_DAT,B.USERNAME,A.BLD_DAT
+		from MO_EWM_CM A
+		LEFT JOIN PCMC_USER B ON A.BLD_PSN_ID=B.USERID and B.DISABLE != '1'
+		LEFT JOIN SYS_PUB_DICT C ON A.SEG_TYPE=C.DICT_CODE
+		WHERE 1=1 AND C.DICT_TYPE='plancycunit'
+		<if test=" wayname!=null and wayname!='' ">
+			AND A.WAY_NAME like '%${wayname}%'
+		</if>
+		<if test=" username!=null and username!='' ">
+			AND B.USERNAME like '%${username}%
+		</if>
+		ORDER BY A.WAY_CODE ASC
+	</select>
+
+	<!-- 导出人员考核方案功能-获取人员考核方案信息 -->
+	<select id="plan_cm_export_get_wayinfo" parameterType="java.lang.reflect.Array"
+		resultType="java.util.HashMap">
+		SELECT
+		A.WAY_CODE,A.WAY_NAME,C.DICT_NAME,A.REMARK,A.WAY_DESC,A.START_DAT,A.END_DAT,H.USERNAME,A.BLD_DAT,B.ORG,B.ORG_TYPE,B.ORG_BUSS_TYPE,B.STAFF_POST,
+		B.WHITE,B.BLACK,D.DIMENSION_NO,D.DIMENSION_NAME,D.SEQ_NUM,B.DIMENSION_DX,B.DIMENSION_DX_RATE,E.SEQ_NUM,G.KPI_NAME,E.RATE,
+		F.SCR_MODEL_NAME,B.APPRAISE_METHOD,B.TEMPLET_CONFIG
+		FROM MO_EWM_CM A
+		LEFT JOIN MO_EWM_CM_DIMENSION D ON A.WAY_CODE=D.WAY_CODE
+		LEFT JOIN SYS_PUB_DICT C ON A.SEG_TYPE=C.DICT_CODE
+		LEFT JOIN MO_EWM_CM_TRG_RATE E ON D.DIMENSION_NO=E.DIMENSION_NO
+		LEFT JOIN MO_SCR_MODEL F ON E.SCR_MODEL_CODE=F.SCR_MODEL_CODE
+		LEFT JOIN MO_KPI_INFO G ON E.TARGET_CODE=G.KPI_CODE
+		LEFT JOIN MO_EWM_CM_ASSIST B ON E.WAY_CODE=B.WAY_CODE AND
+		E.TARGET_CODE=B.TARGET_CODE
+		LEFT JOIN PCMC_USER H ON A.BLD_PSN_ID=H.USERID and H.DISABLE != '1'
+		WHERE A.WAY_CODE in
+		<foreach collection="array" item="item" index="" open="("
+			close=")" separator=",">
+			#{item}
+		</foreach>
+		ORDER BY A.WAY_CODE,D.SEQ_NUM ASC,E.SEQ_NUM ASC
+	</select>
+	
+    
+
+	<!-- 机构考核方案得分调整 指标得分查询 tangyin -->
+	<resultMap type="java.util.HashMap" id="orgKpiScoreDataInfo">
+		<result column="scoreType" property="scoreType" />
+		<result column="dname" property="dname" />
+		<result column="drate" property="drate" />
+		<result column="kpiName" property="kpiName" />
+		<result column="rate" property="rate" />
+		<result column="score" property="score" />
+		<result column="editScore" property="editScore" />
+		<result column="kpiCode" property="kpiCode" />
+		<result column="wayCode" property="wayCode" />
+		<result column="orgNo" property="orgNo" />
+		<result column="dataDate" property="dataDate" />
+	</resultMap>
+	<select id="query_org_kpi_score" parameterType="java.util.HashMap" resultMap="orgKpiScoreDataInfo">
+		select
+		    scoreType,dname,drate,kpiName,rate,score,editScore,kpiCode,wayCode,orgNo,dataDate
+		from (
+		select 'detail' scoreType,dimension.dimension_name
+		    dname,dimension.dimension_rate drate,kpi.kpi_str_cn kpiname,
+		    kpi.rate rate,detail.calc_score score,case when detail.edit_score is null then
+		    detail.CALC_SCORE else detail.edit_score end editScore,
+		    detail.kpi_code kpiCode,detail.way_code wayCode, detail.org_no
+		    orgNo,detail.data_date dataDate
+		from mo_way_org_kpi kpi left join mo_way_org_dimension dimension on
+		    dimension.dimension_no = kpi.dimension_no
+		inner join mo_way_org_detail_h detail on detail.kpi_code = kpi.src_code and
+		    way_type = #{wayType}  
+		<if test=" startDate != null and startDate != ''">
+		    and detail.data_date &gt;= #{startDate}
+		</if>
+		<if test=" endDate != null and endDate != ''">
+		    and detail.data_date &lt;= #{endDate}
+		</if>
+		<if test=" orgNo != null and orgNo != ''">
+		    and detail.org_no = #{orgNo}
+		</if>
+		 
+		<where>
+			<if test="wayCode != null and dataDate != null and orgNo != null">
+				and kpi.way_code = #{wayCode}
+			</if>
+		</where>
+		union
+		select 'total' as  scoreType,'' as dname,0 as drate,'' as kpiName,0 as rate,
+		    total.total_score as score,total.edit_score as editScore,
+		    '' as kpiCode,total.way_code as wayCode,total.org_no as orgNo,total.data_date as dataDate
+		from mo_way_org_total_h total
+		where way_type = #{wayType}
+		<if test=" wayCode != null and wayCode != ''">
+		    and total.way_code = #{wayCode}
+		</if>
+		<if test=" startDate != null and startDate != ''">
+		    and total.data_date &gt;= #{dataDate}
+		</if>
+		<if test=" endDate != null and endDate != ''">
+		    and total.data_date &lt;= #{dataDate}
+		</if>
+		<if test=" orgNo != null and orgNo != ''">
+		    and total.org_no = #{orgNo}
+		</if>
+		) t
+	</select>
+
+	<!-- 行员考核方案得分调整 指标得分查询 tangyin -->
+	<resultMap type="java.util.HashMap" id="personKpiScoreDataInfo">
+		<result column="scoreType" property="scoreType" />
+		<result column="dname" property="dname" />
+		<result column="drate" property="drate" />
+		<result column="kpiName" property="kpiName" />
+		<result column="rate" property="rate" />
+		<result column="score" property="score" />
+		<result column="editScore" property="editScore" />
+		<result column="kpiCode" property="kpiCode" />
+		<result column="wayCode" property="wayCode" />
+		<result column="personNo" property="personNo" />
+		<result column="dataDate" property="dataDate" />
+	</resultMap>
+	<select id="query_person_kpi_score" parameterType="java.util.HashMap"
+		resultMap="personKpiScoreDataInfo">
+		select
+		scoreType,dname,drate,kpiName,rate,score,editScore,kpiCode,wayCode,personNo,dataDate
+		from (
+		select 'detail' scoreType,dimension.dimension_name
+		dname,dimension.dimension_rate drate,kpi.kpi_str_cn kpiname,
+		kpi.rate rate,detail.calc_score score,case when detail.edit_score is null then
+		detail.CALC_SCORE else detail.edit_score end editScore,
+		detail.kpi_code kpiCode,detail.way_code wayCode,detail.manager_no
+		personNo,detail.data_date dataDate
+		from mo_way_person_kpi kpi
+		left join mo_way_person_dimension dimension on dimension.dimension_no =
+		kpi.dimension_no
+		inner join mo_way_person_detail_h detail on detail.kpi_code = kpi.src_code
+		and way_type = #{type} and detail.data_date = #{dataDate} and
+		detail.manager_no = #{personNo}
+		<where>
+			<if test="wayCode != null and dataDate != null and personNo != null">
+				and kpi.way_code = #{wayCode}
+			</if>
+		</where>
+		union
+		select 'total' scoreType,'' dname, 0 drate,'' kpiName,0 rate,
+		total.total_score score,total.edit_score editScore,
+		'' kpiCode,total.way_code wayCode,total.manager_no
+		personNo,total.data_date dataDate
+		from mo_way_person_total_h total
+		where way_type = #{type}
+		<if test="wayCode != null and dataDate != null and personNo != null">
+			and total.way_code = #{wayCode}
+			and total.data_date = #{dataDate}
+			and total.manager_no = #{personNo}
+		</if>
+		) t
+	</select>
+
+	<!--更新机构得分明细表 -->
+	<update id="update_org_score_detail" parameterType="java.util.HashMap">
+		update mo_way_org_detail set edit_score = #{editScore,jdbcType=NUMERIC},editor =
+		#{editor,jdbcType=VARCHAR},edit_time = #{editTime,jdbcType=TIMESTAMP}
+		<where>
+		    <if test=" dataDate != null ">
+		        and data_date = #{dataDate} 
+		    </if>
+		    <if test=" orgNo != null and orgNo != '' ">
+		        and org_no = #{orgNo} 
+		    </if>
+		    <if test=" wayCode != null and wayCode != null ">
+		        and way_code = #{wayCode} 
+		    </if>
+		    <if test=" type != null and type != null ">
+		        and way_type = #{type} 
+		    </if>
+		    <if test=" seqNum != null and seqNum != null ">
+		        and SEQ_NUM = #{seqNum} 
+		    </if>
+		</where>
+		
+	</update>
+	<!--更新机构得分明细历史表 -->
+	<update id="update_org_score_detail_his" parameterType="java.util.HashMap">
+		update mo_way_org_detail_h set edit_score = #{editScore,jdbcType=NUMERIC},editor =
+		#{editor,jdbcType=VARCHAR},edit_time = #{editTime,jdbcType=TIMESTAMP}
+		<where>
+		    <if test=" dataDate != null ">
+		        and data_date = #{dataDate} 
+		    </if>
+		    <if test=" orgNo != null and orgNo != '' ">
+		        and org_no = #{orgNo} 
+		    </if>
+		    <if test=" wayCode != null and wayCode != null ">
+		        and way_code = #{wayCode} 
+		    </if>
+		    <if test=" type != null and type != null ">
+		        and way_type = #{type} 
+		    </if>
+		    <if test=" seqNum != null and seqNum != null ">
+		        and SEQ_NUM = #{seqNum} 
+		    </if>
+		</where>
+	</update>
+	<!--更新机构总分表 -->
+	<update id="update_org_score_total" parameterType="java.util.HashMap">
+		update mo_way_org_total set edit_score = #{editScore,jdbcType=NUMERIC},editor =
+		#{editor,jdbcType=VARCHAR},edit_time = #{editTime,jdbcType=TIMESTAMP}
+		<where>
+		    <if test=" dataDate != null ">
+		        and data_date = #{dataDate} 
+		    </if>
+		    <if test=" orgNo != null and orgNo != '' ">
+		        and org_no = #{orgNo} 
+		    </if>
+		    <if test=" wayCode != null and wayCode != null ">
+		        and way_code = #{wayCode} 
+		    </if>
+		    <if test=" type != null and type != null ">
+		        and way_type = #{type} 
+		    </if>
+		</where>
+	</update>
+	<!--更新机构总分历史表 -->
+	<update id="update_org_score_total_his" parameterType="java.util.HashMap">
+		update mo_way_org_total_h set edit_score = #{editScore,jdbcType=NUMERIC},editor =
+		#{editor,jdbcType=VARCHAR},edit_time = #{editTime,jdbcType=TIMESTAMP}
+		<where>
+		    <if test=" dataDate != null ">
+		        and data_date = #{dataDate} 
+		    </if>
+		    <if test=" orgNo != null and orgNo != '' ">
+		        and org_no = #{orgNo} 
+		    </if>
+		    <if test=" wayCode != null and wayCode != null ">
+		        and way_code = #{wayCode} 
+		    </if>
+		    <if test=" type != null and type != null ">
+		        and way_type = #{type} 
+		    </if>
+		</where>
+	</update>
+
+	<!--更新行员得分明细表 -->
+	<update id="update_person_score_detail" parameterType="java.util.HashMap">
+		update mo_way_person_detail set edit_score = #{editScore,jdbcType=NUMERIC},editor =
+		#{editor,jdbcType=VARCHAR},edit_time = #{editTime,jdbcType=TIMESTAMP}
+		<where>
+		    <if test=" dataDate != null ">
+		        and data_date = #{dataDate} 
+		    </if>
+		    <if test=" managerNo != null and managerNo != '' ">
+		        and MANAGER_NO = #{managerNo} 
+		    </if>
+		    <if test=" wayCode != null and wayCode != null ">
+		        and way_code = #{wayCode} 
+		    </if>
+		    <if test=" seqNum != null and seqNum != null ">
+		        and SEQ_NUM = #{seqNum} 
+		    </if>
+		    <if test=" type != null and type != null ">
+		        and way_type = #{type} 
+		    </if>
+		</where>
+	</update>
+	<!--更新机构得分明细历史表 -->
+	<update id="update_person_score_detail_his" parameterType="java.util.HashMap">
+		update mo_way_person_detail_h set edit_score = #{editScore,jdbcType=NUMERIC},editor =
+		#{editor,jdbcType=VARCHAR},edit_time = #{editTime,jdbcType=TIMESTAMP}
+		<where>
+		    <if test=" dataDate != null ">
+		        and data_date = #{dataDate} 
+		    </if>
+		    <if test=" managerNo != null and managerNo != '' ">
+		        and MANAGER_NO = #{managerNo} 
+		    </if>
+		    <if test=" wayCode != null and wayCode != null ">
+		        and way_code = #{wayCode} 
+		    </if>
+		    <if test=" seqNum != null and seqNum != null ">
+		        and SEQ_NUM = #{seqNum} 
+		    </if>
+		    <if test=" type != null and type != null ">
+		        and way_type = #{type} 
+		    </if>
+		</where>
+	</update>
+	<!--更新机构总分表 -->
+	<update id="update_person_score_total" parameterType="java.util.HashMap">
+		update mo_way_person_total set edit_score = #{editScore,jdbcType=NUMERIC},editor =
+		#{editor,jdbcType=VARCHAR},edit_time = #{editTime,jdbcType=TIMESTAMP}
+		<where>
+		    <if test=" dataDate != null ">
+		        and data_date = #{dataDate} 
+		    </if>
+		    <if test=" managerNo != null and managerNo != '' ">
+		        and MANAGER_NO = #{managerNo} 
+		    </if>
+		    <if test=" wayCode != null and wayCode != null ">
+		        and way_code = #{wayCode} 
+		    </if>
+
+		    <if test=" type != null and type != null ">
+		        and way_type = #{type} 
+		    </if>
+		</where>
+	</update>
+	<!--更新机构总分历史表 -->
+	<update id="update_person_score_total_his" parameterType="java.util.HashMap">
+		update mo_way_person_total_h set edit_score = #{editScore,jdbcType=NUMERIC},editor =
+		#{editor,jdbcType=VARCHAR},edit_time = #{editTime,jdbcType=TIMESTAMP}
+		<where>
+		    <if test=" dataDate != null ">
+		        and data_date = #{dataDate} 
+		    </if>
+		    <if test=" managerNo != null and managerNo != '' ">
+		        and MANAGER_NO = #{managerNo} 
+		    </if>
+		    <if test=" wayCode != null and wayCode != null ">
+		        and way_code = #{wayCode} 
+		    </if>
+
+		    <if test=" type != null and type != null ">
+		        and way_type = #{type} 
+		    </if>
+		</where>
+	</update>
+	
+	<!-- 机构方案名称查询 -->
+	<select id="query_org_wayname" parameterType="java.util.HashMap" resultType="java.lang.String" >
+		select way_name as wayName 
+		from mo_way_org 
+		where way_code = #{wayCode}
+	</select>
+
+	<!-- 人员方案名称查询 -->
+	<select id="query_person_wayname" parameterType="java.util.HashMap"
+		resultType="java.lang.String" >
+		select way_name as wayName from mo_way_person where way_code = #{wayCode} 
+	</select>
+
+	<!-- 机构考核方案信息查询 -->
+	<select id="queryOrgBasWayInfolistpage" parameterType="java.util.HashMap"
+		resultType="java.lang.String" >
+		select way_name as wayName from mo_way_org where way_code = #{wayCode} 
+	</select>
+
+	
+	
+	
+	
+	<resultMap type="java.util.HashMap" id="queryMoWayKpi_map">
+		<result column="WAYCODE" property="wayCode"/>
+		<result column="SRCCODE" property="srcCode"/>
+	</resultMap>
+	<select id="queryMoWayKpi" parameterType="java.util.HashMap"
+		resultMap="queryMoWayKpi_map" >
+		SELECT A.WAYCODE AS WAYCODE,A.SRCCODE AS SRCCODE FROM (
+		SELECT WAY_CODE AS WAYCODE,SRC_CODE AS SRCCODE FROM MO_WAY_ORG_KPI WHERE
+		WAY_SRC IN ('WU','WO')
+		UNION
+		SELECT WAY_CODE AS WAYCODE,SRC_CODE AS SRCCODE FROM MO_WAY_PERSON_KPI
+		WHERE WAY_SRC IN ('WU','WO')
+		) A
+		<where>
+			<if test="filter != null and filter != '' ">
+				AND A.SRCCODE IN ${filter}
+			</if>
+		</where>
+	</select>
+	
+	
+	<resultMap type="java.util.HashMap" id="queryOrgBscWaylistPage_map">
+		<result column="WAY_CODE" property="wayCode"/>
+		<result column="WAY_NAME" property="wayName"/>
+		<result column="START_DAT" property="startDate"/>
+		<result column="END_DAT" property="endDate"/>
+		<result column="WAY_CYCLE" property="wayCycle"/>
+		<result column="EDIT_ORG" property="editOrg"/>
+		<result column="CREATE_TIME" property="createTime"/>
+		<result column="STATUS" property="status"/>
+	</resultMap>
+	<!-- 机构考核方案得分查询查询出方案信息 -->
+	<select id="queryOrgBscWaylistPage" parameterType="java.util.HashMap"
+		resultMap="queryOrgBscWaylistPage_map" >
+		SELECT A.WAY_CODE AS WAYCODE,A.WAY_NAME AS WAYNAME,A.START_DAT AS 
+		STARTDATE,A.END_DAT AS ENDDATE,
+		A.WAY_CYCLE AS WAYCYCLE,A.EDIT_ORG AS EDITORG,A.CREATE_TIME AS CREATETIME,A.STATUS
+		AS STATUS
+		from mo_way_org a
+		where exists
+		(
+		select 1 from mo_way_org_total_h b
+		where a.WAY_CODE = b.WAY_CODE
+		and b.ORG_NO in (select deptcode from v_auth_org where userid =
+		#{userId})
+		)and a.WAY_TYPE = 'BSC'
+
+		and a.status &lt;&gt; 'DEL'
+		<if test="wayName != null and wayName != '' ">
+			and a.WAY_NAME like #{wayName}
+		</if>
+		<if test="status != null and status != '' ">
+			and a.STATUS = #{status}
+		</if>
+		<if test="startDate != null and startDate != '' ">
+			and a.START_DAT >= #{startDate}
+		</if>
+
+		<if test="endDate != null and endDate != '' ">
+			and #{endDate} >= a.END_DAT
+		</if>
+	</select>
+
+	<!-- 机构薪酬方案得分查询查询出方案信息 -->
+	<select id="queryOrgPayWaylistPage" parameterType="java.util.HashMap"
+		resultMap="queryOrgBscWaylistPage_map" >
+		SELECT A.WAY_CODE AS WAYCODE,A.WAY_NAME AS WAYNAME,A.START_DAT
+		AS STARTDATE,A.END_DAT AS ENDDATE,
+		A.WAY_CYCLE AS WAYCYCLE,A.EDIT_ORG AS EDITORG,A.CREATE_TIME AS CREATETIME,A.STATUS
+		AS STATUS
+		from mo_way_org a
+		where exists
+		(
+		select 1 from mo_way_org_total_h b
+		where a.WAY_CODE = b.WAY_CODE
+		and b.ORG_NO in (select deptcode from v_auth_org where userid =
+		#{userId})
+		)and a.WAY_TYPE = 'PAY'
+
+		and a.status &lt;&gt; 'DEL'
+		<if test="wayName != null and wayName != '' ">
+			and a.WAY_NAME like #{wayName}
+		</if>
+		<if test="status != null and status != '' ">
+			and a.STATUS = #{status}
+		</if>
+		<if test="startDate != null and startDate != '' ">
+			and a.START_DAT >= #{startDate}
+		</if>
+
+		<if test="endDate != null and endDate != '' ">
+			and #{endDate} >= a.END_DAT
+		</if>
+	</select>
+
+
+	<!-- 行员考核方案得分查询查询出方案信息 -->
+	<select id="queryCmBscWaylistPage" parameterType="java.util.HashMap"
+		resultMap="queryOrgBscWaylistPage_map" >
+		SELECT A.WAY_CODE AS WAYCODE,A.WAY_NAME AS WAYNAME,A.START_DAT
+		AS STARTDATE,A.END_DAT AS ENDDATE,
+		A.WAY_CYCLE AS WAYCYCLE,A.EDIT_ORG AS EDITORG,A.CREATE_TIME AS CREATETIME,A.STATUS
+		AS STATUS
+		from mo_way_person a
+		where exists
+		(
+		select 1 from mo_way_person_total_h b
+		where a.WAY_CODE = b.WAY_CODE
+		and
+		( b.MANAGER_NO in
+		(
+		select d.USERCODE
+		from v_auth_org c
+		inner join pcmc_user d on c.deptid = d.DEPTID and d.DISABLE != '1'
+		where c.userid = #{userId}
+		)
+		or
+		b.MANAGER_NO = #{userCode}
+		)
+		)
+		and a.WAY_TYPE = 'BSC'
+		and a.status &lt;&gt; 'DEL'
+		<if test="wayName != null and wayName != '' ">
+			and a.WAY_NAME like #{wayName}
+		</if>
+		<if test="status != null and status != '' ">
+			and a.STATUS = #{status}
+		</if>
+		<if test="startDate != null and startDate != '' ">
+			and a.START_DAT >= #{startDate}
+		</if>
+
+		<if test="endDate != null and endDate != '' ">
+			and #{endDate} >= a.END_DAT
+		</if>
+	</select>
+
+	<!-- 行员考核方案得分查询查询出方案信息 -->
+	<select id="queryCmPayWaylistPage" parameterType="java.util.HashMap"
+		resultMap="queryOrgBscWaylistPage_map" >
+		SELECT A.WAY_CODE AS WAYCODE,A.WAY_NAME AS WAYNAME,A.START_DAT
+		AS STARTDATE,A.END_DAT AS ENDDATE,
+		A.WAY_CYCLE AS WAYCYCLE,A.EDIT_ORG AS EDITORG,A.CREATE_TIME AS CREATETIME,A.STATUS
+		AS STATUS
+		FROM MO_WAY_PERSON A
+		where exists
+		(
+		select 1 from mo_way_person_total_h b
+		where a.WAY_CODE = b.WAY_CODE
+		and
+		( b.MANAGER_NO in
+		(
+		select d.USERCODE
+		from v_auth_org c
+		inner join pcmc_user d on c.deptid = d.DEPTID and d.DISABLE != '1'
+		where c.userid = #{userId}
+		)
+		or
+		b.MANAGER_NO = #{userCode}
+		)
+		)
+		and a.WAY_TYPE = 'PAY'
+		and a.status &lt;&gt; 'DEL'
+		<if test="wayName != null and wayName != '' ">
+			and a.WAY_NAME like #{wayName}
+		</if>
+		<if test="status != null and status != '' ">
+			and a.STATUS = #{status}
+		</if>
+		<if test="startDate != null and startDate != '' ">
+			and a.START_DAT >= #{startDate}
+		</if>
+
+		<if test="endDate != null and endDate != '' ">
+			and #{endDate} >= a.END_DAT
+		</if>
+	</select>
+	
+	<resultMap type="java.util.HashMap" id="queryOrgBscWayKO_map">
+		<result column="KPICODE" property="kpiCode"/>
+		<result column="KPINAME" property="kpiName"/>
+	</resultMap>
+	<!-- 机构考核方案获取定量指标 -->
+	<select id="queryOrgBscWayKO" parameterType="java.util.HashMap"
+		resultMap="queryOrgBscWayKO_map" >
+		SELECT A.SRC_CODE AS KPICODE,B.KPI_NAME AS KPINAME
+		from MO_WAY_ORG_KPI a
+		inner join mo_kpi_info b on a.SRC_CODE = b.KPI_CODE
+		where a.WAY_SRC = 'KO'
+		<if test="wayCode != null and wayCode != '' ">
+			and a.WAY_CODE = #{wayCode}
+		</if>
+	</select>
+
+	<!-- 行员考核方案获取定量指标 -->
+	<select id="queryCmBscWayKO" parameterType="java.util.HashMap"
+		resultMap="queryOrgBscWayKO_map" >
+		SELECT A.SRC_CODE AS KPICODE,B.KPI_NAME AS KPINAME
+		from MO_WAY_PERSON_KPI a
+		inner join mo_kpi_info b on a.SRC_CODE =
+		b.KPI_CODE
+		where a.WAY_SRC = 'KO'
+		<if test="wayCode != null and wayCode != '' ">
+			and a.WAY_CODE = #{wayCode}
+		</if>
+	</select>
+
+	<!-- 行员薪酬方案获取定量指标 -->
+	<select id="queryCmPayWayKO" parameterType="java.util.HashMap"
+		resultMap="queryOrgBscWayKO_map" >
+		SELECT A.SRC_CODE AS KPICODE,B.KPI_NAME AS KPINAME
+		from MO_WAY_PERSON_KPI a
+		inner join mo_kpi_info b on a.SRC_CODE =
+		b.KPI_CODE
+		where a.WAY_SRC = 'KO'
+		<if test="wayCode != null and wayCode != '' ">
+			and a.WAY_CODE = #{wayCode}
+		</if>
+	</select>
+
+	<!-- 机构考核方案获取定量指标名称 -->
+	<select id="queryOrgBscWayKOName" parameterType="java.util.HashMap"
+		resultMap="queryOrgBscWayKO_map" >
+		SELECT A.KPI_CODE AS KPICODE,A.KPI_NAME AS KPINAME
+		from mo_kpi_info a
+		where a.KPI_CODE = #{kpiCode}
+	</select>
+
+	<!-- 行员考核方案获取定量指标名称 -->
+	<select id="queryCmBscWayKOName" parameterType="java.util.HashMap"
+		resultMap="queryOrgBscWayKO_map" >
+		SELECT A.KPI_CODE AS KPICODE,A.KPI_NAME AS KPINAME
+		from mo_kpi_info a
+		where a.KPI_CODE = #{kpiCode}
+	</select>
+
+	<!-- 行员薪酬方案获取定量指标名称 -->
+	<select id="queryCmPayWayKOName" parameterType="java.util.HashMap"
+		resultMap="queryOrgBscWayKO_map" >
+		SELECT A.KPI_CODE AS KPICODE,A.KPI_NAME AS KPINAME
+		from mo_kpi_info a
+		where a.KPI_CODE = #{kpiCode}
+	</select>
+
+	<!-- 机构考核方案获取定性指标 -->
+	<select id="queryOrgBscWayKS" parameterType="java.util.HashMap"
+		resultMap="queryOrgBscWayKO_map" >
+		SELECT A.SRC_CODE AS KPICODE,B.KPI_NAME AS KPINAME
+		from MO_WAY_ORG_KPI a
+		inner join mo_kpi_subjective b on a.SRC_CODE =
+		b.KPI_CODE
+		where a.WAY_SRC = 'KS'
+		<if test="wayCode != null and wayCode != '' ">
+			and a.WAY_CODE = #{wayCode}
+		</if>
+	</select>
+
+	<!-- 行员考核方案获取定性指标 -->
+	<select id="queryCmBscWayKS" parameterType="java.util.HashMap"
+		resultMap="queryOrgBscWayKO_map" >
+		SELECT A.SRC_CODE AS KPICODE,B.KPI_NAME AS KPINAME
+		from MO_WAY_PERSON_KPI a
+		inner join mo_kpi_subjective b on a.SRC_CODE =
+		b.KPI_CODE
+		where a.WAY_SRC = 'KS'
+		<if test="wayCode != null and wayCode != '' ">
+			and a.WAY_CODE = #{wayCode}
+		</if>
+	</select>
+
+	<!-- 行员薪酬方案获取定性指标 -->
+	<select id="queryCmPayWayKS" parameterType="java.util.HashMap"
+		resultMap="queryOrgBscWayKO_map" >
+		SELECT A.SRC_CODE AS KPICODE,B.KPI_NAME AS KPINAME
+		from MO_WAY_PERSON_KPI a
+		inner join mo_kpi_subjective b on a.SRC_CODE =
+		b.KPI_CODE
+		where a.WAY_SRC = 'KS'
+		<if test="wayCode != null and wayCode != '' ">
+			and a.WAY_CODE = #{wayCode}
+		</if>
+	</select>
+
+	<!-- 机构考核方案获取定性指标名称 -->
+	<select id="queryOrgBscWayKSName" parameterType="java.util.HashMap"
+		resultMap="queryOrgBscWayKO_map" >
+		SELECT A.KPI_CODE AS KPICODE,A.KPI_NAME AS KPINAME
+		from mo_kpi_subjective a
+		where a.KPI_CODE = #{kpiCode}
+	</select>
+
+	<!-- 行员考核方案获取定性指标名称 -->
+	<select id="queryCmBscWayKSName" parameterType="java.util.HashMap"
+		resultMap="queryOrgBscWayKO_map" >
+		SELECT A.KPI_CODE AS KPICODE,A.KPI_NAME AS KPINAME
+		from mo_kpi_subjective a
+		where a.KPI_CODE = #{kpiCode}
+	</select>
+
+	<!-- 行员薪酬方案获取定性指标名称 -->
+	<select id="queryCmPayWayKSName" parameterType="java.util.HashMap"
+		resultMap="queryOrgBscWayKO_map" >
+		SELECT A.KPI_CODE AS  KPICODE,A.KPI_NAME AS KPINAME
+		from mo_kpi_subjective a
+		where a.KPI_CODE = #{kpiCode}
+	</select>
+
+	<!-- 机构考核方案获取方案指标 -->
+	<select id="queryOrgBscWayWayKpiCode" parameterType="java.util.HashMap"
+		resultMap="queryOrgBscWayKO_map" >
+		SELECT A.SRC_CODE AS WAYCODE,B.WAY_NAME AS WAYNAME
+		from MO_WAY_ORG_KPI a
+		inner join mo_way_org b on a.SRC_CODE = b.WAY_CODE
+		where a.WAY_SRC = 'WO'
+		<if test="wayCode != null and wayCode != '' ">
+			and a.WAY_CODE = #{wayCode}
+		</if>
+
+		union
+
+		SELECT A.SRC_CODE AS WAYCODE,B.WAY_NAME AS WAYNAME
+		from MO_WAY_PERSON_KPI a
+		inner join mo_way_person b on a.SRC_CODE =
+		b.WAY_CODE
+		where a.WAY_SRC = 'WU'
+		<if test="wayCode != null and wayCode != '' ">
+			and a.WAY_CODE = #{wayCode}
+		</if>
+	</select>
+	
+	
+	<resultMap type="java.util.HashMap" id="wayCodeWayName">
+		<result column="WAYCODE" property="wayCode"/>
+		<result column="WAYNAME" property="wayName"/>
+	</resultMap>
+	<!-- 机构考核方案获取方案指标 -->
+	<select id="queryOrgPayWayWayKpiCode" parameterType="java.util.HashMap"
+		resultMap="wayCodeWayName" >
+		SELECT A.SRC_CODE AS WAYCODE,B.WAY_NAME AS WAYNAME
+		from MO_WAY_ORG_KPI a
+		inner join mo_way_org b on a.SRC_CODE = b.WAY_CODE
+		where a.WAY_SRC = 'WO'
+		<if test="wayCode != null and wayCode != '' ">
+			and a.WAY_CODE = #{wayCode}
+		</if>
+
+		union
+
+		SELECT A.SRC_CODE AS WAYCODE,B.WAY_NAME AS WAYNAME
+		from MO_WAY_PERSON_KPI a
+		inner join mo_way_person b on a.SRC_CODE =
+		b.WAY_CODE
+		where a.WAY_SRC = 'WU'
+		<if test="wayCode != null and wayCode != '' ">
+			and a.WAY_CODE = #{wayCode}
+		</if>
+	</select>
+
+
+	<!-- 机构考核方案获取方案指标 机构方案名称 -->
+	<select id="queryOrgBscWayWayKpiCodeWoName" parameterType="java.util.HashMap"
+		resultMap="wayCodeWayName" >
+		SELECT A.WAY_CODE AS  WAYCODE,A.WAY_NAME AS WAYNAME
+		from mo_way_org a
+		where a.WAY_CODE = #{wayCode}
+	</select>
+
+	<!-- 机构薪酬方案获取方案指标 机构方案名称 -->
+	<select id="queryOrgPayWayWayKpiCodeWoName" parameterType="java.util.HashMap"
+		resultMap="wayCodeWayName" >
+		SELECT A.WAY_CODE AS WAYCODE,A.WAY_NAME AS WAYNAME
+		from mo_way_org a
+		where a.WAY_CODE = #{wayCode}
+	</select>
+
+	<!-- 机构考核方案获取方案指标 行员方案名称 -->
+	<select id="queryOrgBscWayWayKpiCodeWuName" parameterType="java.util.HashMap"
+		resultMap="wayCodeWayName" >
+		SELECT A.WAY_CODE AS WAYCODE,A.WAY_NAME AS WAYNAME
+		from
+		mo_way_person a
+		where a.WAY_CODE = #{wayCode}
+	</select>
+
+	<!-- 机构考核方案获取方案指标 行员方案名称 -->
+	<select id="queryOrgPayWayWayKpiCodeWuName" parameterType="java.util.HashMap"
+		resultMap="wayCodeWayName" >
+		SELECT A.WAY_CODE AS WAYCODE,A.WAY_NAME AS WAYNAME
+		from
+		mo_way_person a
+		where a.WAY_CODE = #{wayCode}
+	</select>
+
+	<!-- 行员考核方案获取方案指标 行员方案名称 -->
+	<select id="queryCmBscWayWayKpiCodeWuName" parameterType="java.util.HashMap"
+		resultMap="wayCodeWayName" >
+		SELECT A.WAY_CODE AS WAYCODE,A.WAY_NAME AS WAYNAME
+		from
+		mo_way_person a
+		where a.WAY_CODE = #{wayCode}
+	</select>
+
+	<!-- 行员薪酬方案获取方案指标 行员方案名称 -->
+	<select id="queryCmPayWayWayKpiCodeWuName" parameterType="java.util.HashMap"
+		resultMap="wayCodeWayName" >
+		SELECT A.WAY_CODE AS WAYCODE,A.WAY_NAME AS WAYNAME
+		from
+		mo_way_person a
+		where a.WAY_CODE = #{wayCode}
+	</select>
+
+
+	<!-- 查询系统参数表中 方案执行程序的路径 -->
+	<select id="queryWayEvaluatePropPath" resultType="String">
+		SELECT PARA_VALUE
+		FROM sys_pub_para
+		<where>
+			<if test=" paraCode != null and paraCode != '' ">
+				PARA_CODE = #{paraCode}
+			</if>
+		</where>
+
+	</select>
+
+
+	<!-- 查询某个方案的成绩查询 -->
+	<select id="querySomeoneBscOrgScoreSql" parameterType="java.util.HashMap"
+		resultType="java.util.HashMap">
+		${sql}
+	</select>
+
+	
+	<resultMap type="java.util.HashMap" id="loadpalistPage_map">
+		<result column="AREA_NO" property="areaNo"/>
+		<result column="KPI_CODE" property="kpiCode"/>
+		<result column="KPI_NAME" property="kpiName"/>
+		<result column="KPI_ALIAS" property="kpiAllis"/>
+		<result column="SORT_NUM" property="shortNum"/>
+	</resultMap>
+	
+	<!-- 考核指标配置_机构考核指标查询 -->
+	<select id="loadpalistPage" parameterType="HashMap"
+		resultMap="loadpalistPage_map" >
+		select distinct
+         A.KPI_CODE as "KPICODE"  ,B.KPI_NAME as
+        "KPINAME", A.KPI_ALIAS as "KPIALIAS" ,A.SORT_NUM  as "SORTNUM" 
+        from MO_KPI_PA A
+        LEFT JOIN mo_kpi_info B ON A.KPI_CODE=B.KPI_CODE and A.AREA_NO = B.AREA_NO
+        where A.AREA_NO = #{corpCode} and A.PA_TYPE=10
+		<if test="kpiCode != null and kpiCode != '' ">
+			AND A.KPI_CODE = #{kpiCode}
+		</if>
+		<if test=" kpiName !=null and kpiName != ''  ">
+			AND B.KPI_NAME = #{kpiName}
+		</if>
+		order by SORTNUM
+	</select>
+	
+	
+	
+	<!-- 考核指标配置_机构考核指标查导出语句-->
+	<select id="load_pa_list" parameterType="HashMap"
+		resultType="com.sunline.pams.plan.pa.Pa">
+		select distinct
+		A.kpi_code as kpiCode,B.kpi_name as  kpiName, 
+		A.kpi_alias as kpiAllis,A.sort_num as sortNum
+		from MO_KPI_PA A
+		LEFT JOIN mo_kpi_info B ON A.KPI_CODE=B.KPI_CODE AND A.AREA_NO = B.AREA_NO
+		where A.AREA_NO = #{corpCode} AND A.PA_TYPE=10
+		<if test="kpiCode != null and kpiCode != '' ">
+			AND A.KPI_CODE = #{kpiCode}
+		</if>
+		<if test=" kpiName !=null and kpiName != ''  ">
+			AND B.KPI_NAME = #{kpiName}
+		</if>
+		order by A.sort_num 
+	</select>
+	
+	
+	<!-- 根据指标编号，查询信息 -->
+
+	 <select id="queryPaByKpicode" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+	  select KPI_ALIAS as "KPIALIAS",SORT_NUM  as "SORTNUM" from MO_KPI_PA
+	  WHERE KPI_CODE= #{kpiCode}
+	</select>
+	
+	<!-- 根据指标编号，更新信息 -->
+	<update id="updatePa" parameterType="java.util.HashMap">
+		update mo_kpi_pa  set 
+		KPI_ALIAS  = #{kpiAllis},SORT_NUM= #{shortNum}
+		where KPI_CODE  = #{kpiCode} and PA_TYPE=#{PaType}
+	</update>
+	
+	<!-- 添加指标配置_机构考核指标 -->
+	<insert id="add_pa" parameterType="HashMap">
+		insert into MO_KPI_PA(AREA_NO,PA_TYPE,KPI_CODE,KPI_ALIAS,SORT_NUM)
+		VALUES( #{AREA_NO}, #{PA_TYPE}, #{KPI_CODE}, #{KPI_ALAIAS},#{SOTR_NUM})
+	</insert>
+	
+	
+	<select id="verify_pa" parameterType="java.lang.String" resultType="java.lang.Integer">
+        select count(1) from MO_KPI_PA where KPI_CODE = #{kpiCode}
+    </select>	
+	<!-- 
+	<select id="verifyTaskFlowExist2" parameterType="java.lang.String" resultType="java.lang.Integer">
+        select count(system_code) count from ca_bat_task_flow where system_code = #{System_Code}
+    </select>
+    
+    <select id="verify_pa" parameterType="java.lang.String" resultType="java.lang.Integer">
+        select count(1) count from MO_KPI_PA where KPI_CODE = #{kpiCode}
+    </select>		
+	 -->
+	
+	
+	<!-- 根据kpicCode删除该条指标信息 -->
+	<delete id="del_pa" parameterType="HashMap">
+		 delete from mo_kpi_pa 
+		 where KPI_CODE =#{kpiCode}  and PA_TYPE=#{PaType}
+		 
+	</delete>
+	
+	<!--    -->
+	
+	
+	<!-- 行员指标查询 -->
+	<select id="load_pa_emp_listPage" parameterType="HashMap"
+		resultMap="loadpalistPage_map" >
+	   select distinct
+        A.KPI_CODE as "KPICODE"  ,B.KPI_NAME as
+        "KPINAME", A.KPI_ALIAS as "KPIALIAS" ,A.SORT_NUM  as "SORTNUM" 
+        from MO_KPI_PA A
+        LEFT JOIN mo_kpi_info B ON A.KPI_CODE=B.KPI_CODE AND A.AREA_NO= B.AREA_NO
+		where A.AREA_NO = #{corpCode} AND A.PA_TYPE=20
+		<if test="kpiCode != null and kpiCode != '' ">
+			AND A.KPI_CODE = #{kpiCode}
+		</if>
+		
+		<if test=" kpiName !=null and kpiName != ''  ">
+			 AND B.KPI_NAME = #{kpiName}
+		</if>
+		order by A.sort_num 
+	</select>
+	
+	<!-- 考核指标配置_行员考核指标查导出语句-->
+	<select id="load_pa_emp_list" parameterType="HashMap"
+		resultType="com.sunline.pams.plan.pa.Pa">
+		select distinct
+	    A.kpi_code kpiCode,B.kpi_name kpiName, 
+		A.kpi_alias kpiAllis,A.sort_num sortNum
+		from MO_KPI_PA A
+		LEFT JOIN mo_kpi_info B ON A.KPI_CODE=B.KPI_CODE AND A.AREA_NO= B.AREA_NO
+		where A.AREA_NO = #{corpCode} AND A.PA_TYPE=20
+		<if test="kpiCode != null and kpiCode != '' ">
+			AND A.KPI_CODE = #{kpiCode}
+		</if>
+		<if test=" kpiName !=null and kpiName != ''  ">
+			 AND B.KPI_NAME = #{kpiName}
+		</if>
+		order by A.sort_num 
+	</select>
+	
+	<!-- 团队指标查询 -->
+	<select id="load_pa_team_listPage" parameterType="HashMap"
+		resultMap="loadpalistPage_map" >
+		select distinct
+        A.KPI_CODE as "KPICODE"  ,B.KPI_NAME as
+       "KPINAME", A.KPI_ALIAS as "KPIALIAS" ,A.SORT_NUM  as "SORTNUM" 
+        from MO_KPI_PA A
+        LEFT JOIN mo_kpi_info B ON A.KPI_CODE=B.KPI_CODE and A.AREA_NO = B.AREA_NO
+		where A.AREA_NO =#{corpCode} AND A.PA_TYPE=30
+		<if test="kpiCode != null and kpiCode != '' ">
+			AND A.KPI_CODE = #{kpiCode}
+		</if>
+		
+		<if test=" kpiName !=null and kpiName != ''  ">
+			 AND B.KPI_NAME = #{kpiName}
+		</if>
+		order by A.sort_num 
+	</select>
+	
+	<!-- 考核指标配置_团队考核指标查导出语句-->
+	<select id="load_pa_team_list" parameterType="HashMap"	resultType="com.sunline.pams.plan.pa.Pa">
+		select distinct
+		 A.kpi_code as kpiCode,B.kpi_name as kpiName, 
+		 A.kpi_alias as kpiAllis,A.sort_num as sortNum
+		from MO_KPI_PA A
+		LEFT JOIN mo_kpi_info B ON A.KPI_CODE=B.KPI_CODE AND A.AREA_NO = B.AREA_NO
+		where A.AREA_NO = #{corpCode} AND A.PA_TYPE=30
+		<if test="kpiCode != null and kpiCode != '' ">
+			AND A.KPI_CODE = #{kpiCode}
+		</if>
+		<if test=" kpiName !=null and kpiName != ''  ">
+
+			 AND B.KPI_NAME = #{kpiName}
+
+		</if>
+		order by A.sort_num 
+	</select>
+	
+	
+	<!--手工数据 特殊调整相关语句 -->
+	  <!-- 添加特殊调整信息 --> 
+	  <insert id="addSpecialnessRectify" parameterType="HashMap">
+	     insert into AP_CHG_INFO
+	                 (CHG_ID,AREA_NO,BIZ_KEY,CUST_NAME,CHG_COLUMN ,CHG_METHOD,START_DATE,END_DATE,ORG_NO,CHG_VALUE,CREATE_TIME,OPERATOR)
+	           VALUES(#{chgId},#{areaNo},#{bizKey},#{custName},#{chgColumn},#{chgMethod},#{startdate},#{enddate},#{orgNo},#{chgValue},to_date(to_char(sysdate,'yyyy-mm-dd'),'yyyy-mm-dd'),#{opErator})     
+	  </insert>
+		
+		<resultMap type="java.util.HashMap" id="querySpecialnessRectifylistPage_map">
+			<result column="CHG_ID" property="chgId"/>
+			<result column="BIZ_KEY" property="bizKey"/>
+			<result column="CUST_NAME" property="custName"/>
+			<result column="CHG_COLUMN" property="chgCokumn"/>
+			<result column="CHG_VALUE" property="chgValue"/>
+			<result column="START_DATE" property="startDate"/>
+			<result column="OPERATOR" property="opErator"/>
+			<result column="CREATE_TIME" property="createrTime"/>
+			<result column="DEPTNAME" property="deptName"/>
+		</resultMap>
+	 <!-- 分页查询特殊调整信息 --> 
+        <select id="querySpecialnessRectifylistPage" parameterType="HashMap" resultType="java.util.HashMap">
+	      SELECT A.CHG_ID,A.BIZ_KEY,A.CUST_NAME,A.CHG_COLUMN,A.CHG_VALUE,A.START_DATE, A.OPERATOR,A.CREATE_TIME ,B.DEPTNAME 
+                 FROM AP_CHG_INFO A ,pcmc_dept B
+                 WHERE A.ORG_NO =B.DEPTCODE  and A.AREA_NO = B.CORPCODE
+                      AND B.CORPCODE = #{corpCode}   
+                 <if test="bizKey != null and bizKey != '' ">
+			        AND A.BIZ_KEY = #{bizKey}
+		         </if>
+		         <if test="startDate != null and startDate != '' ">
+			        AND A.START_DATE = to_date(#{startDate},'yyyy-mm-dd')
+		         </if>
+		         <if test="createrTime != null and createrTime != '' ">
+			        AND A. CREATE_TIME = to_date(#{createrTime},'yyyy-mm-dd')
+		         </if>
+		         <if test="chgColumn != null and chgColumn != '' ">
+			        AND A.CHG_COLUMN  = #{chgColumn}
+		         </if>
+		         <if test="chgId != null and chgId != '' ">
+			        AND A.CHG_ID = #{chgId}
+		         </if>
+		         <if test="deptName != null and deptName != '' ">
+			        AND B.DEPTNAME = #{deptName}
+		         </if>                
+	  </select>
+	  
+	  <select id="querySpecialnessRectifyExport" parameterType="HashMap" resultType="java.util.HashMap">
+	      SELECT A.CHG_ID,A.BIZ_KEY,A.CUST_NAME,A.CHG_COLUMN,A.CHG_VALUE,A.START_DATE, A.OPERATOR,A.CREATE_TIME ,B.DEPTNAME 
+                 FROM AP_CHG_INFO A ,pcmc_dept B
+                 WHERE A.ORG_NO =B.DEPTCODE  and A.AREA_NO = B.CORPCODE
+                      AND B.CORPCODE = #{corpCode}   
+                 <if test="bizKey != null and bizKey != '' ">
+			        AND A.BIZ_KEY = #{bizKey}
+		         </if>
+		         <if test="startDate != null and startDate != '' ">
+			        AND A.START_DATE = #{startDate}
+		         </if>
+		         <if test="createrTime != null and createrTime != '' ">
+			        AND A. CREATE_TIME = #{createrTime}
+		         </if>
+		         <if test="chgCokumn != null and chgCokumn != '' ">
+			        AND A.CHG_COLUMN  = #{chgCokumn}
+		         </if>
+		         <if test="chgId != null and chgId != '' ">
+			        AND A.CHG_ID = #{chgId}
+		         </if>
+		         <if test="deptName != null and deptName != '' ">
+			        AND B.DEPTNAME = #{deptName}
+		         </if>                
+	  </select>
+	  <!-- 账号校验 -->
+	    <!--从对公存款指标表中检索 -->
+	      <select id="check1" parameterType="HashMap" resultType="java.util.HashMap">
+	        select CUST_NAME from PI_BIZ_DEPOSIT_UNIT where ACCT_NO=#{chgId} and rownum=1
+	      </select>
+	   <!--从零售指标存款表中检索 -->
+	      <select id="check2" parameterType="HashMap" resultType="java.util.HashMap">
+	        select CUST_NAME from PI_BIZ_DEPOSIT_PERSON where ACCT_NO=#{chgId} and rownum=1
+	      </select>
+	    <!--从对公贷款指标表中检索 -->
+	      <select id="check3" parameterType="HashMap" resultType="java.util.HashMap">
+	        select CUST_NAME from  PI_BIZ_LOAN_UNIT  where LOAN_NO=#{chgId} and rownum=1
+	      </select>
+	      <!--从零售贷款指标表中检索 -->
+	      <select id="check4" parameterType="HashMap" resultType="java.util.HashMap">
+	        select CUST_NAME from PI_BIZ_LOAN_PERSON where LOAN_NO=#{chgId} and rownum=1
+	      </select>  
+	      <!--对公客户 -->
+	      <select id="check5" parameterType="HashMap" resultType="java.util.HashMap">
+	        select CUST_NAME from CI_CUS_UNIT where CUST_NO=#{chgId} and rownum=1
+	      </select> 
+	      <!-- 零售客户 -->
+	      <select id="check6" parameterType="HashMap" resultType="java.util.HashMap">
+	        select CUST_NAME from CI_CUS_PERSON where CUST_NO=#{chgId} and rownum=1
+	      </select>
+	      <!--查找机构编号 -->
+	      <select id="queryOrgNo" parameterType="HashMap" resultType="java.util.HashMap">
+	        select DEPTCODE from PCMC_DEPT where DEPTNAME=#{orgNane} and rownum=1
+	      </select>       
+	  
+	  <!-- 导入数据校验 -->
+	
+	
+	<!-- 获取调整方式 -->
+	<select id="queryChgMethod" parameterType="HashMap" resultType="java.util.HashMap">
+	        select paracd from PCMC_KNP_PARA where subscd='pams' and PARATP = 'cla_type' and parana =#{chgMethod1}
+	</select>
+	<!-- 获取调整类型 -->
+	<select id="queryChgColumn" parameterType="HashMap" resultType="java.util.HashMap">
+	        select paracd from PCMC_KNP_PARA where subscd='pams' and PARATP = 'chgitm' and parana =#{chgColumn1}
+	</select>
+	<!-- 获取业务类型 -->
+	<select id="queryBizKey" parameterType="HashMap" resultType="java.util.HashMap">
+	        select paracd from PCMC_KNP_PARA where subscd='pams' and PARATP = 'chg_table' and parana =#{bizKey1}
+	</select>
+	
+	
+	
+	<!-- 删除特殊数据信息 -->
+	    <delete id="delSpecialnessRectify" parameterType="HashMap">
+	    delete from AP_CHG_INFO 
+		 where CHG_ID =#{chgId} 
+	    </delete>
+	    
+	<!-- 机构考核方案得分调整 方案查询 -->
+	<select id="query_org_scorelistPage" parameterType="java.util.HashMap"
+		resultMap="moWayOrgResult" >
+		SELECT 
+		    way.WAY_CODE
+		    ,way.AREA_NO
+		    ,way.WAY_TYPE
+		    ,way.WAY_NAME
+		    ,way.WAY_RANGE
+		    ,way.ALL_SCORE
+		    ,way.ORG_LEVEL
+		    ,way.ORG_TYPE
+		    ,way.WHITE_LIST
+		    ,way.BLACK_LIST
+		    ,way.START_DAT
+		    ,way.END_DAT
+		    ,way.WAY_CYCLE
+		    ,way.EDIT_ORG
+		    ,way.EDIT_ROLE
+		    ,way.WAY_DESC
+		    ,way.STATUS
+		    ,way.CREATE_TIME
+		    ,way.OPERATOR
+		    ,way.REVIEW_MAN
+		    ,way.REVIEW_TIME
+		    ,way.REVIEW_STATUS
+		    ,way.REVIEW_OPINION
+		    ,way.IS_EXE 		    
+		FROM MO_WAY_ORG way 
+		inner join (
+		    select DISTINCT AREA_NO
+		    from v_auth_org 
+		    WHERE USERID = #{userID}
+		) area on way.AREA_NO = area.AREA_NO
+		<where>
+		    <if test="  wayName != null and wayName != ''  ">
+		        AND way.WAY_NAME = #{wayName}
+		    </if>
+		    <if test="  wayNameLike != null and wayNameLike != ''  ">
+		        AND way.WAY_NAME like #{wayNameLike}
+		    </if>
+		    <if test="  startDate != null and startDate != ''  ">
+		        AND way.START_DAT &gt;= #{startDate}
+		    </if>
+		    <if test="  endDate != null and endDate != ''  ">
+		        AND way.END_DAT &lt;= #{endDate}
+		    </if>
+		    <if test="  wayType != null and wayType != ''  ">
+		        AND way.WAY_TYPE = #{wayType}
+		    </if>
+		    <if test=" 1==1 ">
+		        AND way.STATUS &lt;&gt; 'DEL'
+		    </if>
+		</where>
+		order by way.WAY_CODE
+	</select>
+	
+	<!-- 机构考核方案结果映射 -->
+	<resultMap type="com.sunline.pams.plan.bean.MoWayOrgTotal" id="moWayOrgTotal">
+	    <result column="DATA_DATE" property="dataDate" jdbcType="DATE" />
+		<result column="WAY_CODE" property="wayCode" jdbcType="VARCHAR" />
+		<result column="ORG_NO" property="orgNo" jdbcType="VARCHAR" />
+		<result column="AREA_NO" property="areaNo" jdbcType="VARCHAR" />
+		<result column="WAY_TYPE" property="wayType" jdbcType="VARCHAR" />
+		<result column="STAGE" property="stage" jdbcType="NUMERIC" />
+		<result column="TOTAL_SCORE" property="totalScore" jdbcType="NUMERIC" />
+		<result column="RANK" property="rank" jdbcType="NUMERIC" />
+		<result column="EDIT_SCORE" property="editScore" jdbcType="NUMERIC" />
+		<result column="EDITOR" property="editor" jdbcType="VARCHAR" />
+		<result column="EDIT_TIME" property="editTime" jdbcType="TIMESTAMP" />	
+		<result column="WAY_NAME" property="wayName" jdbcType="VARCHAR" />
+		<result column="SCORE" property="score" jdbcType="NUMERIC" />
+		<result column="ORG_NAME" property="orgName" jdbcType="VARCHAR" />
+	</resultMap>
+	<!-- 查询方案总得分 -->
+	<select id="queryMoWayOrgTotallistPage" parameterType="java.util.HashMap" resultMap="moWayOrgTotal">
+	    SELECT
+	        score.DATA_DATE
+	        ,score.WAY_CODE
+	        ,score.ORG_NO
+	        ,score.AREA_NO
+	        ,score.WAY_TYPE
+	        ,score.STAGE
+	        ,score.TOTAL_SCORE
+	        ,score.RANK
+	        ,score.EDIT_SCORE
+	        ,coalesce(score.EDIT_SCORE,score.TOTAL_SCORE) as SCORE
+	        ,score.EDITOR
+	        ,score.EDIT_TIME
+	        ,way.WAY_NAME 
+	        ,dept.ORG_NAME
+	    FROM MO_WAY_ORG_TOTAL score
+	    INNER JOIN MO_WAY_ORG  way on score.WAY_CODE = way.WAY_CODE
+	    inner join ( 
+	        SELECT distinct DEPTCODE AS ORG_NO ,DEPTNAME AS ORG_NAME
+	        FROM v_auth_org
+	        WHERE USERID = #{userID}
+	    ) dept on score.ORG_NO = dept.ORG_NO
+	    <where>
+	        <if test=" startDate != null ">
+	            AND score.DATA_DATE &gt;= #{startDate}
+	        </if>
+	        <if test=" endDate != null ">
+	            AND score.DATA_DATE &lt;= #{endDate}
+	        </if>
+	        <if test=" wayType != null and wayType != '' ">
+	            AND way.WAY_TYPE = #{wayType}
+	        </if>
+	        <if test=" wayNameLike != null and wayNameLike != '' ">
+	            AND way.WAY_NAME like #{wayNameLike}
+	        </if>
+	        <if test=" orgNo != null and orgNo != '' ">
+	            AND score.ORG_NO = #{orgNo}
+	        </if>
+	        <if test=" orgNameLike != null and orgNameLike != '' ">
+	            AND dept.ORG_NAME like #{orgNameLike}
+	        </if>
+	    </where>
+	    order by score.DATA_DATE desc ,score.WAY_CODE,coalesce(score.EDIT_SCORE,score.TOTAL_SCORE) desc,score.ORG_NO
+	</select>
+	
+	<!-- 绩效管理专员查询方案得分 -->
+	<select id="queryMoWayOrgTotalManagerlistPage" parameterType="java.util.HashMap" resultMap="moWayOrgTotal">
+	    SELECT
+	        score.DATA_DATE
+	        ,score.WAY_CODE
+	        ,score.ORG_NO
+	        ,score.AREA_NO
+	        ,score.WAY_TYPE
+	        ,score.STAGE
+	        ,score.TOTAL_SCORE
+	        ,score.RANK
+	        ,score.EDIT_SCORE
+	        ,coalesce(score.EDIT_SCORE,score.TOTAL_SCORE) as SCORE
+	        ,score.EDITOR
+	        ,score.EDIT_TIME
+	        ,way.WAY_NAME 
+	        ,dept.DEPTNAME AS ORG_NAME 
+	    FROM MO_WAY_ORG_TOTAL score
+	    INNER JOIN MO_WAY_ORG  way on score.WAY_CODE = way.WAY_CODE AND score.AREA_NO = way.AREA_NO
+	    left JOIN PCMC_DEPT dept on score.ORG_NO = dept.DEPTCODE AND score.AREA_NO = dept.CORPCODE
+	    <where>
+	    	score.AREA_NO = #{corpCode}
+	        <if test=" startDate != null ">
+	            AND score.DATA_DATE &gt;= #{startDate}
+	        </if>
+	        <if test=" endDate != null ">
+	            AND score.DATA_DATE &lt;= #{endDate}
+	        </if>
+	        <if test=" wayType != null and wayType != '' ">
+	            AND way.WAY_TYPE = #{wayType}
+	        </if>
+	        <if test=" wayNameLike != null and wayNameLike != '' ">
+	            AND way.WAY_NAME like #{wayNameLike}
+	        </if>
+			<if test=" wayType != null and wayType != '' ">
+				AND way.WAY_TYPE = #{wayType}
+			</if>
+	        <if test=" orgNo != null and orgNo != '' ">
+	            AND score.ORG_NO = #{orgNo}
+	        </if>
+	        <if test=" wayCode != null and wayCode != '' ">
+	            AND score.way_code = #{wayCode}
+	        </if>
+	        <if test=" wayCodeInStr != null and wayCodeInStr != '' ">
+	            AND score.way_code in ( '${wayCodeInStr}')
+	        </if>
+	        <if test=" deptCodeList != null and deptCodeList.size() >0">
+	            AND dept.DEPTCODE IN (<foreach item="deptcode" collection="deptCodeList" separator=",">#{deptcode}</foreach>)
+	        </if>
+	    </where>
+	    order by score.DATA_DATE desc ,score.WAY_CODE ,score.ORG_NO
+	</select>
+	
+	<!-- 机构考核方案指标得分明细映射 -->
+	<resultMap type="com.sunline.pams.plan.bean.MoWayOrgDetail" id="moWayOrgDetail">
+	    <result column="DATA_DATE" property="dataDate" jdbcType="DATE" />
+		<result column="WAY_CODE" property="wayCode" jdbcType="VARCHAR" />
+		<result column="ORG_NO" property="orgNo" jdbcType="VARCHAR" />
+		<result column="SRC_CODE" property="srcCode" jdbcType="VARCHAR" />
+		<result column="AREA_NO" property="areaNo" jdbcType="VARCHAR" />
+		<result column="WAY_TYPE" property="wayType" jdbcType="VARCHAR" />
+		<result column="STAGE" property="stage" jdbcType="NUMERIC" />
+		<result column="KPI_VALUE" property="kpiValue" jdbcType="NUMERIC" />
+		<result column="MBO_VALUE" property="mboValue" jdbcType="NUMERIC" />
+		<result column="BASE_NUM" property="baseNum" jdbcType="NUMERIC" />
+		<result column="AVG_VALUE" property="avgValue" jdbcType="NUMERIC" />
+		<result column="RANK" property="rank" jdbcType="NUMERIC" />
+		<result column="CALC_SCORE" property="calcScore" jdbcType="NUMERIC" />
+		<result column="EDIT_SCORE" property="editScore" jdbcType="NUMERIC" />
+		<result column="EDITOR" property="editor" jdbcType="VARCHAR" />
+		<result column="EDIT_TIME" property="editTime" jdbcType="TIMESTAMP" />	
+		<result column="WAY_NAME" property="wayName" jdbcType="VARCHAR" />
+		<result column="SCORE" property="score" jdbcType="NUMERIC" />
+		<result column="ORG_NAME" property="orgName" jdbcType="VARCHAR" />
+		<result column="ALIAS_NAME" property="aliasName" jdbcType="VARCHAR" />
+		<result column="DIMENSION_NAME" property="dimensionName" jdbcType="VARCHAR" />
+		<result column="SEQ_NUM" property="seqNum" jdbcType="VARCHAR" />
+	</resultMap>
+	
+	<!-- 查询方案指标明细总得分 -->
+	<select id="queryWayOrgDetailM" parameterType="java.util.HashMap" resultMap="moWayOrgDetail">
+	    SELECT
+	        score.DATA_DATE
+	        ,score.WAY_CODE
+	        ,score.ORG_NO
+	        ,score.SRC_CODE
+	        ,score.SEQ_NUM
+	        ,score.AREA_NO
+	        ,score.WAY_TYPE
+	        ,score.STAGE
+	        ,score.KPI_VALUE
+	        ,score.MBO_VALUE
+	        ,score.BASE_NUM
+	        ,score.AVG_VALUE	        
+	        ,score.RANK
+	        ,score.CALC_SCORE
+	        ,score.EDIT_SCORE
+	        ,coalesce(score.EDIT_SCORE,score.CALC_SCORE) as SCORE
+	        ,score.EDITOR
+	        ,score.EDIT_TIME
+	        ,score.ALIAS_NAME
+	        ,score.DIMENSION_NAME
+	    FROM MO_WAY_ORG_DETAIL score
+	    <where>
+	        <if test=" dataDate != null ">
+	            AND score.DATA_DATE = #{dataDate}
+	        </if>
+	        <if test=" wayCode != null and wayCode != '' ">
+	            AND score.WAY_CODE = #{wayCode}
+	        </if>
+	        <if test=" orgNo != null and orgNo != '' ">
+	            AND score.ORG_NO = #{orgNo}
+	        </if>
+	    </where>
+	    order by score.DIMENSION_NO asc,score.SEQ_NUM asc
+	</select>
+	
+	<!-- 查询方案指标明细总得分 -->
+	<select id="queryMoWayOrgDetailManagerlistPage" parameterType="java.util.HashMap" resultMap="moWayOrgDetail">
+	    SELECT
+	        score.DATA_DATE
+	        ,score.WAY_CODE
+	        ,score.ORG_NO
+	        ,score.SRC_CODE
+	        ,score.SEQ_NUM
+	        ,score.AREA_NO
+	        ,score.WAY_TYPE
+	        ,score.STAGE
+	        ,score.KPI_VALUE
+	        ,score.MBO_VALUE
+	        ,score.BASE_NUM
+	        ,score.AVG_VALUE	        
+	        ,score.RANK
+	        ,score.CALC_SCORE
+	        ,score.EDIT_SCORE
+	        ,coalesce(score.EDIT_SCORE,score.CALC_SCORE) as SCORE
+	        ,score.EDITOR
+	        ,score.EDIT_TIME
+	        ,way.WAY_NAME 
+	        ,dept.deptname as ORG_NAME
+	        ,score.ALIAS_NAME
+	        ,score.DIMENSION_NAME
+	    FROM MO_WAY_ORG_DETAIL score
+	    <!-- 关联方案名称 -->
+	    INNER JOIN MO_WAY_ORG  way on score.WAY_CODE = way.WAY_CODE
+	    left JOIN PCMC_DEPT dept on score.ORG_NO = dept.deptcode
+	    and score.area_no = dept.corpcode
+	    <where>
+	    	score.area_no = #{areaNo}
+	        <if test=" startDate != null ">
+	            AND score.DATA_DATE &gt;= #{startDate}
+	        </if>
+	        <if test=" endDate != null ">
+	            AND score.DATA_DATE &lt;= #{endDate}
+	        </if>
+	        <if test=" dataDate != null ">
+	            AND score.DATA_DATE = #{dataDate}
+	        </if>
+	        <if test=" wayCode != null and wayCode != '' ">
+	            AND score.WAY_CODE = #{wayCode}
+	        </if>
+	        <if test=" wayType != null and wayType != '' ">
+	            AND score.WAY_TYPE = #{wayType}
+	        </if>
+	        <if test=" orgNo != null and orgNo != '' ">
+	            AND score.ORG_NO = #{orgNo}
+	        </if>
+	        <if test=" wayNameLike != null and wayNameLike != '' ">
+	            AND way.WAY_NAME like #{wayNameLike}
+	        </if>
+	        <if test=" orgNameLike != null and orgNameLike != '' ">
+	            AND dept.ORG_NAME like #{orgNameLike}
+	        </if>
+	        <if test=" kpiNameLike != null and kpiNameLike != '' ">
+	            AND kpi.KPI_NAME like #{kpiNameLike}
+	        </if>
+	    </where>
+	    order by score.DATA_DATE desc ,score.WAY_CODE,coalesce(score.EDIT_SCORE,score.CALC_SCORE) desc,score.SRC_CODE,score.ORG_NO
+	</select>
+	
+	<!-- 查询方案指标明细总得分 -->
+	<select id="queryMoWayOrgDetaillistPage" parameterType="java.util.HashMap" resultMap="moWayOrgDetail">
+	    SELECT
+	        score.DATA_DATE
+	        ,score.WAY_CODE
+	        ,score.ORG_NO
+	        ,score.SRC_CODE
+	        ,score.SEQ_NUM
+	        ,score.AREA_NO
+	        ,score.WAY_TYPE
+	        ,score.STAGE
+	        ,score.KPI_VALUE
+	        ,score.MBO_VALUE
+	        ,score.BASE_NUM
+	        ,score.AVG_VALUE	        
+	        ,score.RANK
+	        ,score.CALC_SCORE
+	        ,score.EDIT_SCORE
+	        ,coalesce(score.EDIT_SCORE,score.CALC_SCORE) as SCORE
+	        ,score.EDITOR
+	        ,score.EDIT_TIME
+	        ,way.WAY_NAME 
+	        ,dept.DEPTNAME AS ORG_NAME
+	        ,score.ALIAS_NAME
+	        ,score.DIMENSION_NAME
+	    FROM MO_WAY_ORG_DETAIL score
+	    <!-- 关联方案名称 -->
+	    INNER JOIN MO_WAY_ORG  way on score.WAY_CODE = way.WAY_CODE
+
+	    left join pcmc_dept dept on score.ORG_NO = dept.deptcode
+	    <where>
+	        <if test=" startDate != null ">
+	            AND score.DATA_DATE &gt;= #{startDate}
+	        </if>
+	        <if test=" endDate != null ">
+	            AND score.DATA_DATE &lt;= #{endDate}
+	        </if>
+	        <if test=" dataDate != null ">
+	            AND score.DATA_DATE = #{dataDate}
+	        </if>
+	        <if test=" wayCode != null and wayCode != '' ">
+	            AND score.WAY_CODE = #{wayCode}
+	        </if>
+	        <if test=" wayType != null and wayType != '' ">
+	            AND score.WAY_TYPE = #{wayType}
+	        </if>
+	        <if test=" orgNo != null and orgNo != '' ">
+	            AND score.ORG_NO = #{orgNo}
+	        </if>
+	        <if test=" wayNameLike != null and wayNameLike != '' ">
+	            AND way.WAY_NAME like #{wayNameLike}
+	        </if>
+	        <if test=" orgNameLike != null and orgNameLike != '' ">
+	            AND dept.deptname like #{orgNameLike}
+	        </if>
+	        <if test=" kpiNameLike != null and kpiNameLike != '' ">
+	            AND kpi.KPI_NAME like #{kpiNameLike}
+	        </if>
+	    </where>
+	    order by score.DATA_DATE desc ,score.WAY_CODE,coalesce(score.EDIT_SCORE,score.CALC_SCORE) desc,score.SRC_CODE,score.ORG_NO
+	</select>
+
+	<!-- 查询方案指标明细总得分 -->
+	<select id="queryMoWayOrgDetail" parameterType="java.util.HashMap" resultMap="moWayOrgDetail">
+	    SELECT
+	        score.DATA_DATE
+	        ,score.WAY_CODE
+	        ,score.ORG_NO
+	        ,score.SEQ_NUM
+	        ,score.SRC_CODE
+	        ,score.AREA_NO
+	        ,score.WAY_TYPE
+	        ,score.STAGE
+	        ,score.KPI_VALUE
+	        ,score.MBO_VALUE
+	        ,score.BASE_NUM
+	        ,score.AVG_VALUE	        
+	        ,score.RANK
+	        ,score.CALC_SCORE
+	        ,score.EDIT_SCORE
+	        ,coalesce(score.EDIT_SCORE,score.CALC_SCORE) as SCORE
+	        ,score.EDITOR
+	        ,score.EDIT_TIME
+	        ,dept.ORG_NAME	        
+	    FROM MO_WAY_ORG_DETAIL score	    
+	    inner join (
+	        SELECT DISTINCT DEPTCODE AS ORG_NO ,RESCNA AS ORG_NAME
+	        FROM v_auth_org
+	        WHERE USERID = #{userID}
+	    ) dept on score.ORG_NO = dept.ORG_NO
+	    <where>
+	        <if test=" startDate != null ">
+	            AND score.DATA_DATE &gt;= #{startDate}
+	        </if>
+	        <if test=" endDate != null ">
+	            AND score.DATA_DATE &lt;= #{endDate}
+	        </if>
+	        <if test=" dataDate != null ">
+	            AND score.DATA_DATE = #{dataDate}
+	        </if>
+	        <if test=" wayCode != null and wayCode != '' ">
+	            AND score.WAY_CODE = #{wayCode}
+	        </if>
+	        <if test=" orgNo != null and orgNo != '' ">
+	            AND score.ORG_NO = #{orgNo}
+	        </if>
+	        <if test=" orgNameLike != null and orgNameLike != '' ">
+	            AND dept.ORG_NAME like #{orgNameLike}
+	        </if>
+	    </where>
+	    order by score.DATA_DATE desc ,score.WAY_CODE,score.SEQ_NUM asc
+	</select>
+	
+	<!-- 机构考核方案指标得分明细映射 -->
+	<resultMap type="com.sunline.pams.plan.bean.MoWayPersonDetail" id="moWayPersonDetail">
+	    <result column="DATA_DATE" property="dataDate" jdbcType="DATE" />
+		<result column="WAY_CODE" property="wayCode" jdbcType="VARCHAR" />
+		<result column="MANAGER_NO" property="managerNo" jdbcType="VARCHAR" />
+		<result column="SRC_CODE" property="srcCode" jdbcType="VARCHAR" />
+		<result column="AREA_NO" property="areaNo" jdbcType="VARCHAR" />
+		<result column="WAY_TYPE" property="wayType" jdbcType="VARCHAR" />
+		<result column="STAGE" property="stage" jdbcType="NUMERIC" />
+		<result column="MANAGER_ORG" property="managerOrg" jdbcType="VARCHAR" />
+		<result column="KPI_VALUE" property="kpiValue" jdbcType="NUMERIC" />
+		<result column="MBO_VALUE" property="mboValue" jdbcType="NUMERIC" />
+		<result column="BASE_NUM" property="baseNum" jdbcType="NUMERIC" />
+		<result column="AVG_VALUE" property="avgValue" jdbcType="NUMERIC" />
+		<result column="RANK" property="rank" jdbcType="NUMERIC" />
+		<result column="SEQ_NUM" property="seqNum" jdbcType="NUMERIC" />
+		<result column="CALC_SCORE" property="calcScore" jdbcType="NUMERIC" />
+		<result column="EDIT_SCORE" property="editScore" jdbcType="NUMERIC" />
+		<result column="EDITOR" property="editor" jdbcType="VARCHAR" />
+		<result column="EDIT_TIME" property="editTime" jdbcType="TIMESTAMP" />	
+		<result column="WAY_NAME" property="wayName" jdbcType="VARCHAR" />
+		<result column="SCORE" property="score" jdbcType="NUMERIC" />
+		<result column="ORG_NAME" property="orgName" jdbcType="VARCHAR" />
+		<result column="ALIAS_NAME" property="aliasName" jdbcType="VARCHAR" />
+		<result column="DIMENSION_NAME" property="dimensionName" jdbcType="VARCHAR" />
+	</resultMap>
+	
+	<!-- 查询方案指标明细总得分 -->
+	<select id="queryPerDetailM" parameterType="java.util.HashMap" resultMap="moWayPersonDetail">
+	    SELECT
+	        score.DATA_DATE
+	        ,score.WAY_CODE
+	        ,score.MANAGER_NO
+	        ,score.SRC_CODE
+	        ,score.SEQ_NUM
+	        ,score.AREA_NO
+	        ,score.WAY_TYPE
+	        ,score.STAGE
+	        ,score.MANAGER_ORG
+	        ,score.KPI_VALUE
+	        ,score.MBO_VALUE
+	        ,score.BASE_NUM
+	        ,score.AVG_VALUE	        
+	        ,score.RANK
+	        ,score.CALC_SCORE
+	        ,score.EDIT_SCORE
+	        ,coalesce(score.EDIT_SCORE,score.CALC_SCORE) as SCORE
+	        ,score.EDITOR
+	        ,score.EDIT_TIME
+	        ,score.ALIAS_NAME
+	        ,score.DIMENSION_NAME
+	    FROM MO_WAY_PERSON_DETAIL score
+	    <where>
+	        <if test=" dataDate != null ">
+	            AND score.DATA_DATE = #{dataDate}
+	        </if>
+	        <if test=" wayCode != null and wayCode != '' ">
+	            AND score.WAY_CODE = #{wayCode}
+	        </if>
+
+	        <if test=" managerNo != null and managerNo != '' ">
+	            AND score.MANAGER_NO = #{managerNo}
+	        </if>
+	        
+	    </where>
+	    order by score.DIMENSION_NO asc,score.SEQ_NUM asc
+	</select>
+	
+	<!-- 查询方案指标明细总得分 -->
+	<select id="queryWayPersonDetailManagerlistPage" parameterType="java.util.HashMap" resultMap="moWayPersonDetail">
+	    SELECT
+	        score.DATA_DATE
+	        ,score.WAY_CODE
+	        ,score.MANAGER_NO
+	        ,score.SRC_CODE
+	        ,score.SEQ_NUM
+	        ,score.AREA_NO
+	        ,score.WAY_TYPE
+	        ,score.STAGE
+	        ,score.MANAGER_ORG
+	        ,score.KPI_VALUE
+	        ,score.MBO_VALUE
+	        ,score.BASE_NUM
+	        ,score.AVG_VALUE	        
+	        ,score.RANK
+	        ,score.CALC_SCORE
+	        ,score.EDIT_SCORE
+	        ,coalesce(score.EDIT_SCORE,score.CALC_SCORE) as SCORE
+	        ,score.EDITOR
+	        ,score.EDIT_TIME
+	        ,way.WAY_NAME 
+	        ,dept.deptname as ORG_NAME
+	        ,score.ALIAS_NAME
+	        ,score.DIMENSION_NAME
+	    FROM MO_WAY_PERSON_DETAIL score
+	    <!-- 关联方案名称 -->
+	    INNER JOIN MO_WAY_PERSON  way on score.WAY_CODE = way.WAY_CODE
+	    <!-- 权限控制，只能查询管辖机构的得分 -->
+	    left join pcmc_dept dept on score.MANAGER_ORG = dept.deptcode
+	    <where>
+	        <if test=" startDate != null ">
+	            AND score.DATA_DATE &gt;= #{startDate}
+	        </if>
+	        <if test=" endDate != null ">
+	            AND score.DATA_DATE &lt;= #{endDate}
+	        </if>
+	        <if test=" dataDate != null ">
+	            AND score.DATA_DATE = #{dataDate}
+	        </if>
+	        <if test=" wayCode != null and wayCode != '' ">
+	            AND score.WAY_CODE = #{wayCode}
+	        </if>
+	        <if test=" wayType != null and wayType != '' ">
+	            AND score.WAY_TYPE = #{wayType}
+	        </if>
+	        <if test=" managerNo != null and managerNo != '' ">
+	            AND score.MANAGER_NO = #{managerNo}
+	        </if>
+	        <if test=" wayNameLike != null and wayNameLike != '' ">
+	            AND way.WAY_NAME like #{wayNameLike}
+	        </if>
+	        <if test=" orgNameLike != null and orgNameLike != '' ">
+	            AND dept.ORG_NAME like #{orgNameLike}
+	        </if>
+	    </where>
+	    order by score.DATA_DATE desc ,score.WAY_CODE,coalesce(score.EDIT_SCORE,score.CALC_SCORE) desc,score.SEQ_NUM,score.MANAGER_ORG,score.MANAGER_NO
+	</select>
+	
+	<!-- 查询方案指标明细总得分 -->
+	<select id="queryWayPersonDetaillistPage" parameterType="java.util.HashMap" resultMap="moWayPersonDetail">
+	    SELECT
+	        score.DATA_DATE
+	        ,score.WAY_CODE
+	        ,score.MANAGER_NO
+	        ,score.SRC_CODE
+	        ,score.SEQ_NUM
+	        ,score.AREA_NO
+	        ,score.WAY_TYPE
+	        ,score.STAGE
+	        ,score.MANAGER_ORG
+	        ,score.KPI_VALUE
+	        ,score.MBO_VALUE
+	        ,score.BASE_NUM
+	        ,score.AVG_VALUE	        
+	        ,score.RANK
+	        ,score.CALC_SCORE
+	        ,score.EDIT_SCORE
+	        ,coalesce(score.EDIT_SCORE,score.CALC_SCORE) as SCORE
+	        ,score.EDITOR
+	        ,score.EDIT_TIME
+	        ,way.WAY_NAME 
+	        ,dept.DEPTNAME
+	        ,score.ALIAS_NAME
+	        ,score.DIMENSION_NAME
+	    FROM MO_WAY_PERSON_DETAIL score
+	    <!-- 关联方案名称 -->
+	    INNER JOIN MO_WAY_PERSON  way on score.WAY_CODE = way.WAY_CODE
+	    <!-- 权限控制，只能查询管辖机构的得分 -->
+	    left join pcmc_dept dept on score.MANAGER_ORG = dept.deptcode
+	    <where>
+	        <if test=" startDate != null ">
+	            AND score.DATA_DATE &gt;= #{startDate}
+	        </if>
+	        <if test=" endDate != null ">
+	            AND score.DATA_DATE &lt;= #{endDate}
+	        </if>
+	        <if test=" dataDate != null ">
+	            AND score.DATA_DATE = #{dataDate}
+	        </if>
+	        <if test=" wayCode != null and wayCode != '' ">
+	            AND score.WAY_CODE = #{wayCode}
+	        </if>
+	        <if test=" wayType != null and wayType != '' ">
+	            AND score.WAY_TYPE = #{wayType}
+	        </if>
+	        <if test=" managerNo != null and managerNo != '' ">
+	            AND score.MANAGER_NO = #{managerNo}
+	        </if>
+	        <if test=" wayNameLike != null and wayNameLike != '' ">
+	            AND way.WAY_NAME like #{wayNameLike}
+	        </if>
+	        <if test=" orgNameLike != null and orgNameLike != '' ">
+	            AND dept.deptname like #{orgNameLike}
+	        </if>
+	    </where>
+	    order by score.DATA_DATE desc ,score.WAY_CODE,coalesce(score.EDIT_SCORE,score.CALC_SCORE) desc,score.SEQ_NUM,score.MANAGER_ORG,score.MANAGER_NO
+	</select>
+	
+	<!-- 人员考核方案得分调整 方案查询  -->
+	<select id="query_person_scorelistPage" parameterType="java.util.HashMap"
+		resultMap="moWayPersonResult" >
+		SELECT 
+		    way.WAY_CODE
+		    ,way.AREA_NO
+		    ,way.WAY_TYPE
+		    ,way.WAY_NAME
+		    ,way.WAY_RANGE
+		    ,way.ALL_SCORE
+		    ,way.ORG_LEVEL
+		    ,way.ORG_TYPE
+		    ,way.WAY_POST
+		    ,way.WHITE_LIST
+		    ,way.BLACK_LIST
+		    ,way.START_DAT
+		    ,way.END_DAT
+		    ,way.WAY_CYCLE
+		    ,way.EDIT_ORG
+		    ,way.EDIT_ROLE
+		    ,way.WAY_DESC
+		    ,way.STATUS
+		    ,way.CREATE_TIME
+		    ,way.OPERATOR
+		    ,way.REVIEW_MAN
+		    ,way.REVIEW_TIME
+		    ,way.REVIEW_STATUS
+		    ,way.REVIEW_OPINION
+		    ,way.IS_EXE 		    
+		FROM MO_WAY_PERSON way 
+		inner join (
+		    select DISTINCT AREA_NO 
+		    from v_auth_org 
+		    WHERE USERID = #{userID}
+		) area on way.AREA_NO = area.AREA_NO
+		<where>
+		    <if test="  wayName != null and wayName != ''  ">
+		        AND way.WAY_NAME = #{wayName}
+		    </if>
+		    <if test="  wayNameLike != null and wayNameLike != ''  ">
+		        AND way.WAY_NAME like #{wayNameLike}
+		    </if>
+		    <if test="  startDate != null and startDate != ''  ">
+		        AND way.START_DAT &gt;= #{startDate}
+		    </if>
+		    <if test="  endDate != null and endDate != ''  ">
+		        AND way.END_DAT &lt;= #{endDate}
+		    </if>
+		    <if test="  wayType != null and wayType != ''  ">
+		        AND way.WAY_TYPE = #{wayType}
+		    </if>
+		    <if test=" 1==1 ">
+		        AND way.STATUS &lt;&gt; 'DEL'
+		    </if>
+		</where>
+		order by way.WAY_CODE
+	</select>
+	
+	<!-- 行员考核方案结果映射 -->
+	<resultMap type="com.sunline.pams.plan.bean.MoWayPersonTotal" id="MoWayPersonTotal">
+	    <result column="DATA_DATE" property="dataDate" jdbcType="DATE" />
+		<result column="WAY_CODE" property="wayCode" jdbcType="VARCHAR" />
+		<result column="MANAGER_NO" property="managerNo" jdbcType="VARCHAR" />
+		<result column="AREA_NO" property="areaNo" jdbcType="VARCHAR" />
+		<result column="WAY_TYPE" property="wayType" jdbcType="VARCHAR" />
+		<result column="STAGE" property="stage" jdbcType="NUMERIC" />
+		<result column="MANAGER_ORG" property="managerOrg" jdbcType="VARCHAR" />
+		<result column="TOTAL_SCORE" property="totalScore" jdbcType="NUMERIC" />
+		<result column="RANK" property="rank" jdbcType="NUMERIC" />
+		<result column="EDIT_SCORE" property="editScore" jdbcType="NUMERIC" />
+		<result column="EDITOR" property="editor" jdbcType="VARCHAR" />
+		<result column="EDIT_TIME" property="editTime" jdbcType="TIMESTAMP" />	
+		<result column="WAY_NAME" property="wayName" jdbcType="VARCHAR" />
+		<result column="SCORE" property="score" jdbcType="NUMERIC" />
+		<result column="ORG_NAME" property="orgName" jdbcType="VARCHAR" />
+		<result column="MANAGER_NAME" property="managerName" jdbcType="VARCHAR" />
+		
+	</resultMap>
+	<!-- 查询方案总得分 -->
+	<select id="queryMoWayPersonTotallistPage" parameterType="java.util.HashMap" resultMap="MoWayPersonTotal">
+	    SELECT score.DATA_DATE,
+               score.WAY_CODE,
+               score.MANAGER_NO,
+               score.AREA_NO,
+               score.WAY_TYPE,
+               score.STAGE,
+               score.MANAGER_ORG,
+               score.TOTAL_SCORE,
+               score.RANK,
+               score.EDIT_SCORE,
+               coalesce(score.EDIT_SCORE, score.TOTAL_SCORE) as SCORE,
+               score.EDITOR,
+               score.EDIT_TIME,
+               way.WAY_NAME,
+               dept.DEPTNAME AS ORG_NAME,
+               puser.USERNAME AS MANAGER_NAME
+          FROM MO_WAY_PERSON_TOTAL score
+          INNER JOIN MO_WAY_PERSON way on score.WAY_CODE = way.WAY_CODE
+		  LEFT JOIN pcmc_user puser ON puser.USERCODE = score.MANAGER_NO
+		  LEFT JOIN pcmc_dept dept ON dept.deptid = puser.deptid
+		<where>
+	    	score.area_No = #{areaNo}
+			AND (
+			EXISTS ( SELECT 1 FROM V_AUTH_ORG AUTH WHERE AUTH.DEPTCODE = dept.DEPTCODE AND AUTH.USERCODE = #{usercode} )
+			OR #{usercode} = score.MANAGER_NO
+			)
+	        <if test=" startDate != null ">
+	            AND score.DATA_DATE &gt;= #{startDate}
+	        </if>
+	        <if test=" endDate != null ">
+	            AND score.DATA_DATE &lt;= #{endDate}
+	        </if>
+	        <if test=" wayNameLike != null and wayNameLike != '' ">
+	            AND way.WAY_NAME like #{wayNameLike}
+	        </if>
+	        <if test=" userCodeStr1 != null and userCodeStr1 != '' ">
+	            AND puser.usercode in (${userCodeStr1})
+	        </if>
+	        <!-- <if test=" orgNameLike != null and orgNameLike != '' ">
+	            AND dept.deptname like #{orgNameLike}
+	        </if> -->
+	        <if test=" deptCode != null and deptCode != '' ">
+				AND dept.deptcode IN ( SELECT a.ORG_NO FROM SYS_PUB_ORG_SUB_V a WHERE a.PARENT_ORG_NO = #{deptCode} )
+	        </if>
+	        <if test="wayCode!= null and wayCode!= '' ">
+	            AND score.WAY_CODE=#{wayCode}
+	        </if>
+	    </where>
+	    order by score.DATA_DATE desc ,score.WAY_CODE,score.MANAGER_ORG,score.MANAGER_NO
+	</select>
+	
+	
+	<!-- 查询方案总得分 -->
+	<select id="queryWayPerTotalManagerlistPage" parameterType="java.util.HashMap" resultMap="MoWayPersonTotal">
+	    SELECT
+	        score.DATA_DATE
+	        ,score.WAY_CODE
+	        ,score.MANAGER_NO
+	        ,score.AREA_NO
+	        ,score.WAY_TYPE
+	        ,score.STAGE
+	        ,score.MANAGER_ORG
+	        ,score.TOTAL_SCORE
+	        ,score.RANK
+	        ,score.EDIT_SCORE
+	        ,coalesce(score.EDIT_SCORE,score.TOTAL_SCORE) as SCORE
+	        ,score.EDITOR
+	        ,score.EDIT_TIME
+	        ,way.WAY_NAME 
+	        ,dept.DEPTNAME AS ORG_NAME
+	        ,puser.USERNAME AS MANAGER_NAME
+	    FROM MO_WAY_PERSON_TOTAL score
+	    INNER JOIN MO_WAY_PERSON  way on score.WAY_CODE = way.WAY_CODE
+	    LEFT JOIN PCMC_DEPT dept on score.MANAGER_ORG = dept.DEPTCODE
+	    left join pcmc_user puser on puser.usercode = score.MANAGER_NO
+	    <where>
+	        <if test=" startDate != null ">
+	            AND score.DATA_DATE &gt;= #{startDate}
+	        </if>
+	        <if test=" endDate != null ">
+	            AND score.DATA_DATE &lt;= #{endDate}
+	        </if>
+	        <if test=" wayCodeInStr != null and wayCodeInStr != '' ">
+	            AND score.way_code in ( #{wayCodeInStr})
+	        </if>
+	        <if test=" wayType != null and wayType != '' ">
+	            AND way.WAY_TYPE = #{wayType}
+	        </if>
+	        <if test=" wayCode != null and wayCode != '' ">
+	            AND way.WAY_CODE = #{wayCode}
+	        </if>
+	        <if test=" wayNameLike != null and wayNameLike != '' ">
+	            AND way.WAY_NAME like #{wayNameLike}
+	        </if>
+	        <if test=" managerNameLike != null and managerNameLike != '' ">
+	            AND puser.USERNAME like #{managerNameLike}
+	        </if>
+	        
+	        <if test=" orgNameLike != null and orgNameLike != '' ">
+	            AND dept.DEPTNAME like #{orgNameLike}
+	        </if>
+	        
+	        <if test=" managerNameLike != null and managerNameLike != '' ">
+	            AND puser.USERNAME like #{managerNameLike}
+	        </if>
+	        
+	    </where>
+	    order by score.DATA_DATE desc ,score.WAY_CODE ,score.MANAGER_ORG,score.MANAGER_NO
+	</select>
+	
+	<!-- 修改机构方案状态 -->
+	<update id="updateOrgWayStatus" parameterType="java.util.HashMap">
+	    UPDATE MO_WAY_ORG SET STATUS = #{wayStatus,jdbcType=VARCHAR}
+	    where WAY_CODE = #{wayCode}
+	</update>
+	
+	<!-- 修改机构方案登记-->
+	<update id="updateOrgWayLevel" parameterType="java.util.HashMap">
+	    UPDATE MO_WAY_ORG SET WAY_LEVEL = #{wayLevel,jdbcType=VARCHAR}
+	    where WAY_CODE = #{wayCode}
+	</update>
+	
+	<!-- 机构历史表映射 -->
+	<resultMap type="com.sunline.pams.plan.bean.MoWayOrgH" id="moWayOrgH">
+	    <result column="WAY_VERSION" property="wayVersion" jdbcType="VARCHAR" />
+	    <result column="way_code" property="wayCode" jdbcType="VARCHAR" />
+		<result column="area_no" property="areaNo" jdbcType="CHAR" />
+		<result column="way_type" property="wayType" jdbcType="CHAR" />
+		<result column="way_name" property="wayName" jdbcType="VARCHAR" />
+		<result column="way_range" property="wayRange" jdbcType="VARCHAR" />
+		<result column="all_score" property="allScore" jdbcType="NUMERIC" />
+		<result column="org_level" property="orgLevel" jdbcType="VARCHAR" />
+		<result column="org_type" property="orgType" jdbcType="VARCHAR" />
+		<result column="white_list" property="whiteList" jdbcType="VARCHAR" />
+		<result column="black_list" property="blackList" jdbcType="VARCHAR" />
+		<result column="start_dat" property="startDate" jdbcType="DATE" />
+		<result column="end_dat" property="endDate" jdbcType="DATE" />
+		<result column="way_cycle" property="wayCycle" jdbcType="CHAR" />
+		<result column="edit_org" property="editOrg" jdbcType="VARCHAR" />
+		<result column="edit_role" property="editRole" jdbcType="VARCHAR" />
+		<result column="way_desc" property="wayDesc" jdbcType="VARCHAR" />
+		<result column="status" property="status" jdbcType="VARCHAR" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="operator" property="operator" jdbcType="VARCHAR" />
+		<result column="review_man" property="reviewMan" jdbcType="VARCHAR" />
+		<result column="review_time" property="reviewTime" jdbcType="TIMESTAMP" />
+		<result column="review_status" property="reviewStatus" jdbcType="VARCHAR" />
+		<result column="review_opinion" property="reviewOpinion" jdbcType="VARCHAR" />
+		<result column="is_exe" property="isExe" jdbcType="CHAR" />
+		<result column="exeStatus" property="exeStatus"  />
+		<result column="WAY_LEVEL" property="wayLevel" jdbcType="VARCHAR"  />
+	</resultMap>
+	
+	<!-- 查询机构方案版本 -->
+	<select id="queryOrgVersionlistPage" parameterType="java.util.HashMap" resultMap="moWayOrgH">
+	    SELECT
+	        WAY_VERSION
+	        ,WAY_CODE
+	        ,AREA_NO
+	        ,WAY_TYPE
+	        ,WAY_NAME
+	        ,WAY_RANGE
+	        ,ALL_SCORE
+	        ,ORG_LEVEL
+	        ,ORG_TYPE
+	        ,WHITE_LIST
+	        ,BLACK_LIST
+	        ,START_DAT
+	        ,END_DAT
+	        ,WAY_CYCLE
+	        ,EDIT_ORG
+	        ,EDIT_ROLE
+	        ,WAY_DESC
+	        ,STATUS
+	        ,CREATE_TIME
+	        ,OPERATOR
+	        ,REVIEW_MAN
+	        ,REVIEW_TIME
+	        ,REVIEW_STATUS
+	        ,REVIEW_OPINION
+	        ,IS_EXE
+	        ,WAY_LEVEL
+	    FROM MO_WAY_ORG_H
+	    <where>
+	        <if test=" wayCode != null and wayCode !='' ">
+	            AND WAY_CODE = #{wayCode}
+	        </if>
+	        <if test=" wayType != null and wayType !='' ">
+	            AND WAY_TYPE = #{wayType}
+	        </if>
+	    </where>
+	    order by WAY_VERSION ASC
+	</select>
+	
+	<!-- 查询机构历史表的版本 -->
+	<select id="queryOrgWayHisVersion" parameterType="java.util.HashMap" resultType="String" >
+	    SELECT
+	        COUNT(1)
+	    FROM MO_WAY_ORG_H
+	    WHERE  WAY_CODE = #{wayCode}
+	</select>
+	
+	<!-- 查询人员历史表的版本 -->
+	<select id="queryPersonWayHisVersion" parameterType="java.util.HashMap" resultType="String" >
+	    SELECT
+	        COUNT(1)
+	    FROM MO_WAY_PERSON_H
+	    WHERE  WAY_CODE = #{wayCode}
+	</select>
+	
+	<!-- 插入机构方案历史数据表-->
+	<insert id="insertOrgWayHis" parameterType="java.util.HashMap">
+	    INSERT INTO MO_WAY_ORG_H ( WAY_VERSION,WAY_CODE,AREA_NO,WAY_TYPE,WAY_NAME,WAY_RANGE,
+	        ALL_SCORE,ORG_LEVEL,ORG_TYPE,WHITE_LIST,BLACK_LIST,START_DAT,END_DAT,WAY_CYCLE,
+	        EDIT_ORG,EDIT_ROLE,WAY_DESC,STATUS,CREATE_TIME,OPERATOR,REVIEW_MAN,REVIEW_TIME,
+	        REVIEW_STATUS,REVIEW_OPINION,IS_EXE,WAY_LEVEL)
+	    SELECT #{wayVersion},WAY_CODE,AREA_NO,WAY_TYPE,WAY_NAME,WAY_RANGE,
+	        ALL_SCORE,ORG_LEVEL,ORG_TYPE,WHITE_LIST,BLACK_LIST,START_DAT,END_DAT,WAY_CYCLE,
+	        EDIT_ORG,EDIT_ROLE,WAY_DESC,STATUS,CREATE_TIME,OPERATOR,REVIEW_MAN,REVIEW_TIME,
+	        REVIEW_STATUS,REVIEW_OPINION,IS_EXE,WAY_LEVEL
+	    FROM MO_WAY_ORG WHERE  WAY_CODE = #{wayCode}
+	</insert>
+	
+	<!-- 插入机构方案维度历史表 -->
+	<insert id="insertOrgWayDimensionHis" parameterType="java.util.HashMap">
+	    INSERT INTO MO_WAY_ORG_DIMENSION_H ( WAY_VERSION,WAY_CODE,DIMENSION_NO,
+	        DIMENSION_NAME,DIMENSION_RATE,SEQ_NUM)
+	    SELECT #{wayVersion},WAY_CODE,DIMENSION_NO,
+	        DIMENSION_NAME,DIMENSION_RATE,SEQ_NUM
+	    FROM MO_WAY_ORG_DIMENSION WHERE  WAY_CODE = #{wayCode}
+	</insert>
+	
+	<!-- 插入机构方案指标表-历史 -->
+	<insert id="insertWayOrgKpiHis" parameterType="java.util.HashMap">
+	    INSERT INTO MO_WAY_ORG_KPI_H ( WAY_VERSION,WAY_CODE,SEQ_NUM,KPI_STR,KPI_STR_CN,
+	        DIMENSION_NO,RATE,APPRAISE_METHOD,MODEL_CODE,MODEL_FORMULA,
+	        MODEL_FC,WAY_SRC,SRC_CODE,SRC_RULE,ALIAS_NAME)
+	    SELECT #{wayVersion},WAY_CODE,SEQ_NUM,KPI_STR,KPI_STR_CN,
+	        DIMENSION_NO,RATE,APPRAISE_METHOD,MODEL_CODE,MODEL_FORMULA,
+	        MODEL_FC,WAY_SRC,SRC_CODE,SRC_RULE,ALIAS_NAME
+	    FROM MO_WAY_ORG_KPI WHERE  WAY_CODE = #{wayCode}
+	</insert>
+	
+	
+	<!-- 修改人员方案状态 -->
+	<update id="updatePersonWayStatus" parameterType="java.util.HashMap">
+	    UPDATE MO_WAY_PERSON SET STATUS = #{wayStatus,jdbcType=VARCHAR}
+	    where WAY_CODE = #{wayCode}
+	</update>
+	
+	<!-- 修改人员方案登记-->
+	<update id="updatePersonWayLevel" parameterType="java.util.HashMap">
+	    UPDATE MO_WAY_PERSON SET WAY_LEVEL = #{wayLevel,jdbcType=VARCHAR}
+	    where WAY_CODE = #{wayCode}
+	</update>
+	
+	<!-- 机构历史表映射 -->
+	<resultMap type="com.sunline.pams.plan.bean.MoWayPersonH" id="moWayPersonHResultMAP">
+	    <result column="WAY_VERSION" property="wayVersion" jdbcType="VARCHAR" />
+	    <result column="way_code" property="wayCode" jdbcType="VARCHAR" />
+		<result column="area_no" property="areaNo" jdbcType="CHAR" />
+		<result column="way_type" property="wayType" jdbcType="CHAR" />
+		<result column="way_name" property="wayName" jdbcType="VARCHAR" />
+		<result column="way_range" property="wayRange" jdbcType="VARCHAR" />
+		<result column="all_score" property="allScore" jdbcType="NUMERIC" />
+		<result column="org_level" property="orgLevel" jdbcType="VARCHAR" />
+		<result column="org_type" property="orgType" jdbcType="VARCHAR" />
+		<result column="WAY_POST" property="wayPost" jdbcType="VARCHAR" />
+		<result column="white_list" property="whiteList" jdbcType="VARCHAR" />
+		<result column="black_list" property="blackList" jdbcType="VARCHAR" />
+		<result column="start_dat" property="startDate" jdbcType="DATE" />
+		<result column="end_dat" property="endDate" jdbcType="DATE" />
+		<result column="way_cycle" property="wayCycle" jdbcType="CHAR" />
+		<result column="edit_org" property="editOrg" jdbcType="VARCHAR" />
+		<result column="edit_role" property="editRole" jdbcType="VARCHAR" />
+		<result column="way_desc" property="wayDesc" jdbcType="VARCHAR" />
+		<result column="status" property="status" jdbcType="VARCHAR" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="operator" property="operator" jdbcType="VARCHAR" />
+		<result column="review_man" property="reviewMan" jdbcType="VARCHAR" />
+		<result column="review_time" property="reviewTime" jdbcType="TIMESTAMP" />
+		<result column="review_status" property="reviewStatus" jdbcType="VARCHAR" />
+		<result column="review_opinion" property="reviewOpinion" jdbcType="VARCHAR" />
+		<result column="is_exe" property="isExe" jdbcType="CHAR" />
+		<result column="exeStatus" property="exeStatus"  />
+		<result column="WAY_LEVEL" property="wayLevel" jdbcType="VARCHAR"  />
+	</resultMap>
+	
+	<!-- 查询机构方案版本 -->
+	<select id="queryPersonVersionlistPage" parameterType="java.util.HashMap" resultMap="moWayPersonHResultMAP">
+	    SELECT
+	        WAY_VERSION
+	        ,WAY_CODE
+	        ,AREA_NO
+	        ,WAY_TYPE
+	        ,WAY_NAME
+	        ,WAY_RANGE
+	        ,ALL_SCORE
+	        ,ORG_LEVEL
+	        ,ORG_TYPE
+	        ,WAY_POST
+	        ,WHITE_LIST
+	        ,BLACK_LIST
+	        ,START_DAT
+	        ,END_DAT
+	        ,WAY_CYCLE
+	        ,EDIT_ORG
+	        ,EDIT_ROLE
+	        ,WAY_DESC
+	        ,STATUS
+	        ,CREATE_TIME
+	        ,OPERATOR
+	        ,REVIEW_MAN
+	        ,REVIEW_TIME
+	        ,REVIEW_STATUS
+	        ,REVIEW_OPINION
+	        ,IS_EXE
+	        ,WAY_LEVEL
+	    FROM MO_WAY_PERSON_H
+	    <where>
+	        <if test=" wayCode != null and wayCode !='' ">
+	            AND WAY_CODE = #{wayCode}
+	        </if>
+	        <if test=" wayType != null and wayType !='' ">
+	            AND WAY_TYPE = #{wayType}
+	        </if>
+	    </where>
+	    order by WAY_VERSION ASC
+	</select>
+	
+	<!-- 插入机构方案历史数据表-->
+	<insert id="insertPersonWayHis" parameterType="java.util.HashMap">
+	    INSERT INTO MO_WAY_PERSON_H ( WAY_VERSION,WAY_CODE,AREA_NO,WAY_TYPE,WAY_NAME,WAY_RANGE,
+	        ALL_SCORE,ORG_LEVEL,ORG_TYPE,WAY_POST,WHITE_LIST,BLACK_LIST,START_DAT,
+	        END_DAT,WAY_CYCLE,EDIT_ORG,EDIT_ROLE,WAY_DESC,STATUS,CREATE_TIME,OPERATOR,
+	        REVIEW_MAN,REVIEW_TIME,REVIEW_STATUS,REVIEW_OPINION,IS_EXE,WAY_LEVEL)
+	    SELECT #{wayVersion},WAY_CODE,AREA_NO,WAY_TYPE,WAY_NAME,WAY_RANGE,
+	        ALL_SCORE,ORG_LEVEL,ORG_TYPE,WAY_POST,WHITE_LIST,BLACK_LIST,START_DAT,
+	        END_DAT,WAY_CYCLE,EDIT_ORG,EDIT_ROLE,WAY_DESC,STATUS,CREATE_TIME,OPERATOR,
+	        REVIEW_MAN,REVIEW_TIME,REVIEW_STATUS,REVIEW_OPINION,IS_EXE,WAY_LEVEL
+	    FROM MO_WAY_PERSON WHERE  WAY_CODE = #{wayCode}
+	</insert>
+	
+	<!-- 插入机构方案维度历史表 -->
+	<insert id="insertPersonWayDimensionHis" parameterType="java.util.HashMap">
+	    INSERT INTO MO_WAY_PERSON_DIMENSION_H ( WAY_VERSION,WAY_CODE,DIMENSION_NO,
+	        DIMENSION_NAME,DIMENSION_RATE,SEQ_NUM)
+	    SELECT #{wayVersion},WAY_CODE,DIMENSION_NO,
+	        DIMENSION_NAME,DIMENSION_RATE,SEQ_NUM
+	    FROM MO_WAY_PERSON_DIMENSION WHERE  WAY_CODE = #{wayCode}
+	</insert>
+	
+	<!-- 插入机构方案指标表-历史 -->
+	<insert id="insertWayPersonKpiHis" parameterType="java.util.HashMap">
+	    INSERT INTO MO_WAY_PERSON_KPI_H ( WAY_VERSION,WAY_CODE,SEQ_NUM,KPI_STR,KPI_STR_CN,
+	        DIMENSION_NO,RATE,APPRAISE_METHOD,MODEL_CODE,MODEL_FORMULA,
+	        MODEL_FC,WAY_SRC,SRC_CODE,SRC_RULE,ALIAS_NAME)
+	    SELECT #{wayVersion},WAY_CODE,SEQ_NUM,KPI_STR,KPI_STR_CN,
+	        DIMENSION_NO,RATE,APPRAISE_METHOD,MODEL_CODE,MODEL_FORMULA,
+	        MODEL_FC,WAY_SRC,SRC_CODE,SRC_RULE,ALIAS_NAME
+	    FROM MO_WAY_PERSON_KPI WHERE  WAY_CODE = #{wayCode}
+	</insert>
+	
+	<resultMap type="java.util.HashMap" id="dimensionListResultMap">
+	    <result column="WAY_CODE" property="wayCode" jdbcType="VARCHAR"/>
+	    <result column="DIMENSION_NO" property="dimensionNo" jdbcType="VARCHAR"/>
+	    <result column="DIMENSION_NAME" property="dimensionName" jdbcType="VARCHAR"/>
+	    <result column="KPINUMS" property="kpiNums" jdbcType="NUMERIC"/>
+	</resultMap>
+	<!-- 查询机构方案维度 -->
+	<select id="queryOrgWayDimensionList" parameterType="java.util.HashMap" resultMap="dimensionListResultMap">
+	    select D.WAY_CODE,D.DIMENSION_NO,D.DIMENSION_NAME,count(k.kpi_str) as KPINUMS
+	    from MO_WAY_ORG_DIMENSION D 
+	    LEFT JOIN MO_WAY_ORG_KPI K ON D.DIMENSION_NO = K.DIMENSION_NO AND D.WAY_CODE = K.WAY_CODE
+	    where d.way_code = #{wayCode}
+	    group by D.WAY_CODE,D.DIMENSION_NO,D.DIMENSION_NAME
+	    order by d.dimension_no asc
+	</select>
+	
+	<!-- 查询机构方案维度 -->
+	<select id="queryPersonWayDimensionList" parameterType="java.util.HashMap" resultMap="dimensionListResultMap">
+	    select D.WAY_CODE,D.DIMENSION_NO,D.DIMENSION_NAME,count(k.kpi_str) as KPINUMS
+	    from MO_WAY_PERSON_DIMENSION D 
+	    LEFT JOIN MO_WAY_PERSON_KPI K ON D.DIMENSION_NO = K.DIMENSION_NO AND D.WAY_CODE = K.WAY_CODE
+	    where d.way_code = #{wayCode}
+	    group by D.WAY_CODE,D.DIMENSION_NO,D.DIMENSION_NAME
+	    order by d.dimension_no asc
+	</select>
+	
+	<resultMap type="java.util.HashMap" id="dimensionKpiResultMap">
+	    <result column="WAY_CODE" property="wayCode" jdbcType="VARCHAR"/>
+	    <result column="DIMENSION_NO" property="dimensionNo" jdbcType="VARCHAR"/>
+	    <result column="ALIAS_NAME" property="kpiName" jdbcType="VARCHAR"/>
+	</resultMap>
+	<!-- 查询机构方案指标 -->
+	<select id="queryOrgWayKpiList" parameterType="java.util.HashMap" resultMap="dimensionKpiResultMap">
+	    select D.WAY_CODE,D.DIMENSION_NO,k.ALIAS_NAME                                                  
+	    from MO_WAY_ORG_DIMENSION D                                                              
+	    LEFT JOIN MO_WAY_ORG_KPI K ON D.DIMENSION_NO = K.DIMENSION_NO AND D.WAY_CODE = K.WAY_CODE
+	    where d.way_code = #{wayCode}
+	    order by d.dimension_no asc,k.seq_num asc                                                  
+	</select>
+	
+	<!-- 查询人员方案指标 -->
+	<select id="queryPersonWayKpiList" parameterType="java.util.HashMap" resultMap="dimensionKpiResultMap">
+	    select D.WAY_CODE,D.DIMENSION_NO,k.ALIAS_NAME                                                  
+	    from MO_WAY_PERSON_DIMENSION D                                                              
+	    LEFT JOIN MO_WAY_PERSON_KPI K ON D.DIMENSION_NO = K.DIMENSION_NO AND D.WAY_CODE = K.WAY_CODE
+	    where d.way_code = #{wayCode}
+	    order by d.dimension_no asc,k.seq_num asc                                                  
+	</select>
+	
+	<!-- 统计方案机构总分 -->
+	<select id="queryWayOrgTotalEditScore" parameterType="java.util.HashMap" resultType="String">
+	    SELECT SUM(coalesce(coalesce(EDIT_SCORE,CALC_SCORE),0))
+	    FROM MO_WAY_ORG_DETAIL
+	    <where>
+	        <if test="wayCode != null and wayCode !=''">
+	            AND WAY_CODE = #{wayCode}
+	        </if>
+	        <if test="orgNo != null and orgNo !=''">
+	            AND ORG_NO = #{orgNo}
+	        </if>
+	        <if test="dataDate != null and dataDate !=''">
+	            AND DATA_DATE = #{dataDate}
+	        </if>
+	    </where>
+	</select>
+	
+	<!-- 查询岗位系数 -->
+	<resultMap type="java.util.HashMap" id="ratioResultMap">
+	    <result  column="PARACD" property="paracd" jdbcType="VARCHAR" />
+	    <result  column="PARANA" property="parana" jdbcType="VARCHAR" />
+	</resultMap>
+	<select id="queryKnpPara" parameterType="java.util.HashMap" resultMap="ratioResultMap">
+	    SELECT 
+	        PARACD,PARANA
+	    FROM pcmc_knp_para
+	    WHERE paratp = #{paratp} AND paracd &lt;&gt;'%' 
+	</select>
+	
+	<!-- 查询方案是否包含机构 -->
+	<select id="queryWayOrg" parameterType="java.util.HashMap" resultType="java.lang.String">
+	    SELECT B.DEPTCODE 
+	    FROM MO_WAY_ORG_TOTAL  A 
+	    INNER JOIN PCMC_DEPT  B ON A.ORG_NO = B.DEPTCODE AND A.AREA_NO = B.AREANO
+	    WHERE A.WAY_CODE = #{wayCode} and b.deptname = #{deptName}
+	</select>
+	
+	<!-- 查询方案维度 -->
+	<select id="queryWayDim" parameterType="java.util.HashMap" resultType="java.lang.String">
+	    SELECT DIMENSION_NO FROM MO_WAY_ORG_DIMENSION 
+	    WHERE WAY_CODE = #{wayCode} and DIMENSION_Name = #{dimensionName}
+	</select>
+	
+	<resultMap type="java.util.HashMap" id="wayNameMap">
+	    <result column="WAY_NAME" property="wayName" jdbcType="VARCHAR" />
+	</resultMap>
+	<!-- 查询方案名称 -->
+	<select id="queryOrgWayName" parameterType="java.util.HashMap" resultMap="wayNameMap">
+	    SELECT WAY_NAME 
+	    FROM MO_WAY_ORG 
+	    where way_name = #{wayName}
+	    <if test=" wayCode != null and wayCode !='' ">
+	        and way_code != #{wayCode}
+	    </if>
+	</select>
+	
+	<select id="queryPerWayName" parameterType="java.util.HashMap" resultMap="wayNameMap">
+	    SELECT WAY_NAME 
+	    FROM MO_WAY_PERSON 
+	    where way_name = #{wayName}
+	    <if test=" wayCode != null and wayCode !='' ">
+	        and way_code != #{wayCode}
+	    </if>
+	</select>
+	
+	
+	
+	<!-- 工资条查询 -->
+	<select id="queryPayInfolistPage" parameterType="java.util.HashMap" resultType="java.util.HashMap" >
+	   SELECT
+			USERCODE,
+			USERNAME,
+			AREA_NO,
+		    POSTCODE,
+		    POST_PAY,
+		    PA_PAY,
+		    OTHER_SUBSIDY,
+		    POST_PAY + PA_PAY + OTHER_SUBSIDY AS SHOULD_TOTAL,
+		    SOCIAL_SECURITY,
+			ACCT_FUND,
+			TAX,
+		    SOCIAL_SECURITY + ACCT_FUND + TAX AS REAL_TOTAL
+		 FROM(
+		SELECT
+			A.USERCODE,
+			B.USERNAME,
+		    B.POSTCODE,
+			A.AREA_NO,
+			POST_PAY,
+		    POST_PA_PAY+DEPT_PA_PAY+TEAM_PA_PAY+PERSON_SALE_PA_PAY AS PA_PAY,
+			TRAFFIC_SUBSIDY + STAY_SUBSIDY + FOOD_SUBSIDY + PHONE_SUBSIDY AS OTHER_SUBSIDY,
+			SOCIAL_SECURITY,
+			ACCT_FUND,
+			TAX
+		FROM
+			MO_PAY_INFO A
+		LEFT JOIN PCMC_USER B ON A .USERCODE = B.USERCODE
+		AND A .AREA_NO = CORPCODE) a
+		<where>
+		    <if test=" usercode != null and usercode !='' ">
+		        and USERCODE = #{usercode}
+		    </if>
+	    </where>
+	</select>
+	
+	
+	<!-- 查询某一条工资条信息 -->
+	<select id="queryPayInfoById" parameterType="java.util.HashMap" resultType="java.util.HashMap" >
+	   select 
+			A.USERCODE,
+			B.USERNAME,
+			POST_PA_PAY,
+			DEPT_PA_PAY,
+			TEAM_PA_PAY,
+			PERSON_SALE_PA_PAY,
+			POST_PA_PAY+DEPT_PA_PAY+TEAM_PA_PAY+PERSON_SALE_PA_PAY AS PA_PAY,
+			TRAFFIC_SUBSIDY,
+			STAY_SUBSIDY,
+			FOOD_SUBSIDY,
+			PHONE_SUBSIDY,
+		    TRAFFIC_SUBSIDY + STAY_SUBSIDY + FOOD_SUBSIDY + PHONE_SUBSIDY AS OTHER_SUBSIDY
+		 from MO_PAY_INFO A
+		LEFT JOIN PCMC_USER B ON A.USERCODE = B.USERCODE 
+		AND A.AREA_NO = CORPCODE
+		<where>
+		    <if test=" usercode != null and usercode !='' ">
+		        and A.USERCODE = #{usercode}
+		    </if>
+	    </where>
+	</select>
+	
+	
+	<!-- 工资条配置查询 -->
+	<select id="querySalaryConfigInfolistPage" parameterType="java.util.HashMap" resultType="java.util.HashMap" >
+	   select * from mo_salbill_config 
+	</select>
+	
+	<!-- 税率配置查询 -->
+	<select id="queryTaxConfigInfolistPage" parameterType="java.util.HashMap" resultType="java.util.HashMap" >
+	   select * from mo_tax_config order by tax_code
+	</select>
+	
+	
+    <!-- 新增工资条配置 -->
+    <insert id="insertSalaryConfigInfo" parameterType="java.util.HashMap">
+		insert into MO_SALBILL_CONFIG (		   
+			SALBILL_CODE,
+			SALBILL_NAME,
+			SALBILL_RULENAME
+		)
+		VALUES
+			(
+				nvl((select max(SALBILL_CODE) from MO_SALBILL_CONFIG), 0) + 1,
+				#{salbill_name},
+			   #{salbill_rulename}
+			)
+	</insert>
+	
+	<!-- 新增税率配置 -->
+    <insert id="insertTaxConfigInfo" parameterType="java.util.HashMap">
+		insert into MO_TAX_CONFIG (		   
+			
+				TAX_CODE
+			<if test= "tax_min != null and tax_min != ''">
+				,TAX_MIN
+			</if>
+			<if test= "tax_max != null and tax_max != ''">
+				,TAX_MAX
+			</if>
+			<if test= "tax_rate != null and tax_rate != ''">
+				,TAX_RATE
+			</if>
+			<if test= "tax_exceed != null and tax_exceed != ''">
+				,TAX_EXCEED
+			</if>
+			<if test= "tax_threshold != null and tax_threshold != ''">
+				,TAX_THRESHOLD
+			</if>
+		)
+		VALUES
+			(
+				nvl((select max(TAX_CODE) from MO_TAX_CONFIG), 0) + 1
+				<if test= "tax_min != null and tax_min != ''">
+					,#{tax_min}
+				</if>
+				<if test= "tax_max != null and tax_max != ''">
+			  		,#{tax_max}
+			   </if>
+			   <if test= "tax_rate != null and tax_rate != ''">
+			   		,#{tax_rate}
+			   </if>
+			   <if test= "tax_exceed != null and tax_exceed != ''">
+			   		,#{tax_exceed}
+			   	</if>
+			   	<if test= "tax_threshold != null and tax_threshold != ''">
+			   		,#{tax_threshold}
+			   	</if>
+			   
+			)
+	</insert>
+	
+	<!-- 查询薪酬项数据字典 -->
+	<select id="queryKnpByPayItem" parameterType="java.util.HashMap" resultType="java.util.HashMap" >
+		   SELECT
+			SUBSCD,
+			PARATP,
+			PARACD,
+			CORPCODE,
+			PARANA,
+			SORTNO
+		FROM
+			PCMC_KNP_PARA
+		WHERE
+			paratp = 'payItem'
+		AND PARACD != '%'
+	</select>
+	
+	<!-- 查询薪酬项数据字典 -->
+	<select id="queryKnpByPayItemByNa" parameterType="java.util.HashMap" resultType="java.util.HashMap" >
+		   SELECT
+			SUBSCD,
+			PARATP,
+			PARACD,
+			CORPCODE,
+			PARANA,
+			SORTNO
+		FROM
+			PCMC_KNP_PARA
+		WHERE
+			paratp = 'payItem'
+		AND PARACD != '%' and PARANA = #{salbill_name}
+	</select>
+	
+	
+	<!-- 删除工资条配置 -->
+	<delete id="delSayaryConfigInfo" parameterType="java.util.HashMap" >
+    	<![CDATA[
+    		DELETE FROM MO_SALBILL_CONFIG  
+    	]]>
+    	<where>
+    	<if test="delstr != null and delstr != ''">
+        	and SALBILL_CODE IN (${delstr})
+        </if>
+        </where>
+     </delete>	
+     
+     
+     <!-- 删除税率配置信息 -->
+	<delete id="delTaxConfigInfo" parameterType="java.util.HashMap" >
+    	<![CDATA[
+    		DELETE FROM MO_TAX_CONFIG  
+    	]]>
+    	<where>
+    	<if test="delstr != null and delstr != ''">
+        	and TAX_CODE IN (${delstr})
+        </if>
+        </where>
+     </delete>	
+    <!--导出人员方案得分明细-->
+	<select id="exportPersonScore" parameterType="java.util.HashMap" resultType="java.util.HashMap" >
+	SELECT score.DATA_DATE,
+	       score.WAY_CODE,
+	       score.MANAGER_NO,
+	       score.SRC_CODE,
+	       score.SEQ_NUM,
+	       score.AREA_NO,
+	       score.WAY_TYPE,
+	       score.STAGE,
+	       score.MANAGER_ORG,
+	       score.KPI_VALUE,
+	       score.MBO_VALUE,
+	       score.BASE_NUM,
+	       score.AVG_VALUE,
+	       score.RANK,
+	       score.CALC_SCORE,
+	       score.EDIT_SCORE,
+	       coalesce(score.EDIT_SCORE, score.CALC_SCORE) as SCORE,
+	       score.EDITOR,
+	       score.EDIT_TIME,
+	       way.WAY_NAME,
+	       dept.DEPTNAME,
+	       score.ALIAS_NAME,
+	       score.DIMENSION_NAME,
+	       puser.USERNAME
+	  FROM MO_WAY_PERSON_DETAIL score
+	  INNER JOIN MO_WAY_PERSON way
+            on score.WAY_CODE = way.WAY_CODE
+          left join pcmc_dept dept
+            on score.MANAGER_ORG = dept.deptcode
+           AND SCORE.AREA_no = dept.corpcode
+          left join pcmc_user_dept puser
+            on puser.usercode = score.MANAGER_NO
+           and score.area_no = puser.corpcode
+		   and puser.deptcode in (select a.ORG_NO
+                                  from SYS_PUB_ORG_SUB_V a
+                                 where a.PARENT_ORG_NO =#{deptCode})
+         WHERE score.area_No = '9999'
+           AND (score.MANAGER_ORG IN
+               (SELECT distinct DEPTCODE as usercode
+                   FROM v_auth_org
+                  WHERE USERID = #{userid}
+                 union all
+                 select usercode
+                   from pcmc_user a
+                  where a.deptid in
+                        (select deptid from v_auth_org where USERID = #{userid})) or
+               score.MANAGER_NO = #{usercode})
+           <if test=" startDate != null and startDate != '' ">
+					AND score.DATA_DATE <![CDATA[ >= ]]> #{startDate}
+			</if>
+			<if test=" endDate != null and endDate != '' ">
+				AND score.DATA_DATE <![CDATA[ <= ]]> #{endDate}
+			</if>
+			<if test=" wayNameLike != null and wayNameLike != '' ">
+				AND way.WAY_NAME like #{wayNameLike}
+			</if>
+           <if test=" wayCode != null and wayCode != '' ">
+			AND score.WAY_CODE = #{wayCode}
+			</if>
+			<if test=" managerNo != null and managerNo != '' ">
+			AND puser.usercode = #{managerNo}
+			</if>
+         order by score.DATA_DATE desc,
+                  score.WAY_CODE,
+                  score.MANAGER_ORG,
+                  score.MANAGER_NO
+    </select>
+     
+    <select id="exportOrgScore2" parameterType="java.util.HashMap" resultType="java.util.HashMap" >
+       SELECT score.DATA_DATE,
+       score.WAY_CODE,
+       score.ORG_NO,
+       score.SRC_CODE,
+       score.SEQ_NUM,
+       score.AREA_NO,
+       score.WAY_TYPE,
+       score.STAGE,
+       score.KPI_VALUE,
+       score.MBO_VALUE,
+       score.BASE_NUM,
+       score.AVG_VALUE,
+       score.RANK,
+       score.CALC_SCORE,
+       score.EDIT_SCORE,
+       coalesce(score.EDIT_SCORE, score.CALC_SCORE) as SCORE,
+       score.EDITOR,
+       score.EDIT_TIME,
+       way.WAY_NAME,
+       dept.deptname as ORG_NAME,
+       score.ALIAS_NAME,
+       score.DIMENSION_NAME
+       FROM MO_WAY_ORG_DETAIL score
+       INNER JOIN MO_WAY_ORG way
+       on score.WAY_CODE = way.WAY_CODE
+       left JOIN PCMC_DEPT dept
+       on score.ORG_NO = dept.deptcode
+       and score.area_no = dept.corpcode
+       WHERE score.area_no ='9999' AND score.WAY_TYPE ='BSC'
+	   <if test="wayCode!= null and wayCode!='' ">
+	       AND score.WAY_CODE=#{wayCode}
+	   </if>   
+	   <if test="startDate!= null and startDate!='' ">
+	       AND score.DATA_DATE<![CDATA[>=]]>to_date(#{startDate},'yyyy-mm-dd')
+	   </if> 
+	   <if test="endDate!= null and endDate!='' ">
+	       AND score.DATA_DATE<![CDATA[<=]]>to_date(#{endDate},'yyyy-mm-dd')
+	   </if>     
+	   <if test="deptCodeList!=null and deptCodeList.size()>0">
+		   AND dept.DEPTCODE IN (<foreach item="deptcode" collection="deptCodeList" separator=",">#{deptcode}</foreach>)
+	　　</if>
+       order by score.DATA_DATE desc,
+          score.WAY_CODE,
+          coalesce(score.EDIT_SCORE, score.CALC_SCORE) desc,
+          score.SRC_CODE,
+          score.ORG_NO
+    </select>
+</mapper> 	  

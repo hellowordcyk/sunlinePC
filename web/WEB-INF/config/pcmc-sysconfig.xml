@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+    <applications>
+        <parameters factory="com.sunline.bimis.pcmc.factory.ParameterFactory">
+            <!-- <parameter type="org" class="com.sunline.bimis.pcmc.factory.OrgParameter"/> -->
+            <parameter type="knp" class="com.sunline.bimis.pcmc.factory.KnpParameter"/>
+            <parameter type="subsys" class="com.sunline.bimis.pcmc.factory.SubSysParameter"/>
+            <parameter type="subsyscd" class="com.sunline.bimis.pcmc.factory.SubSysCDParameter"/><!-- select的key为系统简称 -->
+            <parameter type="base" class="com.sunline.bimis.pcmc.factory.BaseParameter"/><!-- 基本数据字典 用于sc:tran标签-->
+            <parameter type="area" class="com.sunline.bimis.pcmc.factory.AreaParameter"/><!-- 基本数据字典 用于sc:tran标签-->
+        	<parameter type="dict" class="com.sunline.bimis.pcmc.factory.DictParameter"/> 
+        	<parameter type="para" class="com.sunline.bimis.pcmc.factory.ParaParameter"/>  
+        </parameters>
+        <!--启动服务时，初始化程序，需要实现Initializer接口-->
+        <initializers>
+        	<!-- 因为数据字典 依赖与 语言服务，所以语言服务必须在 数据字典之前加载 -->
+        	<step class="com.sunline.funcpub.initializer.lang.I18nInitializer" desc="语言环境初始化">
+            	<!-- 
+            	<defaultI18n>en-us</defaultI18n>
+            	<defaultI18n>zh-cn</defaultI18n>
+            	<defaultI18n>zh-tw</defaultI18n>
+            	 -->
+            </step>
+             <step class="com.sunline.jraf.lang.I18nMessageInitializer" desc="初始化国际化信息资源，包括错误码，消息提示等">
+            </step>
+            <step class="com.sunline.bimis.pcmc.factory.ParameterFactory" desc="初始化门户参数配置">
+                <parameterType>knp</parameterType> 
+                <parameterType>dict</parameterType>
+                <!-- <parameterType>org</parameterType> -->
+                <parameterType>subsys</parameterType>
+                <parameterType>subsyscd</parameterType>
+                <parameterType>base</parameterType>
+                <parameterType>area</parameterType>
+                <parameterType>para</parameterType>
+            </step>
+            <step class="com.sunline.funcpub.notice.component.config.MessageNoticeInitializer" desc="初始化消息通知服务">
+            </step>
+            <step class="com.sunline.funcpub.roleintercept.RoleInterceptInitializer" desc="初始化所有角色的权限Url">
+            </step>
+            
+			<step class="com.sunline.funcpub.initializer.CryptoInitializer"
+				desc="初始化加密方式">
+				<crypto type="des" class="com.sunline.funcpub.crypto.DES" />
+				<crypto type="md5" class="com.sunline.funcpub.crypto.MD5" />
+			</step>
+            
+        </initializers>
+        <pagepriv>
+        	<!-- class="com.sunline.funcpub.privilege.initializer.PagePrivilegeInitializer" desc="加载页面权限配置信息" -->
+        	<control>
+        		<type>text</type>
+				<type>datepicker</type>
+				<type>textarea</type>
+				<type>select</type>
+				<type>radio</type>
+				<type>checkbox</type>
+				<type>scheckbox</type>
+				<type>sradio</type>
+				<type>selres</type>
+				<type>date</type>
+				<type>dcheckbox</type>
+				<type>dradio</type>
+				<type>hide</type>
+				<type>button</type>
+				<type>money</type>
+        	</control>
+        	<addchecklist>  <!-- 系统启动，根据子系统列表遍历/imps/web/子系统简写/ 目录下的所有 jsp 文件，如果有特别需要扫描的目录，在这里添加 -->
+        		<check systemcode="other" systemname="其他">/jui/</check>
+        	</addchecklist>
+        </pagepriv>
+        <privileges>
+        	<!-- type权限类型，class实现类(default表示默认实现类，需配置子节点)，grant授权方式:role|user -->
+        	<privilege type="dept" class="default" grant="role" desc="管辖机构">
+        		<!-- resouce资源表映射   table:资源表名-->
+        		<resource table="pcmc_dept">
+        			<resouceCode name="deptcode"/>
+        			<resouceName name="deptname"/>
+        		</resource>
+        		<!-- assignment资源分配关系映射 
+        		table:分配关系表名 
+        		constraint:是否保存约束，默认为false（字段为subsysCode和privType,默认实现数据表对应字段为subsys_code和priv_type）
+        		resource:分配关系表资源编码存放字段
+        		resource:分配关系表授权对象存放字段，usercode或roleid
+        		-->
+        		<assignment table="sys_priv_asgn" constraint="true">
+        			<resouce name="priv_code"/>
+        			<assignee name="priv_asgn"/>
+        		</assignment>
+        	</privilege>
+        	
+        	<privilege type="role" class="default" grant="user" desc="管辖角色">
+        		<resource table="pcmc_role">
+        			<resouceCode name="roleid"/>
+        			<resouceName name="rolename"/>
+        		</resource>
+        		<assignment table="sys_priv_asgn" constraint="true">
+        			<resouce name="priv_code"/>
+        			<assignee name="priv_asgn"/>
+        		</assignment>
+        	</privilege>
+        	
+        	<privilege type="priv_entity" class="default" grant="role" desc="管辖实体">
+        		<resource table="sys_priv_entity">
+        			<resouceCode name="entity_code"/>
+        			<resouceName name="entity_name"/>
+        		</resource>
+        		<assignment table="sys_priv_asgn" constraint="true">
+        			<resouce name="priv_code"/>
+        			<assignee name="priv_asgn"/>
+        		</assignment>
+        	</privilege>
+        </privileges>
+    </applications>
+    <jraf-config>
+        <handlers>
+            <!-- 全局拦截器，拦截action时可使用name引用 -->
+            <!-- name处理器名字， type处理类路径（格式：java:类路径）
+            <handler name="" type=""/>
+            -->
+            <handler name="actorPermission" scope="before" expression="*.*.*" 
+                type="java:com.sunline.funcpub.roleintercept.RoleInterceptActorHandler">
+            </handler>
+            <handler name="pubLog" scope="after" expression="*.*.*" 
+                type="java:com.sunline.funcpub.log.handler.PubLogHandler">
+            </handler>  
+            
+            <handler name="CheckUserLoginHandler" type="java:com.sunline.funcpub.handler.CheckUserLoginHandler"/>
+        	<!-- 数据权限 后台方法拦截器 -->
+        	<handler name="DataprivHandler" type="java:com.sunline.funcpub.handler.DataPrivHandler"/>
+        </handlers>
+        <!-- 接口功能实现类 -->
+        <implements> 
+            <!-- mode: 唯一标识的功能码； desc： 描述；class： 使用的实现类 -->
+            <impl mode="logConfig" desc="日志模块" class="com.sunline.bimis.pcmc.log.LogConfigInit"/>
+            <impl mode="filter_url" desc="" class="com.sunline.funcpub.roleintercept.RoleInterceptUrl"/>
+            <impl mode="page_priv" desc="标签权限" class="com.sunline.funcpub.privilege.service.PagePrivilegeService"/>
+            <impl mode="data_priv" desc="数据权限" class="com.sunline.funcpub.privilege.service.SysPrivDataService"/>
+            <impl mode="i18n" desc="国际化服务类" class="com.sunline.funcpub.service.lang.SysPubI18nService"/>
+        </implements> 
+        <messagenotic>
+            <components>
+                <component code="PublicMessage" name="公告信息" 
+                    class="com.sunline.funcpub.notice.component.impl.PublicMessageComponentImpl" 
+                    detailurl=""
+                    desc="" />
+            </components>
+        </messagenotic>
+    </jraf-config>
+</config>

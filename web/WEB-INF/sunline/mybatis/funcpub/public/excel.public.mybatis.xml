@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="com.sunline.funcpub.mybatis.public.excel" >
+	<resultMap type="java.util.HashMap" id="queryModelSql_rsm">
+	   <result column="modeid" property="modeid" />
+	   <result column="modename" property="modename"/>
+	   <result column="modesql" property="modesql"/>
+	</resultMap>
+	<select id="queryModelSql" parameterType="java.util.HashMap" resultMap="queryModelSql_rsm">
+		select modeid,modename,modesql from pub_excel_model
+ 	</select> 	
+ 	
+ 	<resultMap type="java.util.HashMap" id="queryFixedSql_rsm">
+ 	   <result column="fixid" property="fixid"/>
+ 	   <result column="modeid" property="modeid"/>
+ 	   <result column="isparam" property="isparam"/>
+ 	   <result column="fixsql" property="fixsql"/>
+ 	</resultMap>
+	<select id="queryFixedSql" parameterType="java.util.HashMap" resultMap="queryFixedSql_rsm">
+		select fixid,modeid,isparam,fixsql from pub_excel_fixed where modeid=#{modeid}	
+	</select> 
+	
+	<resultMap type="java.util.HashMap" id="queryDynamicSql_rsm">
+       <result column="dynaid" property="dynaid"/>
+       <result column="modeid" property="modeid"/>
+       <result column="isparam" property="isparam"/>
+       <result column="dynasql" property="dynasql"/>
+    </resultMap>
+	<select id="queryDynamicSql" parameterType="java.util.HashMap" resultMap="queryDynamicSql_rsm">
+		select dynaid,modeid,isparam,dynasql from pub_excel_dynamic where modeid=#{modeid}	
+	</select> 
+	<!--  没有被用到的SQL-->
+	<select id="nullNamedSql" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		${namedsql}	
+	</select> 	
+ 	 
+</mapper> 	  

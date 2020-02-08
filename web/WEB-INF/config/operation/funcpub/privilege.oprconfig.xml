@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="gb2312"?>
+<!-- 权限模块操作相关  -->
+<Sunline>
+	<Session></Session>
+	<Operation id="privilegeManager"  bean="com.sunline.funcpub.privilege.PrivilegeManagerActor"  desc="权限管理"
+	filterpath="/funcpub/privilege/">
+		<Action name="getSubsysList" desc="查询子系统列表"/>
+		<Action name="getPrivTypeList" desc="查询权限类型"/>
+		<Action name="queryPrivilegeDataList" desc="查询权限数据"/>
+		<Action name="queryPrivGrant" desc="获取授权方式"/>
+		<Action name="queryAccreditUser" desc="查询已授权用户信息"/>
+		<Action name="queryUnAccreditUser" desc="查询未授权用户信息"/>
+		<Action name="queryAccreditRole" desc="查询已授权角色信息"/>
+		<Action name="queryUnAccreditRole" desc="查询未授权用户信息"/>
+		<Action name="managerAccredit" desc="授权" acttype="update"/>
+		<Action name="cancelAcredit" desc="取消权限" acttype="update"/>
+		<Action name="queryunAccreditRole" desc="查询未授权角色信息"/>
+	</Operation>
+	
+	<Operation id="grantResourceToRoleActor"  bean="com.sunline.funcpub.privilege.role.actor.GrantResourceToRoleActor"  desc="将资源授权给角色-权限管理">
+		<Action name="getSubsysList" desc="查询子系统列表" acttype="query"/>
+		<Action name="getPrivTypeList" desc="查询权限类型"/>
+		<Action name="getRoleUnGrantedPrivilegeListPage" desc="查询所有未授权的资源"/>
+		<Action name="getRoleGrantedPrivilegeListPage" desc="查询所有已授权给指定角色的资源"/>
+		<Action name="GrantResourceToRole" desc="将资源列表授权给指定角色"  acttype="update"/>
+		<Action name="revokeResourceToRole" desc="取消指定资源列表的权限" acttype="update"/>
+		<Action name="getPrivTypeListToJson" desc="获取权限类型列表"/>
+	</Operation>
+	
+	<Operation id="grantResourceToUserActor"  bean="com.sunline.funcpub.privilege.user.actor.GrantResourceToUserActor"  desc="将资源授权给用户-权限管理">
+		<Action name="getSubsysList" desc="查询子系统列表"/>
+		<Action name="getPrivTypeList" desc="查询权限类型"/>
+		<Action name="getUserUnGrantedPrivilegeListPage" desc="查询所有未授权的资源"/>
+		<Action name="getUserGrantedPrivilegeListPage" desc="查询所有已授权给指定用户的资源"/>
+		<Action name="GrantResourceToUser" desc="将资源列表授权给指定用户" acttype="update"/>
+		<Action name="revokeResourceToUser" desc="取消指定资源列表的权限" acttype="update"/>
+		<Action name="getAllConfigs" desc="获取子系统和 权限类型列表"/>
+	</Operation>
+	
+	<Operation id="privilegeTagsActor" bean="com.sunline.funcpub.actor.privilege.PrivilegeTagsActor" desc="提供selres标签使用的权限查询">
+		<Action name="queryPrivilegeResource" desc="查询权限"/>
+	</Operation>
+</Sunline>

@@ -1,0 +1,494 @@
+@CHARSET "UTF-8";
+	.tabsToggle li.selected{
+		border:none !important;
+	}
+	.h_title{
+		border-bottom:1px solid #ddd;
+		background:#fff;
+	}
+	.h_title li{
+		height:35px;
+		line-height:35px;
+		float:left;
+		padding:0 15px;
+		text-align:center;
+		color:#999;
+	
+	}
+	.h_title li.selected{
+		font-size:14px;
+		color:#333;
+	}
+	.h_title li.selected span{
+		
+		
+		background:#609ee9;
+		
+	}
+	.h_title li span{
+		width:4px;
+		height:12px;
+		float:left;
+		background:#fff;
+		margin-top: 11px;
+    	margin-right: 4px;
+	}
+	.h_content{
+		background:#fff;
+		padding:20px;
+	}
+	.h_content{
+		
+	}
+	/* 第一部分 */
+	.keydata-3,.keydata-4,.keydata-5{
+		background:#f0f0f0;
+	}
+	 .keydata-5 li{
+		width:19%;
+		height:106px;
+		float:left;		
+		margin-left:1.2%;
+		background:#fff;
+	}
+	 .keydata-5 li:first-child{
+		margin-left:0;
+	}
+	.keydata-5 li>div{
+		float:left;
+		height:100%;
+	}
+	.keydata-5 li .bgicon{
+		width:35%;
+		text-align:center;
+		line-height:100px;
+	}
+	.keydata-5 li .data{
+		width:65%;
+		padding-left: 12px;
+	}
+	.keydata-5 .data-value{
+		margin-top:8px;
+		
+	}
+	.keydata-5 .data-value>span{
+		
+		font-size:26px;
+	}
+	.keydata-5  .data-desc{
+		margin-top:20px;
+		font-size:12px;
+		color:#666;
+	}
+	.keydata-5 .data-compare{
+		margin-top:16px;
+	
+	}
+		
+	.bgicon span{
+		display:inline-block;
+		width:50px;
+		height:50px;
+		margin-top:20px;
+		border-radius:50%;
+		
+	}
+	.keydata-5 .bgicon span{
+		
+		margin-top:30px;
+		
+		
+	}
+	 .keydata-3 li{
+		width:32.66%;
+		height:90px;
+		float:left;		
+		margin-left:1%;
+		background:#fff;
+	}
+	 .keydata-3 li:first-child{
+		margin-left:0;
+	}
+	.keydata-3 li>div{
+		float:left;
+		height:100%;
+	}
+	.keydata-3 li .bgicon{
+		width:30%;
+		text-align:center;
+		line-height:90px;
+	}
+	.keydata-3 li .data{
+		width:40%;
+		padding-left: 20px;
+	}
+	.keydata-3 li .rate{
+		width:30%;
+		padding-left: 20px;
+	}
+	.keydata-3 .data-desc{
+		margin-top:24px;
+		color:#666;
+	}
+	.keydata-3 .data-value{
+		margin-top:8px
+	}
+	.keydata-3 .data-value>span{
+		
+		font-size:26px;
+		
+	}
+	.keydata-3 .rate  .historycompare{
+		margin-top:20px;
+		border:none;
+		font-size:12px;
+		
+	}
+	.keydata .historycompare{
+	
+		border:none;
+		padding:0px;
+		
+	}
+	.keydata-2 .rateper{
+		margin-top: 13px;
+    	padding-left: 8px;		
+	}
+	/*  */
+	 .keydata-4 li{
+		width:24%;
+		height:114px;
+		float:left;		
+		margin-left:1.3%;
+		background:#fff;
+	}
+	 .keydata-4 li:first-child{
+		margin-left:0;
+	}
+	.keydata-4 li>div{
+		float:left;
+		height:100%;
+	}
+	.keydata-4 li .bgicon{
+		width:35%;
+		text-align:center;
+		line-height:100px;
+	}
+	.keydata-4 li .data{
+		width:65%;
+		padding-left: 12px;
+	}
+	.keydata-4 .data-value{
+		margin-top:8px;
+		
+	}
+	.keydata-4 .data-value>span{
+		
+		font-size:26px;
+	}
+	.keydata-4  .data-desc{
+		margin-top:20px;
+		font-size:12px;
+		color:#666;
+	}
+	.keydata-4 .data-compare{
+		margin-top:16px;
+	
+	}
+		
+	.bgicon span{
+		display:inline-block;
+		width:50px;
+		height:50px;
+		margin-top:20px;
+		border-radius:50%;
+		
+	}
+	.keydata-4 .bgicon span{
+		
+		margin-top:34px;
+		
+		
+	}
+	.keydata-4 .historycompare{
+	
+		border:none;
+		padding:0px;
+		
+	}
+	.bgp1 span{
+		
+		background:url('./images/bgicon_1.png') no-repeat center center;
+	}
+	.bgp2 span{
+		
+		background:url('./images/bgicon_2.png') no-repeat center center;
+	}
+	.bgp3 span{
+		
+		background:url('./images/bgicon_3.png') no-repeat center center;
+	}
+	.bgp4 span{
+		
+		background:url('./images/bgicon_4.png') no-repeat center center;
+	}
+	.bgp5 span{
+	
+		background:url('./images/bgicon_5.png') no-repeat center center;
+	}
+	.data-compare .up{
+		color:#ff3b54;
+	}
+	.data-compare .down{
+		color:#3ecebd;
+	}
+	 .data-compare .fa-long-arrow-up{
+	 	color:#ff3b54;
+	 	margin-left:6px;
+	 }
+	 .data-compare .fa-long-arrow-down{
+	 	color:#3ecebd;
+	 	margin-left:6px;
+	 }
+	 .data-compare>span{
+		width:96px !important;
+	}
+	.data-compare .select2-container--default .select2-selection--single{
+		border:none;
+	}
+	.data-compare .select2-selection__rendered{
+		padding-left:0px !important;
+	}
+	/* 第二部分 */
+	.homopage-second{
+		margin-top:20px;
+		
+	}
+	.datasel{
+		width:182px;
+		float:left;
+		margin-left:200px;
+		border:1px solid #ddd;
+	}
+	.datasel li{
+		float:left;
+		width:60px;
+		height:24px;
+		line-height:24px;
+		text-align:center;
+	}
+	.datasel li.selected{
+		background:#f0f0f0;
+	}
+	.institution .select2-container--default .select2-selection--single{
+		border:none;
+		margin-bottom:2px;
+	
+	}
+	/* 第三部分 */
+	.homopage-third{
+		margin-top:20px;
+		
+	}
+	.hiddencon{
+		display:none;
+	}
+	
+	/*  */
+	.tabsToggle li span{
+		float:left;
+		width: 4px;
+    	height: 12px;
+    	float: left;
+    	background: #fff;
+    	margin-top: 11px;
+    	margin-right: 4px;
+	}
+	.tabsToggle li.selected span{
+		background:#1b87e0;
+	}
+	.tabsToggle li:hover span{
+		background:#1b87e0;
+	}
+	.tabsToggle li.selected a{
+		font-size:14px;
+		color:#333;
+	} 
+	 .top1,.top2,.top3{
+		width:22px;
+		height:22px;
+		left:30px;
+		position:absolute;
+		z-index:999;
+		
+	}
+	.top1{
+		top:75px;
+		background:url('./images/top1.png') no-repeat center center;
+	}
+	.top2{		
+		top:134px;		
+		background:url('./images/top2.png') no-repeat center center;
+	}
+	.top3{
+		top:190px;			
+		background:url('./images/top3.png') no-repeat center center;
+	}
+	
+	
+	
+	select::-ms-expand { display: none; }          
+	.info-select{
+		   padding:0px 10px 0 0 !important;
+	   border: none;
+	   outline: none;
+	   appearance:none;
+	   -moz-appearance:none;
+	   -webkit-appearance:none;
+	   -ms-appearance:none;
+	   background: url('./images/search-bg.gif') no-repeat 97% -50px;            
+	}
+	
+
+	/* 时间筛选 */
+	 .checkterm {
+	 	position:absolute;
+	 	top:0;
+	 	left:290px;
+	 } 
+	 .checkterm>li{
+		    height: 30px;
+		    float: left;
+		    position: relative;
+		    line-height: 30px;
+			border-top:1px solid #ddd;
+			border-bottom:1px solid #ddd;
+	}
+	 .checkterm li input,
+	 .checkterm li select
+	 {
+	
+		border:none;
+		margin:0;
+		background:#fff;
+	
+	}
+	.datecheck{
+		padding-right:8px;
+	}
+	.checkterm li>div{
+		display:inline-block;
+		position:relative;
+	}
+
+	.checkterm li>div>a{
+		position:static;
+	}
+	.checkterm li>div>a>i{
+		color:#999;
+	}
+	.checktermbot{
+		padding:0 15px;
+		margin-top:10px;
+		
+	}
+	.checktermbot li{
+		float:left;
+		
+	}
+	.checktermbot li.detail{
+		float:right;
+		
+	}
+	/* .checktermbot li span{
+		display:inline-block;
+		width:10px;
+		height:10px;
+		background:#2582ce;
+	} */
+	
+	.secBank{	
+		margin-left:20px;
+	}
+	/* .checktermbot li.secBank span{
+		
+		background:#ea5757;
+	} */
+	.checktermbot li.detail a{
+		height:30px;
+		
+		line-height:30px;
+		text-align:center;
+		display:inline-block;
+		border-radius:4px;
+	
+		color:#fff;
+		cursor:pointer;
+	}
+	.checktermbot li .detai{
+		width:60px;
+		margin-left:20px;
+		background:#2582ce;
+	}
+	.checktermbot li .loanDetail{
+		width:100px;
+		background:#ff3b54;
+	}
+/*  */
+	.borderR{
+		border-right:1px solid #ddd;
+	}
+	.borderL{
+		border-left:1px solid #ddd;
+	}
+	.nobdr{
+		border-right:none !important;
+	}
+	.timeinterval{
+		margin-top:20px;
+		padding-left:15px;
+	}
+	.timeinterval li{
+		float:left;
+		height:30px;
+		line-height:30px;
+		padding:0 10px;
+		border:1px solid #ddd;
+		color:#999;
+		cursor:pointer;
+	}
+	li.timeselected{
+		background:#f1f1f1;
+		color:#333;
+	}
+	#agencyRank1 .select2-container--default .select2-selection--multiple,
+	#agencyRank2 .select2-container--default .select2-selection--multiple{	 
+	    border: none;
+	    border-radius:none;
+	    margin-bottom: 6px;
+	}
+	.select2-container .select2-selection--multiple:after{
+		margin-top:-4px;
+	}
+	/* 第四部分 */
+	.home_four{
+		margin-top:20px;
+		margin-bottom:20px;
+		background:#fff;
+		
+	}
+	.home_four .quickenter li{
+		height:40px;
+		line-height:40px;
+		float:left;				
+	}
+	.home_four .quickenter li>span{
+		padding:0 30px;
+		border-right:1px solid #ddd;		
+	}
+	.home_four .quickenter li>span>span{
+		color:red;
+	}
+	.homepage-fifth{
+		margin-top:20px;		
+	}

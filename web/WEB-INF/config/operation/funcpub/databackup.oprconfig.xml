@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="gb2312"?>
+<Sunline>
+	<Session></Session>
+
+	<!-- 备份表 -->
+	<Operation id="MysqlBackupsTable"
+		bean="com.sunline.funcpub.dbback.table.MysqlBackupsTable" desc="备份数据 "
+		filterpath="/funcpub/dbback/table/mysql/">
+		<Action name="BackupsMysql" desc="查询数据" acttype="query" />
+		<Action name="TableQuery" desc="查询数据" acttype="query" />
+		<Action name="queryCaCtlDataBak" desc="查询数据" acttype="query" />
+		<Action name="addCaCtlDataBak" desc="查询数据" acttype="add" />
+		<Action name="delCaCtlDataBak" desc="查询数据" acttype="del" />
+		<Action name="updateCaCtlDataBak" desc="查询数据" acttype="update" />
+		<Action name="backCaCtlDataBak" desc="查询数据" acttype="query" />
+	</Operation>
+	
+	<!-- 备份表管理 -->
+    <Operation id="MysqlBackupsTableManage"
+        bean="com.sunline.funcpub.dbback.table.MysqlBackupsTableManage" desc="备份数据 "
+        filterpath="/funcpub/dbback/table/query/">
+        <Action name="BackupsMysql" desc="查询数据" acttype="query" />
+        <Action name="TableQuery" desc="查询数据" acttype="query" />
+        <Action name="queryCaCtlDataBak" desc="查询数据" acttype="query" />
+        <Action name="addCaCtlDataBak" desc="查询数据" acttype="add" />
+        <Action name="delCaCtlDataBak" desc="查询数据" acttype="del" />
+        <Action name="updateCaCtlDataBak" desc="查询数据" acttype="update" />
+        <Action name="backCaCtlDataBak" desc="查询数据" acttype="query" />
+    </Operation>
+
+	<!-- 备份库 -->
+	<Operation id="sqlBackups" bean="com.sunline.funcpub.dbback.db.sqlBackups"
+		desc="备份数据 " filterpath="/funcpub/dbback/db/">
+		<Action name="InterruptedException" desc="查询数据" acttype="query" />
+		<Action name="sysSql" desc="查询使用的库" acttype="query" />
+	</Operation>
+
+	<!-- 数据备份配置管理 -->
+	<Operation id="sysPubBack" bean="com.sunline.funcpub.dbback.sysPubBack"
+		desc="备份数据 " filterpath="/funcpub/dbback/">
+		<Action name="querySysPubBack" desc="查询数据" acttype="query" />
+		<Action name="querySysPubBackupdate" desc="查询数据" acttype="query" />
+		<Action name="updateSysPubBack" desc="修改数据" acttype="update" />
+		<Action name="addSysPubBack" desc="新增数据" acttype="add" />
+		<Action name="deleteSysPubBack" desc="删除数据" acttype="delete" />
+	</Operation>
+	
+</Sunline>

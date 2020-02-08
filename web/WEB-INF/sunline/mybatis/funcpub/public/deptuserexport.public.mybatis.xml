@@ -1,0 +1,312 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sunline.funcpub.mybatis.public.deptuserexport" >
+	<resultMap type="com.sunline.funcpub.entity.PcmcDept" id="pcmcDeptMap">
+		<result column="deptid" property="deptid"/>
+		<result column="deptcode" property="deptcode"/>
+		<result column="pdeptid" property="pdeptid"/>
+		<result column="levelp" property="levelp"/>
+		<result column="deptname" property="deptname"/>
+		<result column="orgtype" property="orgtype"/>
+		<result column="orgseq" property="orgseq"/>
+		<result column="linkman" property="linkman"/>
+		<result column="phone" property="phone"/>
+		<result column="brsmna" property="brsmna"/>
+		<result column="areano" property="areano"/>
+		<result column="orgbusssize" property="orgbusssize"/>
+		<result column="orgnaturetype" property="orgnaturetype"/>
+		<result column="orgbusstype" property="orgbusstype"/>
+		<result column="remark" property="remark"/>
+		<result column="disable" property="disable"/>
+		<result column="orgcode" property="orgcode"/>
+		<result column="org_code" property="orgcode"/>
+	</resultMap>
+
+	<select id="queryPcmcDept" parameterType="HashMap" resultMap="pcmcDeptMap">
+		select deptid,deptcode,pdeptid,levelp,deptname,orgtype,
+		orgseq,linkman,phone,brsmna,areano,orgbusssize,orgnaturetype,
+		orgbusstype,remark,disable
+		from pcmc_dept
+		<where>
+			corpcode=#{corpcode}
+		</where>
+	</select> 
+	 
+	 <!-- longjian 20160621 增加 disable='0' 判断，排除已删除的机构 -->
+	 <select id="getTopDept"  resultType="com.sunline.funcpub.entity.PcmcDept">
+		select * from pcmc_dept a 
+		where a.pDeptId = -1 and disable='0' and corpcode=#{corpcode}
+	 </select>
+	 
+	 <select id="getNextDept"  parameterType="java.util.HashMap"  resultType="com.sunline.funcpub.entity.PcmcDept">
+		select 
+			deptid,
+			deptcode,
+			pdeptid,
+			levelp,
+			deptname,
+			orgtype,
+			orgseq,
+			linkman,
+			phone,
+			brsmna,
+			areano,
+			orgbusssize,
+			orgnaturetype,
+			orgbusstype,
+			remark,
+			disable,
+			corpcode,
+			org_code as orgcode
+		 from pcmc_dept
+		where disable='0' and corpcode=#{corpcode}
+		<if test= "deptId != null and deptId != ''">
+			AND pDeptId = #{deptId}
+       	</if>
+	 </select>
+	 
+	 <!-- 获取所有顶级机构 -->
+	 <select id="getAllTopDept" parameterType="java.util.HashMap"  resultType="com.sunline.funcpub.entity.PcmcDept">
+		select 
+			deptid,
+			deptcode,
+			pdeptid,
+			levelp,
+			deptname,
+			orgtype,
+			orgseq,
+			linkman,
+			phone,
+			brsmna,
+			areano,
+			orgbusssize,
+			orgnaturetype,
+			orgbusstype,
+			remark,
+			disable,
+			corpcode,
+			org_code as orgcode
+		 from pcmc_dept a 
+		where a.pDeptId = -1 and corpcode=#{corpcode}
+	 </select>
+	 <!-- 获取某个机构下的所有子机构 -->
+	 <select id="getAllNextDept"  parameterType="java.util.HashMap"  resultType="com.sunline.funcpub.entity.PcmcDept">
+		select 
+			deptid,
+			deptcode,
+			pdeptid,
+			levelp,
+			deptname,
+			orgtype,
+			orgseq,
+			linkman,
+			phone,
+			brsmna,
+			areano,
+			orgbusssize,
+			orgnaturetype,
+			orgbusstype,
+			remark,
+			disable,
+			corpcode,
+			org_code as orgcode
+		 from pcmc_dept
+		<where>
+			corpcode=#{corpcode}
+		    <if test= "deptId != null and deptId != ''">
+			    AND pDeptId = #{deptId}
+       	    </if>
+       	</where>		
+	 </select>
+	 <!-- 获取所有人员信息 -->
+	 <select id="getAllUsers" parameterType="java.util.HashMap" resultType="com.sunline.funcpub.entity.PcmcUser">
+	 	select * from pcmc_user where corpcode=#{corpcode}
+	 </select>
+	 
+	 <!-- deptid在导入时可能为空，所以需要根据deptcode来获取levelp -->
+	 <select id="getLeveLp"  parameterType="java.util.HashMap"  resultType="com.sunline.funcpub.entity.PcmcDept">
+		select deptid,deptcode,pdeptid,levelp,deptname,orgtype,
+		orgseq,linkman,phone,brsmna,areano,orgbusssize,orgnaturetype,
+		orgbusstype,remark,disable 
+		from pcmc_dept
+		<where>
+			corpcode=#{corpcode}
+			<if test= "deptCode != null and deptCode != ''">
+				AND deptCode = #{deptCode}
+       		</if>
+		</where>
+		
+	 </select>
+	 
+	 <!-- longjian 20160621 增加 disable='0' 判断，排除已删除的人员 -->
+	 <select id="getAllUser" parameterType="java.util.HashMap" resultType="com.sunline.funcpub.entity.PcmcUser">
+	 	select * from pcmc_user where disable='0' and corpcode=#{corpcode}
+	 </select>
+	 
+	 <select id="getDeptMessage" parameterType="java.util.HashMap"  resultType="com.sunline.funcpub.entity.PcmcDept">
+	 	select * from pcmc_dept
+	 	where 1 = 1 and corpcode=#{corpcode}
+ 		<if test= "deptId != null and deptId != ''">
+			AND deptId = #{deptId}
+      	</if>
+	 </select>
+	 
+	 <select id="getDeptCode" parameterType="java.util.HashMap"  resultType="com.sunline.funcpub.entity.PcmcDept">
+	 	select * from pcmc_dept
+	 	where 1 = 1 and corpcode=#{corpcode}
+ 		<if test= "deptId != null and deptId != ''">
+			AND deptId = #{deptId}
+      	</if>
+	 </select>
+	 
+	 <insert id="inserDeptByExcel" parameterType="java.util.HashMap" >
+	 <![CDATA[
+	 	insert into pcmc_dept(deptid,deptcode,pdeptid,levelp,deptname,orgtype,
+		orgseq,linkman,phone,brsmna,areano,orgbusssize,orgnaturetype,
+		orgbusstype,remark,disable,corpcode,org_code) 
+		values(#{deptId,jdbcType=VARCHAR},
+		#{deptCode,jdbcType=VARCHAR},
+		#{pDeptId,jdbcType=VARCHAR},
+		#{leveLp,jdbcType=VARCHAR},
+	 	#{deptName,jdbcType=VARCHAR},
+	 	#{orgtype,jdbcType=VARCHAR},
+	 	null,
+	 	#{linkman,jdbcType=VARCHAR},
+	 	#{phone,jdbcType=VARCHAR},
+	 	#{brsmna,jdbcType=VARCHAR},
+	 	#{areano,jdbcType=VARCHAR},
+	 	#{orgbusssize,jdbcType=VARCHAR},
+	 	#{orgnaturetype,jdbcType=VARCHAR},
+	 	#{orgbusstype,jdbcType=VARCHAR},
+	 	#{remark,jdbcType=VARCHAR},
+	 	#{disable,jdbcType=VARCHAR},
+	 	#{corpcode,jdbcType=VARCHAR},
+	 	#{orgcode,jdbcType=VARCHAR})
+	 	]]>
+	 </insert>
+	 
+	 <select id="isExistDept" parameterType="java.util.HashMap"  resultType="com.sunline.funcpub.entity.PcmcDept">
+	 	select * from pcmc_dept
+	 	where 1 =1 and corpcode=#{corpcode}
+ 		<if test="deptCode != null and deptCode != ''">
+ 			and deptCode = #{deptCode}
+ 		</if>
+	 </select>
+	 
+	 <select id="isExistUser" parameterType="java.util.HashMap"  resultType="com.sunline.funcpub.entity.PcmcUser">
+	 	select * from pcmc_user
+	 	where 1 =1 and corpcode=#{corpcode}
+ 		<if test="userCode != null and userCode != ''">
+ 			and userCode = #{userCode}
+ 		</if>
+	 </select>
+	 
+	 
+	 <select id="getpDeptIdBypDeptCode" parameterType="java.util.HashMap"  resultType="com.sunline.funcpub.entity.PcmcDept">
+	 	select * from pcmc_dept
+	 	where 1 =1 and corpcode=#{corpcode}
+ 		<if test="deptCode != null and deptCode != ''">
+ 			and deptCode = #{deptCode}
+ 		</if>
+	 </select>
+	 
+	 <!-- 根据pDeptCode 查询所有记录的 Pid 是否存在，避免无限递归 导致栈溢出-->
+	 <select id="getpDeptIdBypDeptCodeCount" parameterType="java.util.HashMap"  resultType="java.lang.Integer">
+        select count(*) from pcmc_dept
+        <where>
+        	corpcode=#{corpcode}
+            <if test="codes != null and codes.size() > 0">
+	           and (
+	            <foreach collection="codes" index="index" item="dcs" open="" separator="" close="">
+	               <if test="index==0">
+	                 deptcode in 
+	                 <foreach collection="dcs" index="index" item="dc" open="(" close=")" separator=",">
+                        #{dc}
+                     </foreach>
+	               </if>
+	               <if test="index > 0">
+	                 OR deptcode in
+	                   <foreach collection="dcs" index="index" item="dc" open="(" close=")" separator=",">
+                        #{dc}
+                     </foreach>
+	               </if>
+	            </foreach>
+	            )
+            </if>
+        </where>
+     </select>
+	 
+	 <update id="updateDeptByExcel" parameterType="java.util.HashMap">
+	 	update pcmc_dept 
+	 	<set>
+	 	<if test="deptName != null">
+ 			deptName = #{deptName},
+ 		</if>
+ 		<if test="pdeptId != null">
+ 			pdeptId = #{pdeptId},
+ 		</if>
+ 		<if test="leveLp != null">
+ 			leveLp = #{leveLp},
+ 		</if> 		
+        <if test="brsmna != null">
+ 			brsmna = #{brsmna},
+ 		</if>
+ 		<if test="disable != null">
+ 			disable = #{disable},
+ 		</if>
+ 		<if test="orgtype != null">
+ 			orgtype = #{orgtype},
+ 		</if>
+ 		<if test="areano != null">
+ 			areano = #{areano},
+ 		</if>
+ 		<if test="linkman != null">
+ 			linkman = #{linkman},
+ 		</if>
+ 		 <if test="phone != null">
+ 			phone = #{phone},
+ 		</if>
+ 		<if test="orgbusssize != null">
+ 			orgbusssize = #{orgbusssize},
+ 		</if>
+ 		<if test="orgnaturetype != null">
+ 			orgnaturetype = #{orgnaturetype},
+ 		</if>
+ 		<if test="orgbusstype != null">
+ 			orgbusstype = #{orgbusstype},
+ 		</if>
+ 		<if test="remark != null">
+ 			remark = #{remark},
+ 		</if>	
+ 		<if test="orgcode != null">
+ 			org_code = #{orgcode},
+ 		</if>  	  
+	 	</set> 
+	 	where deptCode = #{deptCode} and corpcode=#{corpcode}
+	 </update>
+	 
+	 
+	 <update id="updateUserByExcel" parameterType="java.util.HashMap">
+	 	update pcmc_user set userName = #{userName},deptId = #{deptId},phone = #{phone},email = #{email},disable = #{disable},remark = #{remark}
+	 	where userCode = #{userCode} and corpcode=#{corpcode}
+	 </update>
+	 
+	 <!-- excel导入用户信息，默认插入密码888888， -->
+	 <insert id="insertUserByExcel" parameterType="java.util.HashMap" >
+	 	insert into pcmc_user(userid,usercode,username,userpwd,phone,pagesize,disable,deptid,email,remark,last_up_ps_date,corpcode)
+	 	 values(
+	 	 #{userId,jdbcType=VARCHAR},
+	 	 #{userCode,jdbcType=VARCHAR},
+	 	 #{userName,jdbcType=VARCHAR},
+	 	 #{userPwd,jdbcType=VARCHAR},
+	 	 #{phone,jdbcType=VARCHAR},
+	 	 10,
+	 	 #{disable,jdbcType=VARCHAR},
+	 	#{deptId,jdbcType=VARCHAR}, 
+	 	#{email,jdbcType=VARCHAR}, 
+	 	#{remark,jdbcType=VARCHAR},
+	 	#{date,jdbcType=DATE},
+	 	#{corpcode,jdbcType=VARCHAR})
+	 </insert>
+	 
+</mapper> 	  

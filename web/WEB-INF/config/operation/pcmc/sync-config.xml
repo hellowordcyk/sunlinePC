@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="gb2312"?>
+<Sunline>
+	<Session></Session>
+	<Operation id="UserSync" bean="com.sunline.bimis.pcmc.login.UserSyncActor" desc="门户用户部门信息批量同步处理">
+		<Action name="syncUser" desc="同步单个用户" acttype="deal"/>
+		<Action name="syncAllUser" desc="同步所有用户信息" acttype="deal"/>
+		<Action name="syncDepartment" desc="同步单个机构" acttype="deal"/>
+		<Action name="syncAllDepartment" desc="同步所有机构" acttype="deal"/>
+		<Action name="hasStartSync" desc="判断是否启用页面同步用户功能" acttype="deal"/>
+	</Operation>
+	<Operation id="BatchSyncActor" bean="com.sunline.bimis.pcmc.sm.BatchSyncActor" desc="门户权限信息批量同步处理">
+		<Action name="doSyncUsers" desc="发起批量用户同步">
+			<Request multi="false">
+				<Field name="toSession" title="对方JrafSession" type="String" notnull="true"/>
+			</Request>
+		</Action>
+		<Action name="addSyncUsers" desc="添加批量同步用户信息"/>
+		<Action name="addSyncDept" desc="添加批量同步部门信息"/>
+		<Action name="addSyncSubSys" desc="添加批量同步子系统信息"/>
+		<Action name="addSyncRole" desc="添加批量同步角色信息"/>
+		<Action name="addSyncMenu" desc="添加批量同步菜单信息"/>
+		<Action name="addSyncRoleMenu" desc="添加批量同步角色菜单信息"/>
+		<Action name="addSyncUserRole" desc="添加批量同步用户角色信息"/>
+		<Action name="addSyncRoleAct" desc="添加批量同步角色操作信息"/>
+	</Operation>
+</Sunline>

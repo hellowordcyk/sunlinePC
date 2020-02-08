@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sunline.funcpub.mybatis.public.seacher">
+
+    <select id="selectRoleId" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+        SELECT DEFAULT_ROLE AS ROLEID FROM PCMC_USER WHERE 1=1
+        <if test="userCode!=null and userCode!=''">
+            and USERCODE = #{userCode}
+        </if>
+    </select>
+<!--    进行功能查询-->
+    <select id="selectFunction" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+        select * from ap_all_menukpi_v where 1=1
+        <if test="roleId!=null and roleId!=''">
+            and roleid = #{roleId}
+        </if>
+        <if test="functionName!=null and functionName!=''">
+            and menuname like '%${functionName}%'
+        </if>
+        and menutype ='1'
+    </select>
+<!--进行指标查询-->
+    <select id="selectKpiName" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+        select * from ap_all_menukpi_v where 1=1
+        <if test="roleId!=null and roleId!=''">
+            and roleid = #{roleId}
+        </if>
+        <if test="functionName!=null and functionName!=''">
+            and menuname like '%${functionName}%'
+        </if>
+        and menutype ='2'
+    </select>
+    <!--进行方案查询（人员方案）-->
+    <select id="selectPersonWayName" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+        select * from ap_all_menukpi_v where 1=1
+        <if test="roleId!=null and roleId!=''">
+            and roleid = #{roleId}
+        </if>
+        <if test="functionName!=null and functionName!=''">
+            and menuname like '%${functionName}%'
+        </if>
+        and menutype ='3'
+    </select>
+    <!--进行方案查询（机构方案）-->
+    <select id="selectUnitWayName" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+        select * from ap_all_menukpi_v where 1=1
+        <if test="roleId!=null and roleId!=''">
+            and roleid = #{roleId}
+        </if>
+        <if test="functionName!=null and functionName!=''">
+            and menuname like '%${functionName}%'
+        </if>
+        and menutype ='4'
+    </select>
+</mapper>

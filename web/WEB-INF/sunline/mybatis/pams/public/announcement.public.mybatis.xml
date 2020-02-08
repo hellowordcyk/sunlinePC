@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sunline.pams.mybatis.public.announcementaction" >
+	<select id="queryAnnouncementlistPage" parameterType="java.util.HashMap" resultType="com.sunline.pams.publi.announcement.Announcement">
+		SELECT 
+			A.ANNOUNCEMENT_ID AS ANNOUNCEMENTID,
+			A.TITLE,
+			A.CONTENT,
+			A.CREATE_TIME AS CREATETIME,
+			A.OPERATOR,
+			B.USERNAME AS OPERATORNAME,
+			A.ORG_NO AS ORGNO,
+			A.PUBLISH_MAN AS PUBLISHMAN,
+			C.USERNAME AS PUBLISHMANNAME,
+			A.PUBLISH_TIME AS PUBLISHTIME,
+			A.AREA_NO AS AREANO,
+			A.STATUS
+		FROM AP_PUB_ANNOUNCEMENT A
+		LEFT JOIN PCMC_USER B ON A.OPERATOR = B.USERCODE AND A.AREA_NO = B.CORPCODE
+		LEFT JOIN PCMC_USER C ON A.PUBLISH_MAN = C.USERCODE AND A.AREA_NO = C.CORPCODE
+		WHERE A.AREA_NO = #{areaNo}
+		<if test="announcementID != null and announcementID != ''">
+			AND A.ANNOUNCEMENT_ID = #{announcementID}
+		</if>
+		<if test="title != null and title != ''">
+			AND A.TITLE LIKE #{title}
+		</if>
+		<if test="status != null and status != ''">
+			AND A.STATUS = #{status}
+		</if>
+		<if test="currentDate != null and currentDate != ''">
+			AND A.PUBLISH_TIME <![CDATA[<=]]> #{currentDate}
+		</if>
+		
+	</select>
+	
+	<insert id="addAnnouncement" parameterType="java.util.HashMap">
+		INSERT INTO AP_PUB_ANNOUNCEMENT(
+			ANNOUNCEMENT_ID, TITLE, CONTENT, CREATE_TIME, OPERATOR, 
+			ORG_NO, PUBLISH_MAN, PUBLISH_TIME, AREA_NO, STATUS
+		) VALUES(
+			#{announcementID},#{title},#{content},#{createTime},#{operator},
+			#{orgNo},#{publishMan},#{publishTime},#{areaNo},#{status}
+		)
+	</insert>
+	
+	<update id="updateAnnouncement" parameterType="java.util.HashMap">
+		UPDATE AP_PUB_ANNOUNCEMENT SET
+			TITLE = #{title},
+			CONTENT = #{content},
+			CREATE_TIME = #{createTime},
+			OPERATOR = #{operator},
+			ORG_NO = #{orgNo},
+			PUBLISH_MAN = #{publishMan},
+			PUBLISH_TIME = #{publishTime},
+			STATUS = #{status}
+		WHERE ANNOUNCEMENT_ID = #{announcementID} AND AREA_NO = #{areaNo}
+	</update>
+	
+	<delete id="delAnnouncement" parameterType="String">
+		DELETE FROM AP_PUB_ANNOUNCEMENT WHERE ANNOUNCEMENT_ID IN(${_parameter})
+	</delete>
+</mapper> 	  
+ 	 

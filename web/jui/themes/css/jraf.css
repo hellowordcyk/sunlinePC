@@ -1,0 +1,200 @@
+@charset "utf-8";
+/**
+ * 存放jraf新增的dwz框架相关的样式
+ */
+
+/*************查询条件table样式****************/
+/*added by Sean on 20160525*/
+/*以width:800px算百分比*/
+
+table.searchContent {
+    width: 100%;
+}
+
+.searchContent td.form-label {
+    width: 5%;
+    min-width: 80px;
+    _width: 80px;
+    text-align: right;
+}
+.searchContent td.form-value {
+    width: 25%;
+    min-width: 160px;
+    text-align: left;
+}
+
+.searchContent td.form-value input[type='text'], .searchContent td.form-value textarea {
+  /*   width: 96%; */
+    width: 80%;
+    *width: 79%;
+    _width: 180px;
+    min-width: 180px;
+}
+/*date*/
+.searchContent td.form-value input.date {
+    width: 100px;
+    min-width: 100px;
+   /*  width: 96%; */
+}
+.searchContent td.form-date input.date{
+	width: 80%;
+    min-width: 180px;
+	
+}
+.searchContent td.form-date-db input.date {
+    width: 37%;
+   /*  width: 96%; */
+}
+/*select*/
+.searchContent td.form-value select {
+    width: 80%;
+    min-width: 180px;
+   /*  width: 96%; */
+}
+
+.searchBar table td.form-btn, .searchBar table td.search-btn  {
+    text-align: right;
+    padding-right: 0;
+}
+.searchBar table td.top-btn {
+    vertical-align: top;
+}
+.searchContent td.form-btn ul {
+    float: left;
+}
+
+.form-btn ul {
+    display: inline-block;
+    text-align: center;
+    /* position: relative; */
+    padding: 0;
+    margin: 0 auto;
+}
+
+.form-btn li {
+    display: inline;
+    padding: 0;
+}
+
+/*提交表单*/
+/*以width:800px算百分比*/
+.pageFormContent table.form-table {
+	width: 100%;
+}
+
+.pageFormContent td.form-label {
+    width: 15%;
+    min-width: 120px;
+    _width: 100px;
+    text-align: right;
+    color: #333;
+    font-weight: 600;
+}
+
+.pageFormContent td.form-value {
+    text-align: left;
+}
+
+.pageFormContent td.form-value input[type='text'],.pageFormContent td.form-value input[type='password'], .pageFormContent td.form-value textarea {
+    width: 70%;
+    min-width: 180px;
+    _width: 180px;
+}
+/*date*/
+.pageFormContent td.form-value input.date {
+    width: 150px;
+    min-width: 150px;
+}
+/*select*/
+.pageFormContent td.form-value select {
+    width: 180px;
+    min-width: 180px;
+}
+
+/*动态列表表格样式*/
+.pageContent table.table {
+    width: 100%;
+}
+
+/*无数据时的tr样式*/
+.pageContent tr.empty {
+    
+}
+/*复选框td的样式*/
+.pageContent table .checkbox {
+    width: 5%;
+    min-width: 40px;
+    text-align: center;
+}
+
+/*金额的样式*/
+.pageContent td.amount {
+    text-align: right;
+}
+
+.grid .gridTbody a span, table.list a span {
+	line-height: 26px;
+}
+
+/*表单录入提示*/
+span.info{
+    display: inline-block;
+    padding: 0 3px 0 3px;
+    text-indent: 15px;
+    color: #dc4e01;
+    white-space: normal;
+    line-height: 25px;
+    background: url(./images/form/tip.png) no-repeat 0 3px;
+}
+
+/*错误提示信息样式*/
+.warning-content{
+    width: 100%;
+    text-align:center;
+    margin: 0;
+    padding:50px 0 0;
+}
+.warning-form{
+    width: 70%;
+    background-color:#fff8e7;
+    border: 1px solid #ed8a54;
+    margin: 0 auto;
+}
+.warning-form-top{
+    padding: 30px 0;
+    text-align: left;
+    width: 100%;
+}
+.warning-info{
+    display:inline-block;
+    background:url(./images/mesgBox/info.gif) no-repeat;
+    width: 68px;
+    height: 68px;
+    margin-left: 30px;
+    vertical-align: top;
+    _float: left;
+}
+.warning-text{
+    width: 70%;
+    display:inline-block;
+    padding:0 0 20px 30px;
+    position: relative;
+    font-family:Arial, Helvetica, sans-serif;
+    
+}
+.warning-text .warning{
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 300%;
+}
+.warning-button{
+    width: 100%;
+    line-height: 300%;
+    text-align: center;
+    margin-top: 50px;
+}
+/*************选项卡样式************/
+.tabs .fixed {
+	position: relative;
+	overflow: auto;
+}

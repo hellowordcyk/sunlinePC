@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="com.sunline.funcpub.mybatis.public.roleintercept" >
+	 
+	 <resultMap type="java.util.HashMap" id="roleUrlMap">
+ 	 	<result column="roleid" property="roleid"/>
+ 	 	<result column="menuid" property="menuid"/>
+ 	 	<result column="linkurl" property="linkurl"/>
+ 	 </resultMap>
+ 	 <select id="query_role_url_list" resultMap="roleUrlMap" parameterType="HashMap">
+ 	 	SELECT A.ROLEID,A.MENUID,B.LINKURL FROM PCMC_ROLE_MENU A 
+	    INNER JOIN PCMC_MENU B ON A.MENUID = B.MENUID AND B.LINKURL IS NOT NULL
+	    UNION
+	    SELECT A.ROLEID, A.FUNCTION_ID AS MENUID, B.FUNCTION_URL AS LINKURL FROM AP_HMP_ROLE_CONFIG A
+	    INNER JOIN AP_HMP_FUNCTION_REGISTER B ON A.FUNCTION_ID = B.FUNCTION_ID AND B.FUNCTION_URL IS NOT NULL
+	    UNION
+	    SELECT A.ROLEID, A.FUNCTION_ID AS MENUID, B.FUNCTION_URL AS LINKURL FROM AP_HMP_ROLE_TAB A
+	    INNER JOIN AP_HMP_FUNCTION_REGISTER B ON A.FUNCTION_ID = B.FUNCTION_ID AND B.FUNCTION_URL IS NOT NULL
+ 	 </select>
+ 	 
+ 	 
+ 	  <resultMap type="java.util.HashMap" id="menuFilterMap">
+ 	 	<result column="roleid" property="roleid"/>
+ 	 	<result column="menuid" property="menuid"/>
+ 	 	<result column="permis" property="permis"/>
+ 	 	<result column="linkurl" property="linkurl"/>
+ 	 </resultMap>
+ 	 <select id="query_pcmc_menu_filter_list" parameterType="HashMap" resultMap="menuFilterMap">
+		select a.roleid,a.menuid,a.permis,c.linkurl
+ 	 	from pcmc_role_menu a  inner join pcmc_role b
+ 	 	on a.roleid = b.roleid
+ 	 	inner join PCMC_MENU c on a.menuid = c.menuid
+		<where>
+			a.permis is not null 
+			<if test="roleid != null and roleid != '' ">
+				and a.roleid = #{roleid}
+			</if>
+			<if test="menuid != null and menuid != '' ">
+				and a.menuid = #{menuid}
+			</if>
+		</where>
+ 	 </select>
+ 	 
+ 	  <resultMap type="java.util.HashMap" id="pcmcRoleMap">
+ 	 	<result column="roleid" property="roleid"/>
+ 	 	<result column="subsysid" property="subsysid"/>
+ 	 	<result column="roletp" property="roletp"/>
+ 	 </resultMap>
+ 	 <select id="query_pcmc_role_admin_type" parameterType="HashMap" resultMap="pcmcRoleMap">
+ 	 	select roleid,subsysid,roletp from pcmc_role where roletp in ('2','3')
+ 	 </select>
+	
+</mapper> 	  

@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+	<mapper namespace="com.sunline.funcpub.mybatis.public.sysfuncpage" >
+	
+		<insert id="addSysFuncPage" parameterType="java.util.HashMap">
+			insert into sys_func_page(
+				func_code,
+	       		func_name,
+	       		func_url,
+	       		func_param,
+	       		func_desc,
+	       		func_ismenu
+	   		)values(
+		       	#{funcCode, jdbcType=VARCHAR},
+	           	#{funcName, jdbcType=VARCHAR},
+	           	#{funcUrl, jdbcType=VARCHAR},
+	           	#{funcParam, jdbcType=VARCHAR},
+	           	#{funcDesc, jdbcType=VARCHAR},
+	           	#{funcIsMenu, jdbcType=VARCHAR}
+		   	)
+		</insert>
+	
+		<update id="updateSysFuncPage" parameterType="java.util.HashMap">
+		   update sys_func_page set
+	           func_name=#{funcName, jdbcType=VARCHAR},
+	           func_url=#{funcUrl, jdbcType=VARCHAR},
+	           func_param=#{funcParam, jdbcType=VARCHAR},
+	           func_desc=#{funcDesc, jdbcType=VARCHAR},
+	           func_ismenu=#{funcIsMenu, jdbcType=VARCHAR}
+		   <where>
+		       func_code=#{funcCode}
+		   </where>
+		</update>
+	
+		<resultMap type="com.sunline.funcpub.portal.func.page.bean.SysFuncPageNew" id="querySysFunclistPage_rsm">
+	       <result column="func_code" property="funcCode"/>
+	       <result column="func_name" property="funcName"/>
+	       <result column="func_url" property="funcUrl"/>
+	       <result column="func_param" property="funcParam"/>
+	       <result column="func_desc" property="funcDesc"/>
+	       <result column="func_ismenu" property="funcIsMenu"/>
+		</resultMap>
+	
+		<select id="querySysFunclistPage" parameterType="java.util.HashMap" resultMap="querySysFunclistPage_rsm">
+	   		select 
+	       		func_code,
+           		func_name,
+           		func_url,
+           		func_param,
+           		func_desc,
+           		func_ismenu
+         	from sys_func_page 
+         	<where>
+           		<if test="funcCode != null and funcCode.trim() !=''">
+               		and func_code like #{funcCode}
+           		</if>
+           		<if test="funcName != null and funcName.trim() !=''">
+           	   		and func_name like #{funcName}
+           		</if>
+           		<if test="funcUrl != null and funcUrl.trim() !=''">
+           	   		and func_url like #{funcUrl}
+           		</if>
+       		</where>
+       		ORDER BY func_code ASC
+		</select>
+		
+		<select id="querySysFunc" parameterType="java.util.HashMap" resultMap="querySysFunclistPage_rsm">
+	   		select 
+	       		func_code,
+           		func_name,
+           		func_url,
+           		func_param,
+           		func_desc,
+           		func_ismenu
+         	from sys_func_page 
+         	<where>
+           		<if test="funcCode != null and funcCode.trim() !=''">
+               		and func_code like #{funcCode}
+           		</if>
+           		<if test="funcName != null and funcName.trim() !=''">
+           	   		and func_name like #{funcName}
+           		</if>
+           		<if test="funcUrl != null and funcUrl.trim() !=''">
+           	   		and func_url like #{funcUrl}
+           		</if>
+       		</where>
+       		ORDER BY func_code ASC
+		</select>
+	
+		<select id="getSysFuncPage" parameterType="java.util.HashMap" resultMap="querySysFunclistPage_rsm">
+		   select 
+		       func_code,
+	           func_name,
+	           func_url,
+	           func_param,
+	           func_desc,
+	           func_ismenu
+	         from sys_func_page 
+	       <where>
+	       		func_code = #{funcCode}
+	       </where>
+		</select>
+	
+		<delete id="deleteSysFuncPage" parameterType="java.lang.String">
+		   delete from sys_func_page 
+		   <where>
+		       func_code = #{funcCode}
+		   </where>
+		</delete>
+	
+		<delete id="deleteSysFuncPageBatch" parameterType="java.util.HashMap">
+		   delete from sys_func_page
+	       <where>
+	           <if test="funcCodes != null and funcCodes.size() > 0">
+	                <foreach collection="funcCodes" index="index" item="items" open="" separator="" close="">
+	                   <if test="index==0">
+	                     func_code in 
+	                     <foreach collection="items" index="index" item="item" open="(" separator="," close=")">
+	                         #{item}
+	                     </foreach>
+	                   </if>
+	                   <if test="index > 0">
+	                     or func_code in 
+	                     <foreach collection="items" index="index" item="item" open="(" separator="," close=")">
+	                         #{item}
+	                     </foreach>
+	                   </if>
+	                </foreach>
+	            </if>
+	       </where>
+		</delete>
+	
+	</mapper> 	  

@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sunline.pams.mybatis.pams.postpara" >
+	<resultMap type="java.util.HashMap" id="PostMap">
+		<result column="PARACD" property="postCode"/>
+		<result column="PARANA" property="postName"/>
+		<result column="AREA_NO_STR" property="areaNo"/>
+		<result column="AREA_NAME" property="areaName"/>
+	</resultMap>
+	<resultMap type="java.util.HashMap" id="PostParaMap">
+		<result column="START_DATE" property="startDate"/>
+		<result column="END_DATE" property="endDate"/>
+		<result column="POST_RATIO" property="postRatio"/>
+	</resultMap>
+	<select id="queryPostlistPage" parameterType="java.util.HashMap" resultMap="PostMap">
+		SELECT 
+			A.PARACD,
+			A.PARANA,
+			A.AREA_NO_STR,
+			B.AREA_NAME
+		FROM PCMC_KNP_PARA A
+		LEFT JOIN SYS_PUB_AREA B ON A.corpcode = B.AREA_NO
+		WHERE A.SUBSCD = #{SUBSCD} 
+		AND A.PARATP = #{PARATP}
+		AND A.PARACD <![CDATA[<>]]> #{ROOTPARACD}
+		AND A.corpcode IN (${ruleArea})
+		<if test="areaNo != null and areaNo != ''">
+			AND A.corpcode = #{areaNo}
+		</if>
+		<if test="postName != null and postName != ''">
+			AND A.PARANA LIKE #{postName}
+		</if>
+		<if test="postCode != null and postCode != ''">
+			AND A.PARACD = #{postCode}
+		</if>
+	</select> 
+	
+	
+	
+	<delete id="deletePost" parameterType="java.util.HashMap">
+		DELETE FROM PCMC_KNP_PARA
+		WHERE SUBSCD = #{SUBSCD} 
+		AND CORPCODE = #{corpCode}
+		AND PARATP = #{PARATP}
+		AND PARACD = #{postCode}
+		AND AREA_NO_STR = #{areaNo}
+	</delete>
+	
+	<delete id="deletePostPara" parameterType="java.util.HashMap">
+		DELETE FROM MO_PAR_POST 
+		WHERE POST = #{postCode}
+		AND AREA_NO = #{areaNo}
+	</delete>
+	
+	<select id="getPostByPostCode" parameterType="java.util.HashMap" resultMap="PostMap">
+		SELECT 
+			PARACD,
+			PARANA,
+			AREA_NO_STR
+		FROM PCMC_KNP_PARA 
+		WHERE SUBSCD = #{SUBSCD} 
+		AND CORPCODE = #{corpCode}
+		AND PARATP = #{PARATP}
+		AND PARACD = #{postCode}
+		AND AREA_NO_STR = #{areaNo}
+	</select>
+	<select id="getPostByPostName" parameterType="java.util.HashMap" resultMap="PostMap">
+		SELECT 
+			PARACD,
+			PARANA,
+			AREA_NO_STR
+		FROM PCMC_KNP_PARA 
+		WHERE SUBSCD = #{SUBSCD} 
+		AND CORPCODE = #{corpCode}
+		AND PARATP = #{PARATP}
+		AND PARANA = #{postName}
+		AND AREA_NO_STR = #{areaNo}
+	</select>
+	<select id="checkPostNameForUpdate" parameterType="java.util.HashMap" resultMap="PostMap">
+		SELECT 
+			PARACD,
+			PARANA,
+			AREA_NO_STR
+		FROM PCMC_KNP_PARA 
+		WHERE SUBSCD = #{SUBSCD} 
+		AND CORPCODE = #{corpCode}
+		AND PARATP = #{PARATP}
+		AND PARANA = #{postName}
+		AND AREA_NO_STR = #{areaNo}
+		AND PARACD <![CDATA[<>]]> #{postCode}
+	</select>
+	
+	<insert id="addPost" parameterType="java.util.HashMap">
+		INSERT INTO PCMC_KNP_PARA(SUBSCD,PARATP,PARACD,CORPCODE,PARANA,AREA_NO_STR)
+		VALUES(#{SUBSCD},#{PARATP},#{postCode},#{corpCode},#{postName},#{areaNo})
+	</insert>
+	
+	<insert id="addPostPara" parameterType="java.util.HashMap">
+		INSERT INTO MO_PAR_POST(AREA_NO,POST,START_DATE,END_DATE,POST_RATIO,OPERATOR,CREATE_TIME)
+		VALUES(#{areaNo},#{postCode},#{startDate},#{endDate},#{postRatio},#{operator},#{createTime})
+	</insert>
+	
+	<update id="updatePost" parameterType="java.util.HashMap">
+		UPDATE PCMC_KNP_PARA SET
+			PARANA = #{postName}
+		WHERE SUBSCD = #{SUBSCD} 
+		AND CORPCODE = #{corpCode}
+		AND PARATP = #{PARATP}
+		AND AREA_NO_STR = #{areaNo} 
+		AND PARACD = #{postCode}
+	</update>
+	
+	<select id="queryPostPara" parameterType="java.util.HashMap" resultMap="PostParaMap">
+		SELECT 
+			START_DATE,
+			END_DATE,
+			POST_RATIO
+		FROM MO_PAR_POST
+		WHERE AREA_NO = #{areaNo} AND POST = #{postCode}
+		ORDER BY START_DATE
+	</select>
+</mapper> 	  
+ 	 

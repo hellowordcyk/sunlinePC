@@ -1,0 +1,322 @@
+/********派生指标-指标配置向导样式***********/ /*主页面样式*/
+
+#tabId {
+    margin: 0px auto;
+    padding: 0;
+    /*width: 330px;*/
+}
+
+#tabId ul {
+    overflow: hidden;
+    zoom: 1;
+    background: url(../../images/tabs/tabId-ui-bg.gif) repeat-x;
+	height: 31px; 
+	padding: 0 0 5px 10px;
+	margin: 0;
+}
+#tabId li {
+    float: left;
+    height: 31px;
+    line-height: 31px;
+    font-size: 12px;   
+	cursor:not-allowed;
+	text-align: center;  
+	list-style: none;
+    display: inline;
+    color: #024279;
+}
+#tabId li a{
+	float: left;
+	display: block;
+	line-height:31px;
+	padding: 0 15px 0;
+	cursor:not-allowed;
+}
+#tabId li.on{
+	float: left;
+    height: 31px;
+	line-height: 31px;
+	padding-left: 16px;
+    background: url(../../images/tabs/on-left.gif) no-repeat left 0;
+}
+#tabId li.on  a{
+	cursor:not-allowed;
+	float: left;
+	display: block;
+    color: #fff;
+	font-weight: 700;
+	height: 31px;
+	line-height: 31px;
+    background: url(../../images/tabs/on-right.gif) no-repeat right 0;
+	padding: 0 25px 0 15px;
+	
+}
+ #tabId li.first a{
+	cursor:not-allowed;
+	float: left;
+	display: block;
+    color: #fff;
+	font-weight: 700;
+	height: 31px;
+	line-height: 31px;
+    background: url(../../images/tabs/on-right.gif) no-repeat right 0;
+	padding: 0 25px 0 15px;
+ }
+
+#tabId div.content {
+    padding: 0;
+    display: block;
+    overflow: auto;
+}
+
+/*第二步页面样式*/
+#brchDspId {
+    width: 100%;
+    float: left;
+    display: block;
+    padding-bottom: 10px;
+}
+
+#brchDspId span {
+    display: inline-block;
+}
+
+#brchDspId #brchLevelId{
+    width: 85%;
+    float: left;
+}
+
+#brchDspId .brch_level {
+    overflow: auto;
+    margin-bottom: 5px;
+    border: 1 dashed #ccc;
+}
+
+#brchDspId .brch_label,#brchDspId .brch_label2 {
+    width: 10%;
+    color: #0c6ba5;
+    display: block;
+    float: left;
+    text-align: left;
+    padding-left: 10px;
+    font-size: 12px;
+    font-weight: bold;
+}
+#brchDspId .brch_label {
+    float: left;
+}
+
+#brchDspId .brch_label2 {
+    font-weight: bold;
+    padding-left: 0px;
+    margin-bottom: 5px;
+    border: 1 dashed #ccc;
+    float: none;
+}
+
+#brchDspId .brch_content {
+    width: 100%;
+    display: block;
+    float: left;
+}
+
+.checkboxspan {
+    width: 180px;
+    display: inline-block;
+    margin-right: 10px;
+    overflow: hidden;
+    white-space: nowrap;
+    line-height: 20px;
+}
+
+.brchdiv {
+    width: 95%;
+    border: 1px solid #9ec0d5;
+    padding: 5px 15px;
+    margin: 5px 0 5px 15px;
+    overflow: auto;
+    background-color: #fff /*#D6E1EB*/;
+}
+
+/*第三步页面样式*/
+#version_title {
+    width: 80px;
+    background-color: #d5eaf0;
+    border-right: 1px solid #83b1d2;
+}
+
+#version_title .titlespan {
+    height: 23px;
+    line-height: 23px;
+    color: #333;
+    padding: 0px 8px;
+    display: block;    
+	background: url(../../images/tabs/version_title_li.gif) repeat-x;
+}
+
+#version_title .titlespan:hover {
+    color: #0c6ba5;
+    background: url(../../images/tabs/version_title_over.gif) repeat-x;
+    /*background: #fc0;*/
+}
+
+#version_title .on { /*background: #fc0;*/
+    color: #fff;
+	border-top: 1px solid #7db3cc;
+    background: url(../../images/tabs/version_title_active.gif) repeat-x;
+}
+
+#version_title .delspan {
+    height: 22px;
+    padding: 0 0 3px 0;
+    display: line-block;
+}
+
+#exParamId span {
+    display: inline-block;
+}
+
+.odd {
+    background-color: #fff;
+}
+
+.even {
+    background-color: #e9f0f7;
+}
+
+div.dict {
+    margin: 3px 5px 3px 0px;
+    padding: 2px 5px;
+    border: 1px solid #9ec0d5;
+}
+
+/*配置公式模板*/
+
+#toolId td{
+    padding: 2px;
+    border: 0px;
+}
+.numbtn{
+    width: 36px;
+    height: 30px;
+    line-height: 18px;
+    text-align: center;
+    background: url(../../images/tabs/sel_middle.gif) repeat-x 0 bottom;
+}
+.tabtop{
+    height: 25px;
+    line-height: 25px;
+	background:url(../../images/tabs/tabtop-bg.gif) repeat-x 0 bottom;
+}
+
+.tabtitle{    
+	height: 23px;
+	line-height: 23px;
+    float: left;
+    margin-right: 2px;
+    font-size: 12px;
+    color: #476171;
+    padding: 0 10px;
+    cursor: pointer;
+    text-align: center;
+    list-style: none;
+    display: inline;
+    border: 1px solid #7fbbd6;
+	border-bottom-width: 0;
+	background:#c8e2ee url(../../images/tabs/tabtitle-normal.gif) repeat-x 0 top;
+}
+
+.tabtop .on {
+	color: #fff;
+	border: 1px solid #3284b0;
+	border-bottom-width: 0;
+	background:#529fc4 url(../../images/tabs/tabtitle-bg.gif) repeat-x 0 top;
+}
+    
+.tab_title,.tab_title_on {
+    float: left;
+    margin-right: 8px;
+    width: 100px;
+    height: 18px;
+    line-height: 18px;
+    border: 1px solid red;
+    border-bottom: 0;
+    cursor: pointer;
+    text-align: center;
+}
+
+.tab_title_on {
+    background: #fc0;
+    color: #fff;
+    border-top: 0;
+    background-repeat: repeat-x;
+}
+
+.tab_content {
+    width: 100%;
+    border: 1px solid #83b1d2;
+    padding: 8px;
+    display: block;
+    overflow: auto;
+}
+
+/********派生指标-指标配置向导样式结束***********/
+
+/********模块标题头样式 BEGIN***********/
+.tab-table-contain {
+	background:#c9ddf0 url(../../images/tabs/tab-table-title.gif) repeat-x 0 bottom;
+	border-bottom-width: 0;
+	height: 27px;
+	line-height: 27px;
+    color: #0466a3;
+	font-weight: 700;
+    font-size: 12px;
+}
+.tab-table-contain img{
+	vertical-align: middle;
+}
+.tab-table-title{
+	padding-left: 20px;
+	height: 27px;
+	padding: 0;
+	margin: 0;
+}
+.tab-title-left{
+	display:block;
+	float: left;
+	background: url(../../images/tabs/tab-title-left.gif) no-repeat;
+	width: 7px;
+	height:26px;
+}
+.tab-title-right{
+	display:block;
+	float: left;
+	background: url(../../images/tabs/tab-title-right.gif) no-repeat right 0;
+	padding: 0 35px 0 5px;
+	height:26px;
+	color: #fff;
+}
+.tab-title-right img{
+	margin-right: 5px;
+}
+.tab-table-body {
+    margin-bottom: 10px;
+}
+
+/********模块标题头样式 END***********/
+
+/** 总账查询条件中标题列 TD 的样式自定义 */
+.span-label {
+    width: 70px;
+    max-width: 70px;
+    text-align: right;
+    padding-left: 10px;
+    overflow: auto;
+}
+
+.reso_dime_dicts{
+	height:200px;
+	overflow: auto;
+	white-space: normal;
+}
+

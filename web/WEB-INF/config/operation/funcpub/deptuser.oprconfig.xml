@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="gb2312"?>
+<!-- 描述各个功能模块，以及各个具体的功能点  -->
+<Sunline>
+	<Session></Session>
+	
+	<!-- 例子 -->
+	<Operation id="funcpub-deptusermanager"  bean="com.sunline.funcpub.portal.organization.DeptUserManager"  desc="机构人员管理"
+	filterpath="/funcpub/portal/organization/">
+		<Action name="getDeptUserData" desc="获取机构人员树"/>
+		<Action name="getDeptUserDataNew" desc="获取机构人员树"/>
+		<Action name="getDeptById" desc="获取机构信息"/>
+		<Action name="getDeptByCode" desc="获取机构信息"/>
+		<Action name="updateDept" desc="修改机构信息"/>
+		<Action name="updateDeptByDialog" desc="弹出框修改机构信息"/>
+		<Action name="getChildDept" desc="获取下级机构"/>
+		<Action name="deleteDept" desc="删除机构"/>
+		<Action name="addDept" desc="添加机构"/>
+		<Action name="getUserByDeptid" desc="通过机构编号获取人员信息"/>
+		<Action name="addUser" desc="添加用户"/>
+		<Action name="deleteUser" desc="删除用户"/>
+		<Action name="getUserById" desc="根据用户id查询用户信息"/>
+		<Action name="updateUserByDialog" desc="弹出框修改用户信息"/>
+		<Action name="updateUser" desc="修改用户信息"/>	
+		<Action name="getUserResource" desc="获取用户已授权资源"/>	
+		<Action name="delUserResource" desc="删除用户资源"/>	
+		<Action name="getResource" desc="获取用户未授权资源"/>	
+		<Action name="userResourceGrant" desc="用户资源授权"/>
+		<Action name="getJsonPcmcDeptLike" desc="通过机构名称查询机构"/>
+		<Action name="getPcmcDeptList" desc="通过机构名称查询机构lookup"/>
+		<Action name="getJsonPcmcUserLike" desc="通过用户名称查询用户"/>
+		<Action name="getPcmcUserList" desc="通过用户名称查询用户"/>
+		<Action name="getPcmcUserDeptList" desc="通过用户名称查询用户和机构信息"/>
+		<Action name="freshDeptOrgseq" desc="刷新机构层级关系" acttype="deal"/>
+		<Action name="getPersonById" desc="获取个人信息"/>
+		<Action name="updatePersonInfo" desc="修改个人信息"/>
+		<Action name="deptUserImport" desc="导入报表" acttype="deal" bean="com.sunline.funcpub.excel.actor.DeptUserExcelImport"/>
+		<Action name="deptUserExportActor" desc="导出报表" acttype="deal" bean="com.sunline.funcpub.excel.actor.DeptUserExcelExport"/>
+        <Action name="deptUserExportInitActor" desc="下载模板" acttype="deal" bean="com.sunline.funcpub.excel.actor.DeptUserExcelExport"/>
+		<Action name="getUserExtUrl" desc="获取用户扩展信息连接" acttype="query"/>
+		<Action name="queryUserExt" desc="用户扩展信息示例" acttype="query" />
+		<Action name="getDeptExtUrl" desc="获取机构扩展信息连接" acttype="query"/>
+		<Action name="queryDeptExt" desc="机构扩展信息示例" acttype="query" />
+		<Action name="getDeptUserConfig" desc="获取根节点配置信息" acttype="query"></Action>
+		<Action name="queryDisalbedDept" desc="查询已被禁用的机构" acttype="query"></Action>
+		<Action name="enableDept" desc="启用机构" acttype="update"></Action>
+		
+		<Action name="resetUserPwd" desc="重置用户密码" acttype="update"></Action>
+	</Operation>
+	
+	<Operation id="funcpub-deptusermanager-public"  bean="com.sunline.funcpub.portal.organization.DeptUserManagerPublic"  desc="机构人员管理">
+		<Action name="findPcmcUserByUserCodes" desc="根据用户编码查询用户"/>
+        <Action name="getDeptUserData" desc="获取机构人员树"/>
+        <Action name="getDeptById" desc="获取机构信息"/>
+        <Action name="getDeptByCode" desc="获取机构信息"/>
+        <Action name="updateDept" desc="修改机构信息"/>
+        <Action name="updateDeptByDialog" desc="弹出框修改机构信息"/>
+        <Action name="getChildDept" desc="获取下级机构"/>
+        <Action name="deleteDept" desc="删除机构"/>
+        <Action name="addDept" desc="添加机构"/>
+        <Action name="getUserByDeptid" desc="通过机构编号获取人员信息"/>
+        <Action name="addUser" desc="添加用户"/>
+        <Action name="deleteUser" desc="删除用户"/>
+        <Action name="getUserById" desc="根据用户id查询用户信息"/>
+        <Action name="updateUserByDialog" desc="弹出框修改用户信息"/>
+        <Action name="updateUser" desc="修改用户信息"/>   
+        <Action name="getUserResource" desc="获取用户已授权资源"/>   
+        <Action name="delUserResource" desc="删除用户资源"/>  
+        <Action name="getResource" desc="获取用户未授权资源"/>   
+        <Action name="userResourceGrant" desc="用户资源授权"/>
+        <Action name="getJsonPcmcDeptLike" desc="通过机构名称查询机构"/>
+        <Action name="getPcmcDeptList" desc="通过机构名称查询机构lookup"/>
+        <Action name="getJsonPcmcUserLike" desc="通过用户名称查询用户"/>
+        <Action name="getPcmcUserList" desc="通过用户名称查询用户"/>
+        <Action name="getPcmcUserDeptList" desc="通过用户名称查询用户和机构信息"/>
+        <Action name="getPcmcRoleList" desc="通过角色名称查询角色信息"/>
+        <Action name="freshDeptOrgseq" desc="刷新机构层级关系" acttype="deal"/>
+        <Action name="getPersonById" desc="获取个人信息"/>
+        <Action name="updatePersonInfo" desc="修改个人信息"/>
+        <Action name="getDeptTree" desc="获取公共选择控件，机构树"/>
+        <Action name="queryUserByDeptCode" desc="获取公共选择控件，机构树下的人员列表"/>
+          <Action name="getPcmcDeptListJson" desc="获取平台机构编码"/>
+         <Action name="getPcmcDeptByDeptNameOrCode" desc="获取平台机构序号"/>
+         <!--  demo-->
+           <Action name="getuserInfoext" desc="获取机构扩展信息"/>
+        <!-- 不过滤权限，公共控件 -->
+        <Action name="getPcmcDeptListUnfilter" desc="查询部门列表，不过滤权限" acttype="query"/>
+        <Action name="getDeptTreeUnFilter" desc="获取公共选择控件，机构树"/>
+        <Action name="queryUserByDeptCodeUnFilter" desc="获取公共选择控件，机构树下的人员列表"/>
+    </Operation>
+	
+	<Operation id="deptUserExport" bean="com.sunline.funcpub.excel.actor.DeptUserExcelExport" 
+	   desc="机构人员导出" filterpath="/funcpub/portal/organization/">
+        <Action name="deptUserExportActor" desc="获取数据" acttype="query"/>
+        <Action name="deptUserExportInitActor" desc="下载模板" acttype="deal"/>
+    </Operation>
+    
+    <Operation id="ExcelImport" bean="com.sunline.funcpub.excel.actor.DeptUserExcelImport"  
+        desc="机构人员导入" filterpath="/funcpub/portal/organization/">
+        <Action name="deptUserImport" desc="获取数据" acttype="query"/>
+    </Operation>
+    
+    <!-- 岗位管理 -->
+    <Operation id="PostMain" bean="com.sunline.funcpub.portal.para.PostMain" filterpath="/funcpub/portal/post/"
+        desc="岗位管理 ">
+        <Action name="queryPost" desc="查询数据" acttype="query" />
+        <Action name="addPost" desc="增加数据" acttype="add" />
+        <Action name="updatePost" desc="修改数据" acttype="update" />
+        <Action name="delPost" desc="删除数据" acttype="delete" />
+    </Operation>
+</Sunline>

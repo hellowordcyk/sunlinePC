@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="gb2312"?>
+<jraf-config name="imps" desc="银行综合智能管理系统" status="debug" logxml="true">
+    <global-session>
+        <Field name="userid" title="操作员流水号" type="long" maxlen="19"
+            notnull="true">
+        </Field>
+        <Field name="usercode" title="操作员登录编号" type="string" maxlen="64"
+            notnull="true">
+        </Field>
+        <Field name="corpcode" title="法人编号" type="string" maxlen="64"
+            notnull="true">
+        </Field>
+    </global-session>
+    <database>
+        <file name="pcmc" desc="门户控制管理中心"
+            path="/WEB-INF/config/database/pcmc-table.xml" />
+    </database>
+    <handlers>
+        <!-- 全局拦截器，拦截action时可使用name引用 -->
+        <!-- 
+        <handler name="DuplicateAction" type="java:com.sunline.bimis.pcmc.handler.DuplicateActionHandler"/>
+         -->
+         <!-- <handler name="CheckUserLoginHandler" type="java:com.sunline.bimis.pcmc.handler.CheckUserLoginHandler"/> -->
+         
+    </handlers>
+    <!-- 接口功能实现类 -->
+    <implements>
+        <!-- mode: 唯一标识的功能码； desc： 描述；class： 使用的实现类
+        <impl mode="" desc="" class=""/>
+         -->
+    </implements> 
+</jraf-config>

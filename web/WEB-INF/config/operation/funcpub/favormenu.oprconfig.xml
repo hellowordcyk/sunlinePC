@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="gb2312"?>
+<Sunline>
+	<Session></Session>
+	<Operation id="deployMenu" bean="com.sunline.funcpub.menudeploy.UserMenuDeploy"
+		desc="用户ser参数">
+		<Action name="getUserMsg" desc="查询用户信息" />
+		<Action name="getUserMenu" desc="查询用户权限菜单" />
+		<Action name="setCommonMenu" desc="设置常用菜单" acttype="update"/>
+		<Action name="delCommonMenu" desc="删除常用菜单" />
+	</Operation>
+</Sunline>

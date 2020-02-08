@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="com.sunline.pams.mybatis.pams.prdpara" >
+ 
+ 	<resultMap type="java.util.HashMap" id="PrdInfo">
+ 		<result column="PRODUCT_NO" property="productNo"/>
+ 		<result column="PRODUCT_NAME" property="productName"/>
+ 		<result column="PARENT_PRODUCT_NO" property="parentProductNo"/>
+ 		<result column="LEAF_FLAG" property="leafFlag"/>
+ 		<result column="REMARK" property="remark"/>
+ 		<result column="DATA_SRC" property="dataSrc"/>
+ 	</resultMap>
+ 	<resultMap type="java.util.HashMap" id="DataSrc">
+ 		<result column="DATA_SRC" property="dataSrc"/>
+ 		<result column="SRC_NAME" property="srcName"/>
+ 	</resultMap>
+ 	<resultMap type="java.util.HashMap" id="prdPara">
+ 		<result column="PRODUCT_NO" property="productNo"/>
+ 		<result column="ENABLE_DATE" property="enableDate"/>
+ 		<result column="DISENABLE_DATE" property="disenableDate"/>
+ 		<result column="PARA_TYPE" property="paraType"/>
+ 		<result column="VALUE_TYPE" property="valueType"/>
+ 		<result column="PARA_VALUE" property="paraValue"/>
+ 	</resultMap>
+ 	<resultMap type="java.util.HashMap" id="moKpiDataCol">
+ 		<result column="DATA_COLUMN" property="dataColumn"/>
+ 		<result column="COL_TYPE" property="colType"/>
+ 		<result column="COL_NAME_P" property="colNameP"/>
+ 		<result column="INPUT_BOX_TYPE" property="inputBoxType"/>
+ 		<result column="DICT_TYPE" property="dictType"/>
+ 	</resultMap>
+ 	<resultMap type="java.util.HashMap" id="productRule">
+ 		<result column="PRODUCT_NO" property="productNo"/>
+ 		<result column="RULE_CONDITION_VIEW" property="ruleConditionView"/>
+ 		<result column="RULE_CONDITION" property="ruleCondition"/>
+ 		<result column="RULE_CONDITION_U" property="ruleConditionU"/>
+ 	</resultMap>
+	<resultMap type="java.util.HashMap" id="TableName">
+ 		<result column="DATA_TABLE_ALL_F" property="dataTableAllF"/>
+ 		<result column="DATA_TABLE_ALL_S" property="dataTableAllS"/>
+ 	</resultMap>
+
+	<select id="queryParentPrdInfo" parameterType="String" resultMap="PrdInfo">
+		SELECT  
+			PRODUCT_NO,
+			PRODUCT_NAME,
+			PARENT_PRODUCT_NO,
+			LEAF_FLAG 
+		FROM OP_PRD_INFO
+		WHERE (PRODUCT_NO = PARENT_PRODUCT_NO OR PARENT_PRODUCT_NO NOT IN (SELECT PRODUCT_NO FROM OP_PRD_INFO))
+		AND AREA_NO = #{_parameter}
+	</select>
+	
+	<select id="queryPrdInfoByPid" parameterType="String" resultMap="PrdInfo">
+		SELECT  
+			PRODUCT_NO,
+			PRODUCT_NAME,
+			PARENT_PRODUCT_NO,
+			LEAF_FLAG
+		FROM OP_PRD_INFO
+		WHERE PARENT_PRODUCT_NO = #{_parameter}
+	</select>
+	
+	<select id="queryProductSeq" parameterType="String" resultType="String">
+		SELECT PRODUCT_SEQ FROM OP_PRD_INFO WHERE PRODUCT_NO = #{_parameter}
+	</select>
+	
+	<select id="queryProductLevel" parameterType="String" resultType="Integer">
+		SELECT PRODUCT_LEVEL FROM OP_PRD_INFO WHERE PRODUCT_NO = #{_parameter}
+	</select>
+	
+	<select id="queryParentProductNo" parameterType="String" resultType="String">
+		SELECT PARENT_PRODUCT_NO FROM OP_PRD_INFO WHERE PRODUCT_NO = #{_parameter}
+	</select>
+	
+	<delete id="deleteProduct" parameterType="String">
+		DELETE FROM OP_PRD_INFO WHERE PRODUCT_SEQ LIKE #{_parameter}
+	</delete>
+	<delete id="deleteProductParaForBatch" parameterType="String">
+		DELETE FROM OP_PRD_PARA 
+		WHERE PRODUCT_NO IN(SELECT PRODUCT_NO FROM OP_PRD_INFO WHERE PRODUCT_SEQ LIKE #{_parameter})
+	</delete>
+	
+	<select id="getDataSrc" parameterType="java.util.HashMap" resultMap="DataSrc">
+		SELECT 
+			DATA_SRC,
+			SRC_NAME
+		FROM MO_KPI_DATA_TABLE
+		ORDER BY DATA_SRC 
+	</select>
+	
+	<select id="getPrdInfo" parameterType="java.util.HashMap" resultMap="PrdInfo">
+		SELECT  
+			PRODUCT_NO,
+			PRODUCT_NAME,
+			PARENT_PRODUCT_NO 
+		FROM OP_PRD_INFO
+		<where>
+			<if test="productNo != null and productNo != ''">
+				AND PRODUCT_NO = #{productNo}
+			</if>
+			<if test="prdNo != null and prdNo != ''">
+				AND PRODUCT_NO <![CDATA[<>]]> #{prdNo}
+			</if>
+			<if test="productName != null and productName != ''">
+				AND PRODUCT_NAME = #{productName}
+			</if>
+		</where>
+	</select>
+	
+	<insert id="addProduct" parameterType="java.util.HashMap">
+		INSERT INTO OP_PRD_INFO(PRODUCT_NO,AREA_NO,PRODUCT_TYPE,PRODUCT_NAME,PRODUCT_LEVEL,PARENT_PRODUCT_NO,DATA_SRC,REMARK,PRODUCT_SEQ,ORG_NO,LEAF_FLAG) 
+		VALUES(#{productNo},#{areaNo},#{productType},#{productName},#{productLevel},#{parentProductNo},#{dataSrc},#{remark},#{productSeq},#{orgNo},#{leafFlag})
+	</insert>
+	
+	<update id="updateProductLeafFlag" parameterType="java.util.HashMap">
+		UPDATE OP_PRD_INFO SET LEAF_FLAG = #{leafFlag} WHERE PRODUCT_NO = #{productNo}
+	</update>
+	
+	<insert id="addProductPara" parameterType="java.util.HashMap">
+		INSERT INTO OP_PRD_PARA(PRODUCT_NO,AREA_NO,ENABLE_DATE,DISENABLE_DATE,PARA_TYPE,VALUE_TYPE,PARA_VALUE,ORG_NO) 
+		VALUES(#{productNo},#{areaNo},#{enableDate},#{disenableDate},#{paraType},#{valueType},#{paraValue},#{orgNo})
+	</insert>
+	
+	<select id="checkProductisLeaf" parameterType="String" resultMap="PrdInfo">
+		SELECT 
+			PRODUCT_NO,
+			PRODUCT_NAME,
+			PARENT_PRODUCT_NO 
+		FROM OP_PRD_INFO 
+		WHERE PARENT_PRODUCT_NO =  #{_parameter}
+	</select>
+	
+	<select id="queryPrdInfoById" parameterType="String" resultMap="PrdInfo">
+		SELECT 
+			PRODUCT_NO,
+			PRODUCT_NAME,
+			DATA_SRC,
+			REMARK  
+		FROM OP_PRD_INFO
+		WHERE PRODUCT_NO = #{_parameter}
+	</select>
+	
+	<select id="queryPrdParaById" parameterType="String" resultMap="prdPara">
+		SELECT  
+			PRODUCT_NO,
+			ENABLE_DATE,
+			DISENABLE_DATE,
+			PARA_TYPE,
+			VALUE_TYPE,
+			PARA_VALUE 
+		FROM OP_PRD_PARA
+		WHERE PRODUCT_NO = #{_parameter}
+		ORDER BY ENABLE_DATE
+	</select>
+	
+	<update id="updateProduct" parameterType="java.util.HashMap">
+		UPDATE OP_PRD_INFO SET
+			PRODUCT_NAME = #{productName},
+			DATA_SRC = #{dataSrc},
+			REMARK = #{remark}
+		WHERE PRODUCT_NO = #{productNo}
+	</update>
+	
+	<delete id="deleteProductPara" parameterType="String">
+		DELETE FROM OP_PRD_PARA WHERE PRODUCT_NO = #{_parameter}
+	</delete>
+	
+	<select id="queryMoKpiDataColByDatasrc" parameterType="String" resultMap="moKpiDataCol">
+		SELECT 
+			DATA_COLUMN,
+			COL_TYPE,
+			COL_NAME_P,
+			INPUT_BOX_TYPE,
+			DICT_TYPE 
+		FROM MO_KPI_DATA_COL 
+		WHERE USE_TYPE IN ('WHERE','ALL') 
+		AND DATA_SRC = #{parameter}
+		ORDER BY SORT_NO
+	</select>
+
+	<select id="queryProductRule" parameterType="String" resultMap="productRule">
+		SELECT 
+			PRODUCT_NO,
+			RULE_CONDITION_VIEW,
+			RULE_CONDITION,
+			RULE_CONDITION_U 
+		FROM OP_PRD_RULE 
+		WHERE PRODUCT_NO = #{productno}
+	</select>
+	
+	<delete id="deletePrdRule" parameterType="java.util.HashMap">
+		DELETE FROM OP_PRD_RULE WHERE PRODUCT_NO = #{productNo}
+	</delete>
+	
+	<insert id="addPrdRule" parameterType="java.util.HashMap">
+		INSERT INTO OP_PRD_RULE(PRODUCT_NO,RULE_CONDITION_VIEW,RULE_CONDITION,RULE_CONDITION_U)
+		VALUES(#{productNo},#{conditionView},#{ruleCondition},#{ruleConditionU})
+	</insert>
+
+	<select id="getTableName" parameterType="String" resultMap="TableName">
+		SELECT 
+			DATA_TABLE_ALL_F,
+			DATA_TABLE_ALL_S  
+		FROM MO_KPI_DATA_TABLE
+		WHERE DATA_SRC = #{_parameter}
+	</select>
+	
+	<select id="checkRuleConditionlistPage" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		SELECT * FROM ${tableName} 
+		<where>
+			${ruleCondition}  
+		</where>
+	</select>
+	
+	<select id="checkRuleConditionUlistPage" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		SELECT * FROM ${tableName} 
+		<where>
+			${ruleConditionU}  
+		</where>
+	</select>
+
+</mapper> 	  
+ 	 

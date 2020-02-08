@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sunline.funcpub.mybatis.public.pcmc_user_ext" >
+	<resultMap type="com.sunline.funcpub.pojo.userext.PcmcUserExt" id="userExt_rsm">
+		<result column="userid" property="userId"/>
+		<result column="attr_01" property="attr01"/>
+		<result column="attr_02" property="attr02"/>
+		<result column="attr_03" property="attr03"/>
+		<result column="attr_04" property="attr04"/>
+		<result column="attr_05" property="attr05"/>
+		<result column="attr_06" property="attr06"/>
+		<result column="attr_07" property="attr07"/>
+		<result column="attr_08" property="attr08"/>
+		<result column="attr_09" property="attr09"/>
+		<result column="attr_10" property="attr10"/>
+	</resultMap>
+	<select id="queryPcmcUserExtlistPage" parameterType="com.sunline.funcpub.pojo.userext.PcmcUserExt" resultMap="userExt_rsm">
+		select 
+		<include refid="userExt_field"></include>
+		 from pcmc_user_ext
+		 <where>
+		 	<include refid="userExt_condition"></include>
+		 </where>
+	</select>
+	
+	<insert id="addPcmcUserExt" parameterType="com.sunline.funcpub.pojo.userext.PcmcUserExt">
+		insert into pcmc_user_ext
+		(
+			<include refid="userExt_field"></include>
+		)values(
+			#{userId,jdbcType=VARCHAR},
+			#{attr01,jdbcType=VARCHAR},
+			#{attr02,jdbcType=VARCHAR},
+			#{attr03,jdbcType=VARCHAR},
+			#{attr04,jdbcType=VARCHAR},
+			#{attr05,jdbcType=VARCHAR},
+			#{attr06,jdbcType=VARCHAR},
+			#{attr07,jdbcType=VARCHAR},
+			#{attr08,jdbcType=VARCHAR},
+			#{attr09,jdbcType=VARCHAR},
+			#{attr10,jdbcType=VARCHAR}
+		)
+	</insert>
+	
+	<update id="updatePcmcUserExt" parameterType="com.sunline.funcpub.pojo.userext.PcmcUserExt">
+		update pcmc_user_ext
+			set 
+			attr_01=#{attr01,jdbcType=VARCHAR},
+			attr_02=#{attr02,jdbcType=VARCHAR},
+			attr_03=#{attr03,jdbcType=VARCHAR},
+			attr_04=#{attr04,jdbcType=VARCHAR},
+			attr_05=#{attr05,jdbcType=VARCHAR},
+			attr_06=#{attr06,jdbcType=VARCHAR},
+			attr_07=#{attr07,jdbcType=VARCHAR},
+			attr_08=#{attr08,jdbcType=VARCHAR},
+			attr_09=#{attr09,jdbcType=VARCHAR},
+			attr_10=#{attr10,jdbcType=VARCHAR}
+		<where>
+			<include refid="userExt_condition"></include>
+		</where>
+	</update>
+	
+	<delete id="deletePcmcUserExt" parameterType="com.sunline.funcpub.pojo.userext.PcmcUserExt">
+		delete from pcmc_user_ext 
+		<where>
+			<include refid="userExt_condition"></include>
+		</where>
+	</delete>
+	
+	<select id="isExist"  parameterType="com.sunline.funcpub.pojo.userext.PcmcUserExt" resultType="java.lang.Integer">
+		select count(1) from pcmc_user_ext
+		<where>
+			<include refid="userExt_condition"></include>
+		</where>
+	</select>
+	
+	<resultMap type="java.util.HashMap" id="userExtTest_rsm">
+		<result column="userid" property="userId"/>
+		<result column="attr_01" property="attr01"/>
+		<result column="attr_02" property="attr02"/>
+		<result column="attr_03" property="attr03"/>
+		<result column="attr_04" property="attr04"/>
+		<result column="attr_05" property="attr05"/>
+		<result column="attr_06" property="attr06"/>
+		<result column="attr_07" property="attr07"/>
+		<result column="attr_08" property="attr08"/>
+		<result column="attr_09" property="attr09"/>
+		<result column="attr_10" property="attr10"/>
+	</resultMap>
+	<select id="queryUserExt" parameterType="com.sunline.funcpub.pojo.userext.PcmcUserExt" resultMap="userExtTest_rsm">
+		select 
+		   t1.userid,
+		   t1.attr_01,
+		   t1.attr_02,
+		   t1.attr_03,
+		   t1.attr_04,
+		   t1.attr_05,
+		   t1.attr_06,
+		   t1.attr_07,
+		   t1.attr_08,
+		   t1.attr_09,
+		   t1.attr_10
+		 from pcmc_user_ext t1 
+		 <where>
+		 	<if test="userId!=null">
+		 		t1.userid=#{userId}
+		 	</if>
+		 </where>
+	</select>
+	
+	<sql id="userExt_field">
+	   userid,
+	   attr_01,
+	   attr_02,
+	   attr_03,
+	   attr_04,
+	   attr_05,
+	   attr_06,
+	   attr_07,
+	   attr_08,
+	   attr_09,
+	   attr_10
+	</sql>
+	<sql id="userExt_condition">
+		<if test="userId!=null">
+	 		and userid=#{userId}
+	 	</if>
+	 	<!-- <if test="attr01!=null and attr01.trim()!=''">
+	 		and attr_01=#{attr01}
+	 	</if>
+	 	<if test="attr02!=null and attr02.trim()!=''">
+	 		and attr_02=#{attr02}
+	 	</if>
+	 	<if test="attr03!=null and attr03.trim()!=''">
+	 		and attr_03=#{attr03}
+	 	</if>
+	 	<if test="attr04!=null and attr04.trim()!=''">
+	 		and attr_04=#{attr04}
+	 	</if>
+	 	<if test="attr05!=null and attr05.trim()!=''">
+	 		and attr_05=#{attr05}
+	 	</if>
+	 	<if test="attr06!=null and attr06.trim()!=''">
+	 		and attr_06=#{attr06}
+	 	</if>
+	 	<if test="attr07!=null and attr07.trim()!=''">
+	 		and attr_07=#{attr07}
+	 	</if>
+	 	<if test="attr08!=null and attr08.trim()!=''">
+	 		and attr_08=#{attr08}
+	 	</if>
+	 	<if test="attr09!=null and attr09.trim()!=''">
+	 		and attr_09=#{attr09}
+	 	</if>
+	 	<if test="attr01!=null and attr10.trim()!=''">
+	 		and attr_10=#{attr10}
+	 	</if> -->
+	</sql>
+</mapper> 	  

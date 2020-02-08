@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="com.sunline.pams.mybatis.public.rateupdate" >
+      <select id="product_rate_updatelistPage" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+	    select 
+	    	c.*,
+	    	f.product_name,
+	    	c.interest_rate 'interest_rate_adjusted',
+	    	c.ftp_rate 'ftp_rate_adjusted' 
+	    from(
+			select  
+				b.product_no,
+				b.interest_rate,
+				b.ftp_rate,sum(b.bal_sum_y) 'bal_sum_y' 
+			from(
+				select 
+					product_no,
+					interest_rate,
+					ftp_rate,
+					bal_sum_y 
+				from (
+				select manager_no,product_no,interest_rate,ftp_rate,bal_sum_y from pi_org_deposit_person_manager
+		union 
+		select manager_no,product_no,interest_rate,ftp_rate,bal_sum_y from pi_org_deposit_unit_manager_test
+		 )a 
+		where 1=1
+		and manager_no = '33'
+		) b
+		group by b.product_no,b.interest_rate
+		) c,OP_PRD_INFO f
+		where c.product_no = f.product_no
+	 </select>
+	 
+	 <select id="product_deposit_userlistPage" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+	   	select c.product_no,c.ftp_rate,(c.ftp_rate+${ftp_rising})'ftp_rate_adjusted',c.interest_rate,(c.interest_rate+${interest_rising})'interest_rate_adjusted',c.bal_sum_y,f.product_name from
+		(
+		select  b.product_no,b.interest_rate,b.interest_rate'interest_rate_adjusted',b.ftp_rate,b.ftp_rate'ftp_rate_adjusted',sum(b.bal_sum_y)'bal_sum_y' from
+		(
+		select product_no,interest_rate,ftp_rate,bal_sum_y from (
+		select manager_no,product_no,interest_rate,ftp_rate,bal_sum_y from pi_org_deposit_person_manager
+		union 
+		select manager_no,product_no,interest_rate,ftp_rate,bal_sum_y from pi_org_deposit_unit_manager_test
+		 )a 
+		where 1=1
+		and manager_no in (${deposit_userStr})
+		) b
+		group by b.product_no,b.interest_rate
+		) c,OP_PRD_INFO f
+		where c.product_no = f.product_no 
+		<if test= "products_idStr != null and products_idStr != ''">
+		and c.product_no in (${products_idStr})
+		</if>
+		union 
+		select c.product_no,c.ftp_rate,c.ftp_rate_adjusted,c.interest_rate,c.interest_rate_adjusted,c.bal_sum_y,f.product_name from
+		(
+		select  b.product_no,b.interest_rate,b.interest_rate'interest_rate_adjusted',b.ftp_rate,b.ftp_rate'ftp_rate_adjusted',sum(b.bal_sum_y)'bal_sum_y' from
+		(
+		select product_no,interest_rate,ftp_rate,bal_sum_y from (
+		select manager_no,product_no,interest_rate,ftp_rate,bal_sum_y from pi_org_deposit_person_manager
+		union 
+		select manager_no,product_no,interest_rate,ftp_rate,bal_sum_y from pi_org_deposit_unit_manager_test
+		 )a 
+		where 1=1
+		and manager_no in (${deposit_userStr})
+		) b
+		group by b.product_no,b.interest_rate
+		) c,OP_PRD_INFO f
+		where c.product_no = f.product_no 
+		<if test= "products_idStr != null and products_idStr != ''">
+		and c.product_no not in (${products_idStr})
+		</if>
+	 </select>	
+	 
+	 <select id="product_deposit_deptlistPage" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+	    select c.product_no,c.ftp_rate,(c.ftp_rate+${ftp_rising})'ftp_rate_adjusted',c.interest_rate,(c.interest_rate+${interest_rising})'interest_rate_adjusted',c.bal_sum_y,f.product_name from
+		(
+		select  b.product_no,b.interest_rate,b.interest_rate'interest_rate_adjusted',b.ftp_rate,b.ftp_rate'ftp_rate_adjusted',sum(b.bal_sum_y)'bal_sum_y' from
+		(
+		select product_no,interest_rate,ftp_rate,bal_sum_y from (
+		select org_no,product_no,interest_rate,ftp_rate,bal_sum_y from pi_org_deposit_person_manager
+		union 
+		select org_no,product_no,interest_rate,ftp_rate,bal_sum_y from pi_org_deposit_unit_manager_test
+		 )a 
+		where 1=1
+		and org_no in (${deposit_deptStr})
+		) b
+		group by b.product_no,b.interest_rate
+		) c,OP_PRD_INFO f
+		where c.product_no = f.product_no 
+		<if test= "products_idStr != null and products_idStr != ''">
+		and c.product_no in (${products_idStr})
+		</if>
+		union 
+		select c.product_no,c.ftp_rate,c.ftp_rate_adjusted,c.interest_rate,c.interest_rate_adjusted,c.bal_sum_y,f.product_name from
+		(
+		select  b.product_no,b.interest_rate,b.interest_rate'interest_rate_adjusted',b.ftp_rate,b.ftp_rate'ftp_rate_adjusted',sum(b.bal_sum_y)'bal_sum_y' from
+		(
+		select product_no,interest_rate,ftp_rate,bal_sum_y from (
+		select org_no,product_no,interest_rate,ftp_rate,bal_sum_y from pi_org_deposit_person_manager
+		union 
+		select org_no,product_no,interest_rate,ftp_rate,bal_sum_y from pi_org_deposit_unit_manager_test
+		 )a 
+		where 1=1
+		and org_no in (${deposit_deptStr})
+		) b
+		group by b.product_no,b.interest_rate
+		) c,OP_PRD_INFO f
+		where c.product_no = f.product_no 
+		<if test= "products_idStr != null and products_idStr != ''">
+		and c.product_no not in (${products_idStr})
+		</if>
+	 </select>
+	 
+	 <select id="product_loan_userlistPage" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+	    select c.product_no,c.ftp_rate,(c.ftp_rate+${ftp_rising})'ftp_rate_adjusted',c.interest_rate,(c.interest_rate+${interest_rising})'interest_rate_adjusted',c.bal_sum_y,f.product_name from
+		(
+		select  b.product_no,b.interest_rate,b.interest_rate'interest_rate_adjusted',b.ftp_rate,b.ftp_rate'ftp_rate_adjusted',sum(b.bal_sum_y)'bal_sum_y' from
+		(
+		select product_no,interest_rate,ftp_rate,bal_sum_y from (
+		select manager_no,product_no,interest_rate,ftp_rate,bal_sum_y from pi_org_loan_person_manager
+		union 
+		select manager_no,product_no,interest_rate,ftp_rate,bal_sum_y from pi_org_loan_unit_manager
+		 )a 
+		where 1=1
+		and manager_no in (${loan_userStr})
+		) b
+		group by b.product_no,b.interest_rate
+		) c,OP_PRD_INFO f
+		where c.product_no = f.product_no
+		<if test= "products_idStr != null and products_idStr != ''"> 
+		and c.product_no in (${products_idStr})
+		</if>
+		union 
+		select c.product_no,c.ftp_rate,c.ftp_rate_adjusted,c.interest_rate,c.interest_rate_adjusted,c.bal_sum_y,f.product_name from
+		(
+		select  b.product_no,b.interest_rate,b.interest_rate'interest_rate_adjusted',b.ftp_rate,b.ftp_rate'ftp_rate_adjusted',sum(b.bal_sum_y)'bal_sum_y' from
+		(
+		select product_no,interest_rate,ftp_rate,bal_sum_y from (
+		select manager_no,product_no,interest_rate,ftp_rate,bal_sum_y from pi_org_loan_person_manager
+		union 
+		select manager_no,product_no,interest_rate,ftp_rate,bal_sum_y from pi_org_loan_unit_manager
+		 )a 
+		where 1=1
+		and manager_no in (${loan_userStr})
+		) b
+		group by b.product_no,b.interest_rate
+		) c,OP_PRD_INFO f
+		where c.product_no = f.product_no
+		<if test= "products_idStr != null and products_idStr != ''"> 
+		and c.product_no not in (${products_idStr})
+		</if>
+	 </select>
+	 
+	 <select id="product_loan_deptlistPage" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+	    select c.product_no,c.ftp_rate,(c.ftp_rate+${ftp_rising})'ftp_rate_adjusted',c.interest_rate,(c.interest_rate+${interest_rising})'interest_rate_adjusted',c.bal_sum_y,f.product_name from
+		(
+		select  b.product_no,b.interest_rate,b.interest_rate'interest_rate_adjusted',b.ftp_rate,b.ftp_rate'ftp_rate_adjusted',sum(b.bal_sum_y)'bal_sum_y' from
+		(
+		select product_no,interest_rate,ftp_rate,bal_sum_y from (
+		select org_no,product_no,interest_rate,ftp_rate,bal_sum_y from pi_org_loan_person_manager
+		union 
+		select org_no,product_no,interest_rate,ftp_rate,bal_sum_y from pi_org_loan_unit_manager
+		 )a 
+		where 1=1
+		and org_no in (${loan_deptStr})
+		) b
+		group by b.product_no,b.interest_rate
+		) c,OP_PRD_INFO f
+		where c.product_no = f.product_no 
+		<if test= "products_idStr != null and products_idStr != ''">
+		and c.product_no in (${products_idStr})
+		</if>
+		union 
+		select c.product_no,c.ftp_rate,c.ftp_rate_adjusted,c.interest_rate,c.interest_rate_adjusted,c.bal_sum_y,f.product_name from
+		(
+		select  b.product_no,b.interest_rate,b.interest_rate'interest_rate_adjusted',b.ftp_rate,b.ftp_rate'ftp_rate_adjusted',sum(b.bal_sum_y)'bal_sum_y' from
+		(
+		select product_no,interest_rate,ftp_rate,bal_sum_y from (
+		select org_no,product_no,interest_rate,ftp_rate,bal_sum_y from pi_org_loan_person_manager
+		union 
+		select org_no,product_no,interest_rate,ftp_rate,bal_sum_y from pi_org_loan_unit_manager
+		 )a 
+		where 1=1
+		and org_no in (${loan_deptStr})
+		) b
+		group by b.product_no,b.interest_rate
+		) c,OP_PRD_INFO f
+		where c.product_no = f.product_no
+		<if test= "products_idStr != null and products_idStr != ''"> 
+		and c.product_no not in (${products_idStr})
+		</if>
+	 </select>  
+	  
+ 	 <select id="deposit_userlistPage" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		select distinct manager_no,manager_name from sys_pub_manager where 1=1
+        and MANAGER_NO in (select distinct manager_no from (
+		select manager_no from pi_org_deposit_person_manager
+		union 
+		select manager_no from pi_org_deposit_unit_manager_test) a)
+		<if test= "manager_name != null and manager_name != ''">
+			AND manager_name LIKE CONCAT('%', #{manager_name} , '%') <!-- 妯＄硦鍖归厤 -->
+        </if>
+ 	 </select>
+ 	 <select id="deposit_deptlistPage" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		select distinct org_no,org_name from sys_pub_manager where 1=1
+        and org_no in (select distinct org_no from (
+		select org_no from pi_org_deposit_person_manager
+		union 
+		select org_no from pi_org_deposit_unit_manager_test) a)
+		<if test= "org_name != null and org_name != ''">
+			AND org_name LIKE CONCAT('%', #{org_name} , '%') <!-- 妯＄硦鍖归厤 -->
+        </if>
+ 	 </select> 	
+ 	 <select id="loan_userlistPage" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		select distinct manager_no,manager_name from sys_pub_manager where 1=1
+        and MANAGER_NO in (select distinct manager_no from (
+		select manager_no from pi_org_loan_person_manager
+		union 
+		select manager_no from pi_org_loan_unit_manager) a)
+		<if test= "manager_name != null and manager_name != ''">
+			AND manager_name LIKE CONCAT('%', #{manager_name} , '%') <!-- 妯＄硦鍖归厤 -->
+        </if>
+ 	 </select> 	
+ 	 <select id="loan_deptlistPage" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		select distinct org_no,org_name from sys_pub_manager where 1=1
+        and org_no in (select distinct org_no from (
+		select org_no from pi_org_loan_person_manager
+		union 
+		select org_no from pi_org_loan_unit_manager) a)
+		<if test= "org_name != null and org_name != ''">
+			AND org_name LIKE CONCAT('%', #{org_name} , '%') <!-- 妯＄硦鍖归厤 -->
+        </if>
+ 	 </select> 	 	
+ </mapper>

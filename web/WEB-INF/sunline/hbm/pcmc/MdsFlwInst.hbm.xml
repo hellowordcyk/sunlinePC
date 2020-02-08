@@ -1,0 +1,53 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="com.sunline.bimis.pcmc.flow.db.MdsFlwInst" table="MDS_FLW_INST">
+        <composite-id name="id" class="com.sunline.bimis.pcmc.flow.db.MdsFlwInstId">
+            <key-property name="bscode" type="string">
+                <column length="32" name="BSCODE"/>
+            </key-property>
+            <key-property name="funccd" type="string">
+                <column length="32" name="FUNCCD"/>
+            </key-property>
+            <key-property name="objscd" type="string">
+                <column length="64" name="OBJSCD"/>
+            </key-property>
+            <key-property name="flowid" type="java.lang.Long">
+                <column name="FLOWID"/>
+            </key-property>
+        </composite-id>
+        
+        <property name="creadt" type="timestamp">
+            <column name="CREADT"/>
+        </property>
+        <property name="comtdt" type="timestamp">
+            <column name="COMTDT"/>
+        </property>
+        <property name="operid" type="string">
+            <column length="32" name="OPERID"/>
+        </property>
+        <property name="operna" type="string">
+            <column length="64" name="OPERNA"/>
+        </property>
+        <property name="currcd" type="string">
+            <column length="32" name="CURRCD"/>
+        </property>
+        <property name="currop" type="string">
+            <column length="32" name="CURROP"/>
+        </property>
+        <property name="currdt" type="timestamp">
+            <column name="CURRDT"/>
+        </property>
+        <property name="nextcd" type="string">
+            <column length="32" name="NEXTCD"/>
+        </property>
+        <property name="isover" type="string">
+            <column length="32" name="ISOVER"/>
+        </property>
+        
+        <many-to-one name="mdsFlwMain" class="com.sunline.bimis.pcmc.flow.db.MdsFlwMain" update="false" insert="false" fetch="select">
+            <column name="FLOWID"/>
+        </many-to-one>
+    </class>
+</hibernate-mapping>

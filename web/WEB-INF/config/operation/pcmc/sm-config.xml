@@ -1,0 +1,1160 @@
+<?xml version="1.0" encoding="gb2312"?>
+<Sunline>
+	<Session></Session>
+	<Operation id="sm_query" bean="com.sunline.bimis.pcmc.sm.QueryBean"
+		desc="查询模块">
+		<Action name="queryDeptListWithRole" desc="查询角色相关机构列表"/>
+		<Action name="getUnGrantRoleList" desc="取得未授权角色列表"/> 
+		<Action name="getGrantRoleList" desc="取得已授权角色列表"/> 
+		<Action name="getUsers" desc="根据用户ID或用户号或部门ID获取（一个或多个）用户信息"/>
+		<Action name="getDepts" desc="根据部门ID或部门号取(一个或多个)部门信息"/>
+		<Action name="getSubDeptInfo" desc="根据部门ID获取下一级部门的信息"/>
+		<Action name="getDeptUsers" desc="根据用户ID或用户号或部门ID获取部门用户信息"/>
+		<Action name="getUsers" desc="根据用户ID或用户号或部门ID获取（一个或多个）用户信息"/>
+		<Action name="getDepts" desc="根据部门ID或部门号取(一个或多个)部门信息"/>
+		<Action name="getOrgSubDepts" desc="取组织下一级部门清单"/>
+		<Action name="getSubDepts" desc="取下一级部门清单"/>
+		<Action name="getSubSyss" desc="根据子系统ID取子系统信息"/>
+		<Action name="getUserInfo" desc="取得操作员信息"/>
+		
+		<Action name="getRoleActExits" desc="获得交易授权信息">
+			<Request multi="false">
+				<Field name="roleid" type="long" maxlen="19" />
+				<Field name="oprid" type="String" maxlen="40" />
+				<Field name="action" type="String" maxlen="40" />
+			</Request>
+		</Action>
+		<Action name="getPendJobList" desc="获得待办事宜列表">
+			<Request multi="false"></Request>
+		</Action>
+		<Action name="findDeptNameByUsercode">
+			<Request multi="false">
+				<Field name="usercode" type="String" notnull="true" />
+			</Request>
+		</Action>
+		<Action name="findUserDetailByUserCode" base="List">
+			<Table name="pcmc_user" />
+		</Action>
+		<Action name="getDeptList" desc="">
+			<Request multi="false"></Request>
+		</Action>
+		<Action name="getDeptDetail" base="Detail"
+			desc="根据部门ID获取部门信息">
+			<Table name="pcmc_dept" />
+		</Action>
+		<Action name="getAllUser" base="ListAll" desc="获取所有用户列表">
+			<Table name="pcmc_user" />
+		</Action>
+		<Action name="getMenuList" desc="取菜单列表">
+			<Request multi="false">
+				<Field name="subsysid" title="子系统流水号" type="long" maxlen="19" />
+			</Request>
+		</Action>
+		<Action name="getMenuShortCuts" desc="取菜单列表">
+			<Request multi="false">
+				<Field name="subsysid" title="子系统流水号" type="long"
+					maxlen="19" notnull="false">
+				</Field>
+			</Request>
+		</Action>
+		<Action name="getMenuShortCutTree" desc="取菜单列表">
+			<Request multi="false">
+				<Field name="subsysid" title="子系统流水号" type="long"
+					maxlen="19" notnull="true">
+				</Field>
+				<Field name="roleid" title="角色流水号" type="long"
+					maxlen="19" notnull="true">
+				</Field>
+				<Field name="userid" title="操作员流水号" type="long"
+					maxlen="19" notnull="true">
+				</Field>
+			</Request>
+		</Action>
+		<Action name="getMenuById" base="Detail" desc="根据菜单ID取详细信息">
+			<Table name="pcmc_menu" />
+		</Action>
+		<Action name="getFrdlink" base="ListAll" desc="获取友情链接列表">
+			<Table name="pcmc_frdlink" />
+		</Action>
+		<Action name="getInfoDetail" base="Detail" desc="查看新闻/公告详细信息">
+			<Table name="pcmc_info" />
+		</Action>
+		<Action name="getSubSysList" base="ListAll" desc="获取子系统列表">
+			<Table name="pcmc_subsys" />
+		</Action>
+		<Action name="getMenuListBySubSysID" desc="根据子系统ID取得相应菜单列表">
+			<Request multi="false">
+				<Field name="subsysid" title="子系统流水号" type="long"
+					maxlen="19" notnull="true">
+				</Field>
+				<Field name="pmenuid" title="父菜单流水号" type="long"
+					maxlen="19" notnull="false">
+				</Field>
+			</Request>
+		</Action>
+		<Action name="getPermissions" desc="根据用户角色获取权限信息">
+			<Request multi="false">
+				<Field name="roleid" title="角色流水号" type="long"
+					maxlen="19" notnull="true">
+				</Field>
+			</Request>
+		</Action>
+		<Action name="getInfoList" desc="获取新闻/公告列表">
+			<Request multi="false">
+				<Field name="infotype" title="信息类别" type="String"
+					maxlen="2" notnull="false">
+				</Field>
+				<Field name="title" title="标题" type="String" maxlen="60"
+					notnull="false">
+				</Field>
+			</Request>
+		</Action>
+		<Action name="getParamMasterList" desc="获取参数列表">
+			<Request multi="false"></Request>
+		</Action>
+		<Action name="getUserPcmcSubsys" desc="">
+			<Request multi="false"></Request>
+		</Action>
+		<Action name="listAllRole" base="ListAll" desc="取得所有角色">
+			<Table name="pcmc_role"></Table>
+		</Action>
+		<Action name="getRoleList" desc="取得所有角色">
+		</Action>
+		<Action name="getUserList" desc="取得所有操作员信息">
+			<Request multi="false">
+				<Field name="deptid" title="部门流水号" type="long"
+					maxlen="19" notnull="false">
+				</Field>
+				<Field name="usercode" title="操作员编号" type="String"
+					maxlen="20" notnull="false">
+				</Field>
+				<Field name="username" title="操作员姓名" type="String"
+					maxlen="40" notnull="false">
+				</Field>
+				<Field name="deptname" title="部门名称" type="String"
+					maxlen="100" notnull="false">
+				</Field>
+			</Request>
+			<Flow>
+				<Forward result="0" path="pcmc/sm/UserList.jsp" />
+			</Flow>
+		</Action>
+		<Action name="getUserListByRole" desc="根据角色取得所有操作员信息">
+			<Request multi="false">
+				<Field name="roleid" title="角色流水号" type="long"
+					maxlen="19" notnull="false">
+				</Field>
+			</Request>
+		</Action>
+		
+		<Action name="getUserListBySCMSRole" desc="根据信贷角色取得所有操作员信息">
+			<Request multi="false">
+				<Field name="scrlid" title="角色流水号" type="long"
+					maxlen="19" notnull="false">
+				</Field>
+			</Request>
+		</Action>
+		<Action name="getSubRoleDetail"  desc="取得角色详细信息"/>
+		<Action name="getRoleDetail" base="Detail" desc="取得角色详细信息">
+			<Table name="pcmc_role" />
+		</Action> 
+		<Action name="getUserDetail" desc="取得操作员详细信息">
+			<Request multi="false">
+				<Field name="userid" title="操作员流水号" type="long"
+					maxlen="19" notnull="true">
+				</Field>
+			</Request>
+			<Flow>
+				<Forward result="0" path="pcmc/sm/UserDetail.jsp" />
+			</Flow>
+		</Action>
+		<Action name="getUserDetailAndRoleList" desc="取得操作员详细信息(包括角色列表)">
+			<Request multi="false">
+				<Field name="userid" title="操作员流水号" type="long"
+					maxlen="19" notnull="true">
+				</Field>
+			</Request>
+		</Action>
+		
+		<Action name="getUserByUserIdAndDeptId" desc="取得操作员详细信息">
+			<Request multi="false">
+				<Field name="userid" title="操作员流水号" type="long"
+					maxlen="19" notnull="true">
+				</Field>
+				<Field name="deptid" title="部门流水号" type="long"
+					maxlen="19" notnull="true">
+				</Field>
+			</Request>
+		</Action>
+		<Action name="getParamMasterDetail" desc="">
+			<Request multi="false">
+				<Field name="paramid" title="流水号" type="long"
+					maxlen="19" notnull="true">
+				</Field>
+			</Request>
+		</Action>
+		<Action name="listAllSubSys" base="ListAll" desc="取得所有子系统信息">
+			<Table name="pcmc_subsys"></Table>
+		</Action>
+		<Action name="getSubSysDetail" base="Detail" desc="取得子系统信息">
+			<Table name="pcmc_subsys"></Table>
+		</Action>
+		<Action name="getParamDetailList" desc="参数查询">
+			<Request multi="false">
+				<Field name="paramname" title="参数名称" type="String"
+					maxlen="40" notnull="true">
+				</Field>
+			</Request>
+		</Action>
+		<Action name="getMessageList" desc="参数查询">
+			<Request multi="false">
+				<Field name="isread" title="是否已阅读" type="String"
+					maxlen="1" minlen="1" notnull="false">
+				</Field>
+			</Request>
+		</Action>
+		<Action name="getNewMsgs" desc="参数查询">
+			<Request multi="false">
+				<Field name="isread" title="是否已阅读" type="String"
+					maxlen="1" minlen="1" notnull="false">
+				</Field>
+			</Request>
+		</Action>
+		<Action name="searchLog" desc="日志查询" log="false">
+			<Request multi="false">
+				<Field name="userid" title="用户流水号" pk="true"></Field>
+				<Field name="begindate" title="开始日期" type="Timestamp"
+					notnull="false">
+				</Field>
+				<Field name="enddate" title="结束日期" type="Timestamp"
+					notnull="false">
+				</Field>
+				<Field name="sysname" title="子系统编号" type="String"
+					notnull="false">
+				</Field>
+				<Field name="mytablename" title="数据表名" type="String"
+					notnull="false">
+				</Field>
+			</Request>
+		</Action>
+
+	</Operation>
+
+	<Operation id="sm_maintenance"
+		bean="com.sunline.bimis.pcmc.sm.SmMaintenanceBean" desc="系统维护">
+		<!-- eccs 移植 -->
+		<Action name="queryDeptList" 	 desc="查询关联角色的机构"/>
+		<Action name="saveDeptPermissions" desc="保存机构角色对照关系"/>
+		
+		<Action name="grantUserRole" 	 desc="授权角色给用户"/>
+		<Action name="delSingleUserRole" desc="取消授权给用户的单个角色"/>
+		<Action name="delAllUserRoles" 	desc="取消授权给用户的全部角色"/>
+		<Action name="addOrgUser" 		desc="增加组织部门用户信息"/>
+		<Action name="getOrgDeptDetail" desc="根据部门id组织部门信息"/>
+		<Action name="addOrgDept" 	desc="增加组织部门信息"/>
+		<Action name="findNode" 	desc="查找定位节点"/>
+		<Action name="deleteOrgDeptandUser" desc="删除下级部门及部门用户"/>
+		<Action name="updateOrgDept" desc="更新机构信息"/>
+		<Action name="addRoleNew" desc="新增角色"/>
+		<Action name="updateRoleNew" desc="新增角色"/>
+		
+		<Action name="setJobStatus" desc="将待办事宜设置为已访问">
+			<Request multi="false">
+				<Field name="pendjobid" title="待办事宜流水号" type="long"
+					maxlen="19" notnull="true" pk="true">
+				</Field>
+			</Request>
+		</Action>
+		<Action name="addInfo" desc="增加新闻/公告">
+			<Request multi="false">
+				<Field name="infotype" title="信息类别" type="String"
+					maxlen="2" notnull="true">
+				</Field>
+				<Field name="title" title="标题" type="String" maxlen="60"
+					notnull="true">
+				</Field>
+				<Field name="content" title="内容" type="String"
+					maxlen="8000" notnull="false">
+				</Field>
+				<Field name="createuser" title="发布人" type="long"
+					maxlen="19" notnull="false">
+				</Field>
+				<Field name="createtime" title="发布时间" type="Timestamp"
+					notnull="false">
+				</Field>
+				<Field name="dPcStart" title="有效期起" type="Timestamp"
+					notnull="false">
+				</Field>
+				<Field name="dPcEnd" title="有效期止" type="Timestamp"
+					notnull="false">
+				</Field>
+				<Field name="tempdoc" title="附件" type="file"
+					notnull="false">
+				</Field>
+				<Field name="purview" title="权限信息" type="String"
+					maxlen="60" notnull="false">
+				</Field>
+				<Field name="secrflag" title="保密标志" type="String"
+					maxlen="1" notnull="false">
+				</Field>
+			</Request>
+		</Action>
+		<Action name="addMessage" desc="发送短消息">
+			<Request multi="false">
+				<Field name="title" title="标题" type="String" maxlen="60"
+					notnull="true">
+				</Field>
+				<Field name="content" title="内容" type="String"
+					maxlen="8000" notnull="false">
+				</Field>
+				<Field name="targetuser" title="接收人" type="String"
+					maxlen="60" notnull="true">
+				</Field>
+			</Request>
+		</Action>
+		<Action name="delMessage" desc="删除短消息">
+			<Request multi="false">
+				<Field name="messageid" title="流水号" type="long"
+					maxlen="19" notnull="true">
+				</Field>
+			</Request>
+		</Action>
+		<Action name="readMessage" desc="发送短消息">
+			<Request multi="false">
+				<Field name="sendgroupid" title="发送流水号" type="long"
+					maxlen="19" notnull="true">
+				</Field>
+			</Request>
+		</Action>
+		<Action name="updateInfo" desc="更新新闻/公告">
+			<Request multi="false">
+				<Field name="infoid" title="流水号" type="long" maxlen="19"
+					notnull="true">
+				</Field>
+				<Field name="infotype" title="信息类别" type="String"
+					maxlen="2" notnull="true">
+				</Field>
+				<Field name="title" title="标题" type="String" maxlen="60"
+					notnull="true">
+				</Field>
+				<Field name="content" title="内容" type="String"
+					maxlen="8000" notnull="false">
+				</Field>
+				<Field name="dPcStart" title="有效期起" type="Timestamp"
+					notnull="false">
+				</Field>
+				<Field name="dPcEnd" title="有效期止" type="Timestamp"
+					notnull="false">
+				</Field>
+				<Field name="tempdoc" title="附件" type="file"
+					notnull="false">
+				</Field>
+				<Field name="purview" title="权限信息" type="String"
+					maxlen="60" notnull="false">
+				</Field>
+				<Field name="secrflag" title="保密标志" type="String"
+					maxlen="1" notnull="false">
+				</Field>
+			</Request>
+		</Action>
+		<Action name="getDeptListDetail" base="Detail" desc="获取部门信息">
+			<Table name="pcmc_dept" />
+		</Action>
+		<Action name="addDept" desc="增加部门信息">
+			<Request multi="false">
+				<Field name="deptcode" title="部门编号" type="String"
+					maxlen="20" notnull="true">
+				</Field>
+				<Field name="pdeptid" title="上级部门流水号" type="long"
+					maxlen="19" notnull="true">
+				</Field>
+				<Field name="levelp" title="层次号" type="long" maxlen="3"
+					notnull="false">
+				</Field>
+				<Field name="deptname" title="部门名称" type="String"
+					maxlen="100" notnull="true">
+				</Field>
+				<Field name="leader" title="部门长" type="long" maxlen="19"
+					notnull="false">
+				</Field>
+				<Field name="viceleader" title="副部门长" type="String"
+					maxlen="255" notnull="false">
+				</Field>
+				<Field name="filereceiver" title="文件接收员" type="long"
+					maxlen="19" notnull="false">
+				</Field>
+				<Field name="linkman" title="联系人" type="String"
+					maxlen="40" notnull="false">
+				</Field>
+				<Field name="phone" title="联系电话" type="String"
+					maxlen="60" notnull="false">
+				</Field>
+				<Field name="remark" title="备注" type="String"
+					maxlen="200" notnull="false">
+				</Field>
+			</Request>
+  		</Action>
+		<Action name="updateDept" desc="更新部门信息">
+			<Request multi="false">
+				<Field name="deptid" title="部门ID" type="long"
+					maxlen="19" notnull="true">
+				</Field>
+				<Field name="deptcode" title="部门编号" type="String"
+					maxlen="20" notnull="true">
+				</Field>
+				<Field name="pdeptid" title="上级部门流水号" type="long"
+					maxlen="19" notnull="true">
+				</Field>
+				<Field name="levelp" title="层次号" type="long" maxlen="3"
+					notnull="false">
+				</Field>
+				<Field name="deptname" title="部门名称" type="String"
+					maxlen="100" notnull="true">
+				</Field>
+				<Field name="leader" title="部门长" type="long" maxlen="19"
+					notnull="false">
+				</Field>
+				<Field name="viceleader" title="副部门长" type="String"
+					maxlen="255" notnull="false">
+				</Field>
+				<Field name="filereceiver" title="文件接收员" type="long"
+					maxlen="19" notnull="false">
+				</Field>
+				<Field name="linkman" title="联系人" type="String"
+					maxlen="40" notnull="false">
+				</Field>
+				<Field name="phone" title="联系电话" type="String"
+					maxlen="60" notnull="false">
+				</Field>
+				<Field name="remark" title="备注" type="String"
+					maxlen="200" notnull="false">
+				</Field>
+			</Request>
+  		</Action>
+  		<Action name="deleteDeptandUser" desc="删除部门和用户信息"></Action>
+		<Action name="deleteDept" desc="删除部门信息">
+			<Request multi="false">
+				<Field name="deptid" title="部门ID" type="long"
+					maxlen="19" notnull="true">
+				</Field>
+			</Request>
+  		</Action>
+		<Action name="getDeptDetail" desc="根据部门ID获取部门信息">
+			<Request multi="false">
+				<Field name="deptid" title="部门ID" type="long"
+					maxlen="19" notnull="true">
+				</Field>
+			</Request>
+		</Action>
+		<Action name="addRole" base="Insert" desc="增加角色">
+			<Table name="pcmc_role" />
+  		</Action>
+		<Action name="addParamMaster" base="Insert" desc="增加参数">
+			<Table name="param_master" />
+		</Action>
+		<Action name="addParamDetail" base="Insert" desc="增加参数值">
+			<Table name="param_detail" />
+		</Action>
+		<Action name="addUserRole" base="Insert" desc="授权角色给用户">
+			<Table name="pcmc_user_role" />
+  		</Action>
+		<Action name="deleteRole" desc="删除角色">
+			<Request multi="false">
+				<Field name="roleid" title="角色编号" type="long"
+					maxlen="19" notnull="true">
+				</Field>
+			</Request>
+  		</Action>
+		<Action name="deleteUser" desc="删除用户">
+			<Request multi="false">
+				<Field name="userid" title="用户编号" type="long"
+					maxlen="19" notnull="true">
+				</Field>
+			</Request>
+		</Action>
+		<Action name="deleteUserRole" base="Delete" desc="取消给用户授权的角色">
+			<Table name="pcmc_user_role" />
+			<!-- 
+	  		<requestFlow>
+	  			<handler type="DuplicateAction">
+	  				<parameter name="toSession" value="ws.bfms"/>
+	  			</handler>  				
+	  		</requestFlow>
+	  		 -->
+		</Action>
+		<Action name="deleteInfo" desc="删除新闻/公告">
+			<Request multi="false">
+				<Field name="infoid" title="信息编号" type="long"
+					maxlen="19" notnull="true">
+				</Field>
+			</Request>
+		</Action>
+		<Action name="deleteParamMaster" base="Delete"
+			desc="删除参数主表信息">
+			<Table name="param_master" />
+		</Action>
+		<Action name="deleteParamDetail" base="Delete" desc="删除参数值信息">
+			<Table name="param_detail" />
+		</Action>
+		<Action name="updateParamMaster" base="Update" desc="更新参数">
+			<Table name="param_master" />
+		</Action>
+		<Action name="updateRole" base="Update" desc="更新角色">
+			<Table name="pcmc_role" />
+		</Action>
+		<Action name="addSubSys" base="Insert" desc="增加子系统">
+			<Table name="pcmc_subsys" />
+		</Action>
+		<Action name="addUser" desc="增加用户">
+			<Request multi="false">
+				<Field name="deptid" title="部门流水号" type="long"
+					maxlen="19" notnull="true">
+				</Field>
+				<Field name="usercode" title="操作员编号" type="String"
+					minlen="2" maxlen="20" notnull="true">
+				</Field>
+				<Field name="username" title="操作员姓名" type="String"
+					maxlen="40" notnull="true">
+				</Field>
+				<Field name="userpwd" title="操作员口令" type="String"
+					minlen="3" maxlen="100" notnull="true">
+				</Field>
+				<Field name="phone" title="办公电话" type="String"
+					maxlen="60" notnull="false">
+				</Field>
+				<Field name="faxno" title="传真" type="String" maxlen="30"
+					notnull="false">
+				</Field>
+				<Field name="mobile" title="手机" type="String"
+					maxlen="20" notnull="false">
+				</Field>
+				<Field name="hmphone" title="家庭电话" type="String"
+					maxlen="30" notnull="false">
+				</Field>
+				<Field name="jobno" title="职位" type="String" maxlen="2"
+					notnull="false">
+				</Field>
+				<Field name="homead" title="家庭住址" type="String"
+					maxlen="100" notnull="false">
+				</Field>
+				<Field name="pagesize" title="每页显示记录数" type="long"
+					maxlen="3" notnull="true">
+				</Field>
+				<Field name="menutype" title="菜单类型" type="String"
+					maxlen="3" notnull="false">
+				</Field>
+				<Field name="disable" title="是否冻结" type="String"
+					maxlen="1" minlen="1" notnull="true">
+				</Field>
+				<Field name="remark" title="备注" type="String"
+					maxlen="200" notnull="false">
+				</Field>
+			</Request>
+			<!-- 
+	  		<requestFlow>
+	  			<handler type="DuplicateAction">
+	  				<parameter name="toSession" value="ws.bfms"/>
+	  			</handler>  				
+	  		</requestFlow>
+	  		 -->
+		</Action>
+		<Action name="updateSubSys" base="Update" desc="更新子系统">
+			<Table name="pcmc_subsys" />
+			<Field name="shortname" title="英文简写" type="String"
+				maxlen="10" notnull="true">
+			</Field>
+			<Field name="enname" title="英文名称" type="String" maxlen="40"
+				notnull="true">
+			</Field>
+			<Field name="cnname" title="中文名称" type="String" maxlen="40"
+				notnull="true">
+			</Field>
+			<Field name="imgurl" title="图片地址" type="String" maxlen="100"
+				notnull="false">
+			</Field>
+			<Field name="linkurl" title="主页地址" type="String"
+				maxlen="200" notnull="true">
+			</Field>
+			<Field name="pubinfourl" title="公共信息页面" type="String"
+				maxlen="200" notnull="false">
+			</Field>
+			<Field name="orderidx" title="显示编号" type="long" maxlen="5"
+				notnull="false">
+			</Field>
+			<Response multi="false" result="-1">
+				<Field name="Hint"></Field>
+				<Field name="Error"></Field>
+			</Response>
+		</Action>
+		<Action name="updateUser" desc="更新用户">
+			<Request multi="false">
+				<Field name="userid" title="操作员编号" type="long"
+					maxlen="19" notnull="true">
+				</Field>
+				<Field name="deptid" title="部门流水号" type="long"
+					maxlen="19" notnull="true">
+				</Field>
+				<Field name="usercode" title="操作员编号" type="String"
+					minlen="2" maxlen="20" notnull="true">
+				</Field>
+				<Field name="username" title="操作员姓名" type="String"
+					maxlen="40" notnull="true">
+				</Field>
+				<Field name="userpwd" title="操作员口令" type="String"
+					minlen="3" maxlen="100" notnull="false">
+				</Field>
+				<Field name="userpwd1" title="操作员新口令" type="String"
+					maxlen="100" notnull="false">
+				</Field>
+				<Field name="phone" title="操作员电话" type="String"
+					maxlen="60" notnull="false">
+				</Field>
+				<Field name="pagesize" title="每页显示记录数" type="long"
+					maxlen="3" notnull="true">
+				</Field>
+				<Field name="menutype" title="菜单类型" type="String"
+					maxlen="3" notnull="false">
+				</Field>
+				<Field name="disable" title="是否冻结" type="String"
+					maxlen="1" minlen="1" notnull="true">
+				</Field>
+				<Field name="remark" title="备注" type="String"
+					maxlen="200" notnull="false">
+				</Field>
+			</Request>
+			<!-- 
+	  		<requestFlow>
+	  			<handler type="DuplicateAction">
+	  				<parameter name="toSession" value="ws.bfms"/>
+	  			</handler>  				
+	  		</requestFlow>
+	  			-->				
+		</Action>
+		<Action name="deleteSubSys" desc="删除子系统">
+			<Request multi="false">
+				<Field name="subsysid" title="子系统流水号" type="long"
+					maxlen="19" notnull="true">
+				</Field>
+			</Request>
+		</Action>
+		<Action name="addMenu" base="Insert" desc="增加菜单">
+			<Table name="pcmc_menu" />
+		</Action>
+		<Action name="updateMenu" desc="更新菜单">
+			<Request multi="false">
+				<Field name="menuid" title="菜单ID" type="long"
+					maxlen="19" notnull="true">
+				</Field>
+				<Field name="subsysid" title="子系统流水号" type="long"
+					maxlen="19" notnull="true">
+				</Field>
+				<Field name="pmenuid" title="父菜单流水号" type="long"
+					maxlen="19" notnull="false">
+				</Field>
+				<Field name="levelp" title="层次号" type="long" maxlen="3"
+					notnull="true">
+				</Field>
+				<Field name="menuname" title="菜单名称" type="String"
+					maxlen="30" notnull="true">
+				</Field>
+				<Field name="imgurl" title="图片地址" type="String"
+					maxlen="100" notnull="false">
+				</Field>
+				<Field name="linkurl" title="超链接地址" type="String"
+					maxlen="200" notnull="false">
+				</Field>
+				<Field name="isinternet" title="是否公网发布" type="String"
+					maxlen="1" notnull="true">
+				</Field>
+				<Field name="remark" title="备注" type="String"
+					maxlen="200" notnull="false">
+				</Field>
+				<Field name="sortno" title="显示编号" type="long" maxlen="5"
+					notnull="false">
+				</Field>
+			</Request>
+		</Action>
+		<Action name="deleteMenu" desc="删除菜单">
+			<Request multi="false">
+				<Field name="menuid" title="菜单流水号" type="long"
+					maxlen="19" notnull="true">
+				</Field>
+			</Request>
+		</Action>
+		<Action name="savePermissions" desc="角色授权">
+			<Request multi="false">
+				<Field name="roleid" title="角色流水号" type="long"
+					maxlen="19" notnull="true">
+				</Field>
+				<Field name="menuid" title="菜单流水号" type="long"
+					maxlen="19" notnull="true">
+				</Field>
+			</Request>
+		</Action>
+		<Action name="saveActPermissions" desc="角色交易授权">
+			<Request multi="false">
+				<Field name="roleid" title="角色流水号" type="long"
+					maxlen="19" notnull="true">
+				</Field>
+				<Field name="chkOpr" title="业务交易号" type="String"
+					maxlen="100" notnull="true">
+				</Field>
+			</Request>
+		</Action>
+		<Action name="saveUserPermissions" desc="用户交易授权">
+			<Request multi="false">
+				<Field name="roleid" title="角色流水号" type="long"
+					maxlen="19" notnull="true">
+				</Field>
+				<Field name="userid" title="用户流水号" type="long"
+					maxlen="19" notnull="true">
+				</Field>
+			</Request>
+		</Action>
+		<Action name="addShortCuts" desc="角色授权">
+			<Request multi="false">
+				<Field name="subsysid" title="子系统流水号" type="long"
+					maxlen="19" notnull="true">
+				</Field>
+				<Field name="menuid" title="菜单流水号" type="long"
+					maxlen="19" notnull="true">
+				</Field>
+			</Request>
+		</Action>
+		<Action name="initPassword" desc="初始化用户口令">
+			<Request multi="false">
+				<Field name="userid" title="操作员流水号" type="long"
+					maxlen="19" notnull="true">
+				</Field>
+			</Request>
+			<!-- 
+	  		<requestFlow>
+	  			<handler type="DuplicateAction">
+	  				<parameter name="toSession" value="ws.bfms"/>
+	  			</handler>  				
+	  		</requestFlow>
+	  		 -->
+		</Action>
+		<Action name="addUserSyncOA" desc="增加用户并同步到办公自动话系统">
+			<Request multi="false">
+				<Field name="deptid" title="部门流水号" type="long"
+					maxlen="19" notnull="true">
+				</Field>
+				<Field name="usercode" title="操作员编号" type="String"
+					minlen="2" maxlen="20" notnull="true">
+				</Field>
+				<Field name="username" title="操作员姓名" type="String"
+					maxlen="40" notnull="true">
+				</Field>
+				<Field name="userpwd" title="操作员口令" type="String"
+					minlen="3" maxlen="100" notnull="true">
+				</Field>
+				<Field name="phone" title="办公电话" type="String"
+					maxlen="60" notnull="false">
+				</Field>
+				<Field name="faxno" title="传真" type="String" maxlen="30"
+					notnull="false">
+				</Field>
+				<Field name="mobile" title="手机" type="String"
+					maxlen="20" notnull="false">
+				</Field>
+				<Field name="hmphone" title="家庭电话" type="String"
+					maxlen="30" notnull="false">
+				</Field>
+				<Field name="jobno" title="职位" type="String" maxlen="2"
+					notnull="false">
+				</Field>
+				<Field name="homead" title="家庭住址" type="String"
+					maxlen="100" notnull="false">
+				</Field>
+				<Field name="pagesize" title="每页显示记录数" type="long"
+					maxlen="3" notnull="true">
+				</Field>
+				<Field name="menutype" title="菜单类型" type="String"
+					maxlen="3" notnull="false">
+				</Field>
+				<Field name="disable" title="是否冻结" type="String"
+					maxlen="1" minlen="1" notnull="true">
+				</Field>
+				<Field name="remark" title="备注" type="String"
+					maxlen="200" notnull="false">
+				</Field>
+			</Request>
+		</Action>
+		<Action name="getNextUserCode" desc="获取下一个唯一的用户编号">
+			<Request multi="false"></Request>
+		</Action>
+		<Action name="updateSubSys" base="Update" desc="更新子系统">
+	  		<!-- 
+            <requestFlow>
+                <handler type="DuplicateAction">
+                    <parameter name="toSession" value="ws.bfms"/>
+                </handler>                  
+            </requestFlow>
+             -->
+			<Table name="pcmc_subsys" />
+			<Field name="shortname" title="英文简写" type="String"
+				maxlen="10" notnull="true">
+			</Field>
+			<Field name="enname" title="英文名称" type="String" maxlen="40"
+				notnull="true">
+			</Field>
+			<Field name="cnname" title="中文名称" type="String" maxlen="40"
+				notnull="true">
+			</Field>
+			<Field name="imgurl" title="图片地址" type="String" maxlen="100"
+				notnull="false">
+			</Field>
+			<Field name="linkurl" title="主页地址" type="String"
+				maxlen="200" notnull="true">
+			</Field>
+			<Field name="pubinfourl" title="公共信息页面" type="String"
+				maxlen="200" notnull="false">
+			</Field>
+			<Field name="orderidx" title="显示编号" type="long" maxlen="5"
+				notnull="false">
+			</Field>
+			<Response multi="false" result="-1">
+				<Field name="Hint"></Field>
+				<Field name="Error"></Field>
+			</Response>
+		</Action>
+		<Action name="updateUserPwd" desc="修改用户密码"/>
+	</Operation>
+
+	<Operation id="sm_permission"
+		bean="com.sunline.bimis.pcmc.sm.SmPermissionBean" desc="权限业务处理">
+		<Action name="login" desc="正常登录">
+			<Request multi="false">
+				<Field name="usercode" title="操作员编号" type="String"
+					maxlen="20" minlen="2" notnull="true">
+				</Field>
+				<Field name="userpwd" title="操作员口令" type="String"
+					maxlen="12" minlen="3" notnull="true">
+				</Field>
+			</Request>
+			<Flow>
+				<Forward result="0" path="/pcmc/forward.jsp" />
+				<Forward result="1" path="/pcmc/pm/index.jsp" />
+			</Flow>
+			
+		</Action>
+		<Action name="checklogin" desc="用户登录校验">
+			<responseFlow>
+              <handler type="java:com.sunline.bimis.pcmc.handler.CheckUserLoginHandler">
+                   <parameter name="actionName" value="checklogin"/>
+              </handler>                  
+          </responseFlow>
+			
+		</Action>
+		<Action name="singleLogin" desc="单点登录，不检查密码">
+		</Action>
+		<Action name="loginltts" desc="登录到综合业务系统">
+			<Request multi="false">
+				<Field name="usercode" title="操作员编号" type="String"
+					maxlen="20" minlen="2" notnull="true">
+				</Field>
+				<Field name="userpwd" title="操作员口令" type="String"
+					maxlen="12" minlen="3" notnull="true">
+				</Field>
+			</Request>
+			<Flow>
+				<Forward result="0" path="/pcmc/pm/personindex.jsp" />
+				<Forward result="1" path="/pcmc/pm/index.jsp" />
+			</Flow>
+		</Action>
+	</Operation>
+
+	<Operation id="sm_menu" bean="com.sunline.bimis.pcmc.sm.SmmenuBean"
+		desc="菜单处理">
+		<Action name="listAll" desc="查询子系统及菜单列表">
+			<Request multi="false">
+				<Field name="subsysid" title="子系统ID" type="long"
+					maxlen="5" notnull="false">
+				</Field>
+				<Field name="menuid" title="菜单ID" type="long" maxlen="5"
+					notnull="false">
+				</Field>
+			</Request>
+			<Response multi="false" result="-1">
+				<Field name="Hint"></Field>
+				<Field name="Error"></Field>
+			</Response>
+		</Action>
+		<Action name="listmenu" desc="查询菜单">
+			<Request multi="false">
+				<Field name="subsysid" title="子系统ID" type="long"
+					maxlen="5" notnull="false">
+				</Field>
+				<Field name="menuid" title="菜单ID" type="long" maxlen="5"
+					notnull="false">
+				</Field>
+			</Request>
+			<Response multi="false" result="-1">
+				<Field name="Hint"></Field>
+				<Field name="Error"></Field>
+			</Response>
+		</Action>
+		<Action name="addMenu" desc="增加菜单">
+			<Request multi="false">
+				<Field name="subsysid" title="子系统流水号" type="long"
+					maxlen="19" notnull="true">
+				</Field>
+				<Field name="pmenuid" title="父菜单流水号" type="long"
+					maxlen="19" notnull="false">
+				</Field>
+				<Field name="levelp" title="层次号" type="long" maxlen="3"
+					notnull="false">
+				</Field>
+				<Field name="menuname" title="菜单名称" type="String"
+					maxlen="50" notnull="true">
+				</Field>
+				<Field name="imgurl" title="图片地址" type="String"
+					maxlen="100" notnull="false">
+				</Field>
+				<Field name="linkurl" title="超链接地址" type="String"
+					maxlen="200" notnull="false">
+				</Field>
+				<Field name="isinternet" title="是否公网发布" type="String"
+					maxlen="1" notnull="true">
+				</Field>
+				<Field name="remark" title="备注" type="String"
+					maxlen="200" notnull="false">
+				</Field>
+				<Field name="sortno" title="显示编号" type="long" maxlen="5"
+					notnull="false">
+				</Field>
+			</Request>
+			<Response multi="false" result="-1">
+				<Field name="Hint"></Field>
+				<Field name="Error"></Field>
+			</Response>
+		</Action>
+		<Action name="updateMenu" desc="更新菜单">
+			<Request multi="false">
+				<Field name="menuid" title="菜单ID" type="long"
+					maxlen="19" notnull="true">
+				</Field>
+				<Field name="subsysid" title="子系统流水号" type="long"
+					maxlen="19" notnull="true">
+				</Field>
+				<Field name="pmenuid" title="父菜单流水号" type="long"
+					maxlen="19" notnull="false">
+				</Field>
+				<Field name="levelp" title="层次号" type="long" maxlen="3"
+					notnull="true">
+				</Field>
+				<Field name="menuname" title="菜单名称" type="String"
+					maxlen="50" notnull="true">
+				</Field>
+				<Field name="imgurl" title="图片地址" type="String"
+					maxlen="100" notnull="false">
+				</Field>
+				<Field name="linkurl" title="超链接地址" type="String"
+					maxlen="200" notnull="false">
+				</Field>
+				<Field name="isinternet" title="是否公网发布" type="String"
+					maxlen="1" notnull="true">
+				</Field>
+				<Field name="remark" title="备注" type="String"
+					maxlen="200" notnull="false">
+				</Field>
+				<Field name="sortno" title="显示编号" type="long" maxlen="5"
+					notnull="false">
+				</Field>
+			</Request>
+		</Action>
+		<Action name="deleteMenu" desc="删除菜单">
+			<Request multi="false">
+				<Field name="menuid" title="菜单流水号" type="long"
+					maxlen="19" notnull="true">
+				</Field>
+			</Request>
+		</Action>
+	</Operation>
+
+
+	<Operation id="smParameter"
+		bean="com.sunline.bimis.pcmc.sm.SmParameterBean" desc="系统参数信息维护">
+
+		<Action name="getParameterList" desc="取得系统参数信息" log="false">
+			<Request multi="false">
+				<Field name="subscd" title="系统编码" type="String" maxlen="4" notnull="false" />
+				<Field name="paratp" title="参数类型" type="String" maxlen="8" notnull="false" />
+				<Field name="paracd" title="参数编码" type="String" maxlen="8" notnull="false" />
+				<Field name="parana" title="参数名称" type="String" maxlen="80" notnull="false" />
+			</Request>
+			<Response multi="false" result="-1">
+				<Field name="Hint" />
+				<Field name="Error" />
+			</Response>
+		</Action>
+		<Action name="getParameterDetail" desc="取得系统参数详细信息"
+			log="false">
+			<Request multi="false">
+				<Field name="subscd" title="系统编码" type="String"
+					maxlen="4" notnull="true" pk="true" />
+				<Field name="paratp" title="参数类型" type="String"
+					maxlen="8" notnull="true" pk="true" />
+				<Field name="paracd" title="参数编码" type="String"
+					maxlen="8" notnull="true" pk="true" />
+			</Request>
+		</Action>
+		<Action name="addParameter" desc="增加系统参数信息" log="false">
+			<Request multi="false">
+				<Field name="subscd" title="系统编码" type="String"
+					maxlen="4" notnull="true" pk="true" />
+				<Field name="paratp" title="参数类型" type="String"
+					maxlen="8" notnull="true" pk="true" />
+				<Field name="paracd" title="参数编码" type="String"
+					maxlen="8" notnull="true" pk="true" />
+				<Field name="parana" title="参数名称" type="String"
+					maxlen="80" notnull="false" />
+				<Field name="paraam" title="货币类型" type="money"
+					notnull="false" />
+				<Field name="paradt" title="日期类型" type="Timestamp"
+					notnull="false" />
+				<Field name="parach" title="参数别名a" type="String"
+					maxlen="50" notnull="false" />
+				<Field name="parbch" title="参数别名b" type="String"
+					maxlen="50" notnull="false" />
+				<Field name="parcch" title="参数别名c" type="String"
+					maxlen="50" notnull="false" />
+				<Field name="pardch" title="参数别名d" type="String"
+					maxlen="50" notnull="false" />
+				<Field name="parech" title="参数别名e" type="String"
+					maxlen="50" notnull="false" />
+			</Request>
+		</Action>
+		<Action name="updateParameter" desc="维护系统参数信息" log="false">
+			<Request multi="false">
+				<Field name="subscd" title="系统编码" type="String"
+					maxlen="4" notnull="true" pk="true" />
+				<Field name="paratp" title="参数类型" type="String"
+					maxlen="8" notnull="true" pk="true" />
+				<Field name="paracd" title="参数编码" type="String"
+					maxlen="8" notnull="true" pk="true" />
+				<Field name="parana" title="参数名称" type="String"
+					maxlen="80" notnull="false" />
+				<Field name="paraam" title="货币类型" type="money"
+					notnull="false" />
+				<Field name="paradt" title="日期类型" type="Timestamp"
+					notnull="false" />
+				<Field name="parach" title="参数别名a" type="String"
+					maxlen="50" notnull="false" />
+				<Field name="parbch" title="参数别名b" type="String"
+					maxlen="50" notnull="false" />
+				<Field name="parcch" title="参数别名c" type="String"
+					maxlen="50" notnull="false" />
+				<Field name="pardch" title="参数别名d" type="String"
+					maxlen="50" notnull="false" />
+				<Field name="parech" title="参数别名e" type="String"
+					maxlen="50" notnull="false" />
+			</Request>
+		</Action>
+		<Action name="deleteParameter" desc="删除系统参数详细信息" log="false">
+			<Request multi="false">
+				<Field name="subscd" title="系统编码" type="String"
+					maxlen="4" notnull="true" pk="true" />
+				<Field name="paratp" title="参数类型" type="String"
+					maxlen="8" notnull="true" pk="true" />
+				<Field name="paracd" title="参数编码" type="String"
+					maxlen="8" notnull="true" pk="true" />
+			</Request>
+		</Action>
+		<Action name="loadParameters" desc="导入参数文件" log="false">
+			<Request multi="false">
+				<Field name="subscd" title="系统编码" type="String"
+					maxlen="4" notnull="false" />
+				<Field name="paratp" title="参数类型" type="String"
+					maxlen="8" notnull="false" />
+			</Request>
+		</Action>		
+		<Action name="unloadParameters" desc="将参数导出为文件" log="false">
+			<Request multi="false">
+				<Field name="subscd" title="系统编码" type="String"
+					maxlen="4" notnull="false" />
+				<Field name="paratp" title="参数类型" type="String"
+					maxlen="8" notnull="false" />
+			</Request>
+		</Action>	
+		<Action name="unloadMenus" desc="将菜单导出为文件" log="false">
+			<Request multi="false">
+				<Field name="subsysid" title="系统编码" type="String" maxlen="40" notnull="true" />
+				<Field name="tempdoc"  title="附件" type="file" notnull="false" />
+			</Request>
+		</Action>
+		<Action name="loadMenus" desc="从文件导入菜单" log="false">
+			<Request multi="false">
+				<Field name="subsysid" title="系统编码" type="String" maxlen="40" notnull="true" />
+				<Field name="tempdoc"  title="附件" type="file" notnull="false" />
+			</Request>
+		</Action>
+	</Operation>
+
+	<Operation id="sm_test" bean="com.sunline.bimis.pcmc.sm.SystemTest" desc="系统测试">
+		<Action name="doPerformentTest" desc="性能压力测试">
+			<Request multi="false">
+				<Field name="sys" title="系统名称" type="String" maxlen="20" notnull="true"></Field>
+				<Field name="opr" title="操作类型" type="String" maxlen="20" notnull="true"></Field>
+				<Field name="acts" title="动作" type="String" maxlen="100" notnull="true"></Field>
+				<Field name="threadnum" title="测试次数" type="String" maxlen="12" notnull="true"></Field>
+				<Field name="usercode" title="操作员编号" type="String" maxlen="20" minlen="2" notnull="true"></Field>
+				<Field name="userpwd" title="操作员口令" type="String" maxlen="12" minlen="3" notnull="true"></Field>
+			</Request>
+		</Action>
+		<Action name="testwsclient" desc="Web Service测试">
+			<Request multi="false"/>
+		</Action>
+	</Operation>
+	<Operation id="LdapMaintenance" bean="com.sunline.bimis.pcmc.sm.LdapMaintenance" desc="LDAP 信息维护管理">
+		<Action name="flushLdapUsers" desc="从LDAP服务器刷新本地用户信息">
+			<Request multi="false"/>
+		</Action>
+		<Action name="createLdapUsers" desc="跟据本地用户创建LDAP服务器用户"/>
+		<Action name="listLdapRoles" desc="LDAP角色授权列表">
+			<Request multi="false">
+				<Field name="roleid" title="角色ID" type="String" maxlen="20" notnull="true"/>
+			</Request>
+		</Action>
+		<Action name="creditADRoles" desc="AD角色授权">
+			<Request multi="true">
+				<Field name="roleid" title="角色ID" type="String" maxlen="20" notnull="true"/>
+			</Request>
+		</Action>
+		<Action name="listADGroups" desc="AD组列表">
+			<Request multi="false"/>
+		</Action>
+		<Action name="getADObjDetail" desc="取AD对象的详细信息"/>
+		<Action name="addRolesFormADObj" desc="添加多个角色并与域对象建立对应关系"/>
+		<Action name="delADObjRoles" desc="删除多个域对象与角色关联"/>	
+		<Action name="addRolesToOneADGroup" desc="添加域组与角色对应关系"/>	
+		<Action name="flushADGroups" desc="从AD服务器刷本地AD对象及对应信息"/>	
+	</Operation>
+	
+	<Operation id="smUserLock" bean="com.sunline.bimis.pcmc.sm.SmUserLock" desc="用户解锁信息">
+		<Action name="getUserLockedList" desc="查询所有已经锁定的用户">
+			<Flow>
+			<Forward result="0" path="pcmc/sm/userLockList.jsp" />
+			</Flow>
+		</Action>
+		<Action name="doUnLockUser" desc="解锁用户" >
+			<Flow>
+			<Forward result="0" path="pcmc/sm/userLockList.jsp" />
+			</Flow>
+		</Action>
+		<Action name="getAllUserLoginByUserId" desc="查询用户" >
+			<Flow>
+			<Forward result="0" path="pcmc/sm/userloginlist.jsp" />
+			</Flow>
+		</Action>
+		<Action name="searchUserLockedListByName" desc="通过账号和用户名查新锁定用户" >
+			<Flow>
+			<Forward result="0" path="pcmc/sm/userloginlist.jsp" />
+			</Flow>
+		</Action>
+		<Action name="checkDefaultPwd" desc="检查是否使用的默认密码" />
+		<Action name="isStartLockUserFunc" desc="检查是否开启检测默认密码功能" />
+		
+	</Operation>
+</Sunline>

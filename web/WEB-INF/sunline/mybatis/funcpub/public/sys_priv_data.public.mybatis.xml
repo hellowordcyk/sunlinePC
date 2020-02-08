@@ -1,0 +1,288 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sunline.funcpub.mybatis.sys_priv_data.public">
+    <resultMap type="com.sunline.funcpub.privilege.bean.SysPrivData" id="privData_rsm">
+    	<result column="entity_code" property="entityCode"/>
+    	<result column="role_id" property="roleId"/>
+    	<result column="system_code" property="systemCode"/>
+    	<result column="corpcode" property="corpcode"/>
+    	<result column="is_insert" property="isInsert"/>
+    	<result column="is_read" property="isRead"/>
+    	<result column="is_update" property="isUpdate"/>
+    	<result column="is_delete" property="isDelete"/>
+    	<result column="is_transfer" property="isTransfer"/>
+    	<result column="is_share" property="isShare"/>
+    	<result column="create_user" property="createUser"/>
+    	<result column="create_time" property="createTime" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+    	<result column="last_update_user" property="lastUpdateUser"/>
+    	<result column="last_update_time" property="lastUpdateTime" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+    </resultMap>
+    
+    <select id="querySysPrivDatalistPage" parameterType="com.sunline.funcpub.privilege.bean.SysPrivData" resultMap="privData_rsm">
+    	select 
+    	<include refid="privData_field" />
+    	from sys_priv_data 
+    	<where>
+    		<include refid="privData_condition"></include>
+    	</where>
+    	order by entity_code asc
+    </select>
+    
+    <resultMap type="java.util.HashMap" id="queryPrivInfo_rsm">
+    	<result column="entity_code" property="entityCode"/>
+    	<result column="entity_name" property="entityName"/>
+    	<result column="system_code" property="systemCode"/>
+    	<result column="corpcode" property="corpcode"/>
+    	<result column="role_id" property="roleId"/>
+    	<result column="is_insert" property="isInsert"/>
+    	<result column="is_read" property="isRead"/>
+    	<result column="is_update" property="isUpdate"/>
+    	<result column="is_delete" property="isDelete"/>
+    	<result column="is_transfer" property="isTransfer"/>
+    	<result column="is_share" property="isShare"/>
+    	<result column="db_table" property="dbTable"/>
+    	<result column="db_column_pk" property="dbColumnPK"/>
+    	<result column="db_pktype" property="dbPKType"/>
+    	<result column="is_composite" property="isComposite"/>
+    	<result column="db_column_pk_a" property="dbColumnPKA"/>
+    	<result column="db_pktype_a" property="dbPKTypeA"/>
+    	<result column="db_column_pk_b" property="dbColumnPKB"/>
+    	<result column="db_pktype_b" property="dbPKTypeB"/>
+    	<result column="db_column_pk_c" property="dbColumnPKC"/>
+    	<result column="db_pktype_c" property="dbPKTypeC"/>
+    	<result column="db_column_pk_d" property="dbColumnPKD"/>
+    	<result column="db_pktype_d" property="dbPKTypeD"/>
+    	<result column="db_column_owner" property="dbColumnOwner"/>
+    	<result column="db_column_dept" property="dbColumnDept"/>
+    </resultMap>
+    <select id="queryPrivInfolistPage" parameterType="java.util.HashMap" resultMap="queryPrivInfo_rsm">
+    	select 
+    		e.entity_code,
+    		e.entity_name,
+    		e.system_code,
+    		e.corpcode,
+    		d.role_id,
+    		d.is_insert,
+    		d.is_read,
+    		d.is_update,
+    		d.is_delete,
+    		d.is_transfer,
+    		d.is_share
+   		 from 
+    		sys_priv_entity e left join sys_priv_data d
+    		on e.entity_code=d.entity_code
+    		and e.system_code=d.system_code
+    		and e.corpcode=d.corpcode
+    		and d.role_id=#{roleId}
+    	<where>
+    		e.corpcode=#{corpcode} 
+    		<if test="systemCode!=null and systemCode.trim()!=''">
+    			and e.system_code=#{systemCode}
+    		</if>
+    		<if test="systemCodes!=null and systemCodes.size()>0">
+	    		and (
+	    		<foreach collection="systemCodes" index="index" item="dcs" open="" separator="" close="">
+	               <if test="index==0">
+	                 e.system_code in 
+	                  <foreach collection="dcs" index="index" item="dc" open="(" separator="," close=")">
+                      #{dc}
+                  </foreach>
+	               </if>
+	               <if test="index > 0">
+	                 OR e.system_code in  
+	                <foreach collection="dcs" index="index" item="dc" open="(" separator="," close=")">
+                      #{dc}
+                  </foreach>
+	               </if>
+	            </foreach>
+	            )
+	    	</if>
+	    	<if test="entityCode != null and entityCode != '' ">
+	    		and e.entity_code like #{entityCode}
+	    	</if>
+	    	<if test="entityName != null and entityName != ''">
+	    		and e.entity_name like #{entityName}
+	    	</if>
+	    	<if test="entityCodeList != null and entityCodeList != ''">
+	    		and e.entity_code in(<foreach item="record" collection="entityCodeList" separator=",">#{record}</foreach>)
+	    	</if>
+    	</where>
+    	order by e.entity_code asc
+    </select>
+    
+    <!-- 根据是否切换角色，查询相应实体的 权限 -->
+    <select id="queryPrivDataByAssignee" parameterType="java.util.HashMap" resultMap="queryPrivInfo_rsm">
+    	select 
+				p.entity_code,
+	    		p.system_code,
+	    		p.corpcode,
+	    		p.role_id,
+	    		p.is_insert,
+	    		p.is_read,
+	    		p.is_update,
+	    		p.is_delete,
+	    		p.is_transfer,
+	    		p.is_share,
+	    		e.db_table,
+	    		e.db_column_pk,
+	    		e.db_pktype,
+		    	e.is_composite,
+		    	e.db_column_pk_a,
+		    	e.db_pktype_a,
+		    	e.db_column_pk_b,
+		    	e.db_pktype_b,
+		    	e.db_column_pk_c,
+		    	e.db_pktype_c,
+		    	e.db_column_pk_d,
+		    	e.db_pktype_d,
+	    		e.db_column_owner,
+	    		e.db_column_dept
+		  from 
+		  <choose>
+		  	<when test="switchRole!=null and switchRole=='no'">
+		  		pcmc_user u
+				 inner join pcmc_user_role ur
+				    on u.userid = ur.userid
+				inner join  pcmc_role r 
+				on ur.roleid=r.roleid 
+		  	</when>
+		  	<otherwise>
+		  		pcmc_role r 
+		  	</otherwise>
+		  </choose>
+		   inner join pcmc_subsys s
+		   on r.subsysid=s.subsysid
+		   inner join sys_priv_data p 
+		   on r.roleid=p.role_id 
+		   and s.shortname=p.system_code
+		   inner join sys_priv_entity e
+		   on p.entity_code=e.entity_code
+		   and p.corpcode=e.corpcode
+		   and p.system_code=e.system_code
+		   <where>
+		   	  <choose>
+			  	<when test="switchRole!=null and switchRole=='no'">
+			  		u.usercode = #{userCode}
+			   		and u.corpcode = #{corpcode}
+			  	</when>
+			  	<otherwise>
+			  		roleid=#{roleId}
+			  		and r.corpcode = #{corpcode}
+			  	</otherwise>
+			  </choose>
+			   and p.entity_code=#{entityCode}
+			   and p.corpcode=#{corpcode}
+		   </where>
+		   order by is_read,is_update,is_insert,is_delete,is_transfer,is_share desc
+    </select>
+    
+    <!-- 清空表中，所有权限都为空或，值为0 的无效数据，可以传入  roleId,entityCode,systemCode,corpcode 指定清空范围 -->
+    <delete id="clearNullPriv" parameterType="com.sunline.funcpub.privilege.bean.SysPrivData">
+    	delete from sys_priv_data
+    	<where>
+    		(is_insert is null or is_insert='0') and
+    		(is_read is null or is_read='0') and
+    		(is_update is null or is_update='0') and
+    		(is_delete is null or is_delete='0') and
+    		(is_transfer is null or is_transfer='0') and
+    		(is_share is null or is_share='0') 
+    		<include refid="privData_condition"></include>
+    	</where>
+    </delete>
+    
+    <delete id="deleteSysPrivData" parameterType="com.sunline.funcpub.privilege.bean.SysPrivData">
+    	delete from sys_priv_data
+    	<where>
+    		<include refid="privData_condition"></include>
+    	</where>
+    </delete>
+    
+    <select id="isExist" parameterType="com.sunline.funcpub.privilege.bean.SysPrivData" resultType="java.lang.Integer">
+    	select count(1) from sys_priv_data 
+    	<where>
+    		<include refid="privData_condition"></include>
+    	</where>
+    </select>
+    
+    <update id="updateSysPrivData" parameterType="com.sunline.funcpub.privilege.bean.SysPrivData">
+    	update sys_priv_data
+    		set
+    	 <if test="isInsert!=null and isInsert.trim()!=''">
+    		is_insert=#{isInsert,jdbcType=VARCHAR},
+   		 </if>
+   		 <if test="isRead!=null and isRead.trim()!=''">
+			is_read=#{isRead,jdbcType=VARCHAR},
+		 </if>
+		<if test="isUpdate!=null and isUpdate.trim()!=''">
+			is_update=#{isUpdate,jdbcType=VARCHAR},
+		 </if>
+		<if test="isDelete!=null and isDelete.trim()!=''">
+			is_delete=#{isDelete,jdbcType=VARCHAR},
+		 </if>
+		<if test="isTransfer!=null and isTransfer.trim()!=''">
+			is_transfer=#{isTransfer,jdbcType=VARCHAR},
+		 </if>
+		<if test="isShare!=null and isShare.trim()!=''">
+			is_share=#{isShare,jdbcType=VARCHAR},
+		 </if>
+			last_update_user=#{lastUpdateUser,jdbcType=VARCHAR},
+			last_update_time=#{lastUpdateTime,jdbcType=TIMESTAMP}
+    	<where>
+    		<include refid="privData_condition"></include>
+    	</where>
+    		
+    </update>
+    
+    <insert id="addSysPrivData" parameterType="com.sunline.funcpub.privilege.bean.SysPrivData">
+    	insert into sys_priv_data(
+    		<include refid="privData_field"></include>
+    	)values(
+			#{entityCode,jdbcType=VARCHAR},
+			#{systemCode,jdbcType=VARCHAR},
+			#{corpcode,jdbcType=VARCHAR},
+			#{roleId,jdbcType=NUMERIC},
+			#{isInsert,jdbcType=VARCHAR},
+			#{isRead,jdbcType=VARCHAR},
+			#{isUpdate,jdbcType=VARCHAR},
+			#{isDelete,jdbcType=VARCHAR},
+			#{isTransfer,jdbcType=VARCHAR},
+			#{isShare,jdbcType=VARCHAR},
+			#{createUser,jdbcType=VARCHAR},
+			#{createTime,jdbcType=TIMESTAMP},
+			#{lastUpdateUser,jdbcType=VARCHAR},
+			#{lastUpdateTime,jdbcType=TIMESTAMP}
+    	)
+    </insert>
+    
+    <sql id="privData_field">
+    	entity_code,
+    	system_code,
+    	corpcode,
+    	role_id,
+    	is_insert,
+    	is_read,
+    	is_update,
+    	is_delete,
+    	is_transfer,
+    	is_share,
+    	create_user,
+    	create_time,
+    	last_update_user,
+    	last_update_time
+    </sql>
+    
+    <sql id="privData_condition">
+    	<if test="entityCode!=null and entityCode.trim()!=''">
+    		and entity_code=#{entityCode}
+    	</if>
+    	<if test="systemCode!=null and systemCode.trim()!=''">
+    		and system_code=#{systemCode}
+    	</if>
+    	<if test="corpcode!=null and corpcode.trim()!=''">
+    		and corpcode=#{corpcode}
+    	</if>
+    	<if test="roleId!=null">
+    		and role_id=#{roleId}
+    	</if>
+    </sql>
+</mapper>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="com.sunline.funcpub.mybatis.public.funcpagepriv" >
+	
+	<insert id="addFuncPagePriv" parameterType="java.util.HashMap">
+        insert into sys_func_page_priv(
+            page_code,
+            role_id
+        ) values(
+            #{pageCode,jdbcType=VARCHAR},
+            #{roleId,jdbcType=NUMERIC}
+        )
+	</insert>
+	
+	<resultMap type="java.util.HashMap" id="queryFuncPagePriv_rsm">
+       <result  column="role_id" property="roleId"/>
+       <result  column="page_code" property="pageCode"/>
+    </resultMap>
+    <select id="queryFuncPagePriv" parameterType="java.util.HashMap" resultMap="queryFuncPagePriv_rsm">
+       select role_id,page_code from sys_func_page_priv
+       <where>
+           <if test="roleId!=null and roleId!=''">
+               and role_id=#{roleId}
+           </if>
+           <if test="pageCode!=null and pageCode.trim()!=''">
+               and page_code=#{pageCode}
+           </if>
+       </where>
+    </select>
+	
+	<delete id="deleteFuncPagePriv" parameterType="java.util.HashMap">
+	    delete from sys_func_page_priv
+       <where>
+           <if test="pageCode != null and pageCode.trim()!=''">
+                and page_code=#{pageCode}
+           </if>
+           <if test="roleId !=null and roleId!=''">
+                and role_id=#{roleId}
+           </if>
+       </where>
+	</delete>
+</mapper> 	  

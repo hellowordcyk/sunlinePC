@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="com.sunline.pams.mybatis.public.opbook" >
+ 	<resultMap type="java.util.HashMap" id="opBookMap">
+ 		<result column="BOOK_NUM" property="bookNum"/>
+ 		<result column="REG_TIME" property="regTime" javaType="java.sql.Timestamp" jdbcType="TIMESTAMP"/>
+ 		<result column="ORG_NO" property="orgNo"/>
+ 		<result column="DEPTNAME" property="deptName"/>
+ 		<result column="MANAGER_NO" property="managerNo"/>
+ 		<result column="USERNAME" property="userName"/>
+ 		<result column="CUS_NAME" property="cusName"/>
+ 		<result column="CRED_TYPE" property="credType"/>
+ 		<result column="CRED_CODE" property="credCode"/>
+ 		<result column="BOOK_VAL" property="bookVal"/>
+ 		<result column="BOOK_DATE" property="bookDate" javaType="java.sql.Timestamp" jdbcType="TIMESTAMP"/>
+ 	</resultMap>
+ 	<select id="queryOpBooklistPage" parameterType="java.util.HashMap" resultMap="opBookMap">
+ 		SELECT 
+ 			A.BOOK_NUM,
+		    A.REG_TIME,
+		    A.ORG_NO,
+		    B.DEPTNAME,
+		    A.MANAGER_NO,
+		    C.USERNAME,
+		    A.CUS_NAME,
+		    A.CRED_TYPE,
+		    A.CRED_CODE,
+		    A.BOOK_VAL,
+		    A.BOOK_DATE
+		FROM OP_BOOK_DEP A
+		LEFT JOIN PCMC_DEPT B ON A.ORG_NO = B.DEPTCODE AND B.DISABLE = '0' AND A.AREA_NO = B.CORPCODE
+		LEFT JOIN PCMC_USER C ON A.MANAGER_NO = C.USERCODE AND C.DISABLE = '0' AND A.AREA_NO = C.CORPCODE
+		WHERE B.CORPCODE = #{corpCode} AND (A.ORG_NO IN (${orgNo}) OR A.MANAGER_NO = #{userCode})
+		<if test= "regTime_min != null and regTime_min != ''">
+			AND to_char(A.REG_TIME,'yyyy-mm-dd') <![CDATA[>=]]> to_char(#{regTime_min},'yyyy-mm-dd')
+		 </if>
+		 <if test= "regTime_max != null and regTime_max != ''">
+			AND to_char(A.REG_TIME,'yyyy-mm-dd') <![CDATA[<=]]> to_char(#{regTime_max},'yyyy-mm-dd')
+		</if>
+		<if test= "bookDate_min != null and bookDate_min != ''">
+			AND A.BOOK_DATE <![CDATA[>=]]> #{bookDate_min}
+		 </if>
+		 <if test= "bookDate_max != null and bookDate_max != ''">
+			AND A.BOOK_DATE <![CDATA[<=]]> #{bookDate_max}
+		</if>
+        <if test= "cusName != null and cusName != ''">
+			AND A.CUS_NAME LIKE #{cusName}
+        </if>
+		ORDER BY A.BOOK_NUM
+ 	</select>
+ 	
+ 	<select id="queryOpBookExport" parameterType="java.util.HashMap" resultMap="opBookMap">
+ 		SELECT 
+ 			A.BOOK_NUM,
+		    A.REG_TIME,
+		    A.ORG_NO,
+		    B.DEPTNAME,
+		    A.MANAGER_NO,
+		    C.USERNAME,
+		    A.CUS_NAME,
+		    A.CRED_TYPE,
+		    A.CRED_CODE,
+		    A.BOOK_VAL,
+		    A.BOOK_DATE
+		FROM OP_BOOK_DEP A
+		LEFT JOIN PCMC_DEPT B ON A.ORG_NO = B.DEPTCODE AND B.DISABLE = '0' AND A.AREA_NO = B.CORPCODE
+		LEFT JOIN PCMC_USER C ON A.MANAGER_NO = C.USERCODE AND C.DISABLE = '0' AND A.AREA_NO = C.CORPCODE
+		WHERE B.CORPCODE = #{corpCode} AND (A.ORG_NO IN (${orgNo}) OR A.MANAGER_NO = #{userCode})
+		<if test= "regTime_min != null and regTime_min != ''">
+			AND A.REG_TIME <![CDATA[>=]]> #{regTime_min}
+		 </if>
+		 <if test= "regTime_max != null and regTime_max != ''">
+			AND A.REG_TIME <![CDATA[<=]]> #{regTime_max}
+		</if>
+		<if test= "bookDate_min != null and bookDate_min != ''">
+			AND A.BOOK_DATE <![CDATA[>=]]> #{bookDate_min}
+		 </if>
+		 <if test= "bookDate_max != null and bookDate_max != ''">
+			AND A.BOOK_DATE <![CDATA[<=]]> #{bookDate_max}
+		</if>
+        <if test= "cusName != null and cusName != ''">
+			AND A.CUS_NAME LIKE '%${cusName}%'
+        </if>
+		ORDER BY A.BOOK_NUM
+ 	</select>
+ 	
+ 	
+ 	
+ 	<delete id="delOpBook" parameterType="HashMap">
+ 		DELETE FROM OP_BOOK_DEP WHERE AREA_NO = #{corpCode} and BOOK_NUM IN (${bookNumStr})
+ 	</delete>
+ 	
+ 	 <insert id="addOpBook" parameterType="java.util.HashMap" >
+		INSERT INTO OP_BOOK_DEP(BOOK_NUM,AREA_NO,REG_TIME,MANAGER_NO,ORG_NO,CUS_NAME,CRED_TYPE,CRED_CODE,BOOK_VAL,BOOK_DATE,REMARK)
+	 	VALUES(#{bookNum},#{areaNo},#{regTime},#{managerNo},#{orgNo},#{cusName},#{credType},#{credCode},#{bookVal},#{bookDate},#{remark})
+ 	 </insert> 
+</mapper> 	  
+ 	 

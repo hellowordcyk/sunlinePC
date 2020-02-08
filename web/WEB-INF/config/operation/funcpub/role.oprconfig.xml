@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="gb2312"?>
+<Sunline>
+	<Session></Session>
+	<!-- 角色管理 -->
+	<!-- 规范：id名，去掉类名的Actor得来 -->
+	<Operation id="PcmcRole"  bean="com.sunline.funcpub.portal.role.PcmcRoleActor"
+		desc="角色管理 " filterpath="/funcpub/portal/role/">
+		
+		<Action name="queryRole" desc="查询数据" acttype="query" />
+		<Action name="addRole" desc="增加数据" acttype="add" >
+			<responseFlow>
+              <handler type="java:com.sunline.funcpub.roleintercept.RoleInterceptHandler">
+              	<parameter name="refreshType" value="adminRole"/>
+              </handler>                  
+          	</responseFlow>
+		</Action>
+		<Action name="updateRole" desc="修改数据" acttype="update" >
+			<responseFlow>
+              <handler type="java:com.sunline.funcpub.roleintercept.RoleInterceptHandler">
+              	<parameter name="refreshType" value="adminRole"/>
+              </handler>                  
+          	</responseFlow>
+		</Action>
+		<Action name="delRole" desc="删除数据" acttype="delete" >
+			<responseFlow>
+              <handler type="java:com.sunline.funcpub.roleintercept.RoleInterceptHandler">
+              	<parameter name="refreshType" value="adminRole"/>
+              </handler>                  
+          	</responseFlow>
+		</Action>
+		<!-- <Action name="queryRoleUser" desc="查询用户授权" acttype="query" /> -->
+		<Action name="queryGrantRoleUser" desc="查询已授权用户" acttype="query" />
+		<Action name="queryUngrantRoleUser" desc="查询未授权用户" acttype="query" />
+		<Action name="queryGrantRole" desc="查询未授权用户" acttype="query" />
+		<Action name="queryUngrantRole" desc="查询未授权用户" acttype="query" />
+		<!-- <Action name="mergeRoleUser" desc="用户授权" acttype="update" /> -->
+		<Action name="grantRoleUser" desc="授权用户角色" acttype="update" />
+		<Action name="cancleGrantRoleUser" desc="取消授权用户角色" acttype="update" />
+		<Action name="mergeRoleUser" desc="合并角色用户" acttype="update" />
+		<Action name="queryRoleMenu" desc="查询角色菜单" acttype="query" />
+		
+		<Action name="role_import" desc="上传" acttype="import" />
+		<Action name="downLoadRoleTemplate" desc="下载" acttype="download" />
+		
+		<Action name="exportRole" desc="查询角色菜单" acttype="export" />
+		
+		<Action name="mergeRoleMenu" desc="合并角色菜单" acttype="update" >
+			<responseFlow>
+              <handler type="java:com.sunline.funcpub.roleintercept.RoleInterceptHandler">
+              	<parameter name="refreshType" value="roleMenu"/>
+              </handler>                  
+          	</responseFlow>
+		</Action>
+		<Action name="queryRoleByUserIdLike" desc="模糊查询用户拥有角色" acttype="query" />
+	</Operation>
+</Sunline>

@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="com.sunline.bimis.pcmc.flow.db.MdsFlwDetl" table="MDS_FLW_DETL">
+        <composite-id name="id" class="com.sunline.bimis.pcmc.flow.db.MdsFlwDetlId">
+            <key-property name="flowid" type="java.lang.Long">
+                <column name="FLOWID"/>
+            </key-property>
+            <key-property name="detlcd" type="string">
+                <column length="32" name="DETLCD"/>
+            </key-property>
+        </composite-id>
+        
+        <property name="detltp" type="string">
+            <column length="32" name="DETLTP"/>
+        </property>
+        <property name="detlpo" type="java.lang.Long">
+            <column name="DETLPO"/>
+        </property>
+        <property name="detlds" type="string">
+            <column length="512" name="DETLDS"/>
+        </property>
+        
+        <many-to-one name="mdsFlwMain" class="com.sunline.bimis.pcmc.flow.db.MdsFlwMain" update="false" insert="false" fetch="select">
+            <column name="FLOWID"/>
+        </many-to-one>
+    </class>
+</hibernate-mapping>

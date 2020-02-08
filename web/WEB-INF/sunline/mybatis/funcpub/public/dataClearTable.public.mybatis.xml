@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sunline.funcpub.mybatis.public.dataClearTable" >
+	<select id="queryCaCtlDataClearlistPage" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		<![CDATA[ 
+			 SELECT TABLE_NAME			"tableName",
+				    TABLE_INFO			"tableInfo",
+				    CLEAR_TYPE			"clearType",
+				    VALIDATOR_ORDER		"validatorOrder",
+				    DATE_KEY			"dateKey",
+				    KEEP_DAY			"keepDay",
+				    STATUS 				"status"
+				FROM CA_CTL_DATA_CLEAR A
+				WHERE 1 = 1
+		]]>
+		<if test= "clearType != null and clearType != ''">
+			AND A.CLEAR_TYPE= #{clearType}
+        </if>
+        <if test= "tableName != null and tableName!='' and tableName != '%%'">
+			AND A.TABLE_NAME LIKE #{tableName}
+        </if>
+        <if test= "tableName1 != null  and tableName1!='' and tableName1 != '%%'">
+			AND A.TABLE_NAME = #{tableName1}
+        </if>
+        <if test= "tableInfo != null and tableInfo!='' and tableInfo != '%%'">
+			AND A.TABLE_INFO LIKE #{tableInfo}
+        </if>
+        <if test= "status != null and status != ''">
+			AND A.STATUS = #{status}
+        </if>
+         <if test= "tableNames != null and tableNames != ''">
+			AND A.TABLE_NAME in 
+			    <foreach collection="tableNames" index="index" item="tableName" open="(" close=")" separator=",">
+                                 #{tableName}
+                </foreach>
+        </if>
+        <![CDATA[
+        	ORDER BY VALIDATOR_ORDER
+        ]]>
+    </select>
+	
+	<delete id="delCaCtlDataClear" parameterType="java.util.HashMap">
+	 	<![CDATA[
+	 		DELETE FROM CA_CTL_DATA_CLEAR WHERE TABLE_NAME = #{tableName}
+        ]]>
+	</delete>
+	
+	<update id="updateCaCtlDataClear" parameterType="java.util.HashMap">
+		
+	 		UPDATE CA_CTL_DATA_CLEAR 
+			SET TABLE_INFO = #{tableInfo},
+			    CLEAR_TYPE = #{clearType},
+			    <if test= "validatorOrder != null and validatorOrder != ''"> 
+			    VALIDATOR_ORDER = #{validatorOrder},
+			    </if>
+			    <if test= "validatorOrder == null and validatorOrder == ''"> 
+			    VALIDATOR_ORDER = null,
+			    </if>
+			    DATE_KEY = #{dateKey},
+			    <if test= "keepDay != null and keepDay != ''"> 
+			    KEEP_DAY = #{keepDay},
+			    </if>
+			    <if test= "keepDay == null and keepDay == ''"> 
+			    KEEP_DAY = null,
+			    </if>
+			    STATUS = #{status}
+			WHERE TABLE_NAME = #{tableName}
+       
+	</update>
+	
+	<insert id="addCaCtlDataClear" parameterType="java.util.HashMap">
+		
+	 		INSERT INTO ca_ctl_data_clear(  TABLE_NAME,
+										    TABLE_INFO,
+										    CLEAR_TYPE,
+			<if test= "validatorOrder != null and validatorOrder != ''"> 
+								    		VALIDATOR_ORDER,
+			</if>
+								    		DATE_KEY,
+			<if test= "keepDay != null and keepDay != ''"> 
+								    		KEEP_DAY,
+			</if>
+								    		STATUS) 
+			VALUES (#{tableName}
+					,#{tableInfo}
+					,#{clearType}
+					<if test= "validatorOrder != null and validatorOrder != ''"> 
+					,#{validatorOrder}
+					</if>
+					,#{dateKey}
+					<if test= "keepDay != null and keepDay != ''"> 
+					,#{keepDay}
+					</if>
+					,#{status} )
+        
+	</insert>
+	
+	<delete id="delDataClear" parameterType="java.util.HashMap">
+	 	<![CDATA[
+	 		DELETE FROM ${tableName} WHERE ${dateKey} = #{dataDate}
+        ]]>
+	</delete>
+	
+	<select id="queryPartition" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		<![CDATA[
+	 		${paraVlue}
+        ]]>
+	</select>
+	
+</mapper> 	  
+ 	 

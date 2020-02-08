@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 2006-10-19 9:58:55 by Hibernate Tools 3.2.0.beta6a -->
+<hibernate-mapping>
+    <class name="com.sunline.bimis.pcmc.db.PcmcAdoumember" table="pcmc_adoumember" schema="dbo">
+        <composite-id name="id" class="com.sunline.bimis.pcmc.db.PcmcAdoumemberId">
+            <key-property name="guid" type="string">
+                <column name="GUID" length="260" />
+            </key-property>
+            <key-property name="ouGuid" type="string">
+                <column name="ouGUID" length="260" />
+            </key-property>
+        </composite-id>
+        <many-to-one name="pcmcAdobj" class="com.sunline.bimis.pcmc.db.PcmcAdobj" update="false" insert="false" fetch="select">
+            <column name="GUID" length="260" not-null="true" />
+        </many-to-one>
+        <many-to-one name="pcmcAdou" class="com.sunline.bimis.pcmc.db.PcmcAdou" update="false" insert="false" fetch="select">
+            <column name="ouGUID" length="260" not-null="true" />
+        </many-to-one>
+    </class>
+</hibernate-mapping>

@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 2006-2-9 18:26:19 by Hibernate Tools 3.1.0.beta4 -->
+<hibernate-mapping>
+    <class name="com.sunline.bimis.pcmc.db.JbGroupuser" table="JB_GROUPUSER">
+        <composite-id name="id" class="com.sunline.bimis.pcmc.db.JbGroupuserId">
+            <key-property name="IUserid" type="integer">
+                <column name="I_USERID" />
+            </key-property>
+            <key-property name="IGroupid" type="integer">
+                <column name="I_GROUPID" />
+            </key-property>
+        </composite-id>
+        <many-to-one name="jbUser" class="com.sunline.bimis.pcmc.db.JbUser" update="false" insert="false" fetch="select">
+            <column name="I_USERID" not-null="true" />
+        </many-to-one>
+        <many-to-one name="jbGroup" class="com.sunline.bimis.pcmc.db.JbGroup" update="false" insert="false" fetch="select">
+            <column name="I_GROUPID" not-null="true" />
+        </many-to-one>
+        <property name="IAdmin" type="byte">
+            <column name="I_ADMIN" not-null="true" />
+        </property>
+    </class>
+</hibernate-mapping>

@@ -1,0 +1,720 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sunline.pams.mybatis.public.task" >
+	<resultMap type="java.util.HashMap" id="userTaskMap">
+		<result column="ID" property="taskID"/>
+		<result column="KPI_CODE" property="kpiCode"/>
+		<result column="KPI_NAME" property="kpiName"/>
+		<result column="MANAGER_NO" property="managerNo"/>
+		<result column="USERNAME" property="userName"/>
+		<result column="AREA_NO" property="areaNo"/>
+		<result column="DATA_YEAR" property="dataYear"/>
+		<result column="NUM" property="num"/>
+		<result column="MBO_VALUE" property="mboValue"/>
+		<result column="CYCLE" property="cycle"/>
+	</resultMap>
+	<resultMap type="java.util.HashMap" id="OrgTaskMap">
+		<result column="ID" property="taskID"/>
+		<result column="KPI_CODE" property="kpiCode"/>
+		<result column="KPI_NAME" property="kpiName"/>
+		<result column="ORG_NO" property="orgNo"/>
+		<result column="DEPTNAME" property="deptName"/>
+		<result column="AREA_NO" property="areaNo"/>
+		<result column="NUM" property="num"/>
+		<result column="MBO_VALUE" property="mboValue"/>
+		<result column="DATA_YEAR" property="dataYear"/>
+		<result column="CYCLE" property="cycle"/>
+	</resultMap>
+	
+	<select id="queryUserTasklistPage" parameterType="java.util.HashMap" resultMap="userTaskMap">
+		SELECT DISTINCT
+			A.ID,
+			A.KPI_CODE,
+			C.KPI_NAME,
+			A.MANAGER_NO,
+			B.USERNAME,
+			A.AREA_NO,
+			A.DATA_YEAR,
+			A.NUM,
+			A.MBO_VALUE 
+		FROM AP_MBO_PERSON_VALUE A
+		LEFT JOIN PCMC_USER B ON A.MANAGER_NO = B.USERCODE AND A.AREA_NO = B.CORPCODE AND B.DISABLE != '1'
+		LEFT JOIN MO_KPI_INFO C ON A.AREA_NO = C.AREA_NO AND A.KPI_CODE = C.KPI_CODE 
+		WHERE A.AREA_NO = #{areaNo} AND B.DISABLE =  0 
+		<if test="cycle != null and cycle != '' ">
+			AND A.CYCLE = #{cycle}
+		</if>
+		<if test="ruleOrg != null and ruleOrg != '' ">
+			AND B.DEPTID  IN  (${ruleOrg})
+		</if>
+		<if test="dataYear != null and dataYear != '' ">
+			AND A.DATA_YEAR = #{dataYear}
+		</if>
+		<if test="kpiCode != null and kpiCode != ''">
+			AND A.KPI_CODE IN #{kpiCode}
+		</if>
+		<if test="orgNo != null and orgNo != ''">
+			AND B.DEPTID in (select ORG_ID from SYS_PUB_ORG_SUB_V a where a.PARENT_ORG_NO = #{orgNo})
+		</if>
+		<if test="managerNoList != null and managerNoList.size() > 0">
+			AND A.MANAGER_NO IN <foreach collection="managerNoList" item="managerNo" open="(" close=")" separator=",">#{managerNo}</foreach>
+		</if>
+		ORDER BY A.KPI_CODE,A.MANAGER_NO 
+	</select>
+	
+	<insert id="addUserTask" parameterType="java.util.HashMap">
+		INSERT INTO AP_MBO_PERSON_VALUE(ID,KPI_CODE,MANAGER_NO,AREA_NO,DATA_YEAR,CYCLE,NUM,START_DATE,END_DATE,MBO_VALUE,CREATE_TIME,OPERATOR,CURRENCY)
+		VALUES(#{taskID},#{kpiCode},#{managerNo},#{areaNo},#{dataYear},#{cycle},#{num},#{startDate},#{endDate},#{mboValue},#{createTime},#{operator},#{currency})
+	</insert>
+	
+	<delete id="deleteUserTask" parameterType="java.util.HashMap">
+		DELETE FROM AP_MBO_PERSON_VALUE  ap
+		WHERE KPI_CODE = #{kpiCode}
+		AND AREA_NO = #{areaNo}
+		AND MANAGER_NO = #{managerNo}
+		AND	DATA_YEAR = #{dataYear}
+		AND	ap.CYCLE = #{cycle}
+	</delete>
+	
+	<select id="querySingleUserTaskByID" parameterType="long"  resultMap="userTaskMap">
+		SELECT 
+			KPI_CODE,
+			MANAGER_NO,
+			DATA_YEAR,
+			AREA_NO,
+			CYCLE
+		FROM AP_MBO_PERSON_VALUE  WHERE ID = #{_parameter}
+	</select>
+	
+	<select id="queryUserTaskByID" parameterType="HashMap"  resultMap="userTaskMap">
+		SELECT 
+			A.ID,
+			A.KPI_CODE,
+			C.KPI_NAME,
+			A.MANAGER_NO,
+			B.USERNAME,
+			A.AREA_NO,
+			A.DATA_YEAR,
+			A.NUM,
+			A.MBO_VALUE 
+		FROM AP_MBO_PERSON_VALUE A
+		LEFT JOIN PCMC_USER   B ON A.AREA_NO = B.CORPCODE AND A.MANAGER_NO = B.USERCODE AND B.DISABLE != '1'
+		LEFT JOIN MO_KPI_INFO C ON A.KPI_CODE   = C.KPI_CODE AND A.AREA_NO = C.AREA_NO
+		WHERE B.DISABLE =  0 AND A.AREA_NO = #{corpCode}
+		AND A.CYCLE      = (SELECT CYCLE      FROM AP_MBO_PERSON_VALUE WHERE ID = #{taskID})
+		AND A.DATA_YEAR  = (SELECT DATA_YEAR  FROM AP_MBO_PERSON_VALUE WHERE ID = #{taskID})
+		AND A.KPI_CODE   = (SELECT KPI_CODE   FROM AP_MBO_PERSON_VALUE WHERE ID = #{taskID})
+		AND A.MANAGER_NO = (SELECT MANAGER_NO FROM AP_MBO_PERSON_VALUE WHERE ID = #{taskID})
+		ORDER BY A.ID 
+	</select>
+	
+	<update id="updateUserTask" parameterType="java.util.HashMap" >
+		UPDATE AP_MBO_PERSON_VALUE SET MBO_VALUE = #{mboValue} 
+		WHERE KPI_CODE = #{kpiCode}
+		AND AREA_NO = #{corpCode} 
+		AND MANAGER_NO = #{managerNo} 
+		AND DATA_YEAR = #{dataYear} 
+		AND NUM = #{num} 
+		AND CYCLE = #{cycle}
+	</update>
+	
+	<select id="queryOrgTasklistPage" parameterType="java.util.HashMap"  resultMap="OrgTaskMap">
+		SELECT DISTINCT 
+			A.ID,
+			A.KPI_CODE,
+			C.KPI_NAME,
+			A.ORG_NO,
+			B.DEPTNAME,
+			A.AREA_NO,
+			A.DATA_YEAR,
+			A.NUM,
+			A.MBO_VALUE 
+		FROM AP_MBO_ORG_VALUE A
+		LEFT JOIN PCMC_DEPT B ON A.ORG_NO = B.DEPTCODE AND B.DISABLE = '0' AND A.AREA_NO = B.CORPCODE
+		LEFT JOIN MO_KPI_INFO C ON A.KPI_CODE = C.KPI_CODE AND C.AREA_NO = A.AREA_NO
+		WHERE A.AREA_NO = #{areaNo}
+			AND B. DISABLE = 0
+		<if test="cycle != null and cycle != '' ">
+			AND A.CYCLE = #{cycle}
+		</if>
+		<if test="ruleOrg != null and ruleOrg != '' ">
+			AND A.ORG_NO IN(${ruleOrg})
+		</if>
+		<if test="dataYear != null and dataYear != '' ">
+			AND A.DATA_YEAR = #{dataYear}
+		</if>
+		<if test="kpiCode != null and kpiCode != ''">
+			AND A.KPI_CODE = #{kpiCode}
+		</if>
+		<if test="orgNoList != null and orgNoList.size() >0">
+			AND A.ORG_NO IN <foreach collection="orgNoList" item="orgCode" open="(" separator="," close=")">#{orgCode}</foreach>
+		</if>
+		<if test="orgNo != null and orgNo != ''">
+			AND A.ORG_NO = #{orgNo}
+		</if>
+		ORDER BY A.KPI_CODE,A.ORG_NO 
+	</select>
+	
+	<delete id="deleteOrgTask" parameterType="java.util.HashMap">
+		DELETE FROM AP_MBO_ORG_VALUE 
+		WHERE KPI_CODE = #{kpiCode} 
+		AND AREA_NO = #{areaNo}
+		AND ORG_NO = #{orgNo} 
+		AND DATA_YEAR = #{dataYear} 
+		AND CYCLE = #{cycle}
+	</delete>
+	
+	<delete id="deleteOrgTaskById" parameterType="java.util.HashMap">
+		DELETE FROM AP_MBO_ORG_VALUE 
+		WHERE ID = #{taskID}
+	</delete>
+	
+	<insert id="addOrgTask" parameterType="java.util.HashMap">
+		INSERT INTO AP_MBO_ORG_VALUE(ID,KPI_CODE,ORG_NO,AREA_NO,DATA_YEAR,CYCLE,NUM,START_DATE,END_DATE,MBO_VALUE,CREATE_TIME,OPERATOR,CURRENCY)
+		VALUES(#{taskID},#{kpiCode},#{orgNo},#{areaNo},#{dataYear},#{cycle},#{num},#{startDate},#{endDate},#{mboValue},#{createTime},#{operator},#{currency})
+	</insert>
+	
+	<select id="querySingleOrgTaskByID" parameterType="long"  resultMap="OrgTaskMap">
+		SELECT 
+			KPI_CODE,
+			ORG_NO,
+			AREA_NO,
+			DATA_YEAR,
+			CYCLE
+		FROM AP_MBO_ORG_VALUE  WHERE ID = #{_parameter}
+	</select>
+	
+	<select id="queryOrgTaskByID" parameterType="java.util.HashMap"  resultMap="OrgTaskMap">
+		SELECT 
+			A.ID,
+			A.KPI_CODE,
+			C.KPI_NAME,
+			A.ORG_NO,
+			B.DEPTNAME,
+			A.AREA_NO,
+			A.DATA_YEAR,
+			A.NUM,
+			A.MBO_VALUE 
+		FROM AP_MBO_ORG_VALUE A
+		LEFT JOIN PCMC_DEPT B ON A.ORG_NO = B.DEPTCODE AND B.DISABLE = '0' AND A.AREA_NO = B.CORPCODE
+		LEFT JOIN MO_KPI_INFO C ON A.KPI_CODE = C.KPI_CODE AND A.AREA_NO = C.AREA_NO
+		WHERE B.DISABLE = 0 AND A.AREA_NO = #{corpCode}
+		AND A.CYCLE = (SELECT CYCLE FROM AP_MBO_ORG_VALUE WHERE ID = #{taskID})
+		AND A.DATA_YEAR = (SELECT DATA_YEAR FROM AP_MBO_ORG_VALUE WHERE ID = #{taskID})
+		AND A.KPI_CODE  = (SELECT KPI_CODE  FROM AP_MBO_ORG_VALUE WHERE ID = #{taskID})
+		AND A.ORG_NO = (SELECT ORG_NO    FROM AP_MBO_ORG_VALUE WHERE ID = #{taskID})
+		ORDER BY A.KPI_CODE,A.ORG_NO
+	</select>
+	
+	<update id="updateOrgTask" parameterType="java.util.HashMap" >
+		UPDATE AP_MBO_ORG_VALUE SET MBO_VALUE = #{mboValue} 
+		WHERE AREA_NO = #{corpCode} AND KPI_CODE = #{kpiCode} AND ORG_NO = #{orgNo} AND DATA_YEAR = #{dataYear} AND NUM = #{num} AND CYCLE = #{cycle}
+	</update>
+	
+	<resultMap type="java.util.HashMap" id="kpiValueMap">
+		<result column="DATAYEAR" property="dataYear"/>
+		<result column="ORGNO" property="orgNo"/>
+		<result column="ORGNAME" property="orgName"/>
+		<result column="KPICODE" property="kpiCode"/>
+		<result column="KPINAME" property="kpiName"/>
+		<result column="MANAGERNO" property="managerNo"/>
+		<result column="MANAGERNAME" property="managerName"/>
+		<result column="KPIVALUE1" property="kpiValue1"/>
+		<result column="KPIVALUE2" property="kpiValue2"/>
+		<result column="KPIVALUE3" property="kpiValue3"/>
+		<result column="KPIVALUE4" property="kpiValue4"/>
+		<result column="KPIVALUE5" property="kpiValue5"/>
+		<result column="KPIVALUE6" property="kpiValue6"/>
+		<result column="KPIVALUE7" property="kpiValue7"/>
+		<result column="KPIVALUE8" property="kpiValue8"/>
+		<result column="KPIVALUE9" property="kpiValue9"/>
+		<result column="KPIVALUE10" property="kpiValue10"/>
+		<result column="KPIVALUE11" property="kpiValue11"/>
+		<result column="KPIVALUE12" property="kpiValue12"/>
+		<result column="MBOVALUE1" property="mboValue1"/>
+		<result column="MBOVALUE2" property="mboValue2"/>
+		<result column="MBOVALUE3" property="mboValue3"/>
+		<result column="MBOVALUE4" property="mboValue4"/>
+		<result column="MBOVALUE5" property="mboValue5"/>
+		<result column="MBOVALUE6" property="mboValue6"/>
+		<result column="MBOVALUE7" property="mboValue7"/>
+		<result column="MBOVALUE8" property="mboValue8"/>
+		<result column="MBOVALUE9" property="mboValue9"/>
+		<result column="MBOVALUE10" property="mboValue10"/>
+		<result column="MBOVALUE11" property="mboValue11"/>
+		<result column="MBOVALUE12" property="mboValue12"/>
+		<result column="RATE1" property="rate1"/>
+		<result column="RATE2" property="rate2"/>
+		<result column="RATE3" property="rate3"/>
+		<result column="RATE4" property="rate4"/>
+		<result column="RATE5" property="rate5"/>
+		<result column="RATE6" property="rate6"/>
+		<result column="RATE7" property="rate7"/>
+		<result column="RATE8" property="rate8"/>
+		<result column="RATE9" property="rate9"/>
+		<result column="RATE10" property="rate10"/>
+		<result column="RATE11" property="rate11"/>
+		<result column="RATE12" property="rate12"/>
+	</resultMap>
+	<!--机构年任务完成情况查询  -->
+	<select id="queryOrgTaskYearManagerQuerylistPage" parameterType="java.util.HashMap"  resultMap="kpiValueMap" >
+		SELECT 
+			${dataYear} AS DATAYEAR,
+			A.ORG_NO AS ORGNO,
+			B.DEPTNAME AS ORGNAME,
+			A.KPI_CODE AS KPICODE,
+			C.KPI_NAME AS KPINAME,
+		    A.KPIVALUE1 AS KPIVALUE1,
+		    A.MBOVALUE1 AS MBOVALUE1,
+		    CASE WHEN A.KPIVALUE1 = 0 THEN 0 WHEN A.MBOVALUE1 = 0 THEN 100 ELSE A.KPIVALUE1/A.MBOVALUE1 *100 END AS RATE1
+		   
+		FROM
+		(
+				SELECT A.ORG_NO,A.KPI_CODE,A.AREA_NO,
+			        SUM(CASE WHEN A.NUM = 1 THEN A.MBO_VALUE ELSE 0 END) AS MBOVALUE1,
+			        SUM(CASE WHEN A.NUM = 1 THEN B.KPI_VALUE ELSE 0 END) AS KPIVALUE1
+			        
+				FROM (
+						SELECT A.KPI_CODE,A.ORG_NO,A.AREA_NO,A.DATA_YEAR,A.CYCLE,A.NUM,A.MBO_VALUE,
+				              A.END_DATE AS DATA_DATE
+				        FROM AP_MBO_ORG_VALUE A 
+				        INNER JOIN V_AUTH_ORG ORG ON A.ORG_NO = ORG.DEPTCODE AND A.AREA_NO = ORG.AREA_NO
+				        WHERE A.CYCLE = 'Y' AND A.AREA_NO = #{areaNo}
+				        AND A.DATA_YEAR = #{dataYear}
+				        AND ORG.USERID = #{userId}
+				        <if test="orgNoList != null and orgNoList.size()>0 ">
+							AND A.ORG_NO IN <foreach collection="orgNoList" item="orgNo" open="(" separator="," close=")">#{orgNo}</foreach>
+						</if>
+						<if test="kpiCodeList != null and kpiCodeList ">
+							AND A.KPI_CODE IN <foreach collection="kpiCodeList" item="kpiCode" open="(" separator="," close=")">#{kpiCode}</foreach>
+						</if>
+				      ) A
+				LEFT JOIN PI_ORG_KPI B ON A.KPI_CODE = B.KPI_CODE AND A.ORG_NO = B.ORG_NO AND B.DATA_DATE = A.DATA_DATE AND A.AREA_NO = B.AREA_NO
+				WHERE A.DATA_YEAR = #{dataYear} AND A.CYCLE = 'Y' AND A.AREA_NO = #{areaNo}
+				GROUP BY A.ORG_NO,A.KPI_CODE,A.AREA_NO
+		) A
+		INNER JOIN PCMC_DEPT B ON  A.AREA_NO = B.CORPCODE AND A.ORG_NO = B.DEPTCODE AND B.DISABLE = '0'
+		INNER JOIN MO_KPI_INFO C ON A.KPI_CODE = C.KPI_CODE AND A.AREA_NO = C.AREA_NO AND C.AREA_NO = #{areaNo}
+	</select>
+	<!--机构季任务完成情况查询  -->
+	<select id="queryOrgTaskManagerQuerylistPage" parameterType="java.util.HashMap"  resultMap="kpiValueMap" >
+		SELECT 
+			${dataYear} AS DATAYEAR,
+			A.ORG_NO AS ORGNO,
+			B.DEPTNAME AS ORGNAME,
+			A.KPI_CODE AS KPICODE,
+			C.KPI_NAME AS KPINAME,
+		    A.KPIVALUE1 AS KPIVALUE1,
+		    A.MBOVALUE1 AS MBOVALUE1,
+		    CASE WHEN A.KPIVALUE1 = 0 THEN 0 WHEN A.MBOVALUE1 = 0 THEN 100 ELSE A.KPIVALUE1/A.MBOVALUE1 *100 END AS RATE1, 
+		    A.KPIVALUE2 AS KPIVALUE2,
+		    A.MBOVALUE2 AS MBOVALUE2,
+		    CASE WHEN A.KPIVALUE2 = 0 THEN 0 WHEN A.MBOVALUE2 = 0 THEN 100 ELSE A.KPIVALUE2/A.MBOVALUE2 *100 END AS RATE2, 
+		    A.KPIVALUE3 AS KPIVALUE3,
+		    A.MBOVALUE3 AS MBOVALUE3,
+		    CASE WHEN A.KPIVALUE3 = 0 THEN 0 WHEN A.MBOVALUE3 = 0 THEN 100 ELSE A.KPIVALUE3/A.MBOVALUE3 *100 END AS RATE3, 
+		    A.KPIVALUE4 AS KPIVALUE4,
+		    A.MBOVALUE4 AS MBOVALUE4,
+		    CASE WHEN A.KPIVALUE4 = 0 THEN 0 WHEN A.MBOVALUE4 = 0 THEN 100 ELSE A.KPIVALUE4/A.MBOVALUE4 *100 END AS RATE4
+		FROM
+		(
+				SELECT A.ORG_NO,A.KPI_CODE,A.AREA_NO,
+			        SUM(CASE WHEN A.NUM = 1 THEN A.MBO_VALUE ELSE 0 END) AS MBOVALUE1,
+			        SUM(CASE WHEN A.NUM = 1 THEN B.KPI_VALUE ELSE 0 END) AS KPIVALUE1,
+			        SUM(CASE WHEN A.NUM = 2 THEN A.MBO_VALUE ELSE 0 END) AS MBOVALUE2,
+			        SUM(CASE WHEN A.NUM = 2 THEN B.KPI_VALUE ELSE 0 END) AS KPIVALUE2,
+			        SUM(CASE WHEN A.NUM = 3 THEN A.MBO_VALUE ELSE 0 END) AS MBOVALUE3,
+			        SUM(CASE WHEN A.NUM = 3 THEN B.KPI_VALUE ELSE 0 END) AS KPIVALUE3,
+			        SUM(CASE WHEN A.NUM = 4 THEN A.MBO_VALUE ELSE 0 END) AS MBOVALUE4,
+			        SUM(CASE WHEN A.NUM = 4 THEN B.KPI_VALUE ELSE 0 END) AS KPIVALUE4
+				FROM (
+						SELECT A.KPI_CODE,A.ORG_NO,A.AREA_NO,A.DATA_YEAR,A.CYCLE,A.NUM,A.MBO_VALUE,
+				              (CASE WHEN NUM = 1 THEN #{dataDate1} 
+				               WHEN NUM = 2 THEN #{dataDate2}
+				               WHEN NUM = 3 THEN #{dataDate3}
+				               WHEN NUM = 4 THEN #{dataDate4}
+				               ELSE NULL END) AS DATA_DATE
+				        FROM AP_MBO_ORG_VALUE A 
+				        INNER JOIN V_AUTH_ORG ORG ON A.ORG_NO = ORG.DEPTCODE AND A.AREA_NO = ORG.AREA_NO
+				        WHERE A.CYCLE = 'Q' AND A.AREA_NO = #{areaNo}
+				        AND A.DATA_YEAR = #{dataYear}
+				        AND ORG.USERID = #{userId}
+				        <if test="orgNoList != null and orgNoList.size()>0 ">
+							AND A.ORG_NO IN <foreach collection="orgNoList" item="orgNo" open="(" separator="," close=")">#{orgNo}</foreach>
+						</if>
+						<if test="kpiCodeList != null and kpiCodeList ">
+							AND A.KPI_CODE IN <foreach collection="kpiCodeList" item="kpiCode" open="(" separator="," close=")">#{kpiCode}</foreach>
+						</if>
+				      ) A
+				LEFT JOIN PI_ORG_KPI B ON A.KPI_CODE = B.KPI_CODE AND A.ORG_NO = B.ORG_NO AND B.DATA_DATE = A.DATA_DATE AND A.AREA_NO = B.AREA_NO
+				WHERE A.DATA_YEAR = #{dataYear} AND A.CYCLE = 'Q' AND A.AREA_NO = #{areaNo}
+				GROUP BY A.ORG_NO,A.KPI_CODE,A.AREA_NO 
+		) A
+		INNER JOIN PCMC_DEPT B ON  A.AREA_NO = B.CORPCODE AND A.ORG_NO = B.DEPTCODE AND B.DISABLE = '0'
+		INNER JOIN MO_KPI_INFO C ON A.KPI_CODE = C.KPI_CODE AND A.AREA_NO = C.AREA_NO AND C.AREA_NO = #{areaNo}
+	</select>
+	
+	<!--机构月任务完成情况查询  -->
+	<select id="queryOrgMonthTaskManagerQuerylistPage" parameterType="java.util.HashMap"  resultMap="kpiValueMap" >
+		SELECT ${dataYear} AS DATAYEAR,A.ORG_NO AS ORGNO,B.DEPTNAME AS ORGNAME,A.KPI_CODE AS KPICODE,C.KPI_NAME AS KPINAME,
+		        A.KPIVALUE1 AS KPIVALUE1,A.MBOVALUE1 AS MBOVALUE1,CASE WHEN A.KPIVALUE1 = 0 THEN 0 WHEN A.MBOVALUE1 = 0 THEN 100 ELSE A.KPIVALUE1/A.MBOVALUE1 *100 END AS RATE1, 
+		        A.KPIVALUE2 AS KPIVALUE2,A.MBOVALUE2 AS MBOVALUE2,CASE WHEN A.KPIVALUE2 = 0 THEN 0 WHEN A.MBOVALUE2 = 0 THEN 100 ELSE A.KPIVALUE2/A.MBOVALUE2 *100 END AS RATE2, 
+		        A.KPIVALUE3 AS KPIVALUE3,A.MBOVALUE3 AS MBOVALUE3,CASE WHEN A.KPIVALUE3 = 0 THEN 0 WHEN A.MBOVALUE3 = 0 THEN 100 ELSE A.KPIVALUE3/A.MBOVALUE3 *100 END AS RATE3, 
+		        A.KPIVALUE4 AS KPIVALUE4,A.MBOVALUE4 AS MBOVALUE4,CASE WHEN A.KPIVALUE4 = 0 THEN 0 WHEN A.MBOVALUE4 = 0 THEN 100 ELSE A.KPIVALUE4/A.MBOVALUE4 *100 END AS RATE4,
+		        A.KPIVALUE5 AS KPIVALUE5,A.MBOVALUE5 AS MBOVALUE5,CASE WHEN A.KPIVALUE5 = 0 THEN 0 WHEN A.MBOVALUE5 = 0 THEN 100 ELSE A.KPIVALUE5/A.MBOVALUE5 *100 END AS RATE5,
+		        A.KPIVALUE6 AS KPIVALUE6,A.MBOVALUE6 AS MBOVALUE6,CASE WHEN A.KPIVALUE6 = 0 THEN 0 WHEN A.MBOVALUE6 = 0 THEN 100 ELSE A.KPIVALUE6/A.MBOVALUE6 *100 END AS RATE6,
+		        A.KPIVALUE7 AS KPIVALUE7,A.MBOVALUE7 AS MBOVALUE7,CASE WHEN A.KPIVALUE7 = 0 THEN 0 WHEN A.MBOVALUE7 = 0 THEN 100 ELSE A.KPIVALUE7/A.MBOVALUE7 *100 END AS RATE7,
+		        A.KPIVALUE8 AS KPIVALUE8,A.MBOVALUE8 AS MBOVALUE8,CASE WHEN A.KPIVALUE8 = 0 THEN 0 WHEN A.MBOVALUE8 = 0 THEN 100 ELSE A.KPIVALUE8/A.MBOVALUE8 *100 END AS RATE8,
+		        A.KPIVALUE9 AS KPIVALUE9,A.MBOVALUE9 AS MBOVALUE9,CASE WHEN A.KPIVALUE9 = 0 THEN 0 WHEN A.MBOVALUE9 = 0 THEN 100 ELSE A.KPIVALUE9/A.MBOVALUE9 *100 END AS RATE9,
+		        A.KPIVALUE10 AS KPIVALUE10,A.MBOVALUE10 AS MBOVALUE10,CASE WHEN A.KPIVALUE10 = 0 THEN 0 WHEN A.MBOVALUE10 = 0 THEN 100 ELSE A.KPIVALUE10/A.MBOVALUE10 *100 END AS RATE10,
+		        A.KPIVALUE11 AS KPIVALUE11,A.MBOVALUE11 AS MBOVALUE11,CASE WHEN A.KPIVALUE11 = 0 THEN 0 WHEN A.MBOVALUE11 = 0 THEN 100 ELSE A.KPIVALUE11/A.MBOVALUE11 *100 END AS RATE11,
+		        A.KPIVALUE12 AS KPIVALUE12,A.MBOVALUE12 AS MBOVALUE12,CASE WHEN A.KPIVALUE12 = 0 THEN 0 WHEN A.MBOVALUE12 = 0 THEN 100 ELSE A.KPIVALUE12/A.MBOVALUE12 *100 END AS RATE12
+		FROM
+		(
+				SELECT A.ORG_NO,A.KPI_CODE,A.AREA_NO,
+			        SUM(CASE WHEN A.NUM = 1 THEN A.MBO_VALUE ELSE 0 END) AS MBOVALUE1,
+			        SUM(CASE WHEN A.NUM = 1 THEN B.KPI_VALUE ELSE 0 END) AS KPIVALUE1,
+			        SUM(CASE WHEN A.NUM = 2 THEN A.MBO_VALUE ELSE 0 END) AS MBOVALUE2,
+			        SUM(CASE WHEN A.NUM = 2 THEN B.KPI_VALUE ELSE 0 END) AS KPIVALUE2,
+			        SUM(CASE WHEN A.NUM = 3 THEN A.MBO_VALUE ELSE 0 END) AS MBOVALUE3,
+			        SUM(CASE WHEN A.NUM = 3 THEN B.KPI_VALUE ELSE 0 END) AS KPIVALUE3,
+			        SUM(CASE WHEN A.NUM = 4 THEN A.MBO_VALUE ELSE 0 END) AS MBOVALUE4,
+			        SUM(CASE WHEN A.NUM = 4 THEN B.KPI_VALUE ELSE 0 END) AS KPIVALUE4,
+			        SUM(CASE WHEN A.NUM = 5 THEN A.MBO_VALUE ELSE 0 END) AS MBOVALUE5,
+			        SUM(CASE WHEN A.NUM = 5 THEN B.KPI_VALUE ELSE 0 END) AS KPIVALUE5,
+			        SUM(CASE WHEN A.NUM = 6 THEN A.MBO_VALUE ELSE 0 END) AS MBOVALUE6,
+			        SUM(CASE WHEN A.NUM = 6 THEN B.KPI_VALUE ELSE 0 END) AS KPIVALUE6,
+			        SUM(CASE WHEN A.NUM = 7 THEN A.MBO_VALUE ELSE 0 END) AS MBOVALUE7,
+			        SUM(CASE WHEN A.NUM = 7 THEN B.KPI_VALUE ELSE 0 END) AS KPIVALUE7,
+			        SUM(CASE WHEN A.NUM = 8 THEN A.MBO_VALUE ELSE 0 END) AS MBOVALUE8,
+			        SUM(CASE WHEN A.NUM = 8 THEN B.KPI_VALUE ELSE 0 END) AS KPIVALUE8,
+			        SUM(CASE WHEN A.NUM = 9 THEN A.MBO_VALUE ELSE 0 END) AS MBOVALUE9,
+			        SUM(CASE WHEN A.NUM = 9 THEN B.KPI_VALUE ELSE 0 END) AS KPIVALUE9,
+			        SUM(CASE WHEN A.NUM = 10 THEN A.MBO_VALUE ELSE 0 END) AS MBOVALUE10,
+			        SUM(CASE WHEN A.NUM = 10 THEN B.KPI_VALUE ELSE 0 END) AS KPIVALUE10,
+			        SUM(CASE WHEN A.NUM = 11 THEN A.MBO_VALUE ELSE 0 END) AS MBOVALUE11,
+			        SUM(CASE WHEN A.NUM = 11 THEN B.KPI_VALUE ELSE 0 END) AS KPIVALUE11,
+			        SUM(CASE WHEN A.NUM = 12 THEN A.MBO_VALUE ELSE 0 END) AS MBOVALUE12,
+			        SUM(CASE WHEN A.NUM = 12 THEN B.KPI_VALUE ELSE 0 END) AS KPIVALUE12
+				FROM (
+						SELECT A.KPI_CODE,A.ORG_NO,A.AREA_NO,A.DATA_YEAR,A.CYCLE,A.NUM,A.MBO_VALUE,
+				              (CASE WHEN NUM = 1 THEN #{dataDate1} 
+				               WHEN NUM = 2 THEN #{dataDate2}
+				               WHEN NUM = 3 THEN #{dataDate3}
+				               WHEN NUM = 4 THEN #{dataDate4}
+				               WHEN NUM = 5 THEN #{dataDate5}
+				               WHEN NUM = 6 THEN #{dataDate6}
+				               WHEN NUM = 7 THEN #{dataDate7}
+				               WHEN NUM = 8 THEN #{dataDate8}
+				               WHEN NUM = 9 THEN #{dataDate9}
+				               WHEN NUM = 10 THEN #{dataDate10}
+				               WHEN NUM = 11 THEN #{dataDate11}
+				               WHEN NUM = 12 THEN #{dataDate12}
+				               ELSE NULL END) AS DATA_DATE
+				        FROM AP_MBO_ORG_VALUE A 
+				        INNER JOIN V_AUTH_ORG ORG ON A.ORG_NO = ORG.DEPTCODE AND A.AREA_NO = ORG.AREA_NO
+				        WHERE A.CYCLE = 'M' AND A.AREA_NO = #{areaNo}
+				        AND A.DATA_YEAR = #{dataYear}
+				        AND ORG.USERID = #{userId}
+				        <if test="orgNoList != null and orgNoList.size()>0 ">
+							AND A.ORG_NO IN <foreach collection="orgNoList" item="orgNo" open="(" separator="," close=")">#{orgNo}</foreach>
+						</if>
+						<if test="kpiCodeList != null and kpiCodeList ">
+							AND A.KPI_CODE IN <foreach collection="kpiCodeList" item="kpiCode" open="(" separator="," close=")">#{kpiCode}</foreach>
+						</if>
+				      ) A
+				LEFT JOIN PI_ORG_KPI B ON A.KPI_CODE = B.KPI_CODE AND A.ORG_NO = B.ORG_NO AND B.DATA_DATE = A.DATA_DATE AND A.AREA_NO = B.AREA_NO
+				WHERE A.DATA_YEAR = #{dataYear} AND a.CYCLE = 'M' AND A.AREA_NO = #{areaNo}
+				GROUP BY A.ORG_NO,A.KPI_CODE,A.AREA_NO
+		) A
+		INNER JOIN PCMC_DEPT B ON A.AREA_NO = B.CORPCODE AND A.ORG_NO = B.DEPTCODE AND B.DISABLE = '0' AND A.AREA_NO = B.CORPCODE
+		INNER JOIN MO_KPI_INFO C ON A.KPI_CODE = C.KPI_CODE AND A.AREA_NO = C.AREA_NO AND C.AREA_NO = #{areaNo}
+		order by A.ORG_NO
+	</select>
+	<!--行员年任务完成情况查询  -->
+	<select id="queryUserYearTaskQuerylistPage" parameterType="java.util.HashMap"  resultMap="kpiValueMap" >
+		SELECT ${dataYear} AS DATAYEAR,D.DEPTCODE AS ORGNO,D.DEPTNAME AS ORGNAME,A.MANAGER_NO AS MANAGERNO,B.USERNAME AS MANAGERNAME,A.KPI_CODE AS KPICODE,C.KPI_NAME AS KPINAME,
+		        A.KPIVALUE1 AS KPIVALUE1,A.MBOVALUE1 AS MBOVALUE1,CASE WHEN A.KPIVALUE1 = 0 THEN 0 WHEN A.MBOVALUE1 = 0 THEN 100 ELSE A.KPIVALUE1/A.MBOVALUE1 *100 END RATE1
+		FROM
+		(
+				SELECT A.MANAGER_NO,A.KPI_CODE,A.AREA_NO,
+			        SUM(CASE WHEN A.NUM = 1 THEN A.MBO_VALUE ELSE 0 END) AS MBOVALUE1,
+			        SUM(CASE WHEN A.NUM = 1 THEN B.KPI_VALUE ELSE 0 END) AS KPIVALUE1
+			       
+				FROM (
+						SELECT A.KPI_CODE,A.MANAGER_NO,A.AREA_NO,A.DATA_YEAR,A.CYCLE,A.NUM,A.MBO_VALUE,
+				              A.END_DATE AS DATA_DATE
+				        FROM AP_MBO_PERSON_VALUE A 
+                        INNER JOIN PCMC_USER PUSER ON A.MANAGER_NO = PUSER.USERCODE AND PUSER.DISABLE != '1' and A.AREA_NO = PUSER.CORPCODE
+				        INNER JOIN V_AUTH_ORG ORG ON PUSER.DEPTID = ORG.DEPTID AND A.AREA_NO = ORG.AREA_NO
+				        WHERE A.CYCLE = 'Y' AND A.AREA_NO = #{areaNo}
+				        AND A.DATA_YEAR = #{dataYear}
+				        AND ORG.USERID = #{userId}
+				        <if test="managerNoList != null and managerNoList.size()>0 ">
+							AND A.MANAGER_NO IN <foreach collection="managerNoList" item="managerNo" open="(" separator="," close=")">#{managerNo}</foreach>
+						</if>
+						<if test="kpiCodeList != null and kpiCodeList ">
+							AND A.KPI_CODE IN <foreach collection="kpiCodeList" item="kpiCode" open="(" separator="," close=")">#{kpiCode}</foreach>
+						</if>
+				      ) A
+				LEFT JOIN PI_ORG_KPI_PERSON B ON A.KPI_CODE = B.KPI_CODE AND A.MANAGER_NO = B.MANAGER_NO AND B.DATA_DATE = A.DATA_DATE AND A.AREA_NO = B.AREA_NO
+				WHERE A.DATA_YEAR = #{dataYear} AND a.CYCLE = 'Y' AND A.AREA_NO = #{areaNo}
+				GROUP BY A.MANAGER_NO,A.KPI_CODE,A.AREA_NO
+		) A
+		INNER JOIN PCMC_USER B ON A.MANAGER_NO = B.USERCODE AND A.AREA_NO = B.CORPCODE AND B.DISABLE != '1' 
+		INNER JOIN MO_KPI_INFO C ON A.AREA_NO = C.AREA_NO AND A.KPI_CODE = C.KPI_CODE AND C.AREA_NO = #{areaNo}
+        INNER JOIN PCMC_DEPT D ON B.DEPTID = D.DEPTID AND D.DISABLE = '0'   
+	</select>
+	<!--行员季任务完成情况查询  -->
+	<select id="queryUserQuarterTaskQuerylistPage" parameterType="java.util.HashMap"  resultMap="kpiValueMap" >
+		SELECT ${dataYear} AS DATAYEAR,D.DEPTCODE AS ORGNO,D.DEPTNAME AS ORGNAME,A.MANAGER_NO AS MANAGERNO,B.USERNAME AS MANAGERNAME,A.KPI_CODE AS KPICODE,C.KPI_NAME AS KPINAME,
+		        A.KPIVALUE1 AS KPIVALUE1,A.MBOVALUE1 AS MBOVALUE1,CASE WHEN A.KPIVALUE1 = 0 THEN 0 WHEN A.MBOVALUE1 = 0 THEN 100 ELSE A.KPIVALUE1/A.MBOVALUE1 *100 END RATE1, 
+		        A.KPIVALUE2 AS KPIVALUE2,A.MBOVALUE2 AS MBOVALUE2,CASE WHEN A.KPIVALUE2 = 0 THEN 0 WHEN A.MBOVALUE2 = 0 THEN 100 ELSE A.KPIVALUE2/A.MBOVALUE2 *100 END RATE2, 
+		        A.KPIVALUE3 AS KPIVALUE3,A.MBOVALUE3 AS MBOVALUE3,CASE WHEN A.KPIVALUE3 = 0 THEN 0 WHEN A.MBOVALUE3 = 0 THEN 100 ELSE A.KPIVALUE3/A.MBOVALUE3 *100 END RATE3, 
+		        A.KPIVALUE4 AS KPIVALUE4,A.MBOVALUE4 AS MBOVALUE4,CASE WHEN A.KPIVALUE4 = 0 THEN 0 WHEN A.MBOVALUE4 = 0 THEN 100 ELSE A.KPIVALUE4/A.MBOVALUE4 *100 END RATE4
+		FROM
+		(
+				SELECT A.MANAGER_NO,A.KPI_CODE,A.AREA_NO,
+			        SUM(CASE WHEN A.NUM = 1 THEN A.MBO_VALUE ELSE 0 END) AS MBOVALUE1,
+			        SUM(CASE WHEN A.NUM = 1 THEN B.KPI_VALUE ELSE 0 END) AS KPIVALUE1,
+			        SUM(CASE WHEN A.NUM = 2 THEN A.MBO_VALUE ELSE 0 END) AS MBOVALUE2,
+			        SUM(CASE WHEN A.NUM = 2 THEN B.KPI_VALUE ELSE 0 END) AS KPIVALUE2,
+			        SUM(CASE WHEN A.NUM = 3 THEN A.MBO_VALUE ELSE 0 END) AS MBOVALUE3,
+			        SUM(CASE WHEN A.NUM = 3 THEN B.KPI_VALUE ELSE 0 END) AS KPIVALUE3,
+			        SUM(CASE WHEN A.NUM = 4 THEN A.MBO_VALUE ELSE 0 END) AS MBOVALUE4,
+			        SUM(CASE WHEN A.NUM = 4 THEN B.KPI_VALUE ELSE 0 END) AS KPIVALUE4
+				FROM (
+						SELECT A.KPI_CODE,A.MANAGER_NO,A.AREA_NO,A.DATA_YEAR,A.CYCLE,A.NUM,A.MBO_VALUE,
+				              (CASE WHEN NUM = 1 THEN #{dataDate1} 
+				               WHEN NUM = 2 THEN #{dataDate2}
+				               WHEN NUM = 3 THEN #{dataDate3}
+				               WHEN NUM = 4 THEN #{dataDate4}
+				               ELSE NULL END) AS DATA_DATE
+				        FROM AP_MBO_PERSON_VALUE A 
+                        INNER JOIN PCMC_USER PUSER ON A.MANAGER_NO = PUSER.USERCODE AND PUSER.DISABLE != '1' and A.AREA_NO = PUSER.CORPCODE
+				        INNER JOIN V_AUTH_ORG ORG ON PUSER.DEPTID = ORG.DEPTID AND A.AREA_NO = ORG.AREA_NO
+				        WHERE A.CYCLE = 'Q' AND A.AREA_NO = #{areaNo}
+				        AND A.DATA_YEAR = #{dataYear}
+				        AND ORG.USERID = #{userId}
+				        <if test="managerNoList != null and managerNoList.size()>0 ">
+							AND A.MANAGER_NO IN <foreach collection="managerNoList" item="managerNo" open="(" separator="," close=")">#{managerNo}</foreach>
+						</if>
+						<if test="kpiCodeList != null and kpiCodeList ">
+							AND A.KPI_CODE IN <foreach collection="kpiCodeList" item="kpiCode" open="(" separator="," close=")">#{kpiCode}</foreach>
+						</if>
+				      ) A
+				LEFT JOIN PI_ORG_KPI_PERSON B ON A.KPI_CODE = B.KPI_CODE AND A.MANAGER_NO = B.MANAGER_NO AND B.DATA_DATE = A.DATA_DATE AND A.AREA_NO = B.AREA_NO
+				WHERE A.DATA_YEAR = #{dataYear} AND a.CYCLE = 'Q' AND A.AREA_NO = #{areaNo}
+				GROUP BY A.MANAGER_NO,A.KPI_CODE,A.AREA_NO
+		) A
+		INNER JOIN PCMC_USER B ON A.MANAGER_NO = B.USERCODE AND A.AREA_NO = B.CORPCODE AND B.DISABLE != '1' 
+		INNER JOIN MO_KPI_INFO C ON A.AREA_NO = C.AREA_NO AND A.KPI_CODE = C.KPI_CODE AND C.AREA_NO = #{areaNo}
+        INNER JOIN PCMC_DEPT D ON B.DEPTID = D.DEPTID AND D.DISABLE = '0'   
+	</select>
+	
+	<!--行员月任务完成情况查询  -->
+	<select id="queryUserMonthTaskQuerylistPage" parameterType="java.util.HashMap"  resultMap="kpiValueMap" >
+		SELECT ${dataYear} AS DATAYEAR,D.DEPTCODE AS ORGNO,D.DEPTNAME AS ORGNAME,A.MANAGER_NO AS MANAGERNO,B.USERNAME AS MANAGERNAME,A.KPI_CODE AS KPICODE,C.KPI_NAME AS KPINAME,
+		        A.KPIVALUE1 AS KPIVALUE1,A.MBOVALUE1 AS MBOVALUE1,CASE WHEN A.KPIVALUE1 = 0 THEN 0 WHEN A.MBOVALUE1 = 0 THEN 100 ELSE A.KPIVALUE1/A.MBOVALUE1 *100 END AS RATE1, 
+		        A.KPIVALUE2 AS KPIVALUE2,A.MBOVALUE2 AS MBOVALUE2,CASE WHEN A.KPIVALUE2 = 0 THEN 0 WHEN A.MBOVALUE2 = 0 THEN 100 ELSE A.KPIVALUE2/A.MBOVALUE2 *100 END AS RATE2, 
+		        A.KPIVALUE3 AS KPIVALUE3,A.MBOVALUE3 AS MBOVALUE3,CASE WHEN A.KPIVALUE3 = 0 THEN 0 WHEN A.MBOVALUE3 = 0 THEN 100 ELSE A.KPIVALUE3/A.MBOVALUE3 *100 END AS RATE3, 
+		        A.KPIVALUE4 AS KPIVALUE4,A.MBOVALUE4 AS MBOVALUE4,CASE WHEN A.KPIVALUE4 = 0 THEN 0 WHEN A.MBOVALUE4 = 0 THEN 100 ELSE A.KPIVALUE4/A.MBOVALUE4 *100 END AS RATE4,
+		        A.KPIVALUE5 AS KPIVALUE5,A.MBOVALUE5 AS MBOVALUE5,CASE WHEN A.KPIVALUE5 = 0 THEN 0 WHEN A.MBOVALUE5 = 0 THEN 100 ELSE A.KPIVALUE5/A.MBOVALUE5 *100 END AS RATE5,
+		        A.KPIVALUE6 AS KPIVALUE6,A.MBOVALUE6 AS MBOVALUE6,CASE WHEN A.KPIVALUE6 = 0 THEN 0 WHEN A.MBOVALUE6 = 0 THEN 100 ELSE A.KPIVALUE6/A.MBOVALUE6 *100 END AS RATE6,
+		        A.KPIVALUE7 AS KPIVALUE7,A.MBOVALUE7 AS MBOVALUE7,CASE WHEN A.KPIVALUE7 = 0 THEN 0 WHEN A.MBOVALUE7 = 0 THEN 100 ELSE A.KPIVALUE7/A.MBOVALUE7 *100 END AS RATE7,
+		        A.KPIVALUE8 AS KPIVALUE8,A.MBOVALUE8 AS MBOVALUE8,CASE WHEN A.KPIVALUE8 = 0 THEN 0 WHEN A.MBOVALUE8 = 0 THEN 100 ELSE A.KPIVALUE8/A.MBOVALUE8 *100 END AS RATE8,
+		        A.KPIVALUE9 AS KPIVALUE9,A.MBOVALUE9 AS MBOVALUE9,CASE WHEN A.KPIVALUE9 = 0 THEN 0 WHEN A.MBOVALUE9 = 0 THEN 100 ELSE A.KPIVALUE9/A.MBOVALUE9 *100 END AS RATE9,
+		        A.KPIVALUE10 AS KPIVALUE10,A.MBOVALUE10 AS MBOVALUE10,CASE WHEN A.KPIVALUE10 = 0 THEN 0 WHEN A.MBOVALUE10 = 0 THEN 100 ELSE A.KPIVALUE10/A.MBOVALUE10 *100 END AS RATE10,
+		        A.KPIVALUE11 AS KPIVALUE11,A.MBOVALUE11 AS MBOVALUE11,CASE WHEN A.KPIVALUE11 = 0 THEN 0 WHEN A.MBOVALUE11 = 0 THEN 100 ELSE A.KPIVALUE11/A.MBOVALUE11 *100 END AS RATE11,
+		        A.KPIVALUE12 AS KPIVALUE12,A.MBOVALUE12 AS MBOVALUE12,CASE WHEN A.KPIVALUE12 = 0 THEN 0 WHEN A.MBOVALUE12 = 0 THEN 100 ELSE A.KPIVALUE12/A.MBOVALUE12 *100 END AS RATE12
+		FROM
+		(
+				SELECT A.MANAGER_NO,A.KPI_CODE,A.AREA_NO,
+			        SUM(CASE WHEN A.NUM = 1 THEN A.MBO_VALUE ELSE 0 END) AS MBOVALUE1,
+			        SUM(CASE WHEN A.NUM = 1 THEN B.KPI_VALUE ELSE 0 END) AS KPIVALUE1,
+			        SUM(CASE WHEN A.NUM = 2 THEN A.MBO_VALUE ELSE 0 END) AS MBOVALUE2,
+			        SUM(CASE WHEN A.NUM = 2 THEN B.KPI_VALUE ELSE 0 END) AS KPIVALUE2,
+			        SUM(CASE WHEN A.NUM = 3 THEN A.MBO_VALUE ELSE 0 END) AS MBOVALUE3,
+			        SUM(CASE WHEN A.NUM = 3 THEN B.KPI_VALUE ELSE 0 END) AS KPIVALUE3,
+			        SUM(CASE WHEN A.NUM = 4 THEN A.MBO_VALUE ELSE 0 END) AS MBOVALUE4,
+			        SUM(CASE WHEN A.NUM = 4 THEN B.KPI_VALUE ELSE 0 END) AS KPIVALUE4,
+			        SUM(CASE WHEN A.NUM = 5 THEN A.MBO_VALUE ELSE 0 END) AS MBOVALUE5,
+			        SUM(CASE WHEN A.NUM = 5 THEN B.KPI_VALUE ELSE 0 END) AS KPIVALUE5,
+			        SUM(CASE WHEN A.NUM = 6 THEN A.MBO_VALUE ELSE 0 END) AS MBOVALUE6,
+			        SUM(CASE WHEN A.NUM = 6 THEN B.KPI_VALUE ELSE 0 END) AS KPIVALUE6,
+			        SUM(CASE WHEN A.NUM = 7 THEN A.MBO_VALUE ELSE 0 END) AS MBOVALUE7,
+			        SUM(CASE WHEN A.NUM = 7 THEN B.KPI_VALUE ELSE 0 END) AS KPIVALUE7,
+			        SUM(CASE WHEN A.NUM = 8 THEN A.MBO_VALUE ELSE 0 END) AS MBOVALUE8,
+			        SUM(CASE WHEN A.NUM = 8 THEN B.KPI_VALUE ELSE 0 END) AS KPIVALUE8,
+			        SUM(CASE WHEN A.NUM = 9 THEN A.MBO_VALUE ELSE 0 END) AS MBOVALUE9,
+			        SUM(CASE WHEN A.NUM = 9 THEN B.KPI_VALUE ELSE 0 END) AS KPIVALUE9,
+			        SUM(CASE WHEN A.NUM = 10 THEN A.MBO_VALUE ELSE 0 END) AS MBOVALUE10,
+			        SUM(CASE WHEN A.NUM = 10 THEN B.KPI_VALUE ELSE 0 END) AS KPIVALUE10,
+			        SUM(CASE WHEN A.NUM = 11 THEN A.MBO_VALUE ELSE 0 END) AS MBOVALUE11,
+			        SUM(CASE WHEN A.NUM = 11 THEN B.KPI_VALUE ELSE 0 END) AS KPIVALUE11,
+			        SUM(CASE WHEN A.NUM = 12 THEN A.MBO_VALUE ELSE 0 END) AS MBOVALUE12,
+			        SUM(CASE WHEN A.NUM = 12 THEN B.KPI_VALUE ELSE 0 END) AS KPIVALUE12
+				FROM (
+						SELECT a.KPI_CODE,a.MANAGER_NO,a.AREA_NO,a.DATA_YEAR,a.CYCLE,a.NUM,a.MBO_VALUE,
+				              (CASE WHEN NUM = 1 THEN #{dataDate1} 
+				               WHEN NUM = 2 THEN #{dataDate2}
+				               WHEN NUM = 3 THEN #{dataDate3}
+				               WHEN NUM = 4 THEN #{dataDate4}
+				               WHEN NUM = 5 THEN #{dataDate5}
+				               WHEN NUM = 6 THEN #{dataDate6}
+				               WHEN NUM = 7 THEN #{dataDate7}
+				               WHEN NUM = 8 THEN #{dataDate8}
+				               WHEN NUM = 9 THEN #{dataDate9}
+				               WHEN NUM = 10 THEN #{dataDate10}
+				               WHEN NUM = 11 THEN #{dataDate11}
+				               WHEN NUM = 12 THEN #{dataDate12}
+				               ELSE NULL END) AS DATA_DATE
+				        FROM AP_MBO_PERSON_VALUE A 
+                        INNER JOIN PCMC_USER PUSER ON A.MANAGER_NO = PUSER.USERCODE AND PUSER.DISABLE != '1' AND A.AREA_NO = PUSER.CORPCODE
+				        INNER JOIN V_AUTH_ORG ORG ON PUSER.DEPTID = ORG.DEPTID AND A.AREA_NO = ORG.AREA_NO
+				        WHERE A.CYCLE = 'M' AND A.AREA_NO = #{areaNo}
+				        AND A.DATA_YEAR = #{dataYear}
+				        AND ORG.USERID = #{userId}
+				       <if test="managerNoList != null and managerNoList.size()>0 ">
+							AND A.MANAGER_NO IN <foreach collection="managerNoList" item="managerNo" open="(" separator="," close=")">#{managerNo}</foreach>
+						</if>
+						<if test="kpiCodeList != null and kpiCodeList ">
+							AND A.KPI_CODE IN <foreach collection="kpiCodeList" item="kpiCode" open="(" separator="," close=")">#{kpiCode}</foreach>
+						</if>
+				      ) A
+				lEFT JOIN PI_ORG_KPI_PERSON B ON A.KPI_CODE = B.KPI_CODE AND A.MANAGER_NO = B.MANAGER_NO AND B.DATA_DATE = A.DATA_DATE AND A.AREA_NO = B.AREA_NO
+				WHERE A.DATA_YEAR = #{dataYear} AND A.CYCLE = 'M' AND A.AREA_NO = #{areaNo}
+				GROUP BY A.MANAGER_NO,A.KPI_CODE,A.AREA_NO
+		) A
+		INNER JOIN PCMC_USER B ON A.MANAGER_NO = B.USERCODE AND A.AREA_NO = B.CORPCODE AND B.DISABLE != '1'
+		INNER JOIN MO_KPI_INFO C ON A.AREA_NO = C.AREA_NO AND A.KPI_CODE = C.KPI_CODE AND C.AREA_NO = #{areaNo}
+        INNER JOIN PCMC_DEPT D ON B.DEPTID = D.DEPTID AND D.DISABLE = '0'
+        order by  A.Manager_No
+	</select>
+	
+	<select id="getChiledDeptCode" parameterType="HashMap" resultType="String">
+		SELECT DEPTCODE FROM PCMC_DEPT 
+		WHERE PDEPTID = (SELECT DEPTID FROM PCMC_DEPT WHERE CORPCODE = #{corpCode} and DEPTCODE = #{deptCode})
+		AND DISABLE = '0'
+		order by DEPTCODE
+	</select>
+	
+	<resultMap type="java.util.HashMap" id="deptMap">
+		<result column="DEPTCODE" property="deptCode"/>
+		<result column="DEPTNAME" property="deptName"/>
+	</resultMap>
+	<select id="getChiledDept" parameterType="HashMap" resultMap="deptMap">
+		SELECT DEPTCODE,DEPTNAME FROM PCMC_DEPT 
+		WHERE PDEPTID = (SELECT DEPTID FROM PCMC_DEPT WHERE CORPCODE = #{corpCode} and DEPTCODE = #{deptCode})
+		AND DISABLE = '0'
+		order by DEPTCODE
+	</select>
+	
+	<resultMap type="java.util.HashMap" id="userMap">
+		<result column="USERCODE" property="userCode"/>
+		<result column="USERNAME" property="userName"/>
+	</resultMap>
+	<select id="getChiledUser" parameterType="HashMap" resultMap="userMap">
+		SELECT USERCODE,USERNAME FROM PCMC_USER 
+		WHERE DISABLE = '0'
+		AND DEPTID = (SELECT DEPTID FROM PCMC_DEPT WHERE CORPCODE = #{areaNo} and DEPTCODE = #{deptCode})
+		AND CORPCODE = #{areaNo}
+	</select>
+	
+	<select id="getChiledUser1" parameterType="HashMap" resultMap="userMap">
+		SELECT USERCODE, USERNAME FROM PCMC_USER
+ 		WHERE DISABLE = '0'
+   		AND DEPTID  in (select deptid from PCMC_DEPT where pdeptid=(
+                        select deptid from PCMC_DEPT where DEPTCODE = #{deptCode})
+                        union all select deptid from PCMC_DEPT where DEPTCODE = #{deptCode})
+        AND not regexp_like(USERCODE,'PFM')
+  		AND not regexp_like(USERCODE,'w')
+  		order by deptid,usercode
+	</select>
+	
+	
+	<select id="getDeptcodeByUserId" parameterType="java.util.HashMap"  resultType="String">
+		select deptcode  from PCMC_DEPT where deptid = 
+		(select deptid  from  pcmc_user  where userid = #{userId} and DISABLE = '0')
+	</select>
+	
+	<select id="getKpiCodeByKpiName" parameterType="java.util.HashMap"  resultType="String">
+		SELECT 
+			KPI_CODE
+		FROM MO_KPI_INFO 
+		WHERE DEL_FLAG = '0' 
+		AND KPI_NAME = #{kpiName} 
+		AND AREA_NO = #{areaNo}
+	</select>
+	<select id="getKpiNameByKpiCode" parameterType="java.util.HashMap"  resultType="String">
+		SELECT 
+			KPI_NAME
+		FROM MO_KPI_INFO 
+		WHERE DEL_FLAG = '0' 
+		AND KPI_CODE = #{kpiCode} 
+		AND AREA_NO = #{areaNo}
+	</select>
+	
+	
+	<select id="getUserNameByUserNo" parameterType="java.util.HashMap"  resultType="String">
+		SELECT 
+			username
+		FROM pcmc_user 
+		WHERE usercode = #{userNo} 
+	</select>
+	
+	<select id="getDeptCode" parameterType="HashMap"  resultType="String">
+		SELECT DEPTNAME FROM PCMC_DEPT WHERE CORPCODE = #{corpCode} AND DEPTCODE = #{deptCode}
+	</select>
+	
+	<select id="getAreaNo" parameterType="java.util.HashMap" resultType="String">
+		SELECT 
+			AREANO
+		FROM PCMC_DEPT 
+		WHERE DEPTCODE = #{deptCode} and CORPCODE = #{corpCode}
+		and DISABLE = '0'
+		<if test="deptName != null and deptName != '' ">
+			AND DEPTNAME = #{deptName}
+		</if>
+	</select>
+	
+	<select id="isUsedForUserTask" parameterType="java.util.HashMap" resultType="String">
+		SELECT ID FROM AP_MBO_PERSON_VALUE
+		<where>
+			<if test="areaNo != null and areaNo != ''">
+				AND AREA_NO = #{areaNo}
+			</if>
+			<if test="kpiCode != null and kpiCode != ''">
+				AND KPI_CODE = #{kpiCode}
+			</if>
+			<if test="year != null and year != ''">
+				AND DATA_YEAR = #{year}
+			</if>
+			<if test="objCode != null and objCode != ''">
+				AND MANAGER_NO = #{objCode}
+			</if>
+		</where>
+	</select>
+	<select id="isUsedForDeptTask" parameterType="java.util.HashMap" resultType="String">
+		SELECT ID FROM AP_MBO_ORG_VALUE
+		<where>
+			<if test="areaNo != null and areaNo != ''">
+				AND AREA_NO = #{areaNo}
+			</if>
+			<if test="kpiCode != null and kpiCode != ''">
+				AND KPI_CODE = #{kpiCode}
+			</if>
+			<if test="year != null and year != ''">
+				AND DATA_YEAR = #{year}
+			</if>
+			<if test="objCode != null and objCode != ''">
+				AND ORG_NO = #{objCode}
+			</if>
+		</where>
+	</select>
+	
+	<select id="getKpiOptionsList" parameterType="String"  resultType="java.util.HashMap">
+	    select kpi_code ,kpi_name  from mo_kpi_info  order by kpi_code
+	</select>
+</mapper> 	  
+ 	 

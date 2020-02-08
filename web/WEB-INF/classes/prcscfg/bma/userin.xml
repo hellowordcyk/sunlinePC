@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="gb2312"?>
+<!DOCTYPE commonfield [<!ENTITY common_request_field SYSTEM "common_request.entity"> <!ENTITY common_response_field SYSTEM "common_response.entity">]>
+<packet prcscd="userin">
+    <Request>
+    	&common_request_field;
+        <Field name="userpw" title="" type="String" maxlen="6" defaultval=""/>
+        <Field name="backtg" title="" type="String" maxlen="4" defaultval=""/>
+    </Request>
+    <Response>
+      &common_response_field;
+      <Field name="sessionid" title="" type="String" maxlen="3" defaultval=""/>
+      <Field name="systdt" title="" type="String" maxlen="8" defaultval=""/>
+      <Field name="brchno" title="" type="String" maxlen="4" defaultval=""/>
+    </Response>
+</packet>

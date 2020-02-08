@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="com.sunline.pams.mybatis.public.subjectivekpivalue" >
+ 	<resultMap type="java.util.HashMap" id="SubjectiveKpiValueMap">
+ 	  		<result column="INPUT_ID" property="inputID"/>
+ 	  		<result column="KPI_CODE" property="kpiCode"/>
+ 	  		<result column="KPI_NAME" property="kpiName"/>
+ 	  		<result column="PA_TYPE" property="paType"/>
+ 	  		<result column="OBJ_NO" property="objNo"/>
+ 	  		<result column="DEPTNAME" property="deptName"/>
+ 	  		<result column="USERNAME" property="userName"/>
+ 	  		<result column="KPI_VALUE" property="kpiValue"/>
+ 	  		<result column="START_DATE" property="startDate"/>
+ 	  		<result column="END_DATE" property="endDate"/>
+ 	  		<result column="CREATE_TIME" property="createTime"/>
+ 	  		<result column="OPERATOR" property="operator"/>
+ 	  </resultMap>
+	<select id="querySubjectiveKpiValuelistPage" parameterType="java.util.HashMap"  resultMap="SubjectiveKpiValueMap">
+		SELECT 
+			A.INPUT_ID,A.KPI_CODE,B.KPI_NAME,A.PA_TYPE,A.OBJ_NO,C.DEPTNAME,D.USERNAME,
+			A.KPI_VALUE,A.START_DATE,A.END_DATE,A.CREATE_TIME,A.OPERATOR
+		FROM AP_SBJ_INPUT_VALUE A
+		LEFT JOIN MO_KPI_SUBJECTIVE B ON A.KPI_CODE = B.KPI_CODE
+		LEFT JOIN PCMC_DEPT C ON A.OBJ_NO = C.DEPTCODE and A.AREA_NO = c.corpcode
+		LEFT JOIN PCMC_USER D ON A.OPERATOR = D.USERCODE
+		WHERE A.STATUS = '1'
+		<if test="inputID !=null and inputID !=''">  
+	   		AND A.INPUT_ID = #{inputID}
+		</if>
+		<if test="kpiCode !=null and kpiCode !=''">  
+	   		AND A.KPI_CODE = #{kpiCode}
+		</if>
+		<if test="paType !=null and paType !=''">  
+	   		AND A.PA_TYPE = #{paType}
+		</if>
+		<if test="areaNo !=null and areaNo !=''">  
+	   		AND A.AREA_NO = #{areaNo}
+		</if>
+		<if test="startDate1 !=null and startDate1 !=''">  
+	   		<![CDATA[AND A.START_DATE >= #{startDate1}]]>
+		</if>
+		<if test="startDate2 !=null and startDate2 !=''">  
+	   		<![CDATA[AND A.START_DATE <= #{startDate2}]]>
+		</if>
+		<if test="endDate1 !=null and endDate1 !=''">  
+	   		<![CDATA[AND A.END_DATE >= #{endDate1}]]>
+		</if>
+		<if test="endDate2 !=null and endDate2 !=''">  
+	   		<![CDATA[AND A.END_DATE <= #{endDate2}]]>
+		</if>
+	</select>
+	
+	
+	<select id="querySubjectiveKpiValueExport" parameterType="java.util.HashMap"  resultMap="SubjectiveKpiValueMap">
+		SELECT 
+			A.INPUT_ID,A.KPI_CODE,B.KPI_NAME,A.PA_TYPE,A.OBJ_NO,C.DEPTNAME,D.USERNAME,
+			A.KPI_VALUE,A.START_DATE,A.END_DATE,A.CREATE_TIME,A.OPERATOR
+		FROM AP_SBJ_INPUT_VALUE A
+		LEFT JOIN MO_KPI_SUBJECTIVE B ON A.KPI_CODE = B.KPI_CODE
+		LEFT JOIN PCMC_DEPT C ON A.OBJ_NO = C.DEPTCODE and A.AREA_NO = c.corpcode
+		LEFT JOIN PCMC_USER D ON A.OPERATOR = D.USERCODE
+		WHERE A.STATUS = '1'
+		<if test="inputID !=null and inputID !=''">  
+	   		AND A.INPUT_ID = #{inputID}
+		</if>
+		<if test="kpiCode !=null and kpiCode !=''">  
+	   		AND A.KPI_CODE = #{kpiCode}
+		</if>
+		<if test="paType !=null and paType !=''">  
+	   		AND A.PA_TYPE = #{paType}
+		</if>
+		<if test="areaNo !=null and areaNo !=''">  
+	   		AND A.AREA_NO = #{areaNo}
+		</if>
+		<if test="startDate1 !=null and startDate1 !=''">  
+	   		<![CDATA[AND A.START_DATE >= #{startDate1}]]>
+		</if>
+		<if test="startDate2 !=null and startDate2 !=''">  
+	   		<![CDATA[AND A.START_DATE <= #{startDate2}]]>
+		</if>
+		<if test="endDate1 !=null and endDate1 !=''">  
+	   		<![CDATA[AND A.END_DATE >= #{endDate1}]]>
+		</if>
+		<if test="endDate2 !=null and endDate2 !=''">  
+	   		<![CDATA[AND A.END_DATE <= #{endDate2}]]>
+		</if>
+	</select>
+	
+	<!-- 时间段筛选 -->
+	<resultMap type="java.util.HashMap" id="checkTimeMap">
+ 	  		<result column="INPUT_ID" property="inputID"/>
+ 	  		<result column="START_DATE" property="startDate"/>
+ 	  		<result column="END_DATE" property="endDate"/>
+ 	  </resultMap>
+	<select id="checkTime" parameterType="java.util.HashMap"  resultMap="checkTimeMap">
+		SELECT 
+			INPUT_ID,
+			START_DATE,
+			END_DATE
+		FROM AP_SBJ_INPUT_VALUE 
+		WHERE STATUS = '1' AND KPI_CODE = #{kpiCode} AND OBJ_NO = #{objNo} AND PA_TYPE = #{paType}
+	</select>
+
+	<insert id="addSubjectiveKpiValue" parameterType="java.util.HashMap">
+		INSERT INTO AP_SBJ_INPUT_VALUE(INPUT_ID,AREA_NO,START_DATE,END_DATE,PA_TYPE,KPI_CODE,KPI_VALUE,OBJ_NO,CREATE_TIME,OPERATOR,ORG_NO,STATUS)
+		VALUES(#{inputID},#{areaNo},#{startDate},#{endDate},#{paType},#{kpiCode},#{kpiValue},#{objNo},#{createTime},#{operator},#{orgNo},#{status})
+	</insert>
+	
+	<update id="delSubjectiveKpiValueByinputID" parameterType="java.util.HashMap">
+		UPDATE AP_SBJ_INPUT_VALUE SET STATUS = '0' WHERE INPUT_ID = #{inputID}
+	</update>
+	
+	<update id="deleteSubjectiveKpiValueForBatch" parameterType="java.util.List">
+		UPDATE AP_SBJ_INPUT_VALUE SET STATUS = '0' 
+		WHERE INPUT_ID IN <foreach collection="list" item="inputID" open="(" separator="," close=")">#{inputID}</foreach> 
+	</update>
+	
+	<update id="deleteSubjectiveKpiValue" parameterType="java.util.HashMap">
+		UPDATE AP_SBJ_INPUT_VALUE SET STATUS = '0' 
+		WHERE KPI_CODE = #{kpiCode} AND PA_TYPE = #{paType} AND OBJ_NO = #{objNo} 
+		AND START_DATE = #{startDate} AND END_DATE = #{endDate}
+	</update>
+	
+	<update id="updateKpiValue" parameterType="java.util.HashMap">
+		UPDATE AP_SBJ_INPUT_VALUE SET 
+			KPI_VALUE = #{kpiValue},
+			CREATE_TIME = #{createTime},
+			OPERATOR = #{operator},
+			ORG_NO = #{orgNo}     
+		WHERE INPUT_ID = #{inputID}
+	</update>
+	
+	<select id="getKpiCodeByKpiName" parameterType="java.util.HashMap" resultType="String">
+		SELECT KPI_CODE FROM MO_KPI_SUBJECTIVE 
+		WHERE DEL_FLAG = '0' 
+		AND STATUS = '1'
+		AND KPI_NAME = #{kpiName}
+		AND AREA_NO = #{areaNo}
+	</select>
+</mapper> 	  
+ 	 

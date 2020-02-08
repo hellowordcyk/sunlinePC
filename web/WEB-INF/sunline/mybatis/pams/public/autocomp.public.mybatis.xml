@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sunline.pams.mybatis.public.autocomp" >
+
+	<resultMap type="java.util.HashMap" id="kpiStrCnSuggestMap">
+		<result column="KPICODE" property="kpicode"/>
+		<result column="KPI_STR_CN" property="kpi_str_cn"/>
+		<result column="TYPE" property="type"/>
+	</resultMap>
+	<select id="kpiStrCnSuggestlistPage" parameterType="java.util.HashMap" resultMap="kpiStrCnSuggestMap">
+		SELECT T.KPICODE,T.KPI_STR_CN,T.TYPE FROM(
+			SELECT KPI_CODE AS KPICODE,KPI_NAME AS KPI_STR_CN,'KO' AS TYPE FROM MO_KPI_INFO
+			UNION
+			SELECT KPI_CODE AS KPICODE,KPI_NAME AS KPI_STR_CN,'KS' AS TYPE FROM MO_KPI_SUBJECTIVE
+			UNION
+			SELECT WAY_CODE AS KPICODE,WAY_NAME AS KPI_STR_CN,'WO' AS TYPE FROM MO_WAY_ORG
+			UNION
+			SELECT WAY_CODE AS KPICODE,WAY_NAME AS KPI_STR_CN,'WU' AS TYPE FROM MO_WAY_PERSON
+		)T
+		WHERE T.TYPE = #{type}
+		<if test="kpiCode != null and kpiCode != ''">
+			AND T.KPI_STR_CN LIKE #{kpiCode}
+		</if>
+	</select>
+ 	 
+</mapper> 	  
+ 	 

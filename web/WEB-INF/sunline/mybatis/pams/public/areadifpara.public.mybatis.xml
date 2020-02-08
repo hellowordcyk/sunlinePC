@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="com.sunline.pams.mybatis.pams.areadifpara" >
+ 	<resultMap type="java.util.HashMap" id="OrgNatureType">
+ 		<result column="PARACD" property="paraCode"/>
+ 		<result column="PARANA" property="paraName"/>
+ 		<result column="AREA_NO_STR" property="areaNo"/>
+ 		<result column="AREA_NAME" property="areaName"/>
+ 	</resultMap>
+ 	<resultMap type="java.util.HashMap" id="AreaDifPara">
+ 		<result column="START_DATE" property="startDate"/>
+		<result column="END_DATE" property="endDate"/>
+		<result column="RATIO" property="ratio"/>
+ 	</resultMap>
+	
+	<select id="queryOrgNatureTypelistPage" parameterType="java.util.HashMap" resultMap="OrgNatureType">
+		SELECT 
+			A.PARACD,
+			A.PARANA,
+			A.AREA_NO_STR,
+			B.AREA_NAME
+		FROM PCMC_KNP_PARA A
+		LEFT JOIN SYS_PUB_AREA B ON A.AREA_NO_STR = B.AREA_NO
+		WHERE A.SUBSCD = #{SUBSCD} 
+		AND A.PARATP = #{PARATP}
+		AND A.PARACD <![CDATA[<>]]> #{ROOTPARACD}
+		AND A.AREA_NO_STR IN (${ruleArea})
+		<if test="areaNo != null and areaNo != ''">
+			AND A.AREA_NO_STR = #{areaNo}
+		</if>
+		<if test="paraName != null and paraName != ''">
+			AND A.PARANA LIKE #{paraName}
+		</if>
+		<if test="paraCode != null and paraCode != ''">
+			AND A.PARACD = #{paraCode}
+		</if>
+	</select>
+	
+	<select id="queryAreaDifPara" parameterType="java.util.HashMap" resultMap="AreaDifPara">
+		SELECT 
+			START_DATE,
+			END_DATE,
+			RATIO
+		FROM MO_PAR_AREA
+		WHERE AREA_NO = #{areaNo} AND ORG_NATURE_TYPE = #{paraCode}
+		ORDER BY START_DATE
+	</select>
+	
+	<delete id="deleteOrgNatureType" parameterType="java.util.HashMap">
+		DELETE FROM PCMC_KNP_PARA
+		WHERE SUBSCD = #{SUBSCD} 
+		AND PARATP = #{PARATP}
+		AND PARACD = #{paraCode}
+		AND AREA_NO_STR = #{areaNo}
+	</delete>
+	
+	<delete id="deleteAreaDifPara" parameterType="java.util.HashMap">
+		DELETE FROM MO_PAR_AREA 
+		WHERE ORG_NATURE_TYPE = #{paraCode}
+		AND AREA_NO = #{areaNo}
+	</delete>
+	
+	<select id="getParaByParaCode" parameterType="java.util.HashMap" resultMap="OrgNatureType">
+		SELECT 
+			PARACD,
+			PARANA,
+			AREA_NO_STR
+		FROM PCMC_KNP_PARA 
+		WHERE SUBSCD = #{SUBSCD} 
+		AND CORPCODE = #{corpCode}
+		AND PARATP = #{PARATP}
+		AND PARACD = #{paraCode}
+		AND AREA_NO_STR = #{areaNo}
+	</select>
+	<select id="getParaByParaName" parameterType="java.util.HashMap" resultMap="OrgNatureType">
+		SELECT 
+			PARACD,
+			PARANA,
+			AREA_NO_STR
+		FROM PCMC_KNP_PARA 
+		WHERE SUBSCD = #{SUBSCD} 
+		AND CORPCODE = #{corpCode}
+		AND PARATP = #{PARATP}
+		AND PARANA = #{paraName}
+		AND AREA_NO_STR = #{areaNo}
+	</select>
+	
+	<insert id="addPara" parameterType="java.util.HashMap">
+		INSERT INTO PCMC_KNP_PARA(SUBSCD,PARATP,PARACD,CORPCODE,PARANA,AREA_NO_STR)
+		VALUES(#{SUBSCD},#{PARATP},#{paraCode},#{corpCode},#{paraName},#{areaNo})
+	</insert>
+	
+	<insert id="addAreaDifPara" parameterType="java.util.HashMap">
+		INSERT INTO MO_PAR_AREA(AREA_NO,ORG_NATURE_TYPE,START_DATE,END_DATE,RATIO,OPERATOR,CREATE_TIME)
+		VALUES(#{areaNo},#{paraCode},#{startDate},#{endDate},#{ratio},#{operator},#{createTime})
+	</insert>
+	
+	<select id="checkOrgNatureTypeNameForUpdate" parameterType="java.util.HashMap" resultMap="OrgNatureType">
+		SELECT 
+			PARACD,
+			PARANA,
+			AREA_NO_STR
+		FROM PCMC_KNP_PARA 
+		WHERE SUBSCD = #{SUBSCD} 
+		AND CORPCODE = #{corpCode}
+		AND PARATP = #{PARATP}
+		AND PARANA = #{paraName}
+		AND AREA_NO_STR = #{areaNo}
+		AND PARACD <![CDATA[<>]]> #{paraCode}
+	</select>
+	
+	<update id="updateOrgNatureType" parameterType="java.util.HashMap">
+		UPDATE PCMC_KNP_PARA SET
+			PARANA = #{paraName}
+		WHERE SUBSCD = #{SUBSCD} AND PARATP = #{PARATP} AND CORPCODE = #{corpCode}
+		AND AREA_NO_STR = #{areaNo} AND PARACD = #{paraCode}
+	</update>
+	
+</mapper> 	  
+ 	 

@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="com.sunline.pams.mybatis.public.midpara" >
+ 	  
+ 	  <resultMap type="java.util.HashMap" id="MidParaMap">
+ 	  		<result column="PROD_CODE" property="PROD_CODE"/>
+ 	  		<result column="PROD_NAME" property="PROD_NAME"/>
+ 	  		<result column="RATE" property="RATE"/>
+ 	  		<result column="PAY_JG" property="PAY_JG"/>
+ 	  		<result column="MID_TYPE" property="MID_TYPE"/>
+ 	  		<result column="START_DATE" property="START_DATE"/>
+ 	  		<result column="END_DATE" property="END_DATE"/>
+ 	  		<result column="PROD_DATE" property="PROD_DATE"/>
+ 	  		<result column="PK_ID" property="PK_ID"/>
+ 	  </resultMap>
+	 	   
+ 	 <!--MVP业绩配置表信息维护 -->
+ 	 <select id="queryMidParalistPage" parameterType="java.util.HashMap" resultMap="MidParaMap">
+		select 
+		a.prod_code as PROD_CODE,
+		a.prod_name as PROD_NAME,
+		a.rate as RATE,
+		a.pay_jg as PAY_JG,
+		a.mid_type as MID_TYPE,
+		to_char(a.start_date,'yyyy-MM-dd') as START_DATE,
+		to_char(a.end_date,'yyyy-MM-dd') as END_DATE ,
+		to_char(a.prod_date,'yyyy-MM-dd') as PROD_DATE,
+		PK_ID as PK_ID
+		from PI_BIZ_MID_PARA a
+		where 1=1
+		<if test= "start_date != null and start_date != ''"> 
+				and a.start_date =to_Date(#{start_date},'yyyy-MM-dd')
+		</if>	
+		<if test= "mid_type != null and mid_type != ''"> 
+				and a.mid_type =#{mid_type}
+		</if>
+		<if test= "prod_nameStr != null and prod_nameStr != ''"> 
+				and a.prod_name like #{prod_nameStr}
+		</if>
+ 	 </select> 	
+ 	 <insert id="addMidPara" parameterType="java.util.HashMap">
+ 	 	insert into PI_BIZ_MID_PARA a(a.prod_code,a.prod_name,a.rate,a.pay_jg,a.mid_type,a.start_date,a.end_date,a.prod_date,a.pk_id)
+ 	 	values (#{prod_code},#{prod_name},to_number(#{rate}),to_number(#{pay_jg}),#{mid_type},to_date(#{start_date},'yyyy-MM-dd'),to_date(#{end_date},'yyyy-MM-dd'),to_Date(#{prod_date},'yyyy-MM-dd'),#{seq_no})
+ 	 </insert>
+ 	 <delete id="deleteMidPara" parameterType="java.util.HashMap">
+ 	 delete from PI_BIZ_MID_PARA where pk_id in (${midParaId})
+ 	 </delete>
+ 	 
+ 	 <select id="queryCount" parameterType="java.util.HashMap" resultMap="MidParaMap">
+		select count(*)
+		from PI_BIZ_MID_PARA
+		where PROD_CODE=#{prod_code}
+ 	 </select>
+ 	 
+ 	 <select id="queryDate" parameterType="java.util.HashMap" resultMap="MidParaMap">
+		select  START_DATE , END_DATE
+		from PI_BIZ_MID_PARA
+		where PROD_CODE=#{prod_code}
+ 	 </select>
+ 	 
+ 	 <select id="queryMidParaById" parameterType="java.util.HashMap" resultMap="MidParaMap">
+		select 
+		a.pk_id as PK_ID,
+		a.prod_code as PROD_CODE,
+		a.prod_name as PROD_NAME,
+		a.rate as RATE,
+		a.pay_jg as PAY_JG,
+		a.mid_type as MID_TYPE,
+		a.start_date as START_DATE,
+		a.end_date as END_DATE,
+		a.prod_date as PROD_DATE
+		from PI_BIZ_MID_PARA a
+		where pk_id=#{midParaId}
+ 	 </select>
+ 	 <update id="updateMidPara" parameterType="java.util.HashMap">
+ 	  update PI_BIZ_MID_PARA set rate=#{rate},pay_jg=#{pay_jg},mid_type=#{mid_type},end_date=to_date(#{end_date},'yyyy-MM-dd'),start_date=to_date(#{start_date},'yyyy-MM-dd')
+ 	  where pk_id=#{seq_no}
+ 	 </update>
+ 	 
+ 	 <select id="exportMidPara" parameterType="java.util.HashMap" resultMap="MidParaMap">
+ 		SELECT PROD_CODE,
+               PROD_NAME,
+               RATE,
+               PAY_JG,
+               MID_TYPE,
+               to_char(START_DATE,'yyyy-MM-dd') as START_DATE,
+       		   to_char(END_DATE,'yyyy-MM-dd') as END_DATE,
+       		   to_char(PROD_DATE,'yyyy-MM-dd') as PROD_DATE,
+               PK_ID 
+		FROM PI_BIZ_MID_PARA A
+		WHERE 1 = 1
+		<if test= "start_date != null and start_date != ''"> 
+				and a.start_date =to_Date(#{start_date},'yyyy-MM-dd')
+		</if>	
+		<if test= "mid_type != null and mid_type != ''"> 
+				and a.mid_type =#{mid_type}
+		</if>
+		<if test= "prod_name != null and prod_name != ''"> 
+				and a.prod_name like #{prod_name}
+		</if>
+ 	</select>
+ 	 
+</mapper> 	  
+ 	 

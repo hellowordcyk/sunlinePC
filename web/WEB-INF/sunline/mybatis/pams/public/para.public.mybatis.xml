@@ -1,0 +1,509 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="com.sunline.pams.mybatis.public.para" >
+	<!-- 分页查找机构基数信息 -->
+	<select id="queryCardinalitylistPage" parameterType="HashMap" resultType="java.util.HashMap">
+	   select distinct
+	     A.BNM_YEAR as "BNMYEAR",A.KPI_CODE as "KPICODE",B.KPI_NAME as "KPINAME",A.ORG_NO as "ORGNO",C.DEPTNAME as "DEPTNAME",A.BNM_VALUE  as "BNMVALUE" ,A.EDIT_VALUE  as "EDITVALUE"
+	     FROM AP_BNM_ORG_VALUE A,MO_KPI_INFO B, pcmc_dept C
+         where A.KPI_CODE=B.KPI_CODE AND A.ORG_NO=C.DEPTID
+         AND A.AREA_NO = B.AREA_NO AND A.AREA_NO = C.CORPCODE
+         AND C.CORPCODE = #{corpCode}
+			<if test="kpiCode != null and kpiCode != '' ">
+			    AND A.KPI_CODE = #{kpiCode}
+		    </if>
+			<if test=" deptName !=null and deptName != ''  ">
+			   AND C.DEPTNAME = #{deptName}
+		    </if>
+		    
+			<if test="orgNo != null and orgNo != '' ">
+			    AND A.ORG_NO = #{orgNo}
+		    </if>
+		    
+			 <if test="bnmYear != null and bnmYear !=''">
+				and A.BNM_YEAR = #{bnmYear}
+			</if>
+
+	</select>
+	<!-- 添加机构基数 -->
+	<insert id="Cardinality" parameterType="java.util.HashMap">
+		insert into AP_BNM_ORG_VALUE(BNM_YEAR,KPI_CODE, ORG_NO ,AREA_NO ,CURRENCY,BNM_VALUE,EDIT_VALUE ,EDITOR )
+		values(#{bnmYear},#{kpiCode},#{orgNo},#{aperaNo},#{CURRENCY},#{bnmValue},#{editValue},#{editor})
+	</insert>
+	<!-- 更新调整值 -->
+	  <update id="updateCardinality" parameterType="java.util.HashMap" >
+	    update AP_BNM_ORG_VALUE set 
+	           EDIT_VALUE =#{editValue}
+	           where KPI_CODE=#{kpiCode} and ORG_NO=#{orgNo}
+	  </update>
+	  
+	 <!-- 根据kpiCode查找信息 --> 
+
+	  <select id="queryCardinalityByKpiCode"  parameterType="java.util.HashMap" resultType="java.util.HashMap" >
+	    select ORG_NO ORGNO,BNM_VALUE BNMVALUE,EDIT_VALUE EDITVALUE from AP_BNM_ORG_VALUE  
+	    where KPI_CODE=#{kpiCode}
+	  </select>
+	  
+   <!-- 机构基数导出语句 -->
+    <select id="exportCardinality" parameterType="HashMap" resultType="java.util.HashMap">
+        select  distinct
+                A.BNM_YEAR bnmYear,A.KPI_CODE kpiCode,B.KPI_NAME kpiName,A.ORG_NO orgNo,C.DEPTNAME deptName,A.BNM_VALUE bnmValue ,A.EDIT_VALUE editValue
+	            FROM AP_BNM_ORG_VALUE A,MO_KPI_INFO B, pcmc_dept C
+                where A.KPI_CODE=B.KPI_CODE AND A.ORG_NO=C.DEPTCODE
+              	AND A.AREA_NO = B.AREA_NO AND A.AREA_NO = C.CORPCODE
+              	AND C.CORPCODE = #{corpCode}
+			<if test="kpiCode != null and kpiCode != '' ">
+			    AND A.KPI_CODE = #{kpiCode}
+		    </if>
+		    
+			<if test=" deptName !=null and deptName != ''  ">
+			  AND C.DEPTNAME = #{deptName}
+		    </if>
+		    
+			<if test="orgNo != null and orgNo != '' ">
+			    AND A.ORG_NO = #{orgNo}
+		    </if>
+		    
+			 <if test="bnmYear != null and bnmYear !=''">
+				and A.BNM_YEAR = #{bnmYear}
+			</if>
+    </select> 
+     
+    <!-- 行员基数查询——添加 -->
+   <insert id="addEmpCardinality" parameterType="java.util.HashMap">
+     INSERT INTO AP_BNM_PERSON_VALUE ( BNM_YEAR ,KPI_CODE, MANAGER_NO , AREA_NO, CURRENCY ,BNM_VALUE,  EDIT_VALUE, EDITOR)
+     VALUES(#{bnmYear},#{kpiCode},#{mangerNo},#{aperaNo},#{CURRENCY},#{bnmValue},#{editValue},#{editor})
+   </insert>    
+   <!-- 分页查询 --> 
+   
+   	<select id="verify_empc" parameterType="java.lang.String" resultType="java.lang.Integer">
+        select count(1) from AP_BNM_PERSON_VALUE where KPI_CODE = #{kpiCode}
+    </select>
+
+   
+
+
+   <select id="queryEmpCardinalitylistPage" parameterType="HashMap" resultType="java.util.HashMap">
+	   select  distinct
+	            A.BNM_YEAR as "BNMYEAR",A.KPI_CODE as "KPICODE",B.KPI_NAME as "KPINAME",A.MANAGER_NO  as "MANAGERNO",C.USERNAME  as "USERNAME",A.BNM_VALUE as "BNMVALUE" ,A.EDIT_VALUE as  "EDTIVALUE"
+	            FROM AP_BNM_PERSON_VALUE A,MO_KPI_INFO B, pcmc_user C
+                where A.KPI_CODE=B.KPI_CODE AND A.MANAGER_NO=C.USERCODE 
+                AND A.AREA_NO = B.AREA_NO AND A.AREA_NO = C.CORPCODE   
+                AND A.AREA_NO = #{corpCode}     
+			<if test="kpiCode != null and kpiCode != '' ">
+			    AND A.KPI_CODE = #{kpiCode}
+		    </if>
+		    
+			<if test=" userName !=null and userName != ''  ">
+
+			   AND C.USERNAME =#{userName }
+|
+		    </if>
+		    
+			<if test="managerNo != null and managerNo != '' ">
+			    AND A.MANAGER_NO = #{managerNo}
+		    </if>
+		    
+			 <if test="bnmYear != null and bnmYear !=''">
+				and A.BNM_YEAR = #{bnmYear}
+			</if>
+	</select>
+    <!-- 根据kpiCode查找信息 --> 
+	  <select id="queryEmpCardinalityByKpiCode"  parameterType="java.util.HashMap" resultType="java.util.HashMap" >
+	    select MANAGER_NO as "MANAGERNO", BNM_VALUE as "BNMVALUE",EDIT_VALUE as "EDITVALUE"  from AP_BNM_PERSON_VALUE  
+	    where AREA_NO = #{corpCode} AND KPI_CODE=#{kpiCode} 
+	  </select>
+    
+    <!-- 更新调整值 -->
+	  <update id="updateEmpCardinality" parameterType="java.util.HashMap" >
+	    update AP_BNM_PERSON_VALUE set 
+	           EDIT_VALUE =#{editValue}  
+	           where KPI_CODE=#{kpiCode} and MANAGER_NO=#{managerNo}
+	  </update>
+	 
+	 <!-- 导出行员基数值语句 -->
+     <select id="EmpCardinality" parameterType="HashMap" resultType="java.util.HashMap">
+	   select    distinct
+	             A.BNM_YEAR bnmYear,A.KPI_CODE kpiCode,B.KPI_NAME kpiName,A.MANAGER_NO managerNo,C.USERNAME userName,A.BNM_VALUE bnmValue ,A.EDIT_VALUE editValue
+	             FROM AP_BNM_PERSON_VALUE A,MO_KPI_INFO B, pcmc_user C
+                 where A.KPI_CODE=B.KPI_CODE AND A.MANAGER_NO=C.USERCODE
+            <if test="kpiCode != null and kpiCode != '' ">
+			    AND A.KPI_CODE = #{kpiCode}
+		    </if>
+		    
+			<if test=" userName !=null and userName != ''  ">
+			   AND C.USERNAME =#{userName }
+		    </if>
+		    
+			<if test="managerNo != null and managerNo != '' ">
+			    AND A.MANAGER_NO = #{managerNo}
+		    </if>
+		    
+			 <if test="bnmYear != null and bnmYear !=''">
+				and A.BNM_YEAR = #{bnmYear}
+			</if>
+	</select>
+	  
+	
+	<!-- 机构基数配置 -->
+	
+	 <insert id="addOrgCardinalityDeploy"  parameterType="HashMap">
+	   insert into 
+	         AP_BNM_ORG_RULE(KPI_CODE,AREA_NO ,BNM_NAME ,DATA_SRC_KPI,CONVERT_RETE, REMARK )
+	         values(#{kpiCode},#{areaNo},#{bnmName},#{dataSrcKpi},#{convertRete},#{remark})
+	 </insert>
+	 
+    <select id="verify_ap_bnm_org" parameterType="java.lang.String" resultType="java.lang.Integer">
+        select count(1) from AP_BNM_ORG_RULE where KPI_CODE = #{kpiCode}
+    </select>	 
+	 
+	 
+	 <resultMap type="java.util.HashMap" id="queryOrgCardinalityDeploylistPage_map">
+	 	<result column="KPI_CODE" property="kpiCode"/>
+	 	<result column="KPI_NAME" property="kpiName"/>
+	 	<result column="AREA_NAME" property="areaName"/>
+	 	<result column="BNM_NAME" property="bnmName"/>
+	 	<result column="DATA_SRC_KPI" property="dataSrcKpi"/>
+	 	<result column="CONVERT_RETE" property="convertRete"/>
+	 </resultMap>
+	 <!-- 分页查询机构基数配置信息 -->
+
+     <select id="queryOrgCardinalityDeploylistPage" parameterType="HashMap" resultType="java.util.HashMap">
+       SELECT distinct
+        A.KPI_CODE as"KPICODE",B.KPI_NAME as"KPINAME" ,C.AREA_NAME as"AREANAME", A.BNM_NAME as "BNMNAME",D.KPI_NAME as "DATASRCKPI",CONVERT_RETE as "CONVERTRETE"
+        from  AP_BNM_ORG_RULE A ,mo_kpi_subjective B ,sys_pub_area C ,mo_kpi_subjective D
+        WHERE A.KPI_CODE=B.KPI_CODE 
+        AND A.AREA_NO=C.AREA_NO AND A.AREA_NO = B.AREA_NO AND A.AREA_NO = D.AREA_NO 
+        AND A.DATA_SRC_KPI=D.KPI_CODE
+        AND A.AREA_NO = #{corpCode}
+          <if test="kpiCode != null and kpiCode !=''">
+				and A.KPI_CODE like #{kpiCode}
+		</if> 
+     </select>
+     
+     <select id="exportQueryOrgCardinalityDeploy" parameterType="HashMap" resultType="java.util.HashMap">
+       SELECT distinct
+        A.KPI_CODE as"KPICODE",B.KPI_NAME as"KPINAME" ,C.AREA_NAME as"AREANAME", A.BNM_NAME as "BNMNAME",D.KPI_NAME as "DATASRCKPI",CONVERT_RETE as "CONVERTRETE"
+        from  AP_BNM_ORG_RULE A ,mo_kpi_subjective B ,sys_pub_area C ,mo_kpi_subjective D
+        WHERE A.KPI_CODE=B.KPI_CODE 
+        AND A.AREA_NO=C.AREA_NO AND A.AREA_NO = B.AREA_NO AND A.AREA_NO = D.AREA_NO 
+        AND A.DATA_SRC_KPI=D.KPI_CODE
+        AND A.AREA_NO = #{corpCode}
+          <if test="kpiCode != null and kpiCode !=''">
+				and A.KPI_CODE like #{kpiCode}
+		</if> 
+     </select>
+     
+     <select id="queryEmpCardinalityDeploy" parameterType="HashMap" resultType="java.util.HashMap">
+      SELECT distinct
+        A.KPI_CODE as"KPICODE",B.KPI_NAME as"KPINAME" ,C.AREA_NAME as"AREANAME", A.BNM_NAME as "BNMNAME",D.KPI_NAME as "DATASRCKPI",CONVERT_RETE as "CONVERTRETE"
+        from  AP_BNM_PERSON_RULE A ,mo_kpi_subjective B ,sys_pub_area C ,mo_kpi_subjective D
+        WHERE A.KPI_CODE=B.KPI_CODE 
+
+        AND A.AREA_NO=C.AREA_NO AND A.AREA_NO = B.AREA_NO AND A.AREA_NO = D.AREA_NO 
+        AND A.DATA_SRC_KPI=D.KPI_CODE
+        AND A.AREA_NO = #{corpCode}
+          <if test="kpiCode != null and kpiCode !=''">
+                and A.KPI_CODE like #{kpiCode}
+        </if>
+       </select>
+     
+     
+      <!-- 根据kpiCode查询配置信息 -->
+     <select id="getCardinalityByKpiCode" parameterType="HashMap" resultType="java.util.HashMap">
+     SELECT distinct
+        A.KPI_CODE as"KPICODE",B.KPI_NAME as"KPINAME" ,C.AREA_NAME as"AREANAME",A.DATA_SRC_KPI as"DATASRCKPICODE", A.BNM_NAME as "BNMNAME",D.KPI_NAME as "DATASRCKPI",A.REMARK as"REMARK",CONVERT_RETE as "CONVERTRETE"
+        from  AP_BNM_ORG_RULE A ,mo_kpi_info B ,sys_pub_area C ,mo_kpi_info D
+        WHERE A.KPI_CODE=B.KPI_CODE AND A.AREA_NO=C.AREA_NO AND A.DATA_SRC_KPI=D.KPI_CODE  and A.KPI_CODE = #{kpiCode}
+     </select>
+     
+     <!-- 更新机构配置信息 -->
+     <update id="updateOrgCardinalityDeploy" parameterType="java.util.HashMap">
+             update AP_BNM_ORG_RULE set 
+             BNM_NAME=#{bnmName},DATA_SRC_KPI=#{dataSrcKpi},CONVERT_RETE=#{convertRete},REMARK=#{remark}
+             where  KPI_CODE=#{kpiCode} 
+     </update>
+     <!-- 删除机构配置信息 -->
+	<delete id="delOrgCardinalityDeploy" parameterType="java.util.HashMap">
+		delete from AP_BNM_ORG_RULE where KPI_CODE=#{kpiCode} 
+	</delete>	
+	 <!-- 向机构执行表中插入机构基数配置信息  -->
+	 
+	 
+	 
+	 <delete id="updateExec" parameterType="java.util.HashMap">
+		delete from AP_BNM_ORG_EXEC where KPI_CODE=#{kpiCode} 
+	</delete>	
+	<insert id="addExec"  parameterType="HashMap">
+	   insert into 
+	         AP_BNM_ORG_EXEC( BNM_YEAR,KPI_CODE,AREA_NO , DATA_SRC_KPI,SRC_DATE , EDITOR )
+	         values(
+	         #{bnmYear,jdbcType=VARCHAR},#{kpiCode,jdbcType=VARCHAR},#{aperaNo},#{dataSrcKpi},#{srcDate},#{editor}
+	         )
+	 </insert>
+	 
+	  <!-- 向机构数值表中插入机构基数配置信息  -->
+     <insert id="addExce1" parameterType="java.util.HashMap">
+		insert into AP_BNM_ORG_VALUE(BNM_YEAR,KPI_CODE, ORG_NO ,AREA_NO ,CURRENCY,BNM_VALUE ,EDITOR )
+		values(
+		    #{bnmYear,jdbcType=VARCHAR},#{kpiCode,jdbcType=VARCHAR},#{orgNo,jdbcType=VARCHAR},
+		    #{aperaNo,jdbcType=VARCHAR},#{CURRENCY,jdbcType=VARCHAR},#{bnmValue,jdbcType=NUMERIC},#{editor,jdbcType=VARCHAR})
+	</insert>
+	
+	
+	<!-- 行员基数配置信息 -->
+	 <!-- 添加行员配置信息 -->
+	   <insert id="addEmpCardinalityDeploy"  parameterType="HashMap">
+	   insert into 
+	         AP_BNM_PERSON_RULE (KPI_CODE,AREA_NO ,BNM_NAME ,DATA_SRC_KPI,CONVERT_RETE, REMARK )
+	         values(
+	         #{kpiCode,jdbcType=VARCHAR},#{areaNo,jdbcType=VARCHAR},#{bnmName,jdbcType=VARCHAR},
+	         #{dataSrcKpi,jdbcType=VARCHAR},#{convertRete,jdbcType=NUMERIC},#{remark,jdbcType=VARCHAR}
+	         )
+	 </insert>
+	 
+	<select id="verify_ap_bnm_person" parameterType="java.lang.String" resultType="java.lang.Integer">
+        select count(1) from AP_BNM_PERSON_RULE where KPI_CODE = #{kpiCode}
+    </select>
+	 
+	  <!-- 分页查询行员基数配置信息 -->
+
+     <select id="queryEmpCardinalityDeploylistPage" parameterType="HashMap" resultType="java.util.HashMap">
+      SELECT distinct
+        A.KPI_CODE as"KPICODE",B.KPI_NAME as"KPINAME" ,C.AREA_NAME as"AREANAME", A.BNM_NAME as "BNMNAME",D.KPI_NAME as "DATASRCKPI",CONVERT_RETE as "CONVERTRETE"
+        from  AP_BNM_PERSON_RULE A ,mo_kpi_subjective B ,sys_pub_area C ,mo_kpi_subjective D
+        WHERE A.KPI_CODE=B.KPI_CODE 
+        AND A.AREA_NO=C.AREA_NO AND A.AREA_NO = B.AREA_NO AND A.AREA_NO = D.AREA_NO 
+        AND A.DATA_SRC_KPI=D.KPI_CODE
+		AND A.AREA_NO = #{corpCode}
+          <if test="kpiCode != null and kpiCode !=''">
+                and A.KPI_CODE like #{kpiCode}
+        </if>
+     </select>
+     
+       <!-- 删除行员置信息 -->
+	<delete id="delEmpCardinalityDeploy" parameterType="java.util.HashMap">
+		delete from AP_BNM_PERSON_RULE where KPI_CODE=#{kpiCode} 
+	</delete>
+	
+	  <!-- 根据kpiCode查询配置信息 -->
+
+     <select id="getEmpCardinalityByKpiCode" parameterType="HashMap" resultType="java.util.HashMap">
+       SELECT distinct
+        A.KPI_CODE as "KPICODE",B.KPI_NAME as "KPINAME" ,C.AREA_NAME as "AREANAME",A.DATA_SRC_KPI as "DATASRCKPICODE", A.BNM_NAME as "BNMNAME",D.KPI_NAME as "DATASRCKPI",A.REMARK as"REMARK",CONVERT_RETE as "CONVERTRETE"
+        from  AP_BNM_PERSON_RULE A ,mo_kpi_info B ,sys_pub_area C ,mo_kpi_info D
+        WHERE A.KPI_CODE=B.KPI_CODE AND A.AREA_NO=C.AREA_NO AND A.DATA_SRC_KPI=D.KPI_CODE  and A.KPI_CODE = #{kpiCode}
+
+     </select>	
+      <!-- 更新行员配置信息 -->
+     <update id="updateEmpCardinalityDeploy" parameterType="HashMap">
+             update AP_BNM_PERSON_RULE set  BNM_NAME=#{bnmName},DATA_SRC_KPI=#{dataSrcKpi},CONVERT_RETE=#{convertRete},REMARK=#{remark}
+             where  KPI_CODE=#{kpiCode} 
+     </update>
+     
+      <!-- 向行员基数执行表中添加数据 -->
+      
+      <delete id="updateempExec" parameterType="java.util.HashMap">
+		delete from AP_BNM_PERSON_EXEC where KPI_CODE=#{kpiCode} 
+	</delete>
+      <insert id="addempExec"  parameterType="HashMap">
+	   insert into 
+	         AP_BNM_PERSON_EXEC( BNM_YEAR,KPI_CODE,AREA_NO , DATA_SRC_KPI,SRC_DATE , EDITOR )
+	         values(#{bnmYear},#{kpiCode},#{aperaNo},#{dataSrcKpi},#{srcDate},#{editor})
+	 </insert>
+      <!-- 向行员数值表中插入行员基数配置信息   -->
+   <insert id="addempExec2" parameterType="java.util.HashMap">
+     INSERT INTO AP_BNM_PERSON_VALUE ( BNM_YEAR ,KPI_CODE, MANAGER_NO , AREA_NO, CURRENCY ,BNM_VALUE,  EDIT_VALUE, EDITOR)
+     VALUES(#{bnmYear},#{kpiCode},#{mangerNo},#{aperaNo},#{CURRENCY},#{bnmValue},#{editor})
+   </insert> 
+   
+	<!--    查询岗位等级系数-->
+    <select id="queryPostGradelistPage" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		<![CDATA[
+		SELECT DISTINCT
+		    A.PARACD AS POSTCODE,
+		    A.PARANA AS POSTNAME,
+		   	B.PARACD AS GRADECODE,
+			B.PARANA AS GRADENAME
+		FROM PCMC_KNP_PARA A
+		LEFT JOIN PCMC_KNP_PARA B 
+		ON A.CORPCODE = B.CORPCODE
+		AND B.PARATP = #{paratp1} AND B.PARACD <> #{rootparacd}
+		WHERE A.PARATP = #{paratp2} AND A.PARACD <> #{rootparacd} AND  A.SUBSCD=#{subscd}
+		]]>
+		<if test="postname != null and postname !='' ">
+			and  A.PARANA like #{postname}
+		</if>
+		<if test="postcode != null and postcode !=''">
+			and  A.PARACD = #{postcode}
+		</if>
+		ORDER BY POSTCODE,GRADECODE
+   </select>
+   
+   <!--    查询单条岗位等级系数-->
+     <select id="queryPostGradeByCode" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+				SELECT
+					A.PARACD AS POSTCODE,
+					A.PARANA AS POSTNAME,
+					A.SUBSCD AS SUBSCD,
+					B.PARACD AS GRADECODE,
+					B.PARANA AS GRADENAME
+				FROM
+					PCMC_KNP_PARA A
+				LEFT JOIN PCMC_KNP_PARA B ON B.PARATP = #{paratp1}
+				WHERE
+					A.PARATP = #{paratp2}
+				AND A.PARACD <![CDATA[<>]]> #{rootparacd}
+				AND B.PARACD <![CDATA[<>]]> #{rootparacd}
+				AND A.SUBSCD=#{subscd}
+			<if test="postcode != null and postcode !='' ">
+			  AND A.PARACD =#{postcode}
+			</if>
+			<if test="gradecode != null and gradecode !=''">
+				AND B.PARACD  = #{gradecode}
+			</if>
+   	</select>
+   	
+   
+  	<!-- 新增岗位等级系数 -->
+   	<insert id="insertPostGradePara" parameterType="java.util.HashMap">
+		insert into MO_PAR_POST_GRD(area_no,post,grade_code,start_date,end_date,ratio,operator,create_time)
+		values(#{areano},#{postcode},#{gradecode},#{startdate},#{enddate},#{ratio},#{operator},#{createtime})
+	</insert>
+	
+	
+	<select id="querykpiCode" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		select count(1) from mo_kpi_subjective where KPI_CODE = #{KPI_CODE}
+	</select>
+	
+	
+	<!-- 查询岗位等级系数 -->
+	<select id="queryPostGradePara" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		select * from mo_par_post_grd where
+		<if test="postcode != null and postcode !=''">
+			post = #{postcode} and
+		</if>
+		<if test="gradecode != null and gradecode !=''">
+			grade_code = #{gradecode} 
+		</if>
+	</select>
+	
+	<!-- 删除岗位等级系数 -->
+	<delete id="deletePostGradePara" parameterType="java.util.HashMap">
+		delete from mo_par_post_grd where 
+		<if test="postcode != null and postcode !=''">
+			 post = #{postcode} and
+		</if>
+		<if test="gradecode != null and gradecode !=''">
+			grade_code = #{gradecode} 
+		</if>
+	</delete>
+	
+	
+	
+	<!--    查询岗位绩效基准值-->
+    <select id="queryPostPerformancelistPage" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		<![CDATA[
+		SELECT DISTINCT
+		    A.PARACD AS PERFORMANCETCODE,
+		    A.PARANA AS PERFORMANCETYPE,
+			B.PARANA AS POSTNAME,
+			A.SUBSCD AS SUBSCD,
+			B.PARACD AS POSTCODE
+		FROM PCMC_KNP_PARA A
+		LEFT JOIN PCMC_KNP_PARA B 
+		ON A.CORPCODE = B.CORPCODE
+		AND B.PARATP = #{paratp1} 
+		WHERE A.PARATP = #{paratp2} AND A.PARACD <> #{rootparacd} 
+		AND B.PARACD <> #{rootparacd} AND  A.SUBSCD=#{subscd} 
+		]]>
+		<if test="postname != null and postname !='' ">
+			and  A.PARANA like #{postname}
+		</if>
+		<if test="postcode != null and postcode !=''">
+			and  B.PARACD = #{postcode} 
+		</if>
+		<if test="otherparacd != null and otherparacd !=''">
+			and A.PARACD != #{otherparacd}
+		</if>
+		ORDER BY A.PARANA desc
+   </select>
+   
+   <!--    查询单条岗位绩效基准数-->
+     <select id="queryPostPerformanceByCode" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+				SELECT
+						A.PARACD AS PERFORMANCETCODE,
+						A.PARANA AS PERFORMANCETYPE,
+						B.PARANA AS POSTNAME,
+						A.SUBSCD AS SUBSCD,
+						B.PARACD AS POSTCODE
+				FROM
+					PCMC_KNP_PARA A
+				LEFT JOIN PCMC_KNP_PARA B ON B.PARATP = #{paratp1}
+				WHERE
+					A.PARATP = #{paratp2}
+				AND A.PARACD <![CDATA[<>]]> #{rootparacd}
+				AND B.PARACD <![CDATA[<>]]> #{rootparacd}
+				AND A.SUBSCD=#{subscd}
+			<if test="postcode != null and postcode !='' ">
+			  AND  B.PARACD=#{postcode}
+			</if>
+			<if test="performancecode != null and performancecode !=''">
+				AND A.PARACD  = #{performancecode}
+			</if>
+			<if test="otherparacd != null and otherparacd !=''">
+				and A.PARACD not in (${otherparacd})
+			</if>
+   	</select>
+   	
+   	<!-- 新增岗位绩效基准值 -->
+   	<insert id="insertPostPerformance" parameterType="java.util.HashMap">
+		insert into MO_PAR_POST_PA(area_no,post,start_date,end_date,pa_stand,operator,create_time)
+		values(#{areano},#{postcode},#{startdate},#{enddate},#{pastand},#{operator},#{createtime})
+	</insert>
+	
+	<!-- 查询岗位绩效基准值 -->
+	<select id="queryPostPerformanceValue" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		select * from MO_PAR_POST_PA where
+		<if test="postcode != null and postcode !=''">
+			post = #{postcode}
+		</if>
+	</select>
+	
+	
+	<!-- 删除岗位等级系数 -->
+	<delete id="deletePostPerformance" parameterType="java.util.HashMap">
+		delete from MO_PAR_POST_PA where 
+		<if test="postcode != null and postcode !=''">
+			 post = #{postcode} and
+		</if>
+		<if test="startdate != null and startdate !=''">
+			start_date = #{startdate} 
+		</if>
+		<if test="areano != null and areano !=''">
+			area_no = #{areano} 
+		</if>
+	</delete>
+	
+	<!-- ftp价格配置 -->
+	<!-- 获取ftp产品列表 -->
+	<select id="queryPrdInfolistPage" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+			SELECT
+		A.PRODUCT_NO,
+		A.PRODUCT_NAME,
+		B.ENABLE_DATE,
+		B.DISENABLE_DATE,
+		B.PARA_VALUE
+	FROM
+		OP_PRD_INFO A
+	LEFT JOIN op_prd_para B ON A.PRODUCT_NO = B.PRODUCT_NO 
+	<where>
+		<if test="proname != null and proname !='' ">
+			A.PRODUCT_NAME like #{proname}
+		</if>
+	</where>
+	</select>
+	
+</mapper>
+
+

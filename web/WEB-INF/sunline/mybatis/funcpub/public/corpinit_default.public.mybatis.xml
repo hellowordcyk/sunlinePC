@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="com.sunline.funcpub.mybatis.public.corpinit_default" >
+	<select id="getDataFromTable" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+	   select 
+	       *
+	    from ${tableName} 
+	   <where>
+	       <if test="corpcode !=null and corpcode.trim()!=''">
+	           and corpcode = #{corpcode}
+	       </if>
+	   </where>
+	</select>
+	<delete id="clearInitData" parameterType="java.util.HashMap">
+		delete from ${tableName} 
+		<where>
+			<choose>
+				<when test="corporationField!=null and corporationField.trim()!=''">
+					 corpcode=#{corpcode}
+				</when>
+				<otherwise>
+					<foreach collection="refTables" item="refTable" index="i">
+						<foreach collection="refColumns" item="refColumn" index="j">
+							<if test="i==j">
+								<if test="i==0">
+									${refColumn} in (select id_new from sys_temp_sequence where table_name=#{refTable}) 
+								</if>
+								<if test="i > 0">
+									or ${refColumn} in (select id_new from sys_temp_sequence where table_name=#{refTable}) 
+								</if>
+							</if>
+						</foreach>
+					</foreach>
+				</otherwise>
+			</choose>
+		</where> 
+	</delete>
+	
+	
+	<insert id="insertNewData" parameterType="java.util.HashMap">
+		insert into ${tableName}(
+		   ${fileds}
+		) select 
+		<if test="idField != null and idField.trim()!=''">
+			d.id_new as ${idField},
+		</if>
+		${values} from ${tableName} a 
+		<choose>
+			<when test="idField != null and idField.trim()!=''">
+				inner join sys_temp_sequence d on a.${idField}=d.id_old and d.table_name=#{tableName}
+			</when>
+			<when test="corporationField!=null and corporationField.trim()!=''">
+					 where a.corpcode=#{corpcode}
+			</when>
+			<otherwise>
+			      where 
+				<foreach collection="refTables" item="refTable" index="i">
+					<foreach collection="refColumns" item="refColumn" index="j">
+						<if test="i==j">
+							<if test="i==0">
+								a.${refColumn} in (select id_new from sys_temp_sequence where table_name=#{refTable}) 
+							</if>
+							<if test="i > 0">
+								or a.${refColumn} in (select id_new from sys_temp_sequence where table_name=#{refTable}) 
+							</if>
+						</if>
+					</foreach>
+				</foreach>
+			</otherwise>
+		</choose>
+		<!-- 
+		<where>
+			<choose>
+				<when test="corporationField!=null and corporationField.trim()!=''">
+					 a.corpcode=#{corpcode}
+				</when>
+				<otherwise>
+					<foreach collection="refTables" item="refTable" index="i">
+						<foreach collection="refColumns" item="refColumn" index="j">
+							<if test="i==j">
+								<if test="i==0">
+									a.${refColumn} in (select id_new from sys_temp_sequence where table_name=#{refTable}) 
+								</if>
+								<if test="i > 0">
+									or a.${refColumn} in (select id_new from sys_temp_sequence where table_name=#{refTable}) 
+								</if>
+							</if>
+						</foreach>
+					</foreach>
+				</otherwise>
+			</choose>
+		</where> 
+		 -->
+	</insert>
+	
+	<delete id="clearSysTempSequece">
+		delete from sys_temp_sequence where 1=1
+	</delete>
+	
+	<update id="updateTempRef" parameterType="java.util.HashMap">
+		UPDATE ${tableName} a
+			SET a.${refColumn} = (
+				SELECT b.ID_NEW 
+                     FROM SYS_TEMP_SEQUENCE b
+                      WHERE b.ID_OLD = a.${refColumn}
+                      and b.table_name = #{refTable}) 
+                            
+			<where>
+			<choose>
+				<when test="corporationField!=null and corporationField.trim()!=''">
+					 a.corpcode=#{corpcode} 
+				</when>
+				<otherwise>
+					${idField} in 
+					(
+						SELECT
+							 b.ID_NEW 
+						FROM
+							SYS_TEMP_SEQUENCE b
+						WHERE
+							b.table_name=#{tableName}
+					)
+				<!-- 
+					<foreach collection="refTables" item="rTable" index="i">
+						<foreach collection="refColumns" item="rColumn" index="j">
+							<if test="i==j">
+								<if test="i==0">
+									a.${rColumn} in (select id_new from sys_temp_sequence where table_name=#{rTable}) 
+								</if>
+								<if test="i > 0">
+									or a.${rColumn} in (select id_new from sys_temp_sequence where table_name=#{rTable}) 
+								</if>
+							</if>
+						</foreach>
+					</foreach>
+					 -->
+				</otherwise>
+			</choose>
+			and a.${refColumn} is not null and a.${refColumn} &lt;&gt; -1 
+			and exists (SELECT 1
+		          FROM SYS_TEMP_SEQUENCE b
+		         WHERE b.ID_OLD = a.${refColumn}
+		           and b.table_name = #{refTable})
+		</where>
+	</update>
+</mapper> 	  

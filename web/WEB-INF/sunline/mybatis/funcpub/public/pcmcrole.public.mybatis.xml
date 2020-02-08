@@ -1,0 +1,445 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sunline.funcpub.mybatis.public.pcmcrole" >
+    
+    <resultMap type="java.util.HashMap" id="queryPcmcRolelistPage_resultMap">
+       <result column="roleid" property="roleid"/>
+       <result column="subsysid" property="subsysid"/>
+       <result column="rolename" property="rolename"/>
+       <result column="remark" property="remark"/>
+       <result column="roletp" property="roletp"/>
+       <result column="deptid" property="deptid"/>
+       <result column="deptcode" property="deptcode"/>
+       <result column="deptname" property="deptname"/>
+       <result column="cnname" property="cnname"/>
+    </resultMap>
+    <select id="queryPcmcRolelistPage" parameterType="java.util.HashMap" resultMap="queryPcmcRolelistPage_resultMap">
+        SELECT a.roleid, a.subsysid, a.rolename, a.remark, a.roletp, a.deptid, e.deptcode,
+               e.deptname, b.cnname
+          FROM pcmc_role a
+         INNER JOIN pcmc_subsys b
+            ON a.subsysid = b.subsysid
+           AND (b.issystem = '1' OR b.issystem IS NULL)
+          LEFT JOIN pcmc_dept e
+            ON a.deptid = e.deptid
+           AND e.disable = '0' and a.corpcode=e.corpcode
+          <if test="userid!=null">
+          	inner join pcmc_user_role ur on a.roleid=ur.roleid
+          </if>
+        <where>
+        	a.corpcode=#{corpcode}
+	        <if test="userid!=null">
+	        	and ur.userid=#{userid}
+	        </if>
+	        <if test= "subsys != null and subsys != ''">
+	            and a.subsysid= #{subsys}
+	        </if>
+	        <!-- 规范：模糊查询的条件判断，需要增加对“%%”的判断，如下 -->
+	        <if test= "rolename != null and rolename != '' and rolename != '%%' and rolename != '%null%' ">
+	            and a.rolename like #{rolename}
+	        </if>
+	        <if test= "roleid != null and roleid != ''">
+	            and a.roleid = #{roleid}
+	        </if>
+	        <if test="roleids != null and roleids.size() > 0">
+              and  (
+                <foreach collection="roleids" index="index1" item="dcs" open="" separator="" close="">
+                   <if test="index1==0">
+                     a.roleid in 
+                     <foreach collection="dcs" index="index" item="dc" open="(" separator="," close=")">
+     	                #{dc}
+     	             </foreach>
+                   </if>
+                   <if test="index1 > 0">
+                     or a.roleid in   
+                     <foreach collection="dcs" index="index" item="dc" open="(" separator="," close=")">
+     	                #{dc}
+     	             </foreach>
+                   </if>
+                </foreach>
+                )
+            </if>
+            <!-- edit modify roleid to roleidItem-->
+            <if test="roleidList != null and roleidList.size()>0">
+            	and a.roleid in(<foreach item="roleidItem" collection="roleidList" separator=",">#{roleidItem}</foreach>)
+            </if>
+            order by a.roleid
+        </where>
+       <!--  order by a.roleid asc -->
+    </select>
+    
+    <insert id="insertRole" parameterType="java.util.HashMap">
+        insert into pcmc_role(
+            roleid,rolename,subsysid,remark,deptid,roletp,corpcode
+        ) values(
+	        #{roleid,jdbcType=NUMERIC},
+	        #{rolename,jdbcType=VARCHAR},
+	        #{subsysid,jdbcType=NUMERIC},
+	        #{remark,jdbcType=VARCHAR},
+	        #{deptid,jdbcType=NUMERIC},
+	        #{roletp,jdbcType=VARCHAR},
+	        #{corpcode,jdbcType=VARCHAR}
+        )
+    </insert>
+     <select id="existRole" parameterType="java.util.HashMap"  resultType="java.lang.Integer" >
+        SELECT COUNT(1) FROM PCMC_ROLE WHERE ROLENAME = #{rolename}
+    </select>
+    <insert id="insertRoleOrg" parameterType="java.util.HashMap">
+        <![CDATA[
+            INSERT INTO PCMC_ROLE_ORG(ROLEID,GORGTYPE) VALUES(#{roleid,jdbcType=NUMERIC},#{gorgtype,jdbcType=VARCHAR})
+        ]]>
+        
+    </insert>
+    
+    <delete id="delRole" parameterType="java.util.HashMap">
+        <![CDATA[
+            DELETE FROM pcmc_role WHERE roleid = #{roleid}
+        ]]>
+    </delete>
+    
+    <delete id="delRoleOrg" parameterType="java.util.HashMap">
+        <![CDATA[
+            DELETE FROM pcmc_role_org WHERE roleid = #{roleid}
+        ]]>
+    </delete>
+    
+    <update id="updateRole" parameterType="java.util.HashMap">
+        <![CDATA[
+            UPDATE pcmc_role 
+            SET rolename = #{rolename,jdbcType=VARCHAR},
+                subsysid = #{subsysid,jdbcType=NUMERIC},
+                remark = #{remark,jdbcType=VARCHAR},
+                roletp = #{roletp,jdbcType=VARCHAR},
+                deptid = #{deptid,jdbcType=NUMERIC}
+            WHERE roleid = #{roleid} 
+        ]]>
+    </update>
+    
+    <update id="updateRoleOrg" parameterType="java.util.HashMap">
+        <![CDATA[
+            UPDATE PCMC_ROLE_ORG
+            SET GORGTYPE = #{gorgtype}
+            WHERE ROLEID = #{roleid} 
+        ]]>
+    </update>
+    
+    <resultMap type="java.util.HashMap" id="RoleMap">
+        <result column="userid" property="userid"/>
+        <result column="deptid" property="deptid"/>
+        <result column="usercode" property="usercode"/>
+        <result column="username" property="username"/>
+        <result column="phone" property="phone"/>
+        <result column="deptname" property="deptname"/>
+        <result column="deptcode" property="deptcode"/>
+        <result column="rolecount" property="rolecount"/>
+    </resultMap>
+    <select id="queryRoleUserlistPage" parameterType="java.util.HashMap" resultMap="RoleMap">
+         select a.userid,a.deptid,a.usercode,a.username,a.phone,b.deptname,b.deptcode
+         from pcmc_user a
+         left join pcmc_dept b on a.deptid = b.deptid and a.corpcode=b.corpcode
+         where a.disable = '0' and b.disable = '0' a.corpcode=#{corpcode}
+        <if test="usercode != null and usercode != ''">
+            and a.usercode = #{usercode}
+        </if>
+        <if test="username != null and username != '' and username != '%%' and username != '%null%' " >
+            and (a.username like #{username} 
+            or b.deptname like #{username} 
+            or a.usercode like #{username} 
+            or b.deptcode like #{username}')
+        </if>
+    </select>
+    
+    <!-- 查询已授权角色的用户列表 -->
+    <select id="queryGrantRoleUserlistPage" parameterType="java.util.HashMap" resultMap="RoleMap">
+         select 
+         	a.userid,a.deptid,a.usercode,a.username,a.phone,b.deptname,b.deptcode
+         from pcmc_user a
+         left join pcmc_dept b on a.deptid = b.deptid and a.corpcode=b.corpcode inner join pcmc_user_role c on a.userid = c.userid
+         where a.disable = '0' and b.disable = '0' and a.corpcode=#{corpcode}
+        <if test="usercode != null and usercode != ''">
+            and a.usercode = #{usercode}
+        </if>
+        <if test="username != null and username != '%%'">
+            and a.username like  #{username}
+        </if>
+        <if test="deptname != null and deptname != '%%'">
+            and b.deptname like  #{deptname} 
+        </if>
+        <if test="roleid != null and roleid != ''">
+            and c.roleid = #{roleid} 
+        </if>
+       <if test="deptCodeList != null and deptCodeList.size()>0" >
+        	and a.deptid in ( 
+        		select deptid from pcmc_dept 
+        		where corpcode=#{corpcode} 
+        		and (
+        			<foreach  collection="deptCodeList" item="list" separator=" or " >
+        				deptcode in( <foreach item="deptCode" collection="list" separator=",">#{deptCode}</foreach>)
+        			</foreach>
+        		)
+        	) 
+        </if> 
+        order by a.username asc
+    </select>
+    
+    <!-- 查询未授权角色的用户列表 -->
+    <select id="queryUngrantRoleUserlistPage" parameterType="java.util.HashMap" resultMap="RoleMap">
+        select a.userid,a.deptid,a.usercode,a.username,a.phone,b.deptname,b.deptcode
+        from pcmc_user a
+        left join pcmc_dept b on a.deptid = b.deptid and a.corpcode=b.corpcode
+        where a.disable = '0' and b.disable = '0'  and a.corpcode=#{corpcode}
+        <if test="usercode != null and usercode != ''">
+            and a.usercode = #{usercode}
+        </if>
+        <if test="username != null and username != '%%'">
+            and a.username like #{username}
+        </if>
+        <if test="roleid!=null and roleid!=''">
+           <![CDATA[  and a.userid not in (select userid from pcmc_user_role where roleid=#{roleid})]]>
+        </if>
+        <if test="deptname != null and deptname!=''  and deptname != '%%'">
+            and b.deptname like  #{deptname}
+        </if>
+         <if test="deptCodeList != null and deptCodeList.size()>0">
+	         and a.deptid in ( 
+	        		select deptid from pcmc_dept 
+	        		where corpcode=#{corpcode} 
+	        		and (
+	        			<foreach  collection="deptCodeList" item="list" separator=" or " >
+	        				deptcode in( <foreach item="deptCode" collection="list" separator=",">#{deptCode}</foreach>)
+	        			</foreach>
+	        		)
+	        	) 
+        </if>
+		 order by a.username asc 
+    </select>
+    
+    <resultMap type="java.util.HashMap" id="getSelectedUser_resultMap">
+        <result column="userroleid" property="userroleid"/>
+        <result column="userid" property="userid"/>
+        <result column="roleid" property="roleid"/>
+    </resultMap>
+    <select id="getSelectedUser" parameterType="java.util.HashMap" resultMap="getSelectedUser_resultMap">
+        select userroleid,userid,roleid from pcmc_user_role where roleid = #{roleid}
+    </select>
+    
+    <delete id="delRoleUser" parameterType="java.util.HashMap">
+        delete from pcmc_user_role where roleid = #{roleid} and userid = #{userid}
+    </delete>
+    
+    <!-- 删除用户的所有角色信息 -->
+    <delete id="delRoleUserByUserId" parameterType="java.util.HashMap">
+        delete from pcmc_user_role where userid = #{userid}
+    </delete>
+    
+    <insert id="addRoleUser" parameterType="java.util.HashMap">
+        insert into pcmc_user_role values(#{userroleid},#{userid},#{roleid})
+    </insert>
+    
+    <delete id="delRoleMenu" parameterType="java.util.HashMap">
+        <![CDATA[
+            delete from pcmc_role_menu where roleid = #{roleid,jdbcType=NUMERIC} and menuid = #{menuid,jdbcType=NUMERIC}
+        ]]>
+    </delete>
+    <select id="queryRoleMenu" parameterType="java.util.HashMap"   resultType="java.util.HashMap">
+         select rolemenuid,roleid,menuid from pcmc_role_menu where roleid = #{roleid} and menuid = #{menuid}
+     </select>
+    <insert id="addRoleMenu" parameterType="java.util.HashMap">
+        <![CDATA[
+            insert into pcmc_role_menu(ROLEMENUID,ROLEID,MENUID,PERMIS) values(#{rolemenuid,jdbcType=NUMERIC},#{roleid,jdbcType=NUMERIC},#{menuid,jdbcType=NUMERIC},#{permis,jdbcType=VARCHAR})
+        ]]>
+    </insert>
+    
+    <select id="getSubsys" parameterType="java.util.HashMap"   resultType="java.util.HashMap">
+		SELECT subsysid "subsysid", cnname "cnname"
+		  FROM pcmc_subsys a
+		 WHERE EXISTS (SELECT 1
+		          FROM pcmc_menu b
+        <if test="roleid != null and roleid != '' ">
+		         INNER JOIN pcmc_role_menu c
+		            ON b.menuid = c.menuid
+		           AND c.roleid = #{roleid}
+        </if> 
+		         WHERE a.subsysid = b.subsysid
+		           AND b.corpcode = #{corpcode})
+		           or a.subsysid=1
+
+    </select>
+    
+    
+    <select id="getMenuManagerSubsys" parameterType="java.util.HashMap"   resultType="java.util.HashMap">
+		select distinct s.subsysid "subsysid", s.cnname "cnname"
+		  from pcmc_subsys s
+		 inner join pcmc_role r
+		    on r.subsysid = s.subsysid
+		 where exists (select 1 from pcmc_menu m where m.subsysid = s.subsysid)
+		   and r.roleid = #{roleid}
+		    or s.subsysid = 1
+    </select>
+     
+    <resultMap type="java.util.HashMap" id="roleMenuMap">
+        <result column="menuid" property="menuid"/>
+        <result column="menuname" property="menuname"/>
+        <result column="levelp" property="levelp"/>
+        <result column="is_leaf" property="isleaf"/>
+        <result column="checked" property="checked"/>
+        <result column="permis" property="permis"/>
+    </resultMap>
+     <select id="getOneLevelMenu" parameterType="java.util.HashMap"    resultMap="roleMenuMap">
+        <!--  select menuid "menuid",menuname "menuname",levelp "levelp",
+         (select count(*) from pcmc_role_menu b where a.menuid = b.menuid and b.roleid = #{roleid}) as "checked" from pcmc_menu a
+        where subsysid = #{subsysid} and levelp = 1 
+        order by sortno -->
+        
+          select a.menuid ,a.menuname ,a.levelp ,
+         b.menuid checked
+         from pcmc_menu a left join pcmc_role_menu b on a.menuid = b.menuid and b.roleid = #{roleid}
+        where a.subsysid = #{subsysid} and a.levelp = 1 and corpcode=#{corpcode}
+        order by a.sortno 
+     </select>
+     
+   
+     <select id="getChildMenu" parameterType="java.util.HashMap" resultMap="roleMenuMap">
+         select DISTINCT a.menuid ,a.menuname ,a.levelp ,a.is_leaf ,
+         b.menuid checked,b.permis
+         from pcmc_menu a left join pcmc_role_menu b on a.menuid = b.menuid and b.roleid = #{roleid}
+        where a.pmenuid = #{menuid} and a.menuid &lt;&gt; #{menuid} and corpcode=#{corpcode}
+        order by a.menuid 
+         <!-- select menuid "menuid",menuname "menuname",levelp "levelp",is_leaf "isleaf",(select count(*) from pcmc_role_menu b where a.menuid = b.menuid and b.roleid =  #{roleid}) as "checked" from pcmc_menu a
+        where pmenuid = #{menuid} and menuid != #{menuid} -->
+     </select>
+     
+     <update id="update_pcmc_role_menu_permis_null" parameterType="HashMap">
+     	update pcmc_role_menu set 
+     	permis = #{permis} 
+     	where roleid = #{roleid} 
+     	<if test="menuid != null and menuid != '' ">
+     		and menuid = #{menuid}
+     	</if>
+     </update>
+     
+     <resultMap type="java.util.HashMap" id="queryRoleByUserIdLike_rsm">
+        <result column="roleid" property="roleid"/>
+        <result column="rolename" property="rolename"/>
+     </resultMap>
+     <select id="queryRoleByUserIdLike" parameterType="java.util.HashMap" resultMap="queryRoleByUserIdLike_rsm">
+        select b.roleid,b.rolename 
+           from pcmc_role b inner join pcmc_user_role a on a.roleid=b.roleid inner join pcmc_user c on a.userid=c.userid
+           <where>
+             b.corpcode=#{corpcode} and c.corpcode=#{corpcode}
+             <if test="userid !=null and userid !=''">
+               and a.userid=#{userid}
+             </if>
+             <if test="usercode !=null and usercode !=''">
+               and c.usercode=#{usercode}
+             </if>
+             <if test="rolename !=null and rolename !='' and rolename != '%%'">
+               and b.rolename like #{rolename}
+             </if>
+           </where> 
+     </select>
+     <delete id="delRoleMenuByRoleId" parameterType="java.util.HashMap">
+        <![CDATA[
+            delete from pcmc_role_menu where roleid = #{roleid,jdbcType=NUMERIC} 
+        ]]>
+    </delete>
+    <delete id="delUserRoleByRoleId" parameterType="java.util.HashMap">
+        <![CDATA[
+            delete from pcmc_user_role where roleid = #{roleid,jdbcType=NUMERIC} 
+        ]]>
+    </delete>
+    
+    <resultMap type="java.util.HashMap" id="queryRoleByUserIdOrCode_resultMap">
+       <result column="roleid" property="roleid"/>
+       <result column="subsysid" property="subsysid"/>
+       <result column="rolename" property="rolename"/>
+       <result column="remark" property="remark"/>
+       <result column="roletp" property="roletp"/>
+       <result column="deptid" property="deptid"/>
+       <result column="isdef_role" property="isdef_role"/>
+       <result column="isnull" property="isnull"/>
+    </resultMap>
+    
+     <select id="queryRoleByUserIdOrCode" parameterType="java.util.HashMap" resultMap="queryRoleByUserIdOrCode_resultMap">
+        select b.roleid,b.rolename,b.subsysid,b.remark,b.roletp,b.deptid ,
+        (case when c.default_role=b.roleid then 'yes' else 'no' end) as isdef_role 
+           from pcmc_role b inner join pcmc_user_role a on a.roleid=b.roleid inner join pcmc_user c on a.userid=c.userid
+           <where>
+             b.corpcode=#{corpcode} and c.corpcode=#{corpcode}
+             <if test="userid !=null and userid !=''">
+               and a.userid=#{userid}
+             </if>
+             <if test="usercode !=null and usercode !=''">
+               and a.usercode=#{usercode}
+             </if>
+             <if test="rolename !=null and rolename !='' and rolename != '%%'">
+               and b.rolename like #{rolename}
+             </if>
+           </where> 
+     </select>
+     
+     <select id="queryGrantRole" parameterType="java.util.HashMap" resultMap="queryRoleByUserIdOrCode_resultMap">
+        select b.roleid,b.rolename,b.subsysid,b.remark,b.roletp,b.deptid ,
+        <if test="isAdmin!=true">
+           		d.roleid as isnull,
+        </if>
+        <if test="isAdmin==true">
+           		'no' as isnull,
+        </if>
+        (case when c.default_role=b.roleid then 'yes' else 'no' end) as isdef_role 
+           from pcmc_user_role a inner join pcmc_role b on a.roleid=b.roleid inner join pcmc_user c on a.userid=c.userid
+           <if test="isAdmin!=true">
+           		left join pcmc_user_role d on d.userid=#{userid_login} and a.roleid = d.roleid
+           </if>
+           <where>
+             b.corpcode=#{corpcode} and c.corpcode=#{corpcode}
+             <if test="userid !=null"> 
+               and a.userid=#{userid}
+             </if> 
+             <if test="usercode !=null and usercode !=''">
+               and a.usercode=#{usercode}
+             </if>
+             <if test="rolename !=null and rolename !='' and rolename != '%%'">
+               and b.rolename like #{rolename}
+             </if>
+           </where> 
+     </select>
+     
+	     <resultMap type="java.util.HashMap" id="queryUngrantRole_resultMap">
+	       <result column="roleid" property="roleid"/>
+	       <result column="rolename" property="rolename"/>
+	    </resultMap>
+	    
+     <select id="queryUngrantRoleByUserId" parameterType="java.util.HashMap" resultMap="queryUngrantRole_resultMap">
+     	select a.roleid,a.rolename from pcmc_role a
+     	    <if test="userid_login !=null and userid_login !='' and isAdmin!=true">
+               inner join pcmc_user_role b on a.roleid = b.roleid
+            </if> 
+     	    where a.corpcode=#{corpcode} and a.roleid not in (select roleid from pcmc_user_role
+            <where>
+	            <if test="userid !=null">
+	            	userid=#{userid}
+	            </if>
+            </where>
+            )
+            <if test="userid_login !=null and userid_login !='' and isAdmin!=true">
+               and b.userid=#{userid_login}
+            </if>
+     </select>
+     
+     <resultMap type="java.util.HashMap" id="queryUserListByRoleId_resultMap">
+       <result column="userid" property="userid"/>
+       <result column="usercode" property="usercode"/>
+     </resultMap>
+     
+     <select id="getUserListByRoleId" parameterType="String" resultMap="queryUserListByRoleId_resultMap">
+     	select distinct b.usercode from pcmc_user_role a inner join pcmc_user b on a.userid = b.userid
+     	<if test="_parameter != null and _parameter.size() > 0">
+     	where a.roleid in 
+     	    <foreach collection="_parameter" index="index" item="dc" open="(" separator="," close=")">
+     	       #{dc}
+     	  </foreach>
+     	  </if>
+     </select>
+</mapper>       
+      

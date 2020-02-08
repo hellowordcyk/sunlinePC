@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sunline.funcpub.mybatis.public.page_privilege" >
+	<resultMap type="java.util.HashMap" id="queryPrivDataByParam_rsm">
+		<result column="page_namespace" property="pageNamespace"/>
+		<result column="privid" property="privId"/>
+		<result column="roleid" property="roleId"/>
+		<result column="corpcode" property="corpcode"/>
+		<result column="priv_value" property="privValue"/>
+	</resultMap>
+	<select id="queryPrivDataByParam" parameterType="java.util.HashMap" resultMap="queryPrivDataByParam_rsm">
+		select 
+		<include refid="priv_field"></include>
+		from sys_page_priv 
+		<include refid="priv_key"></include>
+	</select>
+	
+	<!-- 当切换角色开关未开启，则查询用户所有角色的权限 -->
+	<select id="queryPrivDataByUserIdParam" parameterType="java.util.HashMap" resultMap="queryPrivDataByParam_rsm">
+		select 
+			a.page_namespace,
+			a.privid,
+			a.roleid,
+			a.corpcode,
+			a.priv_value
+		from sys_page_priv a
+		inner join pcmc_user_role b
+		on a.roleid=b.roleid
+		<where>
+			<if test="pageNamespace !=null and pageNamespace.trim()!=''">
+				and a.page_namespace=#{pageNamespace,jdbcType=VARCHAR}
+			</if>
+			<if test="userId !=null">
+				and b.userid=#{userId}
+			</if>
+			<if test="corpcode !=null and corpcode.trim()!=''">
+				and a.corpcode=#{corpcode,jdbcType=VARCHAR}
+			</if>
+		</where>
+	</select>
+	
+	<update id="updatePrivData" parameterType="com.sunline.funcpub.privilege.bean.PagePrivilegeNode">
+		update sys_page_priv
+			set priv_value=#{privValue}
+		<include refid="priv_key"></include>
+	</update>
+	
+	<insert id="insertPrivData" parameterType="com.sunline.funcpub.privilege.bean.PagePrivilegeNode">
+		insert into sys_page_priv(
+				<include refid="priv_field"></include>
+			)values(
+				#{pageNamespace,jdbcType=VARCHAR},
+				#{privId,jdbcType=VARCHAR},
+				#{roleId,jdbcType=NUMERIC},
+				#{corpcode,jdbcType=VARCHAR},
+				#{privValue,jdbcType=VARCHAR}
+			)
+	</insert>
+	
+	<delete id="deletePrivData" parameterType="com.sunline.funcpub.privilege.bean.PagePrivilegeNode">
+		delete from sys_page_priv
+		<include refid="priv_key"></include>
+	</delete>
+	
+	<select id="existPrivData" parameterType="com.sunline.funcpub.privilege.bean.PagePrivilegeNode" resultType="java.lang.Integer">
+		select count(1) from sys_page_priv
+		<include refid="priv_key"></include>
+	</select>
+	
+	<sql id="priv_key" >
+		<where>
+			<if test="pageNamespace !=null and pageNamespace.trim()!=''">
+				and page_namespace=#{pageNamespace,jdbcType=VARCHAR}
+			</if>
+			<if test="privId !=null and privId.trim()!=''">
+				and privid=#{privId,jdbcType=VARCHAR}
+			</if>
+			<if test="roleId !=null">
+				and roleid=#{roleId,jdbcType=NUMERIC}
+			</if>
+			<if test="corpcode !=null and corpcode.trim()!=''">
+				and corpcode=#{corpcode,jdbcType=VARCHAR}
+			</if>
+		</where>
+	</sql>
+	<sql id="priv_field">
+		page_namespace,
+		privid,
+		roleid,
+		corpcode,
+		priv_value
+	</sql>
+</mapper> 	  

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<updateHistory>
+	<dept>
+		<Field name="orgcode" use="true"/>
+		<Field name="pdeptid" use="true"/>
+		<Field name="deptname" use="true"/>
+		<Field name="orgtype" use="false"/>
+		<Field name="orgseq" use="false"/>
+		<Field name="linkman" use="false"/>
+		<Field name="phone" use="false"/>
+		<Field name="brsmna" use="true"/>
+		<Field name="areano" use="false"/>
+		<Field name="orgbusssize" use="false"/>
+		<Field name="orgnaturetype" use="false"/>
+		<Field name="orgbusstype" use="false"/>
+		<Field name="remark" use="true"/>
+		<Field name="disable" use="false"/>
+	</dept>
+	<user>
+		<Field name="username" use="true"/>
+		<Field name="phone" use="true"/>
+		<Field name="pagesize" use="true"/>
+		<Field name="menutype" use="false"/>
+		<Field name="disable" use="false"/>
+		<Field name="skinname" use="false"/>
+		<Field name="email" use="false"/>
+		<Field name="postcode" use="true"/>
+		<Field name="cred_type" use="false"/>
+		<Field name="cred_code" use="false"/>
+		<Field name="lastrole" use="false"/>
+		<Field name="remark" use="true"/>
+		<Field name="ussatg" use="false"/>
+		<Field name="chpwtm" use="false"/>
+		<Field name="default_role" use="false"/>
+		<Field name="last_up_ps_date" use="false"/>
+		<Field name="i18n_code" use="false"/>
+		<Field name="frozen" use="false"/>
+		<Field name="attr_01" use="false"/>
+		<Field name="attr_02" use="false"/>
+		<Field name="attr_03" use="false"/>
+		<Field name="attr_04" use="false"/>
+		<Field name="attr_05" use="false"/>
+		<Field name="attr_06" use="false"/>
+		<Field name="attr_07" use="false"/>
+		<Field name="attr_08" use="false"/>
+		<Field name="attr_09" use="false"/>
+		<Field name="attr_10" use="false"/>
+	</user>
+</updateHistory>
+																										

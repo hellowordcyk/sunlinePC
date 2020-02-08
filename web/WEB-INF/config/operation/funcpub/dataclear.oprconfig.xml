@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="gb2312"?>
+<Sunline>
+	<Session></Session>
+	<!-- 数据清理 -->
+	<Operation id="dataClearTable"
+		bean="com.sunline.funcpub.dataclear.table.dataClearTable" desc="备份数据 "
+		filterpath="/funcpub/dataclear/table/query/">
+		<Action name="queryCaCtlDataClear" desc="查询数据" acttype="query" />
+		<Action name="queryCaCtlDataClearupdate" desc="查询数据" acttype="query" />
+		<Action name="addCaCtlDataClear" desc="查询使用的库" acttype="add" />
+		<Action name="delCaCtlDataClear" desc="查询使用的库" acttype="delete" />
+		<Action name="updateCaCtlDataClear" desc="查询使用的库" acttype="update" />
+	</Operation>
+
+	<!-- 全部数据清理 -->
+	<Operation id="caCtlDataClear"
+		bean="com.sunline.funcpub.dataclear.table.caCtlDataClear" desc="备份数据 "
+		filterpath="/funcpub/dataclear/table/all/">
+		<Action name="queryDataClear" desc="查询数据" acttype="query" />
+		<Action name="querychoiceCaCtlDataClearLookUp" desc="查询数据"
+			acttype="query" />
+	</Operation>
+	
+	<!-- 指定数据清理 -->
+    <Operation id="choiceCaCtlDataClear"
+        bean="com.sunline.funcpub.dataclear.table.ChoiceCaCtlDataClear" desc="备份数据 "
+        filterpath="/funcpub/dataclear/table/choice/">
+        <Action name="queryDataClear" desc="查询数据" acttype="query" />
+        <Action name="querychoiceCaCtlDataClearLookUp" desc="查询数据"
+            acttype="query" />
+    </Operation>
+
+</Sunline>

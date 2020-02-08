@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="com.sunline.funcpub.mybatis.public.menuvisitlog" >
+	
+	<resultMap type="com.sunline.funcpub.pojo.menuvisitlog.MenuVisitLog" id="menuVisitLog_rsm">
+	   <result column="id" property="id"/>
+	   <result column="ip" property="ip"/>
+	   <result column="usercode" property="userCode"/>
+	   <result column="menu_id" property="menuId"/>
+	   <result column="menu_name" property="menuName"/>
+	   <result column="url" property="url"/>
+	   <result column="visit_time" property="visitTime" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+	   <result column="corpcode" property="corpcode"/>
+	</resultMap>
+	
+	<select id="queryMenuVisitLoglistPage" parameterType="java.util.HashMap" resultMap="menuVisitLog_rsm">
+	   select 
+	       id,
+	       ip,
+	       usercode,
+	       menu_id,
+	       menu_name,
+	       url,
+	       visit_time,
+	       corpcode
+	    from sys_menu_log
+	   <where>
+	       <if test="qIp!=null and qIp.trim()!=''">
+	           and ip like #{qIp}
+	       </if>
+	       <if test="qUserCode!=null and qUserCode.trim()!=''">
+	           and usercode = #{qUserCode}
+	       </if>
+	       <if test="menuId!=null">
+	           and menu_id = #{menuId}
+	       </if>
+	       <if test="qMenuName!=null and qMenuName.trim()!=''">
+	           and menu_name like #{qMenuName}
+	       </if>
+	       <if test="qUrl!=null and qUrl.trim()!=''">
+	           and url like #{qUrl}
+	       </if>
+	       <if test="startDate !=null ">
+	           and visit_time &gt; #{startDate,jdbcType=TIMESTAMP}
+	       </if>
+	       <if test="endDate !=null ">
+	           and visit_time &lt; #{endDate,jdbcType=TIMESTAMP}
+	       </if>
+	       <if test="corpcode!=null and corpcode.trim()!=''">
+	       	  and corpcode=#{corpcode}
+	       </if>
+	   </where>
+	   order by visit_time desc
+	</select>
+	
+	<insert id="insertMenuVisitLog" parameterType="com.sunline.funcpub.pojo.menuvisitlog.MenuVisitLog">
+	   insert into sys_menu_log(
+		   id,
+		   ip,
+		   usercode,
+		   menu_id,
+		   menu_name,
+		   url,
+		   visit_time,
+		   corpcode
+	   )
+	   values(
+	       #{id,jdbcType=NUMERIC},
+	       #{ip,jdbcType=VARCHAR},
+	       #{userCode,jdbcType=VARCHAR},
+	       #{menuId,jdbcType=NUMERIC},
+	       #{menuName,jdbcType=VARCHAR},
+	       #{url,jdbcType=VARCHAR},
+	       #{visitTime,jdbcType=TIMESTAMP},
+	       #{corpcode,jdbcType=VARCHAR}
+	   )
+	</insert>
+</mapper> 	  

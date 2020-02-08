@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="com.sunline.funcpub.mybatis.public.userlogin" >
+	
+	<resultMap type="java.util.HashMap" id="userLoginDetaillistPageMap">
+		<result column="LOGNID" property="lognId" javaType="java.lang.String"/>
+		<result column="USERID" property="userId" javaType="java.lang.String"/>
+		<result column="LOGNDT" property="lognDt" javaType="java.lang.String"/>
+		<result column="LOGNST" property="lognSt" javaType="java.lang.String"/>
+		<result column="LOGNIP" property="lognIp" javaType="java.lang.String"/>
+	</resultMap>
+ 	<select id="userLoginDetaillistPage" parameterType="java.util.HashMap" resultMap="userLoginDetaillistPageMap">
+    	SELECT LOGNID ,
+    		   USERID ,
+    		   LOGNDT ,
+    		   LOGNST ,
+    		   ERORNO ,
+    		   LOGNIP 
+			 FROM PCMC_USER_LOGIN a WHERE 1=1 
+    	<if test= "userId != null and userId != ''">
+			AND a.userId = #{userId}
+        </if>
+    </select>
+   <resultMap type="java.util.HashMap" id="userLockDetaillistPageMap">
+		<result column="USERID" property="userId" javaType="java.lang.String"/>
+		<result column="USERCODE" property="userCode" javaType="java.lang.String"/>
+		<result column="USERNAME" property="userName" javaType="java.lang.String"/>
+		<result column="PHONE" property="phone" javaType="java.lang.String"/>
+		<result column="DISABLE" property="disable" javaType="java.lang.String"/>
+		<result column="FROZEN" property="frozen" javaType="java.lang.String"/>
+		<result column="LAST_UP_PS_DATE" property="last_up_ps_date" javaType="java.lang.String"/>
+	</resultMap>
+   <select id="userLockDetaillistPage" parameterType="java.util.HashMap" resultMap="userLockDetaillistPageMap">
+    	SELECT USERID ,
+    		   USERCODE ,
+    		   USERNAME ,
+    		   PHONE ,
+    		   DISABLE ,
+    		   FROZEN,
+    		   LAST_UP_PS_DATE 
+		FROM PCMC_USER
+		WHERE CORPCODE = #{corpcode}
+		AND (DISABLE = '1' OR FROZEN = '1')
+    	<if test= "userCode != null and userCode != '%%'">
+			AND USERCODE like  #{userCode}
+        </if>
+        <choose>
+                <when test="(disable != null and disable != '') and (frozen != null and frozen != '')">
+                    
+                </when>
+                <otherwise>
+                     <if test= "disable != null and disable != ''">
+			             AND DISABLE = '1' 
+                      </if>
+                   <if test= "frozen != null and frozen != ''">
+			        And FROZEN ='1'
+                   </if>
+                </otherwise>
+            </choose>
+    </select>
+    
+    <update id="lockUser" parameterType="java.util.HashMap" >
+    	update pcmc_user a
+    	<set>
+    		a.disable = '0'
+    	</set>
+    	<where>
+    		<if test= "userId != null and userId != ''">
+    			a.userid = #{userId}
+    		</if>
+    	</where>
+    </update>
+</mapper> 	  
+ 	 

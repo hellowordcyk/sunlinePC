@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE weblogic-web-app PUBLIC "-//BEA Systems, Inc.//DTD Web Application 8.1//EN" "http://www.bea.com/servers/wls810/dtd/weblogic810-web-jar.dtd">
+<weblogic-web-app>
+	<reference-descriptor>
+		<resource-description>
+			<res-ref-name>sunline.database</res-ref-name>
+			<jndi-name>sunline.database</jndi-name>
+		</resource-description>
+		<resource-description>
+			<res-ref-name>sunline.datacenter</res-ref-name>
+			<jndi-name>sunline.datacenter</jndi-name>
+		</resource-description>
+		<resource-description>
+			<res-ref-name>sunline.bfms</res-ref-name>
+			<jndi-name>sunline.bfms</jndi-name>
+		</resource-description>
+		<resource-description>
+			<res-ref-name>sunline.pams</res-ref-name>
+			<jndi-name>sunline.pams</jndi-name>
+		</resource-description>
+		<resource-description>
+			<res-ref-name>sunline.bcrm</res-ref-name>
+			<jndi-name>sunline.bcrm</jndi-name>
+		</resource-description>
+		<resource-description>
+			<res-ref-name>sunline.cifs</res-ref-name>
+			<jndi-name>sunline.cifs</jndi-name>
+		</resource-description>
+		<resource-description>
+			<res-ref-name>sunline.meta</res-ref-name>
+			<jndi-name>sunline.meta</jndi-name>
+		</resource-description>
+	</reference-descriptor>
+
+	<session-descriptor>
+		<session-param>
+			<param-name>
+				CookieName
+			</param-name>
+			<param-value>
+				bimisSession
+			</param-value>
+		</session-param>
+	</session-descriptor>
+
+	<jsp-descriptor>
+		<jsp-param>
+			<param-name>backwardCompatible</param-name>
+			<param-value>true</param-value>
+		</jsp-param>
+		<jsp-param>
+			<param-name>keepgenerated</param-name>
+			<param-value>true</param-value>
+		</jsp-param>
+	</jsp-descriptor>
+
+
+
+	<!-- If true, classes located in the WEB-INF directory of a web-app will 
+		be loaded in preference to classes loaded in the application or system classloader. 
+		Defaults to false. Value specified via console will be given precedence over 
+		this setting. -->
+	<container-descriptor>
+		<prefer-web-inf-classes>false</prefer-web-inf-classes>
+		 <prefer-application-packages>
+            <package-name>org.apache.commons.lang.*</package-name>
+            <package-name>antlr.*</package-name>
+            <package-name>org.hibernate.*</package-name>
+            <package-name>javax.persistence.*</package-name>
+            <package-name>org.slf4j.*</package-name>
+        </prefer-application-packages>
+	</container-descriptor>
+	<context-root>/</context-root>
+</weblogic-web-app>

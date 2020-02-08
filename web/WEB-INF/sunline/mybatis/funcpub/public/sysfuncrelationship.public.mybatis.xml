@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="com.sunline.funcpub.mybatis.public.sysfuncrelationship" >
+ 
+ 	<insert id="addPageRelationship" parameterType="java.util.HashMap">
+ 		insert into sys_func_relationship(
+ 			func_id,
+ 			func_code,
+ 			func_subcode
+ 		)values(
+ 			#{funcId, jdbcType=VARCHAR},
+ 			#{funcCode, jdbcType=VARCHAR},
+ 			#{funcSubCode, jdbcType=VARCHAR}
+ 		)
+	</insert>
+	
+	<select id="querySysFuncRelationshiplistPage" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		SELECT 
+			t.func_id "funcId", 
+			t1.func_code "funcSuperCode", 
+			t1.func_name "funcSuperName", 
+			t1.func_url "funcSuperUrl", 
+			t2.func_code "funcSubCode", 
+			t2.func_name "funcSubName", 
+			t2.func_url "funcSubUrl" 
+		FROM sys_func_relationship t 
+		LEFT JOIN sys_func_page t1 ON t.func_code = t1.func_code
+		LEFT JOIN sys_func_page t2 ON t.func_subcode = t2.func_code
+       <where>
+          <if test="funcId != null and funcId.trim() !=''">
+            and t.func_id = #{funcId}
+          </if>
+          <if test="funcSuperCode != null and funcSuperCode.trim() !=''">
+            and t1.func_code = #{funcSuperCode}
+          </if>
+          <if test="funcSubCode != null and funcSubCode.trim() !=''">
+            and t2.func_code like #{funcSubCode}
+          </if>
+          <if test="funcSubName != null and funcSubName.trim() !=''">
+            and t2.func_name like #{funcSubName}
+          </if>
+       </where>
+	</select>
+	
+	<select id="queryUnRelationPageslistPage" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		SELECT 
+			t.func_code "funcCode", 
+			t.func_name "funcName", 
+			t.func_url "funcUrl", 
+			t.func_param "funcParam", 
+			t.func_desc "funcDesc", 
+			t.func_ismenu "funcIsMenu" 
+		FROM sys_func_page t 
+       <where>
+          <if test="funcSuperCode != null and funcSuperCode.trim() !=''">
+          	t.func_code != #{funcSuperCode} 
+            AND t.func_code not in (select func_subcode from sys_func_relationship where func_code=#{funcSuperCode})
+          </if>
+          <if test="funcCode != null and funcCode.trim() !=''">
+          	AND t.func_code like #{funcCode} 
+          </if>
+          <if test="funcName != null and funcName.trim() !=''">
+          	AND t.func_name like #{funcName} 
+          </if>
+       </where>
+	</select>
+	
+	<delete id="deleteSysFuncRelationship" parameterType="java.lang.String">
+		delete from sys_func_relationship 
+		<where>
+			func_id = #{funcId}
+	    </where>
+	</delete>
+	
+	<delete id="deleteSysFuncRelationships" parameterType="java.lang.String">
+		delete from sys_func_relationship 
+		<where>
+			<if test="funcIds != null and funcIds.size() > 0">
+				<foreach collection="funcIds" index="index" item="items" open="" separator="" close="">
+                   <if test="index==0">
+                     func_id in 				
+                     <foreach collection="items" index="index" item="item" open="(" separator="," close=")">
+                     #{item}
+                    </foreach>
+                   </if>
+                   <if test="index > 0">
+                     or func_id in      
+                     <foreach collection="items" index="index" item="item" open="(" separator="," close=")">
+                       #{item}
+                    </foreach>
+                   </if>
+                </foreach>
+            </if>
+			<if test="funcCodes != null and funcCodes.size() > 0">
+				<foreach collection="funcCodes" index="index" item="items" open="" separator="" close="">
+                   <if test="index==0">
+                     func_code in  
+                     <foreach collection="items" index="index" item="item" open="(" separator="," close=")">
+                     #{item}
+                    </foreach>
+                   </if>
+                   <if test="index > 0">
+                     or func_code in 
+                     <foreach collection="items" index="index" item="item" open="(" separator="," close=")">
+                     #{item}
+                    </foreach>
+                   </if>
+                </foreach>
+            </if>
+	   </where>
+	</delete>
+</mapper> 	  

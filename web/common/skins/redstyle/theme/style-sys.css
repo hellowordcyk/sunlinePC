@@ -1,0 +1,75 @@
+@charset "UTF-8";
+
+@import url(displaytag.css);
+
+@import url(Jraf.css);
+
+@import url(/common/skins/redstyle/newcalendar/calendar-win2k-cold-1.css);
+
+.tree-doselect, .tree-doblur {
+	display:inline-block;
+	height: 24px;
+	line-height: 24px;
+    color: #000;
+	padding: 0 9px 0 4px;
+	border: 1px solid #cf938d;
+	background:url(../../../images/tree/tree-select.gif) repeat-x;
+	white-space: nowrap;
+}
+.tree-undoselect, .tree-dofocus  {
+	padding: 0 10px 0 5px;
+	height: 26px;
+	line-height: 26px;
+	white-space: nowrap;
+}
+
+.tree-domouseover {
+	padding: 0 10px 0 5px;
+	height: 26px;
+	line-height: 26px;
+    color: #dc4e01;
+    white-space: nowrap;
+}
+.tree-domouseout {
+	height: 26px;
+	line-height: 26px;
+	padding: 0 10px 0 5px;
+	white-space: nowrap;
+}
+
+.tree-main {
+    margin: 0px;
+    padding: 0px;
+    white-space: nowrap;
+}
+.tree-container {
+    margin: 0px;
+    padding: 0px;
+    white-space: nowrap;
+}
+
+.tree-body {
+    cursor: default;
+    cursor: position;
+    text-align: left;
+    color: black;
+    font-size: 9pt;
+    margin: 0px;
+    height: 26px;
+    line-height: 26px;
+}
+.tree-body img{
+    width: 20px;
+    height: 26px;
+	vertical-align: middle;
+}
+.tree-label {
+	height: 26px;
+	line-height: 26px;
+    padding: 1px;
+    /*margin-left: 2px;
+    vertical-align: middle;
+    text-align: left;*/
+	padding: 0 10px 0 5px;
+	white-space: nowrap;
+}

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sunline.pams.mybatis.pams.tranpara" >
+	<resultMap type="java.util.HashMap" id="TranParaMap">
+		<result column="AREA_NO" property="areaNo"/>
+		<result column="TRAN_TYPE" property="tranType"/>
+		<result column="TRAN_NO" property="tranNo"/>
+		<result column="START_DATE" property="startDate"/>
+		<result column="END_DATE" property="endDate"/>
+		<result column="TRAN_NAME" property="tranName"/>
+		<result column="PARA_VALUE1" property="paraValue1"/>
+		<result column="PARA_VALUE2" property="paraValue2"/>
+	</resultMap>
+	<resultMap type="java.util.HashMap" id="BizTranMap">
+		<result column="AREA_NO" property="areaNo"/>
+		<result column="TRAN_TYPE" property="tranType"/>
+		<result column="TRAN_NO" property="tranNo"/>
+		<result column="TRAN_NAME" property="tranName"/>
+	</resultMap>
+	<select id="queryTranParalistPage" parameterType="java.util.HashMap" resultMap="TranParaMap">
+		SELECT 
+			AREA_NO,
+			TRAN_TYPE,
+			TRAN_NO,
+			START_DATE,
+			END_DATE,
+			TRAN_NAME,
+			PARA_VALUE1,
+			PARA_VALUE2	
+		FROM MO_PAR_TRAN
+		WHERE AREA_NO IN(${ruleArea})
+		<if test="tranType != null and tranType != ''">
+			AND TRAN_TYPE = #{tranType}
+		</if>
+		<if test="tranName != null and tranName != ''">
+			AND TRAN_NAME LIKE #{tranName}
+		</if>
+		<if test="areaNo != null and areaNo != ''">
+			AND AREA_NO = #{areaNo}
+		</if>
+		<if test="date != null and date != ''">
+			AND START_DATE <![CDATA[<=]]> #{date} AND END_DATE <![CDATA[>=]]> #{date}
+		</if>
+		ORDER BY END_DATE DESC
+	</select>
+	
+	<select id="getMaxStartDate" parameterType="String" resultType="String">
+		SELECT MAX(START_DATE) FROM MO_PAR_TRAN WHERE AREA_NO = #{_parameter}
+	</select>
+	
+	<select id="queryBizTran" parameterType="String" resultMap="BizTranMap">
+		SELECT 
+			AREA_NO,
+			TRAN_TYPE,
+			TRAN_NO,
+			TRAN_NAME 
+		FROM OP_BIZ_TRAN_NO
+		WHERE AREA_NO = #{_parameter}
+	</select>
+	
+	<update id="updateEndDate" parameterType="java.util.HashMap">
+		UPDATE MO_PAR_TRAN SET
+			END_DATE = #{newEndDate}
+		WHERE AREA_NO = #{areaNo} AND END_DATE = #{endDate}
+	</update>
+	
+	<insert id="addTranPara" parameterType="java.util.HashMap">
+		INSERT INTO MO_PAR_TRAN(AREA_NO,TRAN_TYPE,TRAN_NO,START_DATE,END_DATE,TRAN_NAME,PARA_VALUE1,PARA_VALUE2)
+		VALUES(#{areaNo},#{tranType},#{tranNo},#{startDate},#{endDate},#{tranName},#{paraValue1},#{paraValue2})
+	</insert>
+	
+	<delete id="deleteTranPara" parameterType="java.util.HashMap">
+		DELETE FROM MO_PAR_TRAN WHERE AREA_NO = #{areaNo} AND START_DATE = #{startDate} AND END_DATE = #{endDate}
+	</delete>
+	
+</mapper> 	  
+ 	 

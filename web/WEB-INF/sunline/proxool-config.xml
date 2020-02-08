@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<proxool-config>
+  <proxool>
+    <alias>sunline.database</alias>
+    <driver-url>jdbc:oracle:thin:@localhost:1521/orcl</driver-url>
+    <driver-class>oracle.jdbc.driver.OracleDriver</driver-class>
+    <driver-properties>
+      <property name="remarksReporting" value="true" />
+      <property name="user" value="scott" />
+      <property name="password" value="41fee00c6ed016a0" />
+    </driver-properties>
+    <house-keeping-sleep-time>40000</house-keeping-sleep-time>
+    <!--milliseconds, checking the state of all the connections and tests whether any need to be destroyed or created,default=30000 -->
+    <house-keeping-test-sql>select * from pcmc_dept</house-keeping-test-sql>
+    <test-before-use>true</test-before-use>
+    <test-after-use>true</test-after-use>
+    <maximum-connection-count>30</maximum-connection-count>
+    <minimum-connection-count>3</minimum-connection-count>
+    <maximum-connection-lifetime>18000000</maximum-connection-lifetime>
+    <!-- 5 hours -->
+    <simultaneous-build-throttle>5</simultaneous-build-throttle>
+    <!-- maximum number of connections we can be building at any one time -->
+    <recently-started-threshold>40000</recently-started-threshold>
+    <overload-without-refusal-lifetime>50000</overload-without-refusal-lifetime>
+    <maximum-active-time>18000000</maximum-active-time>
+    <verbose>false</verbose>
+    <trace>false</trace>
+    <prototype-count>2</prototype-count>
+  </proxool>
+</proxool-config>
+

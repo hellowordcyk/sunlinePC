@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sunline.funcpub.mybatis.sys_priv_entity.public">
+    <resultMap type="com.sunline.funcpub.privilege.bean.SysPrivEntity" id="privEntity_rsm">
+    	<result column="entity_code" property="entityCode"/>
+    	<result column="entity_name" property="entityName"/>
+    	<result column="system_code" property="systemCode"/>
+    	<result column="corpcode" property="corpcode"/>
+    	<result column="db_table" property="dbTable"/>
+    	<result column="db_column_pk" property="dbColumnPK"/>
+    	<result column="db_pktype" property="dbPKType"/>
+    	<result column="db_column_title" property="dbColumnTitle"/>
+    	<result column="is_composite" property="isComposite"/>
+    	<result column="db_column_pk_a" property="dbColumnPKA"/>
+    	<result column="db_pktype_a" property="dbPKTypeA"/>
+    	<result column="db_column_pk_b" property="dbColumnPKB"/>
+    	<result column="db_pktype_b" property="dbPKTypeB"/>
+    	<result column="db_column_pk_c" property="dbColumnPKC"/>
+    	<result column="db_pktype_c" property="dbPKTypeC"/>
+    	<result column="db_column_pk_d" property="dbColumnPKD"/>
+    	<result column="db_pktype_d" property="dbPKTypeD"/>
+    	<result column="db_column_owner" property="dbColumnOwner"/>
+    	<result column="db_column_dept" property="dbColumnDept"/>
+    	<result column="create_user" property="createUser"/>
+    	<result column="create_time" property="createTime" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+    	<result column="last_update_user" property="lastUpdateUser"/>
+    	<result column="last_update_time" property="lastUpdateTime" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+    </resultMap>
+    
+    <select id="querySysPrivEntitylistPage" parameterType="com.sunline.funcpub.privilege.bean.SysPrivEntity" resultMap="privEntity_rsm">
+    	select 
+    	<include refid="privEntity_field" />
+    	from sys_priv_entity 
+    	<where>
+    		<include refid="privEntity_condition"></include>
+    		<if test="systemCode!=null and systemCode.trim()!=''">
+	    		and system_code=#{systemCode}
+	    	</if>
+    		<if test="entityName!=null and entityName.trim()!='' and  entityName.trim()!='%%'">
+	    		and (entity_name like  #{entityName} or entity_code like  #{entityName})
+	    	</if>
+	    	<if test="dbTable!=null and dbTable.trim()!=''">
+	    		and db_table=#{dbTable}
+	    	</if>
+	    	<if test="dbColumnOwner!=null and dbColumnOwner.trim()!=''">
+	    		and db_column_owner=#{dbColumnOwner}
+	    	</if>
+	    	<if test="dbColumnOwner!=null and dbColumnOwner.trim()!=''">
+	    		and db_column_owner=#{dbColumnOwner}
+	    	</if>
+	    	<if test="dbColumnDept!=null and dbColumnDept.trim()!=''">
+	    		and db_column_dept=#{dbColumnDept}
+	    	</if>
+    	</where>
+    	order by entity_code asc
+    </select>
+    
+    <delete id="deleteSysPrivEntity" parameterType="com.sunline.funcpub.privilege.bean.SysPrivEntity">
+    	delete from sys_priv_entity
+    	<where>
+    		<include refid="privEntity_condition"></include>
+    	</where>
+    </delete>
+    
+    <select id="isExist" parameterType="com.sunline.funcpub.privilege.bean.SysPrivEntity" resultType="java.lang.Integer">
+    	select count(1) from sys_priv_entity 
+    	<where>
+    		<include refid="privEntity_condition"></include>
+    	</where>
+    </select>
+    <!--  弃用 -->
+    <select id="checkTableOrColumnExist" parameterType="com.sunline.funcpub.privilege.bean.SysPrivEntity" resultType="java.util.HashMap">
+    	select ${dbColumnPK} ,${dbColumnOwner},${dbColumnDept}
+    		<if test="dbColumnPKA!=null and dbColumnPKA.trim()!=''">
+    			,${dbColumnPKA}
+    		</if>
+    		<if test="dbColumnPKB!=null and dbColumnPKB.trim()!=''">
+    			,${dbColumnPKB}
+    		</if>
+    		<if test="dbColumnPKC!=null and dbColumnPKC.trim()!=''">
+    			,${dbColumnPKC}
+    		</if>
+    		<if test="dbColumnPKD!=null and dbColumnPKD.trim()!=''">
+    			,${dbColumnPKD} 
+    		</if>
+    	  from ${dbTable} where 1=2
+    </select>
+    
+    <update id="updateSysPrivEntity" parameterType="com.sunline.funcpub.privilege.bean.SysPrivEntity">
+    	update sys_priv_entity
+    		set
+    		entity_name=#{entityName,jdbcType=VARCHAR},
+    		db_table=#{dbTable,jdbcType=VARCHAR},
+			db_column_pk=#{dbColumnPK,jdbcType=VARCHAR},
+			db_pktype=#{dbPKType,jdbcType=VARCHAR},
+	    	is_composite=#{isComposite,jdbcType=VARCHAR},
+	    	db_column_pk_a=#{dbColumnPKA,jdbcType=VARCHAR},
+	    	db_pktype_a=#{dbPKTypeA,jdbcType=VARCHAR},
+	    	db_column_pk_b=#{dbColumnPKB,jdbcType=VARCHAR},
+	    	db_pktype_b=#{dbPKTypeB,jdbcType=VARCHAR},
+	    	db_column_pk_c=#{dbColumnPKC,jdbcType=VARCHAR},
+	    	db_pktype_c=#{dbPKTypeC,jdbcType=VARCHAR},
+	    	db_column_pk_d=#{dbColumnPKD,jdbcType=VARCHAR},
+	    	db_pktype_d=#{dbPKTypeD,jdbcType=VARCHAR},
+			db_column_owner=#{dbColumnOwner,jdbcType=VARCHAR},
+			db_column_dept=#{dbColumnDept,jdbcType=VARCHAR},
+			last_update_user=#{lastUpdateUser,jdbcType=VARCHAR},
+			last_update_time=#{lastUpdateTime,jdbcType=TIMESTAMP},
+			db_column_title=#{dbColumnTitle,jdbcType=VARCHAR}
+    	<where>
+    		<include refid="privEntity_condition"></include>
+    	</where>
+    		
+    </update>
+    
+    <insert id="addSysPrivEntity" parameterType="com.sunline.funcpub.privilege.bean.SysPrivEntity">
+    	insert into sys_priv_entity(
+    		<include refid="privEntity_field"></include>
+    	)values(
+			#{entityCode,jdbcType=VARCHAR},
+			#{entityName,jdbcType=VARCHAR},
+			#{systemCode,jdbcType=VARCHAR},
+			#{corpcode,jdbcType=VARCHAR},
+			#{dbTable,jdbcType=VARCHAR},
+			#{dbColumnPK,jdbcType=VARCHAR},
+			#{dbPKType,jdbcType=VARCHAR},
+	    	#{isComposite,jdbcType=VARCHAR},
+	    	#{dbColumnPKA,jdbcType=VARCHAR},
+	    	#{dbPKTypeA,jdbcType=VARCHAR},
+	    	#{dbColumnPKB,jdbcType=VARCHAR},
+	    	#{dbPKTypeB,jdbcType=VARCHAR},
+	    	#{dbColumnPKC,jdbcType=VARCHAR},
+	    	#{dbPKTypeC,jdbcType=VARCHAR},
+	    	#{dbColumnPKD,jdbcType=VARCHAR},
+	    	#{dbPKTypeD,jdbcType=VARCHAR},
+			#{dbColumnOwner,jdbcType=VARCHAR},
+			#{dbColumnDept,jdbcType=VARCHAR},
+			#{createUser,jdbcType=VARCHAR},
+			#{createTime,jdbcType=TIMESTAMP},
+			#{lastUpdateUser,jdbcType=VARCHAR},
+			#{lastUpdateTime,jdbcType=TIMESTAMP},
+			#{dbColumnTitle,jdbcType=VARCHAR}
+    	)
+    </insert>
+    
+    <sql id="privEntity_field">
+    	entity_code,
+    	entity_name,
+    	system_code,
+    	corpcode,
+    	db_table,
+    	db_column_pk,
+    	db_pktype,
+    	is_composite,
+    	db_column_pk_a,
+    	db_pktype_a,
+    	db_column_pk_b,
+    	db_pktype_b,
+    	db_column_pk_c,
+    	db_pktype_c,
+    	db_column_pk_d,
+    	db_pktype_d,
+    	db_column_owner,
+    	db_column_dept,
+    	create_user,
+    	create_time,
+    	last_update_user,
+    	last_update_time,
+    	db_column_title
+    </sql>
+    
+    <sql id="privEntity_condition">
+    	<if test="entityCode!=null and entityCode.trim()!=''">
+    		and entity_code=#{entityCode}
+    	</if>
+    	<if test="corpcode!=null and corpcode.trim()!=''">
+    		and corpcode=#{corpcode}
+    	</if>
+    </sql>
+</mapper>

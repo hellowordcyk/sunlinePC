@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<deployment xmlns="http://xml.apache.org/axis/wsdd/" xmlns:java="http://xml.apache.org/axis/wsdd/providers/java">
+ <globalConfiguration>
+  <parameter name="sendMultiRefs" value="true"/>
+  <parameter name="disablePrettyXML" value="true"/>
+  <parameter name="adminPassword" value="bimisadmin"/>
+  <parameter name="attachments.Directory" value="D:\imps\web\WEB-INF\attachments"/>
+  <parameter name="dotNetSoapEncFix" value="true"/>
+  <parameter name="enableNamespacePrefixOptimization" value="false"/>
+  <parameter name="sendXMLDeclaration" value="true"/>
+  <parameter name="sendXsiTypes" value="true"/>
+  <parameter name="attachments.implementation" value="org.apache.axis.attachments.AttachmentsImpl"/>
+  <parameter name="axis.enableListQuery" value="true"/>
+  <parameter name="axis.disableServiceList" value="false"/>
+  <parameter name="axis.servicesPath" value="/services/"/>
+  <parameter name="axis.development.system" value="false"/>
+  <requestFlow>
+   <handler type="java:org.apache.axis.handlers.JWSHandler">
+    <parameter name="scope" value="session"/>
+   </handler>
+   <handler type="java:org.apache.axis.handlers.JWSHandler">
+    <parameter name="scope" value="request"/>
+    <parameter name="extension" value=".jwr"/>
+   </handler>
+  </requestFlow>
+ </globalConfiguration>
+ <handler name="bimisSession" type="java:org.apache.axis.handlers.SimpleSessionHandler">
+  <parameter name="defaultSessionTimeout" value="6000"/>
+ </handler>
+ <handler name="bimisLoger" type="java:com.sunline.gw.ws.handler.LogSoap"/>
+ <handler name="LocalResponder" type="java:org.apache.axis.transport.local.LocalResponder"/>
+ <handler name="URLMapper" type="java:org.apache.axis.handlers.http.URLMapper"/>
+ <handler name="Authenticate" type="java:org.apache.axis.handlers.SimpleAuthenticationHandler"/>
+ <service name="AdminService" provider="java:MSG">
+  <parameter name="allowedMethods" value="AdminService"/>
+  <parameter name="enableRemoteAdmin" value="false"/>
+  <parameter name="className" value="org.apache.axis.utils.Admin"/>
+  <namespace>http://xml.apache.org/axis/wsdd/</namespace>
+ </service>
+ <service name="Version" provider="java:RPC">
+  <parameter name="allowedMethods" value="getVersion"/>
+  <parameter name="className" value="org.apache.axis.Version"/>
+ </service>
+ <service name="BimisSoap" provider="java:RPC" style="wrapped" use="literal">
+  <requestFlow>
+   <handler type="bimisSession"/>
+  </requestFlow>
+  <responseFlow>
+   <handler type="bimisSession"/>
+  </responseFlow>
+  <parameter name="allowedMethods" value="login checkLogin doPost encodePassword"/>
+  <parameter name="wsdlPortType" value="Bimis"/>
+  <parameter name="scope" value="application"/>
+  <parameter name="className" value="com.sunline.gw.ws.server.Bimis"/>
+  <parameter name="wsdlServicePort" value="BimisServer"/>
+  <parameter name="wsdlTargetNamespace" value="http://schemas.sunline.cn/bimis"/>
+  <parameter name="wsdlServiceElement" value="BimisService"/>
+  <namespace>http://schemas.sunline.cn/bimis</namespace>
+ </service>
+ <transport name="http">
+  <requestFlow>
+   <handler type="URLMapper"/>
+   <handler type="java:org.apache.axis.handlers.http.HTTPAuthHandler"/>
+  </requestFlow>
+  <parameter name="qs:list" value="org.apache.axis.transport.http.QSListHandler"/>
+  <parameter name="qs:wsdl" value="org.apache.axis.transport.http.QSWSDLHandler"/>
+  <parameter name="qs.list" value="org.apache.axis.transport.http.QSListHandler"/>
+  <parameter name="qs.method" value="org.apache.axis.transport.http.QSMethodHandler"/>
+  <parameter name="qs:method" value="org.apache.axis.transport.http.QSMethodHandler"/>
+  <parameter name="qs.wsdl" value="org.apache.axis.transport.http.QSWSDLHandler"/>
+ </transport>
+ <transport name="local">
+  <responseFlow>
+   <handler type="LocalResponder"/>
+  </responseFlow>
+ </transport>
+</deployment>

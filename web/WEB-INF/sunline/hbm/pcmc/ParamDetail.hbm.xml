@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 2006-2-16 11:26:19 by Hibernate Tools 3.1.0.beta4 -->
+<hibernate-mapping>
+    <class name="com.sunline.bimis.pcmc.db.ParamDetail" table="param_detail">
+        <id name="paramdetailid" type="java.lang.Long">
+            <column name="paramdetailid" scale="0" />
+            <generator class="assigned" />
+        </id>
+        <many-to-one name="paramMaster" class="com.sunline.bimis.pcmc.db.ParamMaster" fetch="select">
+            <column name="paramid" scale="0" not-null="true" />
+        </many-to-one>
+        <property name="paramcode" type="string">
+            <column name="paramcode" length="40" not-null="true" />
+        </property>
+        <property name="parammeanings" type="string">
+            <column name="parammeanings" length="100" not-null="true" />
+        </property>
+    </class>
+</hibernate-mapping>

@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 2014-3-8 17:42:12 by Hibernate Tools 3.3.0.GA -->
+<hibernate-mapping>
+    <class name="com.sunline.bimis.pcmc.db.PcmcInfoPriv" table="PCMC_INFO_PRIV">
+        <id name="privid" type="int">
+            <column name="PRIVID" precision="22" scale="0" />
+            <generator class="com.sunline.jraf.id.HBNIDGenerator" >
+			    <param name="seqname">pcmc_info_priv</param>
+			    <param name="column">privid</param>
+			</generator>
+        </id>
+        <property name="privtp" type="string">
+            <column name="PRIVTP" length="8" not-null="true">
+            </column>
+        </property>
+        <property name="privcd" type="int">
+            <column name="PRIVCD" precision="22" scale="0" not-null="true">
+            </column>
+        </property>
+        <property name="infoid" type="int">
+            <column name="INFOID" precision="22" scale="0" not-null="true">
+            </column>
+        </property>
+        <property name="corpcode" type="string">
+            <column name="CORPCODE" length="16" not-null="true">
+            </column>
+        </property>
+    </class>
+</hibernate-mapping>

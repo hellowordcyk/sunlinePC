@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sunline.pams.mybatis.public.plan.sbj">
+    
+    <!-- 机构360方案结果映射 -->
+    <resultMap type="com.sunline.pams.plan.bean.sbj.MoSbjOrg" id="moSbjOrg">
+        <result column="WAY_CODE" property="wayCode" jdbcType="VARCHAR" />
+		<result column="AREA_NO" property="areaNo" jdbcType="CHAR" />
+		<result column="WAY_NAME" property="wayName" jdbcType="VARCHAR" />        
+		<result column="START_DAT" property="startDate" jdbcType="DATE" />
+		<result column="END_DAT" property="endDate" jdbcType="DATE" />
+		<result column="WAY_CYCLE" property="wayCycle" jdbcType="CHAR" />
+		<result column="RESERVE_DAY" property="reserveDay" jdbcType="VARCHAR" />
+        <result column="DELAY_DAY" property="delayDay" jdbcType="VARCHAR" />
+		<result column="EDIT_ORG" property="editOrg" jdbcType="VARCHAR" />
+		<result column="EDIT_ROLE" property="editRole" jdbcType="VARCHAR" />
+		<result column="WAY_DESC" property="wayDesc" jdbcType="VARCHAR" />
+		<result column="STATUS" property="status" jdbcType="VARCHAR" />
+		<result column="CREATE_TIME" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="OPERATOR" property="operator" jdbcType="VARCHAR" />
+		<result column="REVIEW_MAN" property="reviewMan" jdbcType="VARCHAR" />
+		<result column="REVIEW_TIME" property="reviewTime" jdbcType="TIMESTAMP" />
+		<result column="REVIEW_STATUS" property="reviewStatus" jdbcType="VARCHAR" />
+		<result column="REVIEW_OPINION" property="reviewOpinion" jdbcType="VARCHAR" />
+		<result column="IS_EXE" property="isExe" jdbcType="CHAR" />
+    </resultMap>
+    
+    <!-- 管理员查询机构360方案列表 -->
+    <select id="queryOrgSbjMlistPage" parameterType="java.util.HashMap" resultMap="moSbjOrg">
+        SELECT distinct
+            way.WAY_CODE
+            ,way.AREA_NO
+            ,way.WAY_NAME
+            ,way.WAY_RANGE
+            ,way.START_DAT
+            ,way.END_DAT
+            ,way.WAY_CYCLE
+            ,way.RESERVE_DAY
+            ,way.DELAY_DAY
+            ,way.EDIT_ORG
+            ,way.EDIT_ROLE
+            ,way.WAY_DESC
+            ,way.STATUS
+            ,way.CREATE_TIME
+            ,way.OPERATOR
+            ,way.REVIEW_MAN
+            ,way.REVIEW_TIME
+            ,way.REVIEW_STATUS
+            ,way.REVIEW_OPINION
+            ,way.IS_EXE
+        FROM MO_SBJ_ORG way
+        LEFT JOIN PCMC_ROLE prole ON ','||way.EDIT_ROLE||',' LIKE '%,'||prole.ROLEID||',%'
+	    LEFT JOIN PCMC_DEPT pdept ON ','||way.EDIT_ORG||',' LIKE '%,'||pdept.DEPTCODE||',%' and pdept.DISABLE = '0'
+        WHERE  (
+            ((EXISTS(SELECT 1 FROM V_AUTH_ORG B WHERE pdept.DEPTCODE = B.DEPTCODE AND B.USERID = #{userID}) )
+		  AND 
+		    (EXISTS(SELECT 1 FROM PCMC_ROLE B INNER JOIN PCMC_USER_ROLE C ON B.ROLEID = C.ROLEID 
+		        WHERE prole.ROLEID = B.ROLEID AND C.USERID = #{userID}
+			 )))
+		  OR 
+		  OPERATOR = #{userCode}
+		) AND way.status &lt;&gt; 'DEL' AND way.AREA_NO = #{areaNo}
+
+        <if test="startDate!=null">
+			and way.start_dat &lt;= #{startDate}
+		</if>
+		<if test="endDate != null">
+			and way.end_dat &gt;= #{endDate}
+		</if>
+		<if test="wayNameLike != null and wayNameLike !='' ">
+		    AND way.way_NAME LIKE #{wayNameLike}
+		</if>
+		<if test=" wayCode != null and wayCode !='' ">
+		    AND way.way_code = #{wayCode}
+		</if>	
+		order by way.way_code desc
+    </select>
+    
+</mapper> 	  

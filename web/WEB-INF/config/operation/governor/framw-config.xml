@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="gb2312"?>
+<Sunline>
+	<Session></Session>
+	<Operation id="uploadfile" bean="com.sunline.governor.actor.FrameworkActor" desc="上传文件管理模块">
+		<Action name="uploadLicense" desc="上传license文件"/>
+	</Operation>
+	<!-- 资源监控 -->
+	<Operation id="systemInfo" bean="com.sunline.governor.actor.MonitorInfoActor" desc="获取资源信息" >
+		<Action name="getServerInfo" desc="获取服务器信息" acttype="query" />
+		<Action name="getCpuInfo" desc="获取cpu信息" acttype="query" />
+		<Action name="getMemoryInfo" desc="获取内存信息" acttype="query" />
+		<Action name="getFileSystemInfo" desc="获取文件系统信息" acttype="query" />
+	</Operation>
+	<Operation id="initConfig" bean="com.sunline.governor.actor.InitConfigActor" desc="平台初始化配置模块">
+		<Action name="getDataSourceInfo" desc="获取proxool-config.xml文件配置信息" acttype="query" />
+		<Action name="getConfigInfo" desc="获取config.xml文件配置信息" acttype="query" />
+		<Action name="getBankLogoFilePath" desc="获取所有已上传的银行logo图片路径" acttype="query" />
+		<Action name="checkBankpics" desc="检验上传的图片是否合法" acttype="query" />
+		<Action name="isFirstLogin" desc="是否第一次登录平台" acttype="query" />
+		<Action name="configServlet" desc="更新config.xml数据信息" acttype="update" />
+		<Action name="upload" desc="上传文件" acttype="add" ></Action>
+		<Action name="getLogList" desc="获取日志文件列表" acttype="query" />
+		<Action name="getSeqBlockList" desc="获取Hibernate持久化实体自增序列" acttype="query" />
+		<Action name="updateSeqblock" desc="修正Hibernate持久化实体自增序列" acttype="update" />
+		<Action name="manualUpdateSeqblock" desc="修正Hibernate持久化实体自增序列" acttype="update" />
+		
+		<Action name="doDebug" desc="日志级别设置为DEBUG" acttype="update" />
+		<Action name="doInfo" desc="日志级别设置为INFO" acttype="update" />
+		<Action name="doWarn" desc="日志级别设置为WARN" acttype="update" />
+		<Action name="doError" desc="日志级别设置为ERROR" acttype="update" />
+		
+		<Action name="logDownload" desc="日志下载" acttype="other" />
+		
+		<Action name="listMenuAll" desc="查询菜单列表">
+			<Request multi="false">
+				<Field name="subsysid" title="子菜单ID" type="long"
+					maxlen="5" notnull="false">
+				</Field>
+				<Field name="menuid" title="菜单ID" type="long" maxlen="5"
+					notnull="false">
+				</Field>
+			</Request>
+			<Response multi="false" result="-1">
+				<Field name="Hint"></Field>
+				<Field name="Error"></Field>
+			</Response>
+		</Action>
+	</Operation>
+	
+	<!-- 系统升级-->
+	<Operation id="upgrade" bean="com.sunline.governor.upgrade.actor.UpgradeActor" desc="系统升级类" >
+		<Action name="doUpgrade" desc="系统升级" acttype="update" />
+		<Action name="getUpgrHist" desc="获取升级历史信息" acttype="update" />
+		<Action name="rollBackUpgrade" desc="回滚升级" acttype="update" />
+	</Operation>
+	
+    <!-- 资源监控 -->
+	<!--<Operation id="systemInfo" bean="com.sunline.bdss.monitor.actor.GetSystemInfoActor" desc="获取资源信息" >
+		<Action name="getServerInfo" desc="获取服务器信息" acttype="query" />
+		<Action name="getCpuInfo" desc="获取cpu信息" acttype="query" />
+		<Action name="getMemoryInfo" desc="获取内存信息" acttype="query" />
+		<Action name="getFileSystemInfo" desc="获取文件系统信息" acttype="query" />
+	</Operation> -->
+	
+	<!-- Sql监控 -->
+	<Operation id="sqlMonitor" bean="com.sunline.governor.sqlmonitor.actor.SqlMonitorActor" desc="Sql监控" >
+		<Action name="getSqlLog" desc="获取sql记录信息" acttype="query" />
+		<Action name="updateUserInfoOpen" desc="获取sql记录信息" acttype="update" />
+		<Action name="updateUserInfoClose" desc="获取sql记录信息" acttype="update" />
+		<Action name="changeLogStatus" desc="开启或关闭日志记录状态" acttype="update" />
+		<Action name="exportSqlLog" desc="下载sql记录信息" acttype="query" />
+		<Action name="deleteSqlMonitor" desc="删除频率" acttype="update" />
+	</Operation>
+	
+	<Operation id="initData" bean="com.sunline.governor.data.DataInitActor">
+		<Action name="queryInitDataFile" desc="查询数据初始化文件" acttype="query" />
+		<Action name="getStepFile" desc="查询数据初始化文件" acttype="query" />
+		<Action name="exeDataInit" desc="执行初始化" acttype="update" />
+		<Action name="exeAllDataInitByStep" desc="查询数据初始化文件" acttype="query" />
+	</Operation>
+</Sunline>

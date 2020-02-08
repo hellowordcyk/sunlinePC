@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="gb2312"?>
+<!-- 监管平台系统管理  -->
+<Sunline>
+	<Session></Session>
+	
+		<Operation id="publicOptionControls" bean="com.sunline.funcpub.publicoptioncontrols.OptionControlsActor" 
+		    desc="测试">
+			<!-- 机构选择控件 -->
+			<Action name="getDeptTreeOptionData" desc="获取机构树形选择控件选择数据"/>
+			<!-- 人员选择控件 -->
+			<Action name="getUserTreeOptionData" desc="获取人员树形选择控件选择数据"/>
+			<Action name="getUserTableOptionData" desc="获取人员表格选择控件选择数据"/>
+			<Action name="getSelectedUserForUserTableOption" desc="获取已选人员数据"/>
+			<!-- 指标选择控件 -->
+			<Action name="getKpiOptionData" desc="获取人员表格选择控件选择数据"/>
+			<Action name="getSelectedKpiForKpiOption" desc="获取已选人员数据"/>
+		</Operation>
+    	
+</Sunline>

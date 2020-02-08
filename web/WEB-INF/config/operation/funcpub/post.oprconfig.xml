@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="gb2312"?>
+<!-- 功能页面  -->
+<Sunline>
+    <Session></Session>
+    
+    <Operation id="postActor"  bean="com.sunline.funcpub.portal.post.actor.PostActor"  
+        desc="岗位管理操作类" >
+        <Action name="add" desc="新增系统功能页面" acttype="add">
+		</Action>
+        <Action name="update" desc="修改系统功能页面" acttype="update">
+        </Action>
+        <Action name="query" desc="查询系统功能页面" acttype="query"/>
+        
+       	<Action name="queryNoPage" desc="查询系统功能页面" acttype="query"/>
+        
+        
+        <Action name="delete" desc="删除" acttype="delete"/>
+        <Action name="post_import" desc="导入" acttype="import"/>
+        <Action name="downLoadPostTemplate" desc="导出模板" acttype="export"/>
+        <Action name="post_export" desc="导出" acttype="export"/>
+    </Operation>
+    
+</Sunline>

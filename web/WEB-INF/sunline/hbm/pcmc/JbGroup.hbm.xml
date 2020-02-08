@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 2006-2-9 18:26:18 by Hibernate Tools 3.1.0.beta4 -->
+<hibernate-mapping>
+    <class name="com.sunline.bimis.pcmc.db.JbGroup" table="JB_GROUP">
+        <id name="IGroupid" type="integer">
+            <column name="I_GROUPID" />
+            <generator class="assigned" />
+        </id>
+        <property name="VName" type="string">
+            <column name="V_NAME" not-null="true" />
+        </property>
+        <property name="VDesc" type="string">
+            <column name="V_DESC" />
+        </property>
+        <set name="jbGroupusers" inverse="true">
+            <key>
+                <column name="I_GROUPID" not-null="true" />
+            </key>
+            <one-to-many class="com.sunline.bimis.pcmc.db.JbGroupuser" />
+        </set>
+    </class>
+</hibernate-mapping>

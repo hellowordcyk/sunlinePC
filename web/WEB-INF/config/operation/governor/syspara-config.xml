@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="gb2312"?>
+<Sunline>
+	<Session></Session>
+	
+	<!-- 系统参数 管理-->
+    <Operation id="sysparaActor"  bean="com.sunline.governor.syspara.actor.SysparaActor"  desc="系统参数">
+        <Action name="getSyspara" desc="获取系统参数"/>
+        <Action name="updateSyspara" desc="修改系统参数"/>
+    </Operation>
+</Sunline>

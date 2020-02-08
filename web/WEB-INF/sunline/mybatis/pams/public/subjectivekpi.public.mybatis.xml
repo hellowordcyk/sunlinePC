@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="com.sunline.pams.mybatis.public.subjectivekpi" >
+ 	<resultMap type="java.util.HashMap" id="SubjectiveKpiMap">
+ 		<result column="KPI_ID" property="kpiID"/>
+ 		<result column="KPI_CODE" property="kpiCode"/>
+ 		<result column="KPI_NAME" property="kpiName"/>
+ 		<result column="APPLY_TYPE" property="applyType"/>
+ 		<result column="OPERATOR" property="operator"/>
+ 		<result column="USERNAME" property="userName"/>
+ 		<result column="STATUS" property="status"/>
+ 		<result column="SBJ_TYPE" property="sbjType"/>
+ 		<result column="SBJ_FREQUENCY" property="sbjFrequency"/>
+ 		<result column="RESERVE_DAY" property="reserveDay"/>
+ 		<result column="AUTO_SBJ" property="autoSbj"/>
+ 		<result column="BASE_SCORE" property="baseScore"/>
+ 		<result column="H_SCORE" property="hScore"/>
+ 		<result column="L_SCORE" property="lScore"/>
+ 		<result column="SPC_SCORE" property="spcScore"/>
+ 		<result column="L_BASE_LINE" property="lBaseLine"/>
+ 		<result column="H_BASE_LINE" property="hBaseLine"/>
+ 		<result column="REMARK" property="remark"/>
+ 	</resultMap>
+ 	<select id="querySubjectiveKpilistPage" parameterType="java.util.HashMap" resultMap="SubjectiveKpiMap">
+ 		SELECT A.KPI_ID,A.KPI_CODE,A.KPI_NAME,A.APPLY_TYPE,A.OPERATOR,B.USERNAME	 
+ 		FROM MO_KPI_SUBJECTIVE A
+ 		LEFT JOIN PCMC_USER B ON A.OPERATOR = B.USERCODE and a.AREA_NO = b.CORPCODE
+ 		WHERE A.STATUS = '1' AND A.DEL_FLAG = '0'
+ 		AND AREA_NO = #{areaNo}
+		<if test="kpiName != null and kpiName != ''">
+			AND A.KPI_NAME LIKE #{kpiName}
+		</if>
+		<if test="applyType != null and applyType != ''">
+			AND (A.APPLY_TYPE = #{applyType} OR A.APPLY_TYPE = '3')
+		</if>
+ 	</select>
+ 	
+ 	<select id="getSubjectiveKpi" parameterType="String" resultMap="SubjectiveKpiMap">
+ 		SELECT 
+ 			KPI_ID,KPI_CODE,KPI_NAME,APPLY_TYPE,STATUS,SBJ_TYPE,SBJ_FREQUENCY,RESERVE_DAY,AUTO_SBJ,BASE_SCORE,
+ 			H_SCORE,L_SCORE,SPC_SCORE,L_BASE_LINE,H_BASE_LINE,REMARK
+ 		FROM MO_KPI_SUBJECTIVE WHERE KPI_CODE = #{_parameter}
+ 	</select>
+ 	
+ 	<insert id="addSubjectiveKpi" parameterType="java.util.HashMap">
+ 		INSERT INTO MO_KPI_SUBJECTIVE(KPI_ID,AREA_NO,KPI_CODE,KPI_NAME,KPI_TYPE,APPLY_TYPE,ORG_NO,OPERATOR,STATUS,DEL_FLAG,REMARK,SBJ_TYPE,SBJ_FREQUENCY,RESERVE_DAY,AUTO_SBJ,BASE_SCORE,L_SCORE,H_SCORE,SPC_SCORE,L_BASE_LINE,H_BASE_LINE,CREATE_TIME)
+		values(#{kpiID},#{areaNo},#{kpiCode},#{kpiName},#{kpiType},#{applyType},#{orgNo},#{operator},#{status},#{delFlag},#{remark},#{sbjType},#{sbjFrequency},#{reserveDay},#{autoSbj},#{baseScore},#{lScore,jdbcType=NUMERIC},#{hScore,jdbcType=NUMERIC},#{spcScore,jdbcType=NUMERIC},#{lBaseLine,jdbcType=NUMERIC},#{hBaseLine,jdbcType=NUMERIC},#{createTime})
+ 	</insert>
+ 	
+ 	<update id="updateSubjectiveKpi" parameterType="java.util.HashMap">
+ 		UPDATE MO_KPI_SUBJECTIVE SET
+ 			KPI_NAME = #{kpiName},
+ 			APPLY_TYPE = #{applyType},
+            STATUS = #{status},
+            AUTO_SBJ = #{autoSbj},
+            SBJ_TYPE = #{sbjType},
+            SBJ_FREQUENCY = #{sbjFrequency},
+            RESERVE_DAY = #{reserveDay},
+            BASE_SCORE = #{baseScore},
+            L_SCORE = #{lScore,jdbcType=NUMERIC},
+            H_SCORE = #{hScore,jdbcType=NUMERIC},
+            SPC_SCORE = #{spcScore,jdbcType=NUMERIC},
+            L_BASE_LINE = #{lBaseLine,jdbcType=NUMERIC},
+            H_BASE_LINE = #{hBaseLine,jdbcType=NUMERIC},
+            REMARK = #{remark},
+            OPERATOR = #{operator},
+            ORG_NO = #{orgNo},
+            AREA_NO = #{areaNo},
+            CREATE_TIME = #{createTime}
+ 		WHERE KPI_CODE = #{kpiCode}
+ 	</update>
+ 	
+ 	
+ 	<update id="deleteSubjectiveKpi" parameterType="java.util.List">
+ 		UPDATE MO_KPI_SUBJECTIVE 
+ 		SET DEL_FLAG = '1', STATUS = '0'
+ 		WHERE KPI_CODE IN<foreach collection="list" item="kpiCode" open="(" separator="," close=")">#{kpiCode}</foreach>
+ 	</update>
+</mapper> 	  
+ 	 

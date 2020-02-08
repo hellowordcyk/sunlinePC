@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sunline.bimis.pcmc.mybatis">
+	<select id="getGrantRoles" parameterType="java.util.HashMap" resultType="com.sunline.bimis.pcmc.mybatis.PcmcRole">
+		SELECT roleid, rolename
+		  FROM pcmc_role a
+		 WHERE a.subsysid =#{subsysid} and a.corpcode=#{corpcode}
+		AND EXISTS (SELECT 1
+		  FROM pcmc_user_role b
+		 WHERE a.roleid = b.roleid
+		   AND b.userid = #{userid})
+	</select>
+	<select id="getUnGrantRoles" parameterType="java.util.HashMap" resultType="com.sunline.bimis.pcmc.mybatis.PcmcRole">
+		SELECT roleid, rolename
+		  FROM pcmc_role a
+		 WHERE a.subsysid =#{subsysid} and a.corpcode=#{corpcode}
+		AND NOT EXISTS (SELECT 1
+		  FROM pcmc_user_role b
+		 WHERE a.roleid = b.roleid
+		   AND b.userid = #{userid})
+	</select>
+	<delete id="delGrantRole" parameterType="java.util.HashMap">
+		DELETE FROM pcmc_user_role a
+ 		 WHERE userid = #{userid}
+ 		<if test= "roleid != null and roleid != ''">
+ 		     AND a.roleid = #{roleid}
+ 		</if>
+   		AND EXISTS (SELECT 1
+          FROM pcmc_role b,pcmc_subsys c
+         WHERE a.roleid = b.roleid and b.corpcode=#{corpcode}
+           AND b.subsysid=c.subsysid
+           AND b.subsysid = #{subsysid})
+	</delete>
+<!--    
+    <select id="queryPcmcInfoByUserId_listPage" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+        SELECT a.infoid AS "infoid", a.title AS "title",
+               a.createuser AS "createuser", a.createtime AS "createtime",
+               a.startdt AS "startdt", a.enddt AS "enddt"
+          FROM (SELECT e.infoid AS infoid, e.title AS title, f.username AS createuser,
+                        e.createtime AS createtime, e.startdt AS startdt,
+                        e.enddt AS enddt
+                   FROM pcmc_info e, pcmc_user f
+                  WHERE f.userid = e.createuser
+                <if test="title!=null">
+                    and e.title like '%' || #{title} || '%'
+                </if>
+                <if test="createtime!=null">
+                    and e.createtime = #{createtime}
+                </if>
+                <if test="username!=null">
+                    and f.username like '%' || #{username} || '%'
+                </if>
+                <if test="startdt!=null">
+                    <![CDATA[
+                    and e.startdt >= #{startdt}
+                    ]]>
+                </if>
+                <if test="enddt!=null">
+                    <![CDATA[
+                    and e.enddt <= #{enddt}
+                    ]]>
+                </if>) a
+            INNER JOIN (SELECT a.infoid
+            FROM pcmc_info_priv a
+           WHERE a.privcd = #{userid}
+             AND a.privtp = '1'
+          UNION
+          SELECT a.infoid
+            FROM pcmc_info_priv a
+           WHERE a.privtp = '2'
+             AND EXISTS (SELECT 1
+                    FROM pcmc_user b
+                   WHERE b.deptid = a.privcd
+                     AND b.userid = #{userid})) bb
+           ON bb.infoid = a.infoid
+           ORDER BY a.createtime DESC
+    </select>
+     --> 
+<select id="queryPcmcInfoByUserId_listPage" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+        SELECT aa.infoid AS "infoid", aa.title AS "title",
+               aa.createuser AS "createuser", aa.createtime AS "createtime",
+               aa.startdt AS "startdt", aa.enddt AS "enddt",aa.isread AS "isread"
+          FROM (SELECT a.infoid, a.createtime,a.createuser, a.title, a.startdt,a.enddt, nvl(b.isread, '0') isread,a.corpcode
+                   FROM pcmc_info a
+                   LEFT JOIN pcmc_infodesc b 
+                     ON a.infoid = b.infoid and a.corpcode=b.corpcode
+                    AND b.userid = #{userid} and a.corpcode=b.corpcode
+                  WHERE a.ispriv = '0' and a.corpcode=#{corpcode}
+                <if test="title!=null">
+                    and a.title like  #{title}
+                </if>
+                <if test="startdt!=null">
+                    <![CDATA[
+                    and a.startdt >= #{startdt}
+                    ]]>
+                </if>
+                <if test="enddt!=null">
+                    <![CDATA[
+                    and a.enddt <= #{enddt}
+                    ]]>
+                </if>
+                 UNION ALL
+                 SELECT a.infoid, a.createtime,a.createuser, a.title, a.startdt,a.enddt, nvl(b.isread, '0') isread,a.corpcode 
+                   FROM pcmc_info a
+                  INNER JOIN (SELECT a.infoid
+                                FROM pcmc_info_priv a
+                               WHERE a.privcd = #{userid}
+                                 AND a.privtp = '1'
+                              UNION
+                              SELECT a.infoid
+                                FROM pcmc_info_priv a
+                               WHERE a.privtp = '2'
+                                 AND EXISTS (SELECT 1
+                                        FROM pcmc_user b
+                                       WHERE b.deptid = a.privcd
+                                         AND b.userid = #{userid})) bb
+                     ON bb.infoid = a.infoid and a.corpcode=#{corpcode}
+                <if test="title!=null">
+                    and a.title like #{title} 
+                </if>
+                <if test="startdt!=null">
+                    <![CDATA[
+                    and a.startdt >= #{startdt}
+                    ]]>
+                </if>
+                <if test="enddt!=null">
+                    <![CDATA[
+                    and a.enddt <= #{enddt}
+                    ]]>
+                </if>
+                   LEFT JOIN pcmc_infodesc b
+                     ON a.infoid = b.infoid
+                    AND b.userid = #{userid} and a.corpcode=b.corpcode
+                  WHERE a.ispriv = '1' and a.corpcode=#{corpcode}) aa
+                <where>
+                    aa.corpcode=#{corpcode}
+                    <if test="isread!=null">
+                        and aa.isread = #{isread}
+                    </if>
+                </where>
+         ORDER BY createtime DESC ,aa.isread ASC
+    </select>
+    
+    <select id="pcmc_pcmc_config_queryDeptList" parameterType="java.util.HashMap" resultType="com.sunline.bimis.pcmc.db.PcmcDept">
+    	select a.*,decode(b.deptroleid,null,0,1) flag from pcmc_dept a left join pcmc_dept_role b on a.deptid=b.deptid and b.roleid = #{roleid}
+         where  1=1 and a.corpcode=#{corpcode}
+         <if test= "deptcode != null and deptcode != ''">
+			and a.deptcode like #{deptcode}
+         </if>
+   		<if test= "deptname != null and deptname != ''">
+			and a.deptname like #{deptname}
+   		</if>
+ 	 </select>
+ 	 
+ 	 <select id="pcmc_user_login_query" parameterType="java.util.HashMap" resultType="com.sunline.bimis.pcmc.db.PcmcUserLogin">
+    	select a.lognid, a.userid,a.logntp,a.logndt,a.lognst,a.erorno,a.ulokid,a.uloktm
+    	 from pcmc_user_login a where a.lognid = (
+				select max(b.lognid) maxid from pcmc_user_login b
+				<where> 
+					<if test= "userid != null and userid != ''">
+					b.userid = #{userid}
+					</if>
+					<if test= "startDate != null and startDate != ''">
+					and b.logndt  &gt; #{startDate}
+					</if>
+					<if test= "endDate != null and endDate != ''">
+					and b.logndt &lt; #{endDate}
+					</if>
+				</where>
+				 )
+ 	 </select>
+</mapper>

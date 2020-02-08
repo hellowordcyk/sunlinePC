@@ -1,0 +1,562 @@
+<!DOCTYPE taglib PUBLIC "-//Sun Microsystems, Inc.//DTD JSP Tag Library 1.2//EN"
+	"http://java.sun.com/dtd/web-jsptaglibrary_1_2.dtd">
+<taglib>
+	<tlib-version>1.0</tlib-version>
+	<jsp-version>1.2</jsp-version>
+	<short-name>h</short-name>
+	<uri>http://www.sunline.cn/jsp/uri</uri>
+	<display-name>Sunline ebank JSP tag libary 1.0</display-name>
+	<description>
+		Sunline ebank JSP tag libary 1.0 Sunline Bimis Platform
+		1.1.0.3
+	</description>
+	<tag>
+		<name>text</name>  <!-- 文本框  标签 text-->
+		<tag-class>com.sunline.funcpub.tools.tags.Text</tag-class>
+		<body-content>jsp</body-content>
+		<description>显示文本输入框</description>
+		
+		  <attribute>
+			<name>id</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute> 
+		
+		<attribute>
+			<name>name</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		
+		<attribute>
+			<name>maxlength</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		
+		
+		<attribute>
+			<name>min</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		
+		<attribute>
+			<name>validate</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		
+		<attribute>
+			<name>value</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		
+		<attribute>
+			<name>index</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		
+		<attribute>
+			<name>readonly</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		
+		<attribute>
+			<name>hidden</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>onfocus</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		
+		<attribute>
+			<name>style</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		
+		
+	</tag>  
+	
+	<tag>  <!-- 下拉列表  标签 select-->
+		<name>select</name>
+		<tag-class>com.sunline.funcpub.tools.tags.Select</tag-class>
+		<body-content>jsp</body-content>
+		<description>下拉列表</description>
+		
+		<attribute>
+			<name>id</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		
+		<attribute>
+			<name>name</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		
+		<attribute>
+			<name>validate</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		
+		<attribute>
+			<name>value</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		
+		<attribute>
+			<name>size</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		
+		<attribute>
+			<name>index</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>	
+	    <attribute>
+			<name>dicttype</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>datasrc</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>nulllable</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>disabled</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+	</tag>
+	
+	 <tag>  <!-- 单选框 radio -->
+		<name>radio</name>
+		<tag-class>com.sunline.funcpub.tools.tags.Radio</tag-class>
+		<body-content>jsp</body-content>
+		<description>单选框</description>
+		
+		<attribute>
+			<name>id</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+				
+		<attribute>
+			<name>name</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+				
+		<attribute>
+			<name>value</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		
+		<attribute>
+			<name>index</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+			
+	    <attribute>
+			<name>dicttype</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		
+		<attribute>
+			<name>datasrc</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		
+		<!-- wangg 2015-04-20  增加每行显示数量 -->
+		<attribute>
+			<name>linecount</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>		
+	</tag>
+	
+	 <tag>  <!-- 日期控件 date -->
+		<name>date</name>
+		<tag-class>com.sunline.funcpub.tools.tags.Date</tag-class>
+		<body-content>jsp</body-content>
+		<description>日期控件</description>
+		
+		<attribute>
+			<name>id</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+				
+		<attribute>
+			<name>name</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+				
+		<attribute>
+			<name>index</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+			
+	    <attribute>
+			<name>dateFmt</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		
+		<attribute>
+			<name>minDate</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		
+		<attribute>
+			<name>maxDate</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		
+		<attribute>
+			<name>readonly</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>	
+		
+		<attribute>
+			<name>value</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>	
+	</tag>
+	
+	
+	<tag><!-- write标签 -->
+	    <name>write</name>
+		<tag-class>com.sunline.funcpub.tools.tags.Write</tag-class>
+		<body-content>jsp</body-content>
+		<description>write控件</description>
+		
+		<attribute>
+		    <name>name</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		
+		<attribute>
+		    <name>value</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+	</tag>
+	
+	<tag><!-- write标签 -->
+	    <name>iteratorcheckbox</name>
+		<tag-class>com.sunline.funcpub.tools.tags.IteratorCheckbox</tag-class>
+		<body-content>jsp</body-content>
+		<description>write控件</description>
+		
+		<attribute>
+		    <name>name</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		
+		<attribute>
+		    <name>value</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		
+		<attribute>
+		    <name>key</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		
+		<attribute>
+			<name>style</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+	</tag>
+
+	<!-- dwrite标签 -->
+	<tag>
+	    <name>dwrite</name>
+		<tag-class>com.sunline.funcpub.tools.tags.DWrite</tag-class>
+		<body-content>jsp</body-content>
+		<description>dwrite控件</description>
+		
+		<attribute>
+		    <name>name</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		
+		<attribute>
+		    <name>value</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		
+		<!-- 数据字典类型 -->
+		<attribute>
+			<name>paratp</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		
+		<!-- 系统代码 -->
+		<attribute>
+			<name>paramp</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		
+		<!-- 数据字典表 -->
+		<attribute>
+			<name>datasrc</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+	</tag>
+    
+    <!-- iterator标签 -->
+	<tag>
+	    <name>iterator</name>
+		<tag-class>com.sunline.funcpub.tools.tags.HIterator</tag-class>
+		<body-content>jsp</body-content>
+		<description>iterator控件</description>
+		
+		<attribute>
+			<name>target</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		
+		<attribute>
+			<name>rel</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+	</tag>
+	
+	<tag>
+		<name>doPost</name>
+		<tag-class>com.sunline.funcpub.tools.tags.DoPostTag</tag-class>
+		<body-content>JSP</body-content>
+		<description>向后台提交一个请求</description>
+		<attribute>
+			<name>sysName</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>子系统代码</description>
+		</attribute>
+		<attribute>
+			<name>oprId</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>交易ID</description>
+		</attribute>
+		<attribute>
+			<name>action</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>交易方法</description>
+		</attribute>
+		<attribute>
+			<name>params</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>请求参数格式同URL参数</description>
+		</attribute>
+		<attribute>
+			<name>paramsMap</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>请求参数(Map类型)</description>
+		</attribute>
+		<attribute>
+			<name>all</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>是否将请求中的所有参数加到请求包中？缺省=false</description>
+		</attribute>
+		<attribute>
+			<name>scope</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>请求结果(PkgUtil)放在哪个域中？page*,request,session,application</description>
+		</attribute>
+		<attribute>
+			<name>var</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>请求结果(PkgUtil)放在域的哪个属性名称中？缺省"jrafPkg"</description>
+		</attribute>
+		<attribute>
+			<name>encoding</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>缺省取request.getCharacterEncoding()</description>
+		</attribute>
+	</tag>
+	
+	<tag>
+		<name>fmt</name>
+		<tag-class>com.sunline.funcpub.tools.tags.Format</tag-class>
+		<body-content>JSP</body-content>
+		<description>本标签用于转换数据格式</description>
+		<attribute>
+			<name>name</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>应答包字段名.</description>
+		</attribute>
+		<attribute>
+			<name>index</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>应答包多记录的记录序号.</description>
+		</attribute>
+		<attribute>
+			<name>value</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>Expression to be evaluated.</description>
+		</attribute>
+		<attribute>
+			<name>default</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>
+				Default value if the resulting value is null.
+			</description>
+		</attribute>
+		<attribute>
+			<name>escapeXml</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>
+				Determines whether characters &lt;,&gt;,&amp;,'," in the
+				resulting string should be converted to their
+				corresponding character
+				entity codes. Default value is
+				true.
+			</description>
+		</attribute>
+		<attribute>
+			<name>type</name>
+			<required>false</required>
+			<description>要转换的对象的类型.包括string,money,date,crypto(加密，见Java:Crypto.encode),url(进行url编码)</description>
+		</attribute>
+		<attribute>
+			<name>pattern</name>
+			<required>false</required>
+			<description>转换模板.</description>
+		</attribute>
+		<attribute>
+			<name>xmlpath</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+	</tag>
+	
+	<tag>
+		<name>textarea</name>  <!-- 文本域  标签 textarea-->
+		<tag-class>com.sunline.funcpub.tools.tags.Textarea</tag-class>
+		<body-content>jsp</body-content>
+		<description>显示文本域</description>
+		
+		<attribute>
+			<name>id</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute> 
+		
+		<attribute>
+			<name>name</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		
+		<attribute>
+			<name>cols</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		
+		
+		<attribute>
+			<name>rows</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		
+		<attribute>
+			<name>required</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		
+		<attribute>
+			<name>value</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		
+		<attribute>
+			<name>index</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		
+		<attribute>
+			<name>readonly</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		
+		<attribute>
+			<name>disabled</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		
+		<attribute>
+			<name>onfocus</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		
+		<attribute>
+			<name>style</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+	</tag> 
+</taglib>

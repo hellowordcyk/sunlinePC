@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="gb2312"?>
+<!-- 公共功能  -->
+<Sunline>
+	<Session></Session>
+	<!-- 系统参数查询 -->
+	<Operation id="funcpub-syspara"  bean="com.sunline.funcpub.portal.para.syspara.Syspara"  desc="系统参数"
+	filterpath="/funcpub/portal/para/syspara/query/">
+		<Action name="getSyspara" desc="获取系统参数"/>
+		<Action name="updateSyspara" desc="修改系统参数"/>
+	</Operation>
+	
+	<!-- 系统参数 管理-->
+    <Operation id="funcpub-sysparamanage"  bean="com.sunline.funcpub.portal.para.syspara.SysparaManage"  desc="系统参数"
+    filterpath="/funcpub/portal/para/syspara/manager/">
+        <Action name="getSyspara" desc="获取系统参数"/>
+        <Action name="updateSyspara" desc="修改系统参数"/>
+         <Action name="refreshData" desc="刷新内存中的系统参数"/>
+    </Operation>
+	
+	<Operation id="funcpub-basicinfo"  bean="com.sunline.funcpub.basicinfo.BasicInfoActor"  desc="系统参数">
+		<Action name="queryBasicInfo" desc="获取系统参数" acttype="query"/>
+		<Action name="queryLoginInfo" desc="获取Login页面参数" acttype="query"/>
+		<Action name="queryIndexInfo" desc="获取Index页面参数" acttype="query"/>
+		<Action name="getBankLogoFilePath" desc="获取所有已上传的银行logo图片路径" acttype="query"/>
+		<Action name="importBankLogo" desc="导入LOGO图片" acttype="import"/>
+		<Action name="updateBasicInfo" desc="更新系统参数" acttype="update"/>
+		<Action name="checkBankpics" desc="检验上传的图片是否存在文件中"/>
+		<Action name="upload" desc="文件上传"/>
+	</Operation>
+	
+    <!-- 数据字典管理 -->
+    <Operation id="bdssParameter"
+        bean="com.sunline.funcpub.portal.para.BdssParameterActor" desc="数据字典管理"
+        filterpath="/funcpub/portal/para/dict/" >
+        <Action name="queryParamHeader" desc="模糊查询参数表代码值为“%”的项"
+            acttype="query" />
+        <Action name="refreshData" desc="刷新字典表bdss_base_para" acttype="deal" />
+        <Action name="addSysParam" desc="增加业务字典" acttype="add" />
+        <Action name="addSysParam1" desc="增加业务字典属性" acttype="add" />
+        <Action name="delSysParam" desc="删除业务字典" acttype="delete" />
+        <Action name="querySysParam" desc="查询业务字典副属性" acttype="query" />
+        <Action name="querySysParam1" desc="查询业务字典" acttype="query" />
+        <Action name="updateSysParam" desc="修改业务字典属性" acttype="update" />
+        <Action name="importSysParam" desc="导入" acttype="import"/>
+       <Action name="downLoadSysParamTemplate" desc="模板" acttype="import"/>
+       <Action name="exportSysParam" desc="导出" acttype="export"/>
+    </Operation>
+</Sunline>

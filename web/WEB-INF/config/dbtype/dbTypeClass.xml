@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="gb2312"?>
+<root>
+    <data>
+        <!--  建表时是否保留已经存在的表格-->
+        <originalTable    retain="false"   />
+        <!--  建表时是否保留表格中已经存在的数据 flase表示不保留，true表示保留-->
+        <originalData     retain="false"   />
+    </data>
+	<dbase key="ORACLE"  class="com.sunline.governor.data.impl.InitOracleData">
+	                <column key="CHAR"           dbType="VARCHAR" />
+	                <column key="STRING"           dbType="VARCHAR2" />
+	                <column key="INTEGER"         dbType="NUMBER" />
+	                <column key="DECIMAL"        dbType="NUMBER" />
+	                <column key="DATE"               dbType="DATE" />
+	                 <column key="TIMESTAMP"   dbType="TIMESTAMP" />
+	                 <column key="BLOB"   dbType="BLOB"  />
+	</dbase>
+	<dbase key="MYSQL"  class="com.sunline.governor.data.impl.InitMySQLData" >
+	                <column key="STRING"           dbType="VARCHAR" />
+	                <column key="INTEGER"         dbType="DECIMAL" />
+	                <column key="DECIMAL"        dbType="DECIMAL" />
+	                <column key="DATE"               dbType="DATE" />
+	                 <column key="TIMESTAMP"   dbType="DATETIME" />
+	                 <column key="BLOB"   dbType="BLOB"  />
+	</dbase>
+	
+	<dbase key="DB2"  class="">
+	</dbase>
+	
+</root>

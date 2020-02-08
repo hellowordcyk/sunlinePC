@@ -1,0 +1,121 @@
+//ajax_prototype.js 说明
+//这是基于prototype.jsp的Ajax函数工具，在页面中加载此文件前须先加载prototype.js,如下：
+//<Script language="JavaScript" src="/js/prototype.js"/>
+
+
+function formToRequestParams(formObj)
+将表单formObj的数据组装成经过编码的请求数据字符串
+
+
+function ajaxSendRequest(uri,param,onStateChange)
+以Ajax方式发送请求
+uri:服务器uri
+param:经过utf-8编码的请求数字符串
+onStateChange:当请求完成或失败时的回调函数，可以带一个参数，参数类型为XMLHttpRequest
+如：ajaxSendRequest("/httpprocesserservlet","sysName=12&action=...", function(x){
+				alert(x.responseHtml);
+			});
+
+function ajaxLoadPageTo(uri ,params ,htmlElementId)
+以Ajax方式发送请求,并将应答内容显示到htmlElementId中
+uri:服务器uri
+param:经过utf-8编码的请求数字符串
+htmlElementId：HTML中元素的ID名称
+
+function ajaxSubmitForm(formObj ,onStateChange)
+以Ajax方式提交表单
+formObj:表单名称/ID/对象
+onStateChange:当请求完成或失败时的回调函数，可以带一个参数，参数类型为XMLHttpRequest
+如：ajaxSubmitForm('myform', function(x){
+			alert(x.responseHtml);
+		});
+
+function ajaxSubmitFormTo(formObj, htmlElementId)
+以Ajax方式提交表单，并将应答内容显示到htmlElementId中
+formObj:表单名称/ID/对象
+htmlElementId：HTML中元素的ID名称
+如：ajaxSubmitForm('myform', 'result');
+
+
+function ajaxSubmitFormXml(formObj ,processXml)
+以Ajax方式提交表单，并将应答内容转为xml然后传到processXml方法中处理
+formObj:表单名称/ID/对象
+processXml:当请求完成或失败时的回调函数,带一个参数：xmldoc
+如：ajaxSubmitFormXml('myform', function(xml){
+			alert(getBimisPkgMsgs(xml));
+		});
+
+
+function ajaxSendForXml(uri ,params ,processXml)
+以Ajax方式发送请求，并将应答内容转为xml然后传到processXml方法中处理
+uri:服务器uri
+param:经过utf-8编码的请求数字符串
+processXml:当请求完成或失败时的回调函数,带一个参数：xmldoc
+
+
+
+function ajaxSubmitDiv(uri,htmlElementId , callbackonComplete, params)
+以Ajax方式发送指定区域内的数据
+uri:服务器uri
+htmlElementId:圈定要提交数据的元素ID
+callbackonComplete:当请求完成或失败时的回调函数，可以带一个参数，参数类型为XMLHttpRequest
+param:需要附加的其它参数，参数值不要进行utf-8编码
+如：ajaxSubmitDiv(uri ,htmlElementId ,function(x){
+            processXml(x.responseXML);
+        } ,
+        {sysName: '<%=Crypto.encode(request,"pcmc")%>'
+        ,oprID:'<sc:fmt value="sm_query" type="crypto"/>'
+        ,actions:'<sc:fmt value="getUserInfo" type="crypto"/>'
+        }
+         );
+         
+function ajaxSubmitDivXml(uri,htmlElementId ,processXml, params)
+以Ajax方式发送指定区域内的数据，以xml格式接收应答数据，完成时调用processXml(xmldoc)进行处理
+uri:服务器uri
+htmlElementId:圈定要提交数据的元素ID
+processXml:当请求完成或失败时的回调函数,带一个参数：xmldoc
+param:需要附加的其它参数，参数值不要进行utf-8编码
+
+function ajaxSubmitDivTo(uri,htmlElementId ,toId, params)
+以Ajax方式发送指定区域内的数据，并将应答内容显示到toId中
+uri:服务器uri
+htmlElementId:圈定要提交数据的元素ID
+toId:用于显示结果的元素ID
+param:需要附加的其它参数，参数值不要进行utf-8编码
+
+
+function getValueByXml(xpath,xml)
+按给定路径xpath,从XML文档对象xml中获取文本（已清空前后空格）
+缺省返回""
+xpath:XPATH路径
+xml:XML文档对象
+
+function getValueByXmlDefault(path,xml,defautVal)
+按给定路径xpath,从XML文档对象xml中获取文本（已清空前后空格）
+xpath:XPATH路径
+xml:XML文档对象
+defautVal:缺省值
+
+function getBimisPkgResult(xmldoc)
+取Bimis平台应答包中的应答码
+xmldoc:XML文档对象
+
+function getBimisPkgHintMsg(xmldoc,index)
+取Bimis平台应答包中的提示信息
+xmldoc:XML文档对象
+index: 第几个信息，第一个为0，缺省为0
+
+function getBimisPkgErrorMsg(xmldoc,index)
+取Bimis平台应答包中的错误信息
+xmldoc:XML文档对象
+index: 第几个错误信息，第一个为0，缺省为0
+
+function getBimisPkgMsgs(xmldoc)
+取Bimis平台应答包中的所有提示或错误信息
+xmldoc:XML文档对象
+
+
+function getBimisPkgRspVal(xmldoc,fieldname)
+取Bimis平台应答数据字段值
+xmldoc:XML文档对象
+fieldname:字段的名称，或相对于"/DataPacket/Response/Data/"的相对XPath路径

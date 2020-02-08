@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 2006-2-16 11:58:48 by Hibernate Tools 3.1.0.beta4 -->
+<hibernate-mapping>
+    <class name="com.sunline.bimis.pcmc.priv.db.PcmcActgroupBean" table="pcmc_actgroup" >
+      <id name="actgroupid" type="long">
+            <column name="actgroupid" scale="0" />
+            <generator class="com.sunline.jraf.id.HBNIDGenerator" >
+			    <param name="seqname">pcmc_actgroup</param>
+			    <param name="column">actgroupid</param>
+			</generator> 
+        </id>
+        
+        <property name="operid" type="string">
+            <column name="operid" scale="4" />
+        </property>
+        
+        
+        <property name="subsysid" type="long">
+            <column name="subsysid" length="23" />
+        </property>
+        
+        <property name="operbean" type="string">
+            <column name="operbean" length="1024" />
+        </property>
+        
+       
+         <property name="operdesc" type="string">
+            <column name="operdesc" length="1024" />
+        </property>
+        <property name="acttypeList" type="string">
+            <column name="acttypelist" length="1024" />
+        </property>
+        
+    </class>
+</hibernate-mapping>

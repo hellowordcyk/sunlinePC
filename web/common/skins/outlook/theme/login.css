@@ -1,0 +1,79 @@
+
+
+/*----------开始login页面样式---------------*/
+*{margin:0;padding:0;}
+body{
+	background-color:#eee;
+}
+#contaniner{
+	width: 100%;
+	height: 412px;
+	background:url(../images/login/bg.gif) repeat-x;
+	position:absolute;
+	left:0;
+	top:40%;
+	margin-top:-165px;
+
+}
+#main-content{
+	width:1006px; 
+	height:412px; 
+	position:absolute;
+	left:50%;
+	margin-left:-503px;
+	top:40%;
+	margin-top:-165px;
+	background:url(../images/login/content-bg.png) no-repeat;
+}
+.centertable {
+	margin: 0 auto;
+	text-align: center;
+	padding:180px 0 0 220px;
+}
+.errorMessage{
+	display:inline-block;
+	padding-left:2px;
+	height:25px;
+	color:#f00;
+}
+.content {
+	font: normal 14px/40px "Microsoft YaHei";
+	position: relative;
+	margin:0;
+	margin-left:0!important;
+}
+.content tr td{
+	line-height:25px;
+	padding:0;
+	padding:left;
+	}
+/* .content tr td span{
+	line-height:50px;
+} */
+.btn, .btn-over{
+	font: bold 16px/40px "Microsoft YaHei";
+ 	width:126px;
+ 	border:0;
+ 	height:37px;
+	line-height: 40px;	
+  	color:#fff; 
+  	padding: 0 7px 0;
+  	margin: 0 25px;
+ 	font: 12px;
+  	cursor:pointer;
+}
+.btn{
+	background:url(../images/login/button-bg.gif) no-repeat; 
+}
+.btn-over{
+	background:url(../images/login/button-bg-over.gif) no-repeat;
+ }
+#footer{
+	font: normal 12px/28px "Arial, Helvetica, sans-serif;";
+	width:100%;
+	text-align:center;
+	color:#4b4b4b;	
+	position: absolute;
+	left:0;
+	bottom:0;
+}

@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="com.sunline.pams.mybatis.public.common" >
+ 	 <!-- 查询报表 -->
+ 	 <select id="qryEditorProviderDatalistPage" parameterType="java.util.HashMap" resultType="java.util.LinkedHashMap">
+ 	 
+ 	  ${sqlStr}
+	     
+ 	 </select>	
+ 	 
+ 	 <!-- 添加信息 --> 
+	 <insert id="addPolyData" parameterType="HashMap">
+	     insert into ap_rpt_poly_count(data_date,org_no,buss_name,shop_name,account_no,trade_num,trade_amt,or_buy,user_type) 
+	     VALUES (to_date(#{dataDate},'yyyy-mm-dd'),#{orgNo},#{bussName},#{shopName},#{accountNo},#{tradeNum},#{tradeAmt},#{orBuy},#{userType})     
+	 </insert>
+	 
+	 <select id="qryPolylistPage" parameterType="java.util.HashMap" resultType="java.util.LinkedHashMap">
+          SELECT To_Char(a.Data_Date,'yyyy-mm-dd') "data_date",
+                 a.Org_No "org_no",
+                 b.Deptname "org_na",
+                 a.Buss_Name "buss_name",
+                 a.Shop_Name "shop_name",
+                 a.Account_No "account_no",
+                 a.Trade_Num "trade_num",
+                 a.Trade_Amt "trade_amt",
+                 a.Or_Trade "or_trade",
+                 a.Or_Buy "or_buy",
+                 a.User_Type "user_type"
+            FROM Ap_Rpt_Poly_Count a
+            LEFT JOIN Pcmc_Dept b
+              ON a.Org_No = b.Deptcode
+           WHERE 1 = 1
+           <if test="dataDate!= null and dataDate!='' ">
+             AND to_char(a.Data_Date,'yyyy-mm-dd') = #{dataDate}
+            </if>
+           <if test="orgNo!= null and orgNo!='' ">
+             AND a.Org_No IN  <foreach item="orgno" index="index" collection="orgNo" open="(" separator="," close=")">#{orgno}</foreach>
+           </if>
+           <if test="acctNo!= null and acctNo!='' ">
+             AND a.Account_No = #{acctNo}
+           </if>
+           <if test="accCrtl != null and accCrtl != ''">
+			   and  <foreach collection="accCrtl" item="col" separator="and">
+ 				        a.${col.pkName} in (${col.pkValue})
+ 			        </foreach>
+		    </if>
+           ORDER BY Data_Date DESC
+ 	 </select>
+	 
+	 <delete id="deleteHisData" parameterType="java.util.HashMap">
+		 DELETE FROM ${tableName} WHERE DATA_DATE <![CDATA[>=]]> to_date(#{startDate},'yyyy-mm-dd') and DATA_DATE <![CDATA[<=]]>to_date(#{endDate},'yyyy-mm-dd')
+	</delete>
+	
+	<insert id="addAcceptSingle" parameterType="java.util.HashMap" >
+	 insert into rpt_accept_single(DATA_DATE,ORG_NO,ORG_NA,BUSS_NO,BUSS_NA,ACCT_NO)
+	 values (to_date(#{dataDate},'yyyy-mm-dd'),#{orgNo},#{orgNa},#{bussNo},#{bussNa},#{acctNo})
+	</insert>
+	
+	<select id="qryAcceptSinglelistPage" parameterType="java.util.HashMap" resultType="java.util.LinkedHashMap">
+        SELECT To_Char(a.Data_Date,'yyyy-mm-dd') "data_date",
+              a.Org_No "org_no",
+              a.Org_Na "org_na",
+              a.Buss_No "buss_no",
+              a.Buss_Na "buss_na",
+              a.Shop_Na "shop_na",
+              a.Acct_No "acct_no"
+         FROM Rpt_Accept_Single a
+         where 1=1
+           <if test="dataDate!= null and dataDate!='' ">
+             AND to_char(a.Data_Date,'yyyy-mm-dd') = #{dataDate}
+           </if>
+           <if test="orgNo!= null and orgNo!='' ">
+             AND a.Org_No IN  <foreach item="orgno" index="index" collection="orgNo" open="(" separator="," close=")">#{orgno}</foreach>
+           </if>
+           <if test="acctNo!= null and acctNo!='' ">
+             AND a.Acct_No = #{acctNo}
+           </if>
+           <if test="accCrtl != null and accCrtl != ''">
+			   and  <foreach collection="accCrtl" item="col" separator="and">
+ 				        a.${col.pkName} in (${col.pkValue})
+ 			        </foreach>
+		    </if>
+  	</select>
+</mapper>    
+            

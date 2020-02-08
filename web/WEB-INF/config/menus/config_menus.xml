@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="gb2312"?>
+<root>
+	<menu menuid = "1" menuname="系统配置" isleaf="0" linkurl="">
+		<menu menuid = "104" menuname="数据源接口配置" isleaf="1" linkurl="/governor?flag=initConfig&amp;actorName=getConfigInfo&amp;forword=/governor/provider/dsprovider.jsp" />
+		<menu menuid = "103" menuname="数据源管理" isleaf="1" linkurl="/governor?flag=initConfig&amp;actorName=getDataSourceInfo" />
+		<menu menuid = "101" menuname="数据初始化" isleaf="1" linkurl="/governor/initdata/initdata.jsp" />
+		<!-- <menu menuid = "102" menuname="系统状态监控" isleaf="1" linkurl="/governor/monitor/systemInfo.jsp" /> -->
+		<menu menuid = "105" menuname="系统参数配置" isleaf="1" linkurl="/governor?flag=initConfig&amp;actorName=getSysParamInfo"/>
+		<menu menuid = "106" menuname="Log4j日志管理" isleaf="1" linkurl="/governor/download/logDownload.jsp" />
+		<menu menuid = "107" menuname="自增主键维护" isleaf="1" linkurl="/governor/maintain/tableMaintain.jsp" />
+		<menu menuid = "108" menuname="SQL监控" isleaf="1" linkurl="/governor/sqlmonitor/sqlmonitor.jsp" />
+		<menu menuid = "109" menuname="数据升级" isleaf="0" linkurl="">
+			<menu menuid = "10901" menuname="登录密码MD5加密升级" isleaf="1" linkurl="/governor/upgrade/userpwd2md5.jsp" />
+		</menu>
+	</menu>
+	<menu menuid = "2" menuname="应用配置" isleaf="0" linkurl="">
+		<menu menuid = "201" menuname="应用功能配置" isleaf="1" linkurl="/governor/para/sysparaConfig.jsp"/>
+		<menu menuid = "202" menuname="法人管理" isleaf="1" linkurl="/governor/corp/corpmanage/corp_main.jsp"/>
+		<menu menuid = "203" menuname="法人数据初始化配置" isleaf="1" linkurl="/governor/corp/corpinitconfig/corpInitConfig_main.jsp"/>
+		<menu menuid = "204" menuname="国际化语言配置" isleaf="1" linkurl="/funcpub/lang/i18n_main.jsp"/>
+	</menu>
+</root>

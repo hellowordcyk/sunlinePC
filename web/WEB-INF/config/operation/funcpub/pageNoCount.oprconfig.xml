@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="gb2312"?>
+<!-- 功能页面  -->
+<Sunline>
+    <Session></Session>
+    
+    <Operation id="pageNoCountActor"  bean="com.sunline.funcpub.actor.pagenocount.PageNoCountActor"  
+        desc="分页不查询总数测试操作类" >
+        <Action name="query" desc="查询系统功能页面" acttype="query"/>
+    </Operation>
+    
+</Sunline>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="gb2312"?>
+<!-- 监管平台系统管理  -->
+<Sunline>
+	<Session></Session>
+	
+		<!-- jui测试 -->
+		<Operation id="funcpub-jui"  bean="com.sunline.funcpub.ExampleJuiActor"  desc="测试">
+			<Action name="getData" desc="获取数据"/>
+			<Action name="queryPcmcDept" desc="获取机构" acttype="query"/>
+			<Action name="queryPcmcDept1" desc="获取机构"/>
+			<Action name="insertPcmcDept" desc="新增机构"/>
+			<Action name="login" desc="登录系统"/>
+		</Operation>
+		
+		
+		<Operation id="examplePdf"  bean="com.sunline.funcpub.ExamplePdfActor"  desc="测试"
+		 filterpath="/funcpub/pdfdemo/">
+			<Action name="uploadPdfTemp" desc="上传PDF模板" acttype="deal"/>
+			<Action name="queryPdfTempList" desc="查询PDF模板"/>
+			<Action name="getPdfTempById" desc="通过ID查询PDF模板"/>
+			<Action name="savePdfTemp" desc="保存PDF模板" acttype="deal"/>
+		</Operation>
+    	
+</Sunline>

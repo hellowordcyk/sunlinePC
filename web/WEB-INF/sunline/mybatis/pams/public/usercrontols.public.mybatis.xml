@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sunline.pams.mybatis.public.usercrontols" >
+ 	  <select id="getUserOptionslistPage" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+          SELECT Etlcd "etlcd",
+                Etlna "etlna",
+                Permtp "permtp",
+                Typecd "typecd",
+                Typena "typena",
+                Authtp "authtp",
+                Smrytx "smrytx",
+                Offout "offout"
+           FROM Perm_User
+          where 1=1
+          <if test=" etlcd != '' and etlcd != null ">
+              and Etlcd = #{etlcd}
+          </if>	 
+          <if test=" permtp != '' and permtp != null ">
+              and Permtp = #{permtp}
+          </if>	  
+          <if test=" typecd != '' and typecd != null ">
+              and Typecd in <foreach item="typ" index="index" collection="typecd" open="(" separator="," close=")">#{typ}</foreach>
+          </if>	  
+          <if test=" authtp != '' and authtp != null ">
+              and Authtp = #{authtp}
+          </if>	    
+ 	  </select>
+ 	  
+ 	  <insert id="insertUserOptions" parameterType="java.util.HashMap">
+ 	      insert into Perm_User(Etlcd,Etlna,Permtp,Typecd,Typena,Authtp)
+ 	      values(#{etlcd},#{etlna},#{permtp},#{typecd},#{typena},#{authtp})
+ 	  </insert>
+ 	  
+ 	  <delete id="delUserOptions" parameterType="java.util.HashMap">
+ 	      delete from Perm_User
+ 	      where  Etlcd||'-'||Permtp||'-'||Typecd in 
+ 	      <foreach item="del" index="index" collection="delCol" open="(" separator="," close=")">#{del}</foreach>
+ 	  </delete>
+</mapper> 	  
+ 	 
